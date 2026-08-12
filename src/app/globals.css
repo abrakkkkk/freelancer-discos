@@ -16,10 +16,10 @@
 }
 
 [data-theme='light'] {
-  --bg: #f5f5f5;
-  --text: #1e1e2e;
-  --text-muted: #585b70;
-  --border: #ccd0da;
+  --bg: #f0f0f3;
+  --text: #1a1a2e;
+  --text-muted: #4a4d5e;
+  --border: #d5d8e0;
   --bg-card: #ffffff;
   --bg-header: #141416;
   --text-header: #ffffff;
@@ -144,6 +144,7 @@ a {
 .page-title {
   font-size: 24px;
   font-weight: 600;
+  text-transform: uppercase;
 }
 
 /* ========== BUTTONS ========== */
@@ -178,6 +179,9 @@ a {
 }
 .btn-secondary:hover {
   background: rgba(255,255,255,0.05);
+}
+[data-theme='light'] .btn-secondary:hover {
+  background: rgba(0,0,0,0.06);
 }
 
 .btn-danger {
@@ -266,6 +270,9 @@ td {
 
 tbody tr {
   background: var(--bg-card);
+}
+tbody tr:nth-child(even) {
+  background: var(--bg);
 }
 
 tbody tr:hover {
