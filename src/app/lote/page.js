@@ -3,31 +3,32 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MdLayers } from "react-icons/md";
+import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
 
 export default function AcoesEmLote() {
+  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds'
   const [caixas, setCaixas] = useState([]);
   const [caixaSelecionada, setCaixaSelecionada] = useState('');
-  const [discos, setDiscos] = useState([]);
+  const [busca, setBusca] = useState('');
+  
+  const [itens, setItens] = useState([]);
   const [selecionados, setSelecionados] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   
   // Ações state
   const [novaCaixa, setNovaCaixa] = useState('');
+  const [lojaDestino, setLojaDestino] = useState('');
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
 
   useEffect(() => {
     carregarCaixas();
   }, []);
 
+  // Recarregar quando mudar filtros
   useEffect(() => {
-    if (caixaSelecionada) {
-      carregarDiscosDaCaixa(caixaSelecionada);
-    } else {
-      setDiscos([]);
-      setSelecionados([]);
-    }
-  }, [caixaSelecionada]);
+    carregarItens();
+  }, [caixaSelecionada, busca, activeTab]);
 
   async function carregarCaixas() {
     const { data } = await supabase.from('caixas_distintas').select('caixa');
@@ -36,29 +37,47 @@ export default function AcoesEmLote() {
     }
   }
 
-  async function carregarDiscosDaCaixa(caixa) {
+  async function carregarItens() {
     setLoading(true);
     setMensagem(null);
     setSelecionados([]);
-    const { data, error } = await supabase
-      .from('discos')
-      .select('id, artista, titulo, preco, quantidade, ativo')
-      .eq('caixa', caixa)
-      .order('artista', { ascending: true });
+    
+    // Selecionamos '*' para que se a coluna 'loja' ainda não tiver sido criada pelo usuário,
+    // a requisição não falhe com um erro de coluna inexistente. O valor virá indefinido.
+    let query = supabase
+      .from(activeTab)
+      .select('*')
+      .order('titulo', { ascending: true })
+      .limit(200); // hard limit to avoid browser crash
+
+    if (activeTab === 'discos' && caixaSelecionada) {
+      query = query.eq('caixa', parseInt(caixaSelecionada));
+    }
+    
+    if (busca) {
+      if (activeTab === 'dvds') {
+        query = query.or(`titulo.ilike.%${busca}%`);
+      } else {
+        query = query.or(`artista.ilike.%${busca}%,titulo.ilike.%${busca}%`);
+      }
+    }
+
+    const { data, error } = await query;
       
     if (error) {
-      setMensagem({ tipo: 'error', texto: `Erro ao carregar: ${error.message}` });
+      console.error(error);
+      setItens([]);
     } else {
-      setDiscos(data || []);
+      setItens(data || []);
     }
     setLoading(false);
   }
 
   function toggleSelecionarTodos() {
-    if (selecionados.length === discos.length) {
+    if (selecionados.length === itens.length) {
       setSelecionados([]);
     } else {
-      setSelecionados(discos.map(d => d.id));
+      setSelecionados(itens.map(d => d.id));
     }
   }
 
@@ -71,23 +90,49 @@ export default function AcoesEmLote() {
   }
 
   async function moverSelecionados() {
-    if (!novaCaixa) {
-      setMensagem({ tipo: 'error', texto: 'Digite o número da nova caixa.' });
+    if (!novaCaixa || isNaN(Number(novaCaixa)) || parseInt(novaCaixa) < 0) {
+      setMensagem({ tipo: 'error', texto: 'Digite um número válido e positivo para a nova caixa.' });
       return;
     }
     setLoading(true);
     const { error } = await supabase
-      .from('discos')
+      .from(activeTab)
       .update({ caixa: parseInt(novaCaixa) })
       .in('id', selecionados);
       
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
     } else {
-      setMensagem({ tipo: 'success', texto: `${selecionados.length} disco(s) movidos para a Caixa ${novaCaixa}.` });
+      setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) movidos para a Caixa ${novaCaixa}.` });
       setNovaCaixa('');
-      carregarDiscosDaCaixa(caixaSelecionada);
+      carregarItens();
       carregarCaixas();
+    }
+    setLoading(false);
+  }
+  
+  async function migrarParaLoja() {
+    if (!lojaDestino) {
+      setMensagem({ tipo: 'error', texto: 'Selecione a loja de destino.' });
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase
+      .from(activeTab)
+      .update({ loja: lojaDestino })
+      .in('id', selecionados);
+      
+    if (error) {
+      // Mensagem amigável caso a coluna não exista
+      if (error.message.includes('Could not find the') && error.message.includes('loja')) {
+        setMensagem({ tipo: 'error', texto: 'Erro: A coluna "loja" ainda não foi criada no banco de dados para esta tabela.' });
+      } else {
+        setMensagem({ tipo: 'error', texto: `Erro ao migrar loja: ${error.message}` });
+      }
+    } else {
+      setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) migrados para ${lojaDestino}.` });
+      setLojaDestino('');
+      carregarItens();
     }
     setLoading(false);
   }
@@ -95,15 +140,15 @@ export default function AcoesEmLote() {
   async function inativarSelecionados() {
     setLoading(true);
     const { error } = await supabase
-      .from('discos')
+      .from(activeTab)
       .update({ ativo: false })
       .in('id', selecionados);
       
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
     } else {
-      setMensagem({ tipo: 'success', texto: `${selecionados.length} disco(s) inativados.` });
-      carregarDiscosDaCaixa(caixaSelecionada);
+      setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) inativados.` });
+      carregarItens();
     }
     setLoading(false);
   }
@@ -111,16 +156,16 @@ export default function AcoesEmLote() {
   async function excluirSelecionados() {
     setLoading(true);
     const { error } = await supabase
-      .from('discos')
+      .from(activeTab)
       .delete()
       .in('id', selecionados);
       
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
     } else {
-      setMensagem({ tipo: 'success', texto: `${selecionados.length} disco(s) excluídos definitivamente.` });
+      setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) excluídos definitivamente.` });
       setConfirmarExclusao(false);
-      carregarDiscosDaCaixa(caixaSelecionada);
+      carregarItens();
     }
     setLoading(false);
   }
@@ -131,16 +176,48 @@ export default function AcoesEmLote() {
         <MdLayers size={28} color="var(--accent)" />
         <h1 className="page-title">Alteração em Lote</h1>
       </div>
+      
+      <div className="tabs">
+        <button 
+          className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('discos'); setMensagem(null); setBusca(''); }}
+        >
+          <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('dvds'); setMensagem(null); setBusca(''); }}
+        >
+          <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('cds'); setMensagem(null); setBusca(''); }}
+        >
+          <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
+        </button>
+      </div>
 
       <div className="filters">
-        <div className="form-group" style={{ flex: 1, maxWidth: '300px' }}>
-          <label>Selecione uma Caixa para gerenciar</label>
-          <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
-            <option value="">Selecione...</option>
-            {caixas.map(c => (
-              <option key={c} value={c}>Caixa {c}</option>
-            ))}
-          </select>
+        {activeTab === 'discos' && (
+          <div className="form-group" style={{ flex: '0 0 200px' }}>
+            <label>Filtrar por Caixa</label>
+            <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
+              <option value="">Todas</option>
+              {caixas.map(c => (
+                <option key={c} value={c}>Caixa {c}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        <div className="form-group" style={{ flex: 1, maxWidth: '400px' }}>
+          <label>Buscar por {activeTab === 'dvds' ? 'título' : 'artista ou título'}</label>
+          <input
+            type="text"
+            placeholder={activeTab === 'dvds' ? "Ex: O Poderoso Chefão..." : "Ex: Beatles..."}
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
         </div>
       </div>
 
@@ -148,39 +225,40 @@ export default function AcoesEmLote() {
         <div className={`alert alert-${mensagem.tipo}`}>{mensagem.texto}</div>
       )}
 
-      {loading && !discos.length && <p>Carregando...</p>}
+      {loading && !itens.length && <p>Carregando...</p>}
 
-      {!loading && caixaSelecionada && discos.length === 0 && (
-        <div className="empty-state">Nenhum disco encontrado nesta caixa.</div>
+      {!loading && itens.length === 0 && (
+        <div className="empty-state">Nenhum item encontrado.</div>
       )}
 
-      {discos.length > 0 && (
+      {itens.length > 0 && (
         <>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            {discos.length} disco(s) na Caixa {caixaSelecionada}
+            Listando {itens.length} iten(s)
           </p>
-          <div className="table-responsive" style={{ marginBottom: '100px' }}>
+          <div className="table-responsive" style={{ marginBottom: '120px' }}>
             <table>
               <thead>
                 <tr>
                   <th style={{ width: '40px', textAlign: 'center' }}>
                     <input 
                       type="checkbox" 
-                      checked={selecionados.length === discos.length && discos.length > 0}
+                      checked={selecionados.length === itens.length && itens.length > 0}
                       onChange={toggleSelecionarTodos}
                       style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                     />
                   </th>
-                  <th>Artista</th>
+                  {activeTab !== 'dvds' && <th>Artista</th>}
                   <th>Título</th>
+                  <th>Loja</th>
                   <th>Preço</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {discos.map((d) => (
+                {itens.map((d) => (
                   <tr key={d.id} style={{ backgroundColor: selecionados.includes(d.id) ? 'rgba(197, 48, 48, 0.08)' : 'transparent', opacity: d.ativo === false ? 0.6 : 1 }}>
-                    <td style={{ textAlign: 'center' }}>
+                    <td data-label="Selecionar" style={{ textAlign: 'center' }}>
                       <input 
                         type="checkbox" 
                         checked={selecionados.includes(d.id)}
@@ -188,10 +266,17 @@ export default function AcoesEmLote() {
                         style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                       />
                     </td>
-                    <td>{d.artista}</td>
-                    <td>{d.titulo}</td>
-                    <td>R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
-                    <td>
+                    {activeTab !== 'dvds' && <td data-label="Artista">{d.artista}</td>}
+                    <td data-label="Título">{d.titulo}</td>
+                    <td data-label="Loja">
+                      {d.loja ? (
+                        <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{d.loja}</span>
+                      ) : (
+                        <span className="text-empty">—</span>
+                      )}
+                    </td>
+                    <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
+                    <td data-label="Status">
                       <span className={`badge ${d.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
                         {d.ativo !== false ? 'Ativo' : 'Inativo'}
                       </span>
@@ -204,7 +289,7 @@ export default function AcoesEmLote() {
         </>
       )}
 
-      {/* PAINEL FLUTUANTE DE AÇÕES (Se houver discos selecionados) */}
+      {/* PAINEL FLUTUANTE DE AÇÕES (Se houver selecionados) */}
       {selecionados.length > 0 && (
         <div className="bulk-actions-panel">
           <div className="bulk-actions-content">
@@ -213,22 +298,41 @@ export default function AcoesEmLote() {
             </div>
             
             <div className="bulk-actions-tools">
-              <div className="bulk-move-group">
-                <input 
-                  type="number" 
-                  placeholder="Nova cx." 
-                  value={novaCaixa} 
-                  onChange={(e) => setNovaCaixa(e.target.value)}
-                  className="bulk-input"
-                />
-                <button className="btn btn-secondary" onClick={moverSelecionados} disabled={loading}>Mover</button>
+              {/* Opção de Mover para Loja */}
+              <div className="bulk-move-group" style={{ borderColor: 'var(--accent)' }}>
+                <select 
+                  className="bulk-input" 
+                  style={{ width: '110px' }}
+                  value={lojaDestino}
+                  onChange={(e) => setLojaDestino(e.target.value)}
+                >
+                  <option value="">Lojas...</option>
+                  <option value="Loja 1">Loja 1</option>
+                  <option value="Loja 2">Loja 2</option>
+                  <option value="Anexo">Anexo</option>
+                </select>
+                <button className="btn btn-primary" onClick={migrarParaLoja} disabled={loading}>Transferir Loja</button>
               </div>
+
+              {/* Mover Caixa só para Discos */}
+              {activeTab === 'discos' && (
+                <div className="bulk-move-group">
+                  <input 
+                    type="number" 
+                    placeholder="Nº da Caixa" 
+                    value={novaCaixa} 
+                    onChange={(e) => setNovaCaixa(e.target.value)}
+                    className="bulk-input"
+                  />
+                  <button className="btn btn-secondary" onClick={moverSelecionados} disabled={loading}>Mover de Caixa</button>
+                </div>
+              )}
               
               <button className="btn btn-secondary" onClick={inativarSelecionados} disabled={loading}>Inativar</button>
               
               {confirmarExclusao ? (
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <button className="btn btn-danger" onClick={excluirSelecionados} disabled={loading}>Confirmar Exclusão</button>
+                  <button className="btn btn-danger" onClick={excluirSelecionados} disabled={loading}>Confirmar</button>
                   <button className="btn btn-secondary" onClick={() => setConfirmarExclusao(false)}>Cancelar</button>
                 </div>
               ) : (

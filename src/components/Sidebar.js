@@ -10,7 +10,7 @@ import { FaMoon } from "react-icons/fa6";
 
 const links = [
   { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={18} /> },
-  { href: '/adicionar', label: 'Adicionar Disco', icon: <IoIosAddCircleOutline size={18} /> },
+  { href: '/adicionar', label: 'Adicionar Itens', icon: <IoIosAddCircleOutline size={18} /> },
   { href: '/lote', label: 'Alteração em Lote', icon: <MdLayers size={18} /> },
   { href: '/saida', label: 'Saída de Discos', icon: <MdCurrencyExchange size={18} /> },
   { href: '/editar', label: 'Editar / Excluir', icon: <TbTools size={18} /> },

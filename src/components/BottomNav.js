@@ -8,29 +8,36 @@ import { MdCurrencyExchange, MdHistory, MdLayers } from "react-icons/md";
 import { TbTools } from "react-icons/tb";
 
 const links = [
-  { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={24} /> },
-  { href: '/adicionar', label: 'Adicionar', icon: <IoIosAddCircleOutline size={24} /> },
-  { href: '/lote', label: 'Lotes', icon: <MdLayers size={24} /> },
-  { href: '/saida', label: 'Saída', icon: <MdCurrencyExchange size={24} /> },
-  { href: '/editar', label: 'Editar', icon: <TbTools size={24} /> },
-  { href: '/historico', label: 'Histórico', icon: <MdHistory size={24} /> },
+  { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={20} /> },
+  { href: '/adicionar', label: 'Adicionar', icon: <IoIosAddCircleOutline size={20} /> },
+  { href: '/lote', label: 'Lotes', icon: <MdLayers size={20} /> },
+  { href: '/saida', label: 'Saída', icon: <MdCurrencyExchange size={20} /> },
+  { href: '/editar', label: 'Editar', icon: <TbTools size={20} /> },
+  { href: '/historico', label: 'Histórico', icon: <MdHistory size={20} /> },
 ];
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="bottom-nav">
-      {links.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className={`bottom-nav-item ${pathname === link.href ? 'active' : ''}`}
-        >
-          {link.icon}
-          <span>{link.label}</span>
-        </Link>
-      ))}
+    <nav className="bottom-nav" aria-label="Navegação móvel inferior">
+      <div className="bottom-nav-container">
+        {links.map((link) => {
+          const isActive = pathname === link.href;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`bottom-nav-item ${isActive ? 'active' : ''}`}
+            >
+              <div className="bottom-nav-icon-wrapper">
+                {link.icon}
+              </div>
+              <span className="bottom-nav-label">{link.label}</span>
+            </Link>
+          );
+        })}
+      </div>
     </nav>
   );
 }

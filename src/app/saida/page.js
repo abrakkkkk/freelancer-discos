@@ -103,12 +103,12 @@ export default function SaidaDeDiscos() {
             <tbody>
               {resultados.map((d) => (
                 <tr key={d.id}>
-                  <td>{d.caixa}</td>
-                  <td>{d.artista}</td>
-                  <td>{d.titulo}</td>
-                  <td>{d.quantidade}</td>
-                  <td>R$ {Number(d.preco || 0).toFixed(2)}</td>
-                  <td>
+                  <td data-label="Caixa">{d.caixa}</td>
+                  <td data-label="Artista">{d.artista}</td>
+                  <td data-label="Título">{d.titulo}</td>
+                  <td data-label="Estoque">{d.quantidade}</td>
+                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2)}</td>
+                  <td data-label="Ação">
                     <button
                       className="btn btn-primary"
                       onClick={() => { setSelecionado(d); setQtdSaida(1); setObservacao(''); }}

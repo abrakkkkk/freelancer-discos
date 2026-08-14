@@ -80,17 +80,17 @@ export default function Historico() {
             <tbody>
               {movimentacoes.map((m) => (
                 <tr key={m.id}>
-                  <td>{new Date(m.criado_em).toLocaleString('pt-BR')}</td>
-                  <td>
+                  <td data-label="Data">{new Date(m.criado_em).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</td>
+                  <td data-label="Tipo">
                     <span className={`badge badge-${m.tipo}`}>
                       {m.tipo === 'entrada' ? '↓ Entrada' : '↑ Saída'}
                     </span>
                   </td>
-                  <td>{m.discos?.caixa}</td>
-                  <td>{m.discos?.artista}</td>
-                  <td>{m.discos?.titulo}</td>
-                  <td>{m.quantidade}</td>
-                  <td>{m.observacao || '—'}</td>
+                  <td data-label="Caixa">{m.discos?.caixa}</td>
+                  <td data-label="Artista">{m.discos?.artista}</td>
+                  <td data-label="Título">{m.discos?.titulo}</td>
+                  <td data-label="Qtd">{m.quantidade}</td>
+                  <td data-label="Observação">{m.observacao || '—'}</td>
                 </tr>
               ))}
             </tbody>
