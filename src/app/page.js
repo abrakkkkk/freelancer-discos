@@ -72,10 +72,10 @@ export default function Catalogo() {
       setLoading(true);
 
       const columns = activeTab === 'dvds' 
-        ? 'id, titulo, preco, quantidade, ativo, loja' 
+        ? 'id, titulo, preco, quantidade, ativo, loja, observacao' 
         : activeTab === 'cds'
-        ? 'id, artista, titulo, preco, quantidade, ativo, loja'
-        : 'id, caixa, artista, titulo, preco, quantidade, ativo, loja';
+        ? 'id, artista, titulo, preco, quantidade, ativo, loja, observacao'
+        : 'id, caixa, artista, titulo, preco, quantidade, ativo, loja, observacao';
 
       let query = supabase
         .from(activeTab)
@@ -95,10 +95,15 @@ export default function Catalogo() {
         query = query.eq('caixa', parseInt(filtroCaixa));
       }
       if (busca) {
+        const words = busca.trim().split(/\s+/);
         if (activeTab === 'dvds') {
-          query = query.or(`titulo.ilike.%${busca}%`);
+          words.forEach(word => {
+            query = query.ilike('titulo', `%${word}%`);
+          });
         } else {
-          query = query.or(`artista.ilike.%${busca}%,titulo.ilike.%${busca}%`);
+          words.forEach(word => {
+            query = query.or(`artista.ilike.%${word}%,titulo.ilike.%${word}%`);
+          });
         }
       }
 
@@ -250,6 +255,7 @@ export default function Catalogo() {
                 <th>Loja</th>
                 <th>Preço</th>
                 <th>Qtd</th>
+                <th>Obs.</th>
                 <th>Status</th>
                 <th style={{ width: '40px' }}></th>
               </tr>
@@ -271,6 +277,15 @@ export default function Catalogo() {
                   </td>
                   <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2)}</td>
                   <td data-label="Qtd">{d.quantidade}</td>
+                  <td data-label="Obs." title={d.observacao || ''}>
+                    {d.observacao ? (
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        {d.observacao.length > 20 ? d.observacao.substring(0, 20) + '...' : d.observacao}
+                      </span>
+                    ) : (
+                      <span className="text-empty">—</span>
+                    )}
+                  </td>
                   <td data-label="Status">
                     <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`}>
                       {d.ativo ? 'Ativo' : 'Inativo'}

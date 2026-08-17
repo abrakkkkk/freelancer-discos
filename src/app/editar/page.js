@@ -47,7 +47,7 @@ function EditarExcluirContent() {
 
     const { data } = await supabase
       .from('discos')
-      .select('id, caixa, artista, titulo, preco, quantidade, ativo')
+      .select('id, caixa, artista, titulo, preco, quantidade, ativo, observacao')
       .eq('id', id)
       .single();
 
@@ -61,10 +61,16 @@ function EditarExcluirContent() {
     if (!termo) return;
     await carregarCaixas();
 
-    const { data } = await supabase
+    let query = supabase
       .from('discos')
-      .select('id, caixa, artista, titulo, preco, quantidade, ativo')
-      .or(`artista.ilike.%${termo}%,titulo.ilike.%${termo}%`)
+      .select('id, caixa, artista, titulo, preco, quantidade, ativo, observacao');
+      
+    const words = termo.trim().split(/\s+/);
+    words.forEach(word => {
+      query = query.or(`artista.ilike.%${word}%,titulo.ilike.%${word}%`);
+    });
+
+    const { data } = await query
       .order('artista')
       .limit(50);
 
@@ -96,6 +102,7 @@ function EditarExcluirContent() {
       caixa: disco.caixa || '',
       preco: formatarMoedaParaEdicao(disco.preco),
       quantidade: disco.quantidade || 0,
+      observacao: disco.observacao || '',
     });
     setMensagem(null);
     setTela('edicao');
@@ -156,6 +163,7 @@ function EditarExcluirContent() {
         caixa: form.caixa ? parseInt(form.caixa) : null,
         preco: unmaskedPreco,
         quantidade: parseInt(form.quantidade) || 0,
+        observacao: form.observacao || null,
       })
       .eq('id', discoEditando.id);
 
@@ -168,7 +176,7 @@ function EditarExcluirContent() {
     // Atualiza o disco na lista de resultados
     setResultados(prev => prev.map(d =>
       d.id === discoEditando.id
-        ? { ...d, artista: form.artista, titulo: form.titulo, caixa: form.caixa ? parseInt(form.caixa) : null, preco: unmaskedPreco, quantidade: parseInt(form.quantidade) || 0 }
+        ? { ...d, artista: form.artista, titulo: form.titulo, caixa: form.caixa ? parseInt(form.caixa) : null, preco: unmaskedPreco, quantidade: parseInt(form.quantidade) || 0, observacao: form.observacao || null }
         : d
     ));
   }
@@ -283,6 +291,12 @@ function EditarExcluirContent() {
             <span className="edit-info-label">Quantidade</span>
             <span className="edit-info-value">{discoEditando.quantidade}</span>
           </div>
+          {discoEditando.observacao && (
+            <div className="edit-info-item" style={{ gridColumn: '1 / -1' }}>
+              <span className="edit-info-label">Observação</span>
+              <span className="edit-info-value">{discoEditando.observacao}</span>
+            </div>
+          )}
           <div className="edit-info-item">
             <span className="edit-info-label">Status</span>
             <span className="edit-info-value">
@@ -346,6 +360,18 @@ function EditarExcluirContent() {
               <input name="quantidade" type="number" min="0" value={form.quantidade} onChange={handleChange} />
             </div>
             <div className="form-group"></div>
+          </div>
+
+          <div className="form-group">
+            <label>Observação (Opcional)</label>
+            <textarea 
+              name="observacao" 
+              value={form.observacao} 
+              onChange={handleChange} 
+              rows="2" 
+              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', resize: 'vertical' }}
+              placeholder="Qualquer detalhe adicional sobre o item..."
+            ></textarea>
           </div>
 
           <div className="edit-actions">
