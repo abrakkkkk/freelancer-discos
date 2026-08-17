@@ -161,7 +161,7 @@ export default function AdicionarItem() {
 
     const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD';
     setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${(activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : ''}.` });
-    setForm({ ...initialForm, caixa: form.caixa });
+    setForm({ ...initialForm, caixa: form.caixa, loja: form.loja });
   }
 
   return (
