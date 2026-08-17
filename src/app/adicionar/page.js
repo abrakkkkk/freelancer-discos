@@ -124,12 +124,15 @@ export default function AdicionarItem() {
     
     let payload = {
       titulo: form.titulo,
-      caixa: (activeTab === 'discos' && form.caixa) ? parseInt(form.caixa) : null,
       loja: form.loja || null,
       preco: unmaskedPreco,
       quantidade: parseInt(form.quantidade) || 1,
       observacao: form.observacao || null,
     };
+
+    if (activeTab === 'discos') {
+      payload.caixa = form.caixa ? parseInt(form.caixa) : null;
+    }
 
     if (activeTab === 'discos' || activeTab === 'cds') {
       payload.artista = form.artista;
