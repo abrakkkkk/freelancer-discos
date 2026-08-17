@@ -1035,13 +1035,15 @@ tbody tr:last-child td {
   }
 
   tr {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: 12px;
+    border-radius: 12px;
+    padding: 16px;
     background: var(--bg-card);
     position: relative;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* More elevated card look */
+    display: flex;
+    flex-direction: column;
   }
 
   td {
@@ -1049,9 +1051,14 @@ tbody tr:last-child td {
     justify-content: space-between;
     align-items: center;
     border: none;
+    border-bottom: 1px dashed var(--border-light);
     padding: 8px 0;
     text-align: right;
     font-size: 14px;
+  }
+  
+  td:last-child {
+    border-bottom: none;
   }
 
   td::before {
@@ -1065,13 +1072,55 @@ tbody tr:last-child td {
     flex-shrink: 0;
   }
 
+  /* Título como cabeçalho do Card */
+  td[data-label="Título"] {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    padding: 0 0 4px 0;
+    border-bottom: none;
+    display: block;
+    text-align: left;
+    padding-right: 40px; /* space for absolute action btn */
+  }
+  td[data-label="Título"]::before {
+    display: none;
+  }
+
+  /* Artista como subtítulo */
+  td[data-label="Artista"] {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 0 0 12px 0;
+    border-bottom: 1px solid var(--border-light);
+    display: block;
+    text-align: left;
+  }
+  td[data-label="Artista"]::before {
+    display: none;
+  }
+
+  /* Ação / Editar no canto superior direito do Card */
   td[data-label="Ação"], td[data-label="Excluir"] {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: auto;
+  }
+
+  td[data-label="Ação"] a, td[data-label="Excluir"] button {
+    background: var(--bg);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    border-top: 1px solid var(--border);
-    margin-top: 10px;
-    padding-top: 14px;
-    flex-direction: row;
-    gap: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
 
   td[data-label="Ação"]::before, td[data-label="Excluir"]::before {
@@ -1083,7 +1132,7 @@ tbody tr:last-child td {
     border-top: none;
     margin-top: 0;
     padding-top: 8px;
-    padding-bottom: 4px;
+    padding-bottom: 8px;
   }
 
   /* Painel flutuante de lote no celular */
