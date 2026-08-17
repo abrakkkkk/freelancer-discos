@@ -1055,6 +1055,7 @@ tbody tr:last-child td {
     padding: 8px 0;
     text-align: right;
     font-size: 14px;
+    order: 10; /* Padrão para os que não tem ordem definida */
   }
   
   td:last-child {
@@ -1082,6 +1083,7 @@ tbody tr:last-child td {
     display: block;
     text-align: left;
     padding-right: 40px; /* space for absolute action btn */
+    order: 1;
   }
   td[data-label="Título"]::before {
     display: none;
@@ -1096,10 +1098,19 @@ tbody tr:last-child td {
     border-bottom: 1px solid var(--border-light);
     display: block;
     text-align: left;
+    order: 2;
   }
   td[data-label="Artista"]::before {
     display: none;
   }
+
+  /* Outros itens específicos para garantir a ordem */
+  td[data-label="Caixa"] { order: 3; }
+  td[data-label="Loja"] { order: 4; }
+  td[data-label="Preço"] { order: 5; }
+  td[data-label="Qtd"] { order: 6; }
+  td[data-label="Obs."] { order: 7; }
+  td[data-label="Status"] { order: 8; }
 
   /* Ação / Editar no canto superior direito do Card */
   td[data-label="Ação"], td[data-label="Excluir"] {
