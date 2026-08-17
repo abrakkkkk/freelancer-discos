@@ -85,11 +85,10 @@ function EditarExcluirContent() {
 
   function formatarMoedaParaEdicao(valor) {
     if (valor === null || valor === undefined) return '';
-    let str = typeof valor === 'number' ? valor.toFixed(2) : String(valor);
+    let str = typeof valor === 'number' ? Math.floor(valor).toString() : String(valor);
     str = str.replace(/\D/g, '');
     if (!str) return '';
-    str = (parseInt(str, 10) / 100).toFixed(2);
-    str = str.replace('.', ',');
+    str = parseInt(str, 10).toString();
     str = str.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
     return str;
   }
@@ -115,19 +114,19 @@ function EditarExcluirContent() {
   }
 
   function handleChange(e) {
-    if (e.target.name === 'preco') {
-      let value = e.target.value.replace(/\D/g, '');
-      if (!value) {
+    const { name, value } = e.target;
+    if (name === 'preco') {
+      let val = value.replace(/\D/g, '');
+      if (!val) {
         setForm({ ...form, preco: '' });
         return;
       }
-      value = (parseInt(value, 10) / 100).toFixed(2);
-      value = value.replace('.', ',');
-      value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-      setForm({ ...form, preco: value });
+      val = parseInt(val, 10).toString();
+      val = val.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+      setForm({ ...form, preco: val });
       return;
     }
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({ ...form, [name]: value });
   }
 
   async function salvar() {

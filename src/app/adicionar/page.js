@@ -47,8 +47,7 @@ export default function AdicionarItem() {
         setForm({ ...form, preco: '' });
         return;
       }
-      val = (parseInt(val, 10) / 100).toFixed(2);
-      val = val.replace('.', ',');
+      val = parseInt(val, 10).toString();
       val = val.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
       setForm({ ...form, preco: val });
       return;
