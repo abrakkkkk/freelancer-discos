@@ -148,18 +148,21 @@ export default function AdicionarItem() {
       return;
     }
 
-    // Registrar movimentação de entrada (opcional dependendo se a tabela mov_dvds ou mov_cds existir,
-    // mas se 'movimentacoes' usa disco_id, talvez seja melhor não inserir movimentação para cds/dvds, ou talvez usar a mesma.
-    // Como não foi especificado, e o esquema de bd de DVDs/CDs ainda vai ser criado, vamos pular movimentações para DVDs/CDs 
-    // ou inserir genérico se possível. Vamos fazer só para 'discos' por enquanto para não quebrar o banco deles.)
+    const movData = {
+      tipo: 'entrada',
+      quantidade: parseInt(form.quantidade) || 1,
+      observacao: 'Cadastro inicial',
+    };
+
     if (activeTab === 'discos') {
-      await supabase.from('movimentacoes').insert({
-        disco_id: data.id,
-        tipo: 'entrada',
-        quantidade: parseInt(form.quantidade) || 1,
-        observacao: 'Cadastro inicial',
-      });
+      movData.disco_id = data.id;
+    } else if (activeTab === 'dvds') {
+      movData.dvd_id = data.id;
+    } else if (activeTab === 'cds') {
+      movData.cd_id = data.id;
     }
+
+    await supabase.from('movimentacoes').insert(movData);
 
     const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD';
     setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${(activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : ''}.` });

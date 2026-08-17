@@ -21,7 +21,9 @@ export default function Historico() {
           quantidade,
           observacao,
           criado_em,
-          discos ( caixa, artista, titulo )
+          discos ( caixa, artista, titulo ),
+          dvds ( titulo ),
+          cds ( artista, titulo )
         `)
         .order('criado_em', { ascending: false })
         .limit(500);
@@ -86,9 +88,9 @@ export default function Historico() {
                       {m.tipo === 'entrada' ? '↓ Entrada' : '↑ Saída'}
                     </span>
                   </td>
-                  <td data-label="Caixa">{m.discos?.caixa}</td>
-                  <td data-label="Artista">{m.discos?.artista}</td>
-                  <td data-label="Título">{m.discos?.titulo}</td>
+                  <td data-label="Caixa">{m.discos?.caixa || '—'}</td>
+                  <td data-label="Artista">{m.discos?.artista || m.cds?.artista || '—'}</td>
+                  <td data-label="Título">{m.discos?.titulo || m.dvds?.titulo || m.cds?.titulo || '—'}</td>
                   <td data-label="Qtd">{m.quantidade}</td>
                   <td data-label="Observação">{m.observacao || '—'}</td>
                 </tr>
