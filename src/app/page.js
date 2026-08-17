@@ -14,6 +14,7 @@ export default function Catalogo() {
   const [total, setTotal] = useState(0);
   const [pagina, setPagina] = useState(1);
   const [filtroCaixa, setFiltroCaixa] = useState('');
+  const [filtroLoja, setFiltroLoja] = useState('');
   const [busca, setBusca] = useState('');
   const [mostrarAtivos, setMostrarAtivos] = useState(true);
   const [mostrarInativos, setMostrarInativos] = useState(false);
@@ -94,6 +95,9 @@ export default function Catalogo() {
       if (filtroCaixa) {
         query = query.eq('caixa', parseInt(filtroCaixa));
       }
+      if (filtroLoja) {
+        query = query.eq('loja', filtroLoja);
+      }
       if (busca) {
         const words = busca.trim().split(/\s+/);
         if (activeTab === 'dvds') {
@@ -137,12 +141,12 @@ export default function Catalogo() {
       setLoading(false);
     }
     fetchItens();
-  }, [pagina, filtroCaixa, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao, activeTab]);
+  }, [pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao, activeTab]);
 
   // Resetar página e ordenação ao mudar filtros ou abas
   useEffect(() => {
     setPagina(1);
-  }, [filtroCaixa, busca, mostrarAtivos, mostrarInativos, activeTab]);
+  }, [filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, activeTab]);
 
   const totalPaginas = Math.max(1, Math.ceil(total / ITENS_POR_PAGINA));
 
@@ -190,6 +194,15 @@ export default function Catalogo() {
             </select>
           </div>
         )}
+        <div className="form-group" style={{ flex: '0 0 160px' }}>
+          <label>Filtrar por loja</label>
+          <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
+            <option value="">Todas</option>
+            <option value="Loja 1">Loja 1</option>
+            <option value="Loja 2">Loja 2</option>
+            <option value="Anexo">Anexo</option>
+          </select>
+        </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Buscar por {activeTab === 'dvds' ? 'título' : 'artista ou título'}</label>
           <input
