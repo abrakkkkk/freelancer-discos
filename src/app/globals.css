@@ -1210,3 +1210,34 @@ tbody tr:last-child td {
     min-height: 42px;
   }
 }
+
+/* ========== AUTOCOMPLETE DROPDOWN ========== */
+.sugestoes-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 100;
+  list-style: none;
+  margin-top: 4px;
+}
+.sugestoes-dropdown li {
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.sugestoes-dropdown li:last-child {
+  border-bottom: none;
+}
+.sugestoes-dropdown li:hover {
+  background: var(--accent);
+  color: #fff;
+}

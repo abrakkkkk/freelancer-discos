@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
@@ -16,10 +16,16 @@ export default function AdicionarItem() {
     loja: '',
     preco: '',
     quantidade: '1',
+    observacao: '',
   };
   const [form, setForm] = useState(initialForm);
   const [mensagem, setMensagem] = useState(null);
 
+  const [sugestoesArtista, setSugestoesArtista] = useState([]);
+  const [mostrarSugestoesArtista, setMostrarSugestoesArtista] = useState(false);
+  const [sugestoesTitulo, setSugestoesTitulo] = useState([]);
+  const [mostrarSugestoesTitulo, setMostrarSugestoesTitulo] = useState(false);
+  const timerBuscaRef = useRef(null);
   useEffect(() => {
     async function fetchCaixas() {
       const { data } = await supabase
@@ -34,19 +40,58 @@ export default function AdicionarItem() {
   }, []);
 
   function handleChange(e) {
-    if (e.target.name === 'preco') {
-      let value = e.target.value.replace(/\D/g, '');
-      if (!value) {
+    const { name, value } = e.target;
+    if (name === 'preco') {
+      let val = value.replace(/\D/g, '');
+      if (!val) {
         setForm({ ...form, preco: '' });
         return;
       }
-      value = (parseInt(value, 10) / 100).toFixed(2);
-      value = value.replace('.', ',');
-      value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-      setForm({ ...form, preco: value });
+      val = (parseInt(val, 10) / 100).toFixed(2);
+      val = val.replace('.', ',');
+      val = val.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+      setForm({ ...form, preco: val });
       return;
     }
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm({ ...form, [name]: value });
+
+    if (name === 'artista') {
+      if (timerBuscaRef.current) clearTimeout(timerBuscaRef.current);
+      timerBuscaRef.current = setTimeout(() => buscarSugestoes('artista', value), 300);
+    } else if (name === 'titulo') {
+      if (timerBuscaRef.current) clearTimeout(timerBuscaRef.current);
+      timerBuscaRef.current = setTimeout(() => buscarSugestoes('titulo', value), 300);
+    }
+  }
+
+  async function buscarSugestoes(campo, valor) {
+    if (!valor || valor.trim().length < 2) {
+      if (campo === 'artista') setSugestoesArtista([]);
+      if (campo === 'titulo') setSugestoesTitulo([]);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from(activeTab)
+      .select(campo)
+      .ilike(campo, `%${valor.trim()}%`)
+      .limit(20);
+
+    if (error) {
+      console.error("Erro na busca de sugestões:", error);
+      return;
+    }
+
+    if (data) {
+      const unicas = [...new Set(data.map(d => d[campo]).filter(Boolean))];
+      if (campo === 'artista') {
+        setSugestoesArtista(unicas);
+        setMostrarSugestoesArtista(unicas.length > 0);
+      } else {
+        setSugestoesTitulo(unicas);
+        setMostrarSugestoesTitulo(unicas.length > 0);
+      }
+    }
   }
 
   async function handleSubmit(e) {
@@ -83,6 +128,7 @@ export default function AdicionarItem() {
       loja: form.loja || null,
       preco: unmaskedPreco,
       quantidade: parseInt(form.quantidade) || 1,
+      observacao: form.observacao || null,
     };
 
     if (activeTab === 'discos' || activeTab === 'cds') {
@@ -128,19 +174,19 @@ export default function AdicionarItem() {
       <div className="tabs">
         <button 
           className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('discos'); setMensagem(null); setForm(initialForm); }}
+          onClick={() => { setActiveTab('discos'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
         >
           <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
         </button>
         <button 
           className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('dvds'); setMensagem(null); setForm(initialForm); }}
+          onClick={() => { setActiveTab('dvds'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
         >
           <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
         </button>
         <button 
           className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('cds'); setMensagem(null); setForm(initialForm); }}
+          onClick={() => { setActiveTab('cds'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
@@ -151,9 +197,9 @@ export default function AdicionarItem() {
       )}
 
       <form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
-        <div className="form-row">
+        <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
           {(activeTab === 'discos' || activeTab === 'cds') && (
-            <div className="form-group">
+            <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={{ marginBottom: 0 }}>Artista</label>
                 <button 
@@ -165,13 +211,47 @@ export default function AdicionarItem() {
                   Usar Título
                 </button>
               </div>
-              <input name="artista" value={form.artista} onChange={handleChange} />
+              <input 
+                name="artista" 
+                value={form.artista} 
+                onChange={handleChange} 
+                onFocus={() => { if (sugestoesArtista.length > 0) setMostrarSugestoesArtista(true); }}
+                onBlur={() => setTimeout(() => setMostrarSugestoesArtista(false), 200)}
+                autoComplete="off"
+              />
+              {mostrarSugestoesArtista && sugestoesArtista.length > 0 && (
+                <ul className="sugestoes-dropdown">
+                  {sugestoesArtista.map((sug, idx) => (
+                    <li key={idx} onClick={() => {
+                      setForm(prev => ({ ...prev, artista: sug }));
+                      setMostrarSugestoesArtista(false);
+                    }}>{sug}</li>
+                  ))}
+                </ul>
+              )}
             </div>
           )}
           
-          <div className="form-group">
+          <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesTitulo ? 60 : 1 }}>
             <label>Título *</label>
-            <input name="titulo" value={form.titulo} onChange={handleChange} />
+            <input 
+              name="titulo" 
+              value={form.titulo} 
+              onChange={handleChange} 
+              onFocus={() => { if (sugestoesTitulo.length > 0) setMostrarSugestoesTitulo(true); }}
+              onBlur={() => setTimeout(() => setMostrarSugestoesTitulo(false), 200)}
+              autoComplete="off"
+            />
+            {mostrarSugestoesTitulo && sugestoesTitulo.length > 0 && (
+              <ul className="sugestoes-dropdown">
+                {sugestoesTitulo.map((sug, idx) => (
+                  <li key={idx} onClick={() => {
+                    setForm(prev => ({ ...prev, titulo: sug }));
+                    setMostrarSugestoesTitulo(false);
+                  }}>{sug}</li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
@@ -214,6 +294,18 @@ export default function AdicionarItem() {
             <label>Quantidade</label>
             <input name="quantidade" type="number" min="1" value={form.quantidade} onChange={handleChange} />
           </div>
+        </div>
+
+        <div className="form-group">
+          <label>Observação (Opcional)</label>
+          <textarea 
+            name="observacao" 
+            value={form.observacao} 
+            onChange={handleChange} 
+            rows="2" 
+            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', resize: 'vertical' }}
+            placeholder="Qualquer detalhe adicional sobre o item..."
+          ></textarea>
         </div>
 
         <div style={{ marginTop: '8px' }}>
