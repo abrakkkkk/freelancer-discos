@@ -1,29 +1,58 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MdCurrencyExchange } from "react-icons/md";
+import { PiVinylRecord, PiFilmStrip, PiDisc } from "react-icons/pi";
 
 export default function SaidaDeDiscos() {
+  const [activeTab, setActiveTab] = useState('discos');
   const [termo, setTermo] = useState('');
+  const [filtroCaixa, setFiltroCaixa] = useState('');
+  const [filtroLoja, setFiltroLoja] = useState('');
+  const [caixas, setCaixas] = useState([]);
   const [resultados, setResultados] = useState([]);
   const [selecionado, setSelecionado] = useState(null);
   const [qtdSaida, setQtdSaida] = useState(1);
   const [observacao, setObservacao] = useState('');
   const [mensagem, setMensagem] = useState(null);
 
+  useEffect(() => {
+    async function fetchCaixas() {
+      const { data } = await supabase.from('caixas_distintas').select('caixa');
+      if (data) {
+        setCaixas([...new Set(data.map(d => d.caixa))]);
+      }
+    }
+    fetchCaixas();
+  }, []);
+
   async function buscar() {
-    if (!termo) return;
-    const { data } = await supabase
-      .from('discos')
-      .select('id, caixa, artista, titulo, quantidade, preco')
-      .or(`artista.ilike.%${termo}%,titulo.ilike.%${termo}%`)
-      .order('artista')
-      .limit(50);
-    
+    setMensagem(null);
+    let query = supabase.from(activeTab).select('*');
+
+    if (activeTab === 'discos' && filtroCaixa) {
+      query = query.eq('caixa', parseInt(filtroCaixa));
+    }
+    if (filtroLoja) {
+      query = query.eq('loja', filtroLoja);
+    }
+    if (termo) {
+      const words = termo.trim().split(/\s+/);
+      if (activeTab === 'dvds') {
+        words.forEach(word => {
+          query = query.ilike('titulo', `%${word}%`);
+        });
+      } else {
+        words.forEach(word => {
+          query = query.or(`artista.ilike.%${word}%,titulo.ilike.%${word}%`);
+        });
+      }
+    }
+
+    const { data } = await query.limit(50);
     setResultados(data || []);
     setSelecionado(null);
-    setMensagem(null);
   }
 
   function handleKeyDown(e) {
@@ -40,7 +69,7 @@ export default function SaidaDeDiscos() {
     }
 
     const { error: errUpdate } = await supabase
-      .from('discos')
+      .from(activeTab)
       .update({ quantidade: selecionado.quantidade - qtdSaida })
       .eq('id', selecionado.id);
 
@@ -49,14 +78,19 @@ export default function SaidaDeDiscos() {
       return;
     }
 
-    await supabase.from('movimentacoes').insert({
-      disco_id: selecionado.id,
+    const movData = {
       tipo: 'saida',
       quantidade: qtdSaida,
       observacao: observacao || null,
-    });
+    };
+    if (activeTab === 'discos') movData.disco_id = selecionado.id;
+    else if (activeTab === 'dvds') movData.dvd_id = selecionado.id;
+    else if (activeTab === 'cds') movData.cd_id = selecionado.id;
 
-    setMensagem({ tipo: 'success', texto: 'Saída registrada com sucesso!' });
+    await supabase.from('movimentacoes').insert(movData);
+
+    const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD';
+    setMensagem({ tipo: 'success', texto: `Saída de ${qtdSaida}x ${tipoNome}(s) registrada com sucesso!` });
     setSelecionado(null);
     setQtdSaida(1);
     setObservacao('');
@@ -70,13 +104,54 @@ export default function SaidaDeDiscos() {
         <h1 className="page-title">Registrar Saída</h1>
       </div>
 
+      <div className="tabs">
+        <button 
+          className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('discos'); setResultados([]); setSelecionado(null); setMensagem(null); }}
+        >
+          <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('dvds'); setResultados([]); setSelecionado(null); setMensagem(null); }}
+        >
+          <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('cds'); setResultados([]); setSelecionado(null); setMensagem(null); }}
+        >
+          <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
+        </button>
+      </div>
+
       {mensagem && (
         <div className={`alert alert-${mensagem.tipo}`}>{mensagem.texto}</div>
       )}
 
       <div className="filters">
+        {activeTab === 'discos' && (
+          <div className="form-group" style={{ flex: '0 0 160px' }}>
+            <label>Caixa</label>
+            <select value={filtroCaixa} onChange={(e) => setFiltroCaixa(e.target.value)}>
+              <option value="">Todas</option>
+              {caixas.map(c => (
+                <option key={c} value={c}>Caixa {c}</option>
+              ))}
+            </select>
+          </div>
+        )}
+        <div className="form-group" style={{ flex: '0 0 160px' }}>
+          <label>Loja</label>
+          <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
+            <option value="">Todas</option>
+            <option value="Loja 1">Loja 1</option>
+            <option value="Loja 2">Loja 2</option>
+            <option value="Anexo">Anexo</option>
+          </select>
+        </div>
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar disco por artista ou título</label>
+          <label>Buscar por {activeTab === 'dvds' ? 'título' : 'artista ou título'}</label>
           <input
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
@@ -92,10 +167,11 @@ export default function SaidaDeDiscos() {
           <table>
             <thead>
               <tr>
-                <th>Caixa</th>
-                <th>Artista</th>
+                {activeTab === 'discos' && <th>Caixa</th>}
+                {activeTab !== 'dvds' && <th>Artista</th>}
                 <th>Título</th>
-                <th>Estoque</th>
+                <th>Loja</th>
+                <th>Qtd</th>
                 <th>Preço</th>
                 <th>Ação</th>
               </tr>
@@ -103,14 +179,16 @@ export default function SaidaDeDiscos() {
             <tbody>
               {resultados.map((d) => (
                 <tr key={d.id}>
-                  <td data-label="Caixa">{d.caixa}</td>
-                  <td data-label="Artista">{d.artista}</td>
-                  <td data-label="Título">{d.titulo}</td>
-                  <td data-label="Estoque">{d.quantidade}</td>
+                  {activeTab === 'discos' && <td data-label="Caixa">{d.caixa}</td>}
+                  {activeTab !== 'dvds' && <td data-label="Artista">{d.artista || '—'}</td>}
+                  <td data-label="Título">{d.titulo || '—'}</td>
+                  <td data-label="Loja">{d.loja || '—'}</td>
+                  <td data-label="Qtd">{d.quantidade}</td>
                   <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2)}</td>
                   <td data-label="Ação">
                     <button
                       className="btn btn-primary"
+                      style={{ fontSize: '12px', padding: '6px 12px' }}
                       onClick={() => { setSelecionado(d); setQtdSaida(1); setObservacao(''); }}
                     >
                       Selecionar
@@ -123,14 +201,12 @@ export default function SaidaDeDiscos() {
         </div>
       )}
 
-      {resultados.length > 0 && resultados.length === 0 && (
-        <div className="empty-state">Nenhum disco encontrado.</div>
-      )}
-
       {selecionado && (
         <div style={{ marginTop: '24px' }}>
           <div className="summary-box">
-            <strong>Disco selecionado:</strong> [{`Cx ${selecionado.caixa}`}] {selecionado.artista} — {selecionado.titulo}
+            <strong>Selecionado:</strong> {activeTab === 'discos' ? `[Cx ${selecionado.caixa}] ` : ''} 
+            {activeTab !== 'dvds' && selecionado.artista ? `${selecionado.artista} — ` : ''}
+            {selecionado.titulo}
             <br />
             <strong>Estoque atual:</strong> {selecionado.quantidade} | <strong>Preço unitário:</strong> R$ {Number(selecionado.preco || 0).toFixed(2)}
           </div>
