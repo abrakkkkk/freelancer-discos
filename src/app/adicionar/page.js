@@ -222,7 +222,7 @@ export default function AdicionarItem() {
               {mostrarSugestoesArtista && sugestoesArtista.length > 0 && (
                 <ul className="sugestoes-dropdown">
                   {sugestoesArtista.map((sug, idx) => (
-                    <li key={idx} onClick={() => {
+                    <li key={idx} onMouseDown={() => {
                       setForm(prev => ({ ...prev, artista: sug }));
                       setMostrarSugestoesArtista(false);
                     }}>{sug}</li>
@@ -245,7 +245,7 @@ export default function AdicionarItem() {
             {mostrarSugestoesTitulo && sugestoesTitulo.length > 0 && (
               <ul className="sugestoes-dropdown">
                 {sugestoesTitulo.map((sug, idx) => (
-                  <li key={idx} onClick={() => {
+                  <li key={idx} onMouseDown={() => {
                     setForm(prev => ({ ...prev, titulo: sug }));
                     setMostrarSugestoesTitulo(false);
                   }}>{sug}</li>
