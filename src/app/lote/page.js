@@ -225,6 +225,56 @@ export default function AcoesEmLote() {
     ...itens.filter(d => !selecionados.includes(d.id))
   ];
 
+  const selecionadosChipsBlock = selecionadosData.length > 0 ? (
+    <div style={{ 
+      marginBottom: '16px', 
+      padding: '12px 16px', 
+      border: '1px solid var(--accent)', 
+      borderRadius: '8px', 
+      background: 'rgba(197, 48, 48, 0.05)' 
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent)' }}>
+          {selecionadosData.length} selecionado(s)
+        </span>
+        <button 
+          onClick={limparSelecao} 
+          style={{ 
+            background: 'none', border: 'none', color: 'var(--text-muted)', 
+            cursor: 'pointer', fontSize: '12px', textDecoration: 'underline' 
+          }}
+        >
+          Limpar tudo
+        </button>
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+        {selecionadosData.map(d => (
+          <span 
+            key={d.id} 
+            style={{ 
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              padding: '4px 10px', borderRadius: '999px', fontSize: '12px',
+              background: 'var(--accent)', color: '#fff', fontWeight: 500, 
+              lineHeight: 1.4
+            }}
+          >
+            {(activeTab !== 'dvds' && activeTab !== 'vhs') && d.artista ? `${d.artista} — ` : ''}{d.titulo}
+            <button
+              onClick={() => toggleSelecionar(d.id)}
+              style={{ 
+                background: 'none', border: 'none', color: '#fff', cursor: 'pointer', 
+                padding: '0', fontSize: '14px', lineHeight: 1, fontWeight: 700, opacity: 0.8
+              }}
+              title="Remover da seleção"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div>
       <div className="page-header">
@@ -296,55 +346,9 @@ export default function AcoesEmLote() {
       )}
 
       {/* --- SELECIONADOS (chips) --- */}
-      {selecionadosData.length > 0 && (
-        <div style={{ 
-          marginBottom: '16px', 
-          padding: '12px 16px', 
-          border: '1px solid var(--accent)', 
-          borderRadius: '8px', 
-          background: 'rgba(197, 48, 48, 0.05)' 
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent)' }}>
-              {selecionadosData.length} selecionado(s)
-            </span>
-            <button 
-              onClick={limparSelecao} 
-              style={{ 
-                background: 'none', border: 'none', color: 'var(--text-muted)', 
-                cursor: 'pointer', fontSize: '12px', textDecoration: 'underline' 
-              }}
-            >
-              Limpar tudo
-            </button>
-          </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {selecionadosData.map(d => (
-              <span 
-                key={d.id} 
-                style={{ 
-                  display: 'inline-flex', alignItems: 'center', gap: '6px',
-                  padding: '4px 10px', borderRadius: '999px', fontSize: '12px',
-                  background: 'var(--accent)', color: '#fff', fontWeight: 500, 
-                  lineHeight: 1.4
-                }}
-              >
-                {(activeTab !== 'dvds' && activeTab !== 'vhs') && d.artista ? `${d.artista} — ` : ''}{d.titulo}
-                <button
-                  onClick={() => toggleSelecionar(d.id)}
-                  style={{ 
-                    background: 'none', border: 'none', color: '#fff', cursor: 'pointer', 
-                    padding: '0', fontSize: '14px', lineHeight: 1, fontWeight: 700, opacity: 0.8
-                  }}
-                  title="Remover da seleção"
-                >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      <div className="hide-on-mobile">
+        {selecionadosChipsBlock}
+      </div>
 
       {loading && !itens.length && <p>Carregando...</p>}
 
@@ -360,7 +364,7 @@ export default function AcoesEmLote() {
               : `Listando ${itens.length} iten(s)`
             }
           </p>
-          <div className="table-responsive" style={{ marginBottom: '120px' }}>
+          <div className="table-responsive" style={{ marginBottom: '16px' }}>
             <table>
               <thead>
                 <tr>
@@ -419,6 +423,12 @@ export default function AcoesEmLote() {
               </tbody>
             </table>
           </div>
+
+          <div className="hide-on-desktop">
+            {selecionadosChipsBlock}
+          </div>
+          
+          <div style={{ height: '120px' }}></div>
         </>
       )}
 
