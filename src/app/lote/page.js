@@ -40,7 +40,6 @@ export default function AcoesEmLote() {
   async function carregarItens() {
     setLoading(true);
     setMensagem(null);
-    setSelecionados([]);
     
     // Selecionamos '*' para que se a coluna 'loja' ainda não tiver sido criada pelo usuário,
     // a requisição não falhe com um erro de coluna inexistente. O valor virá indefinido.
@@ -180,19 +179,19 @@ export default function AcoesEmLote() {
       <div className="tabs">
         <button 
           className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('discos'); setMensagem(null); setBusca(''); }}
+          onClick={() => { setActiveTab('discos'); setMensagem(null); setBusca(''); setSelecionados([]); }}
         >
           <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
         </button>
         <button 
           className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('dvds'); setMensagem(null); setBusca(''); }}
+          onClick={() => { setActiveTab('dvds'); setMensagem(null); setBusca(''); setSelecionados([]); }}
         >
           <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
         </button>
         <button 
           className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('cds'); setMensagem(null); setBusca(''); }}
+          onClick={() => { setActiveTab('cds'); setMensagem(null); setBusca(''); setSelecionados([]); }}
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
