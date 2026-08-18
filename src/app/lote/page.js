@@ -13,6 +13,7 @@ export default function AcoesEmLote() {
   
   const [itens, setItens] = useState([]);
   const [selecionados, setSelecionados] = useState([]);
+  const [selecionadosData, setSelecionadosData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   
@@ -73,19 +74,38 @@ export default function AcoesEmLote() {
   }
 
   function toggleSelecionarTodos() {
-    if (selecionados.length === itens.length) {
-      setSelecionados([]);
+    const visibleIds = itens.map(d => d.id);
+    const allVisibleSelected = visibleIds.every(id => selecionados.includes(id));
+    
+    if (allVisibleSelected && visibleIds.length > 0) {
+      // Unselect visible items
+      setSelecionados(selecionados.filter(id => !visibleIds.includes(id)));
+      setSelecionadosData(selecionadosData.filter(d => !visibleIds.includes(d.id)));
     } else {
-      setSelecionados(itens.map(d => d.id));
+      // Select all visible items
+      const newIds = visibleIds.filter(id => !selecionados.includes(id));
+      setSelecionados([...selecionados, ...newIds]);
+      const newItemsData = itens.filter(d => newIds.includes(d.id));
+      setSelecionadosData([...selecionadosData, ...newItemsData]);
     }
   }
 
   function toggleSelecionar(id) {
     if (selecionados.includes(id)) {
       setSelecionados(selecionados.filter(sid => sid !== id));
+      setSelecionadosData(selecionadosData.filter(d => d.id !== id));
     } else {
       setSelecionados([...selecionados, id]);
+      const itemData = itens.find(d => d.id === id) || selecionadosData.find(d => d.id === id);
+      if (itemData) {
+        setSelecionadosData([...selecionadosData, itemData]);
+      }
     }
+  }
+
+  function limparSelecao() {
+    setSelecionados([]);
+    setSelecionadosData([]);
   }
 
   async function moverSelecionados() {
@@ -104,6 +124,7 @@ export default function AcoesEmLote() {
     } else {
       setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) movidos para a Caixa ${novaCaixa}.` });
       setNovaCaixa('');
+      limparSelecao();
       carregarItens();
       carregarCaixas();
     }
@@ -131,6 +152,7 @@ export default function AcoesEmLote() {
     } else {
       setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) migrados para ${lojaDestino}.` });
       setLojaDestino('');
+      limparSelecao();
       carregarItens();
     }
     setLoading(false);
@@ -147,6 +169,7 @@ export default function AcoesEmLote() {
       setMensagem({ tipo: 'error', texto: error.message });
     } else {
       setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) inativados.` });
+      limparSelecao();
       carregarItens();
     }
     setLoading(false);
@@ -164,10 +187,16 @@ export default function AcoesEmLote() {
     } else {
       setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) excluídos definitivamente.` });
       setConfirmarExclusao(false);
+      limparSelecao();
       carregarItens();
     }
     setLoading(false);
   }
+
+  const itensParaMostrar = [
+    ...selecionadosData,
+    ...itens.filter(d => !selecionados.includes(d.id))
+  ];
 
   return (
     <div>
@@ -179,19 +208,19 @@ export default function AcoesEmLote() {
       <div className="tabs">
         <button 
           className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('discos'); setMensagem(null); setBusca(''); setSelecionados([]); }}
+          onClick={() => { setActiveTab('discos'); setMensagem(null); setBusca(''); limparSelecao(); }}
         >
           <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
         </button>
         <button 
           className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('dvds'); setMensagem(null); setBusca(''); setSelecionados([]); }}
+          onClick={() => { setActiveTab('dvds'); setMensagem(null); setBusca(''); limparSelecao(); }}
         >
           <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
         </button>
         <button 
           className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('cds'); setMensagem(null); setBusca(''); setSelecionados([]); }}
+          onClick={() => { setActiveTab('cds'); setMensagem(null); setBusca(''); limparSelecao(); }}
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
@@ -224,16 +253,16 @@ export default function AcoesEmLote() {
         <div className={`alert alert-${mensagem.tipo}`}>{mensagem.texto}</div>
       )}
 
-      {loading && !itens.length && <p>Carregando...</p>}
+      {loading && !itensParaMostrar.length && <p>Carregando...</p>}
 
-      {!loading && itens.length === 0 && (
+      {!loading && itensParaMostrar.length === 0 && (
         <div className="empty-state">Nenhum item encontrado.</div>
       )}
 
-      {itens.length > 0 && (
+      {itensParaMostrar.length > 0 && (
         <>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Listando {itens.length} iten(s)
+            Listando {itensParaMostrar.length} iten(s) {selecionados.length > 0 ? `(${selecionados.length} selecionados)` : ''}
           </p>
           <div className="table-responsive" style={{ marginBottom: '120px' }}>
             <table>
@@ -242,7 +271,7 @@ export default function AcoesEmLote() {
                   <th style={{ width: '40px', textAlign: 'center' }}>
                     <input 
                       type="checkbox" 
-                      checked={selecionados.length === itens.length && itens.length > 0}
+                      checked={itens.length > 0 && itens.every(d => selecionados.includes(d.id))}
                       onChange={toggleSelecionarTodos}
                       style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                     />
@@ -255,7 +284,7 @@ export default function AcoesEmLote() {
                 </tr>
               </thead>
               <tbody>
-                {itens.map((d) => (
+                {itensParaMostrar.map((d) => (
                   <tr key={d.id} style={{ backgroundColor: selecionados.includes(d.id) ? 'rgba(197, 48, 48, 0.08)' : 'transparent', opacity: d.ativo === false ? 0.6 : 1 }}>
                     <td data-label="Selecionar" style={{ textAlign: 'center' }}>
                       <input 
