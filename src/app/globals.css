@@ -901,7 +901,14 @@ tbody tr:last-child td {
   }
 }
 
+.hide-on-desktop {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
+  .hide-on-desktop {
+    display: flex !important; /* specific to our use cases */
+  }
   /* Ocultar barra lateral desktop */
   .sidebar {
     display: none;
