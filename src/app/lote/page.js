@@ -48,7 +48,7 @@ export default function AcoesEmLote() {
       .from(activeTab)
       .select('*')
       .order('titulo', { ascending: true })
-      .limit(200); // hard limit to avoid browser crash
+      .limit(3000); // Increased limit to allow larger bulk actions
 
     if (activeTab === 'discos' && caixaSelecionada) {
       query = query.eq('caixa', parseInt(caixaSelecionada));
