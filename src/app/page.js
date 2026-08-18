@@ -397,7 +397,7 @@ export default function Catalogo() {
                 <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
                   {activeTab === 'discos' && <td data-label="Caixa">{d.caixa}</td>}
                   {activeTab !== 'dvds' && (
-                    <td data-label="Artista">{d.artista || <span className="text-empty">—</span>}</td>
+                    <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista || <span className="text-empty">—</span>}</td>
                   )}
                   <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
                   <td data-label="Loja">

@@ -349,7 +349,7 @@ export default function AcoesEmLote() {
                         style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                       />
                     </td>
-                    {activeTab !== 'dvds' && <td data-label="Artista">{d.artista}</td>}
+                    {activeTab !== 'dvds' && <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista}</td>}
                     <td data-label="Título">{d.titulo}</td>
                     <td data-label="Loja">
                       {d.loja ? (
