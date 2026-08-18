@@ -51,9 +51,9 @@ function EditarExcluirContent() {
   }
 
   function getColumns() {
-    if (tipo === 'dvds' || tipo === 'vhs') return 'id, titulo, preco, ativo, loja, observacao';
-    if (tipo === 'cds') return 'id, artista, titulo, preco, ativo, loja, observacao';
-    return 'id, caixa, artista, titulo, preco, ativo, loja, observacao';
+    if (tipo === 'dvds' || tipo === 'vhs') return 'id, titulo, preco, ativo, loja, observacao, quantidade';
+    if (tipo === 'cds') return 'id, artista, titulo, preco, ativo, loja, observacao, quantidade';
+    return 'id, caixa, artista, titulo, preco, ativo, loja, observacao, quantidade';
   }
 
   async function carregarItemPorId(id) {
@@ -209,11 +209,31 @@ function EditarExcluirContent() {
   }
 
   async function excluir(id) {
-    const { error } = await supabase.from(tipo).delete().eq('id', id);
-    if (error) {
-      setMensagem({ tipo: 'error', texto: error.message });
+    const { error: errUpdate } = await supabase
+      .from(tipo)
+      .update({ deletado: true, quantidade: 0 })
+      .eq('id', id);
+
+    if (errUpdate) {
+      setMensagem({ tipo: 'error', texto: errUpdate.message });
       return;
     }
+
+    const movData = {
+      tipo: 'exclusao',
+      quantidade: itemEditando?.quantidade || 1,
+      observacao: 'Exclusão do catálogo',
+    };
+    if (tipo === 'discos') movData.disco_id = id;
+    else if (tipo === 'dvds') movData.dvd_id = id;
+    else if (tipo === 'cds') movData.cd_id = id;
+    else if (tipo === 'vhs') movData.vhs_id = id;
+
+    const { error: errMov } = await supabase.from('movimentacoes').insert(movData);
+    if (errMov) {
+      console.error('Erro ao registrar movimentação de exclusão:', errMov);
+    }
+
     setMensagem({ tipo: 'success', texto: `${tipoNome} excluído.` });
     setConfirmarExclusao(null);
     setResultados(prev => prev.filter(d => d.id !== id));

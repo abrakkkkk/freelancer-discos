@@ -520,6 +520,10 @@ tbody tr:last-child td {
   background: var(--danger);
   color: #4a0418;
 }
+.badge-exclusao {
+  background: #4b5563;
+  color: #f3f4f6;
+}
 
 /* ========== ALERTS ========== */
 .alert {

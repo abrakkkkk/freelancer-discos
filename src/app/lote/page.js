@@ -188,12 +188,30 @@ export default function AcoesEmLote() {
     setLoading(true);
     const { error } = await supabase
       .from(activeTab)
-      .update({ deletado: true })
+      .update({ deletado: true, quantidade: 0 })
       .in('id', selecionados);
       
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
     } else {
+      const movements = selecionadosData.map(item => {
+        const movData = {
+          tipo: 'exclusao',
+          quantidade: item.quantidade || 1,
+          observacao: 'Exclusão em lote',
+        };
+        if (activeTab === 'discos') movData.disco_id = item.id;
+        else if (activeTab === 'dvds') movData.dvd_id = item.id;
+        else if (activeTab === 'cds') movData.cd_id = item.id;
+        else if (activeTab === 'vhs') movData.vhs_id = item.id;
+        return movData;
+      });
+
+      const { error: errMov } = await supabase.from('movimentacoes').insert(movements);
+      if (errMov) {
+        console.error('Erro ao registrar movimentações de exclusão em lote:', errMov);
+      }
+
       setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) excluídos (ocultados do catálogo).` });
       setConfirmarExclusao(false);
       limparSelecao();

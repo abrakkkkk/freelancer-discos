@@ -25,6 +25,7 @@ export default function SaidaEHistorico() {
   // Histórico states
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [filtroTipoMov, setFiltroTipoMov] = useState('');
+  const [filtroPeriodo, setFiltroPeriodo] = useState('hoje'); // 'hoje' | 'todos'
   const [loadingHist, setLoadingHist] = useState(true);
 
   // Fetch caixas on mount
@@ -56,6 +57,12 @@ export default function SaidaEHistorico() {
       .order('criado_em', { ascending: false })
       .limit(100);
 
+    if (filtroPeriodo === 'hoje') {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0);
+      query = query.gte('criado_em', hoje.toISOString());
+    }
+
     if (filtroTipoMov) {
       query = query.eq('tipo', filtroTipoMov);
     }
@@ -71,12 +78,9 @@ export default function SaidaEHistorico() {
   }
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchMovimentacoes();
-    }, 0);
-    return () => clearTimeout(timer);
+    fetchMovimentacoes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtroTipoMov]);
+  }, [filtroTipoMov, filtroPeriodo]);
 
   // Pesquisa Otimizada (Auto-fetch)
   useEffect(() => {
@@ -332,16 +336,29 @@ export default function SaidaEHistorico() {
           <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Últimas Movimentações</h2>
         </div>
         
-        <div className="form-group" style={{ marginBottom: 0, flex: 'none' }}>
-          <select 
-            value={filtroTipoMov} 
-            onChange={(e) => setFiltroTipoMov(e.target.value)}
-            style={{ width: '150px' }}
-          >
-            <option value="">Todas</option>
-            <option value="entrada">Entradas</option>
-            <option value="saida">Saídas</option>
-          </select>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <div className="form-group" style={{ marginBottom: 0, flex: 'none' }}>
+            <select 
+              value={filtroPeriodo} 
+              onChange={(e) => setFiltroPeriodo(e.target.value)}
+              style={{ width: '130px' }}
+            >
+              <option value="hoje">Hoje</option>
+              <option value="todos">Todas</option>
+            </select>
+          </div>
+          <div className="form-group" style={{ marginBottom: 0, flex: 'none' }}>
+            <select 
+              value={filtroTipoMov} 
+              onChange={(e) => setFiltroTipoMov(e.target.value)}
+              style={{ width: '130px' }}
+            >
+              <option value="">Todos Tipos</option>
+              <option value="entrada">Entradas</option>
+              <option value="saida">Saídas</option>
+              <option value="exclusao">Exclusões</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -368,7 +385,7 @@ export default function SaidaEHistorico() {
                 <td data-label="Data" style={{ fontSize: '13px', whiteSpace: 'nowrap' }}>{new Date(m.criado_em.endsWith('Z') ? m.criado_em : m.criado_em + 'Z').toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</td>
                 <td data-label="Tipo">
                   <span className={`badge badge-${m.tipo}`}>
-                    {m.tipo === 'entrada' ? '↓ Entrada' : '↑ Saída'}
+                    {m.tipo === 'entrada' ? '↓ Entrada' : m.tipo === 'exclusao' ? '✖ Exclusão' : '↑ Saída'}
                   </span>
                 </td>
                 <td data-label="Caixa">{m.discos?.caixa || '—'}</td>
