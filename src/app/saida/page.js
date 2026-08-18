@@ -312,14 +312,18 @@ export default function SaidaEHistorico() {
 
 
       {/* --- SEÇÃO DE HISTÓRICO --- */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <MdHistory size={24} color="var(--accent)" />
           <h2 style={{ margin: 0, fontSize: '1.25rem' }}>Últimas Movimentações</h2>
         </div>
         
-        <div className="form-group" style={{ width: '150px', marginBottom: 0 }}>
-          <select value={filtroTipoMov} onChange={(e) => setFiltroTipoMov(e.target.value)}>
+        <div className="form-group" style={{ marginBottom: 0, flex: 'none' }}>
+          <select 
+            value={filtroTipoMov} 
+            onChange={(e) => setFiltroTipoMov(e.target.value)}
+            style={{ width: '150px' }}
+          >
             <option value="">Todas</option>
             <option value="entrada">Entradas</option>
             <option value="saida">Saídas</option>
