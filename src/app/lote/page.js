@@ -355,7 +355,7 @@ export default function AcoesEmLote() {
                         checked={selecionados.includes(d.id)}
                         onChange={() => {}} // State toggled by tr onClick
                         onClick={(e) => { e.stopPropagation(); toggleSelecionar(d.id); }} // Allows direct checkbox click without double trigger
-                        style={{ cursor: 'pointer', width: '16px', height: '16px' }}
+                        style={{ cursor: 'pointer', width: '18px', height: '18px', margin: 0 }}
                       />
                     </td>
                     {activeTab !== 'dvds' && <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista}</td>}

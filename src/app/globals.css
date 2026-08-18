@@ -1154,6 +1154,7 @@ tbody tr:last-child td {
     display: block;
     text-align: left;
     padding-right: 70px; /* space for absolute action btns */
+    padding-left: 36px; /* space for absolute checkbox */
     min-height: 36px; /* evita que a Loja encoste nos botões quando não houver Artista */
     order: 1;
   }
@@ -1171,6 +1172,7 @@ tbody tr:last-child td {
     display: block;
     text-align: left;
     padding-right: 70px;
+    padding-left: 36px;
     order: 2;
   }
   td[data-label="Artista"]::before {
@@ -1218,13 +1220,19 @@ tbody tr:last-child td {
   }
 
   td[data-label="Selecionar"] {
-    justify-content: space-between;
-    border-top: none;
-    border-bottom: 1px solid var(--border);
-    margin-top: 0;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    order: 3;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  td[data-label="Selecionar"]::before {
+    display: none;
   }
 
   /* Painel flutuante de lote no celular */
