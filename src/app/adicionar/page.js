@@ -1,215 +1,107 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
+import { useState } from 'react';
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
+import { useCaixas } from '@/hooks/useCaixas';
+import { useItemForm } from '@/hooks/useItemForm';
+import { itemService } from '@/services/itemService';
+import { movimentacaoService } from '@/services/movimentacaoService';
+import CategoryTabs from '@/components/CategoryTabs';
+import AlertMessage from '@/components/AlertMessage';
+import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
+
+const INITIAL_FORM = {
+  artista: '',
+  titulo: '',
+  caixa: '',
+  loja: '',
+  preco: '',
+  observacao: '',
+};
 
 export default function AdicionarItem() {
   useMobileLeaveConfirm();
-  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds' | 'vhs'
-  const [caixas, setCaixas] = useState([]);
   
-  const initialForm = {
-    artista: '',
-    titulo: '',
-    caixa: '',
-    loja: '',
-    preco: '',
-    observacao: '',
-  };
-  const [form, setForm] = useState(initialForm);
+  const [activeTab, setActiveTab] = useState(CATEGORY_IDS.DISCOS);
+  const { caixas } = useCaixas();
   const [mensagem, setMensagem] = useState(null);
 
-  const [sugestoesArtista, setSugestoesArtista] = useState([]);
-  const [mostrarSugestoesArtista, setMostrarSugestoesArtista] = useState(false);
-  const [sugestoesTitulo, setSugestoesTitulo] = useState([]);
-  const [mostrarSugestoesTitulo, setMostrarSugestoesTitulo] = useState(false);
-  const timerBuscaRef = useRef(null);
-  useEffect(() => {
-    async function fetchCaixas() {
-      const { data } = await supabase
-        .from('caixas_distintas')
-        .select('caixa');
-      if (data) {
-        const unicas = [...new Set(data.map(d => d.caixa))];
-        setCaixas(unicas);
-      }
+  const {
+    form, setForm, handleChange,
+    sugestoesArtista, mostrarSugestoesArtista, setMostrarSugestoesArtista,
+    sugestoesTitulo, mostrarSugestoesTitulo, setMostrarSugestoesTitulo,
+    selectSuggestion, getUnmaskedPreco
+  } = useItemForm(INITIAL_FORM, activeTab);
+
+  const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setMensagem(null);
+    setForm(INITIAL_FORM);
+    setMostrarSugestoesArtista(false);
+    setMostrarSugestoesTitulo(false);
+  };
+
+  const validateForm = () => {
+    if (!isVideo && !form.artista) return 'Preencha o artista.';
+    if (!form.titulo.trim()) return 'O Título é obrigatório.';
+    if (activeTab === CATEGORY_IDS.DISCOS && form.caixa) {
+      if (isNaN(Number(form.caixa)) || parseInt(form.caixa) < 0) return 'Número da caixa inválido.';
     }
-    fetchCaixas();
-  }, []);
+    if (getUnmaskedPreco() < 0) return 'O preço não pode ser negativo.';
+    return null;
+  };
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-    if (name === 'preco') {
-      let val = value.replace(/\D/g, '');
-      if (!val) {
-        setForm({ ...form, preco: '' });
-        return;
-      }
-      val = parseInt(val, 10).toString();
-      val = val.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-      setForm({ ...form, preco: val });
-      return;
-    }
-    setForm({ ...form, [name]: value });
-
-    if (name === 'artista') {
-      if (timerBuscaRef.current) clearTimeout(timerBuscaRef.current);
-      timerBuscaRef.current = setTimeout(() => buscarSugestoes('artista', value), 300);
-    } else if (name === 'titulo') {
-      if (timerBuscaRef.current) clearTimeout(timerBuscaRef.current);
-      timerBuscaRef.current = setTimeout(() => buscarSugestoes('titulo', value), 300);
-    }
-  }
-
-  async function buscarSugestoes(campo, valor) {
-    if (!valor || valor.trim().length < 2) {
-      if (campo === 'artista') setSugestoesArtista([]);
-      if (campo === 'titulo') setSugestoesTitulo([]);
-      return;
-    }
-
-    if (campo === 'artista') {
-      const { data, error } = await supabase
-        .from(activeTab)
-        .select('artista')
-        .ilike('artista', `%${valor.trim()}%`)
-        .limit(20);
-
-      if (error) {
-        console.error("Erro na busca de sugestões de artista:", error);
-        return;
-      }
-
-      if (data) {
-        const unicas = [...new Set(data.map(d => d.artista).filter(Boolean))];
-        setSugestoesArtista(unicas);
-        setMostrarSugestoesArtista(unicas.length > 0);
-      }
-    } else if (campo === 'titulo') {
-      const colunas = (activeTab === 'dvds' || activeTab === 'vhs') 
-        ? 'titulo, preco, loja' 
-        : 'artista, titulo, preco, loja';
-        
-      const { data, error } = await supabase
-        .from(activeTab)
-        .select(colunas)
-        .ilike('titulo', `%${valor.trim()}%`)
-        .order('id', { ascending: false })
-        .limit(30);
-
-      if (error) {
-        console.error("Erro na busca de sugestões de título:", error);
-        return;
-      }
-
-      if (data) {
-        const unicas = [];
-        const seen = new Set();
-        for (const d of data) {
-          const key = (activeTab === 'dvds' || activeTab === 'vhs') ? d.titulo : `${d.artista}-${d.titulo}`;
-          if (!seen.has(key)) {
-            seen.add(key);
-            unicas.push(d);
-          }
-        }
-        setSugestoesTitulo(unicas);
-        setMostrarSugestoesTitulo(unicas.length > 0);
-      }
-    }
-  }
-
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMensagem(null);
 
-    if (activeTab !== 'dvds' && activeTab !== 'vhs' && !form.artista) {
-      setMensagem({ tipo: 'error', texto: 'Preencha o artista.' });
+    const errorMsg = validateForm();
+    if (errorMsg) {
+      setMensagem({ tipo: 'error', texto: errorMsg });
       return;
     }
 
-    if (!form.titulo.trim()) {
-      setMensagem({ tipo: 'error', texto: 'O Título é obrigatório.' });
-      return;
-    }
-
-    if (activeTab === 'discos' && form.caixa) {
-      if (isNaN(Number(form.caixa)) || parseInt(form.caixa) < 0) {
-        setMensagem({ tipo: 'error', texto: 'Número da caixa inválido.' });
-        return;
-      }
-    }
-
-    const unmaskedPreco = form.preco ? parseFloat(form.preco.replace(/\./g, '').replace(',', '.')) : 0;
-    if (unmaskedPreco < 0) {
-      setMensagem({ tipo: 'error', texto: 'O preço não pode ser negativo.' });
-      return;
-    }
-    
-    const insertData = {
-      titulo: form.titulo.trim(),
-      preco: unmaskedPreco,
-      loja: form.loja || null,
-      observacao: form.observacao || null
-    };
-
-    if (activeTab !== 'dvds' && activeTab !== 'vhs') insertData.artista = form.artista.trim();
-    if (activeTab === 'discos') insertData.caixa = form.caixa ? parseInt(form.caixa) : null;
-
-    const { data, error } = await supabase
-      .from(activeTab)
-      .insert(insertData)
-      .select('id')
-      .single();
-
-    if (error) {
-      setMensagem({ tipo: 'error', texto: `Erro: ${error.message}` });
-      return;
-    }
-
-    const movData = {
-      tipo: 'entrada',
-      quantidade: 1,
-      observacao: 'Cadastro inicial',
-    };
-
-    if (activeTab === 'discos') {
-      movData.disco_id = data.id;
-    } else if (activeTab === 'dvds') {
-      movData.dvd_id = data.id;
-    } else if (activeTab === 'cds') {
-      movData.cd_id = data.id;
-    } else if (activeTab === 'vhs') {
-      movData.vhs_id = data.id;
-    }
-
-    const { error: errMov } = await supabase.from('movimentacoes').insert(movData);
-    if (errMov) {
-      console.error('Erro ao registrar movimentação:', errMov);
-    }
-
-    if (form.observacao && form.observacao.trim()) {
-      const idField = activeTab === 'discos' ? 'disco_id' : activeTab === 'dvds' ? 'dvd_id' : activeTab === 'cds' ? 'cd_id' : 'vhs_id';
-      const obsInsert = {
-        observacao: form.observacao.trim(),
+    try {
+      // 1. Inserir item
+      const insertData = {
+        titulo: form.titulo.trim(),
+        preco: getUnmaskedPreco(),
+        loja: form.loja || null,
+        observacao: form.observacao || null
       };
-      obsInsert[idField] = data.id;
 
-      const { error: errObs } = await supabase
-        .from('observacoes_disco')
-        .insert(obsInsert);
+      if (!isVideo) insertData.artista = form.artista.trim();
+      if (activeTab === CATEGORY_IDS.DISCOS) insertData.caixa = form.caixa ? parseInt(form.caixa) : null;
 
-      if (errObs) {
-        console.error('Erro ao salvar observação inicial:', errObs);
+      const itemInfo = await itemService.addItem(activeTab, insertData);
+
+      // 2. Registrar Movimentação
+      const movData = movimentacaoService.createMovementPayload(activeTab, itemInfo.id, 'entrada', 1, 'Cadastro inicial');
+      await movimentacaoService.registerMovement(movData);
+
+      // 3. Registrar Observação se existir
+      if (form.observacao?.trim()) {
+        const obsField = activeTab === 'discos' ? 'disco_id' : activeTab === 'dvds' ? 'dvd_id' : activeTab === 'cds' ? 'cd_id' : 'vhs_id';
+        await movimentacaoService.registerInitialObservation({
+          [obsField]: itemInfo.id,
+          observacao: form.observacao.trim()
+        });
       }
-    }
 
-    const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
-    setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${(activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : ''}.` });
-    setForm({ ...initialForm, caixa: form.caixa, loja: form.loja });
-  }
+      // Sucesso
+      const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
+      const caixaText = (activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : '';
+      
+      setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${caixaText}.` });
+      setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja });
+    } catch (err) {
+      console.error(err);
+      setMensagem({ tipo: 'error', texto: `Erro: ${err.message}` });
+    }
+  };
 
   return (
     <div>
@@ -218,40 +110,12 @@ export default function AdicionarItem() {
         <h1 className="page-title">Adicionar Item</h1>
       </div>
       
-      <div className="tabs">
-        <button 
-          className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('discos'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
-        >
-          <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('dvds'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
-        >
-          <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('cds'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
-        >
-          <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'vhs' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('vhs'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
-        >
-          <PiCassetteTape style={{ marginRight: '6px', verticalAlign: 'middle' }} /> VHS
-        </button>
-      </div>
-
-      {mensagem && (
-        <div className={`alert alert-${mensagem.tipo}`}>{mensagem.texto}</div>
-      )}
+      <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
+      <AlertMessage message={mensagem} />
 
       <form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
         <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
-          {(activeTab !== 'dvds' && activeTab !== 'vhs') && (
+          {!isVideo && (
             <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={{ marginBottom: 0 }}>Artista</label>
@@ -272,14 +136,10 @@ export default function AdicionarItem() {
                 onBlur={() => setTimeout(() => setMostrarSugestoesArtista(false), 200)}
                 autoComplete="off"
               />
-              {mostrarSugestoesArtista && sugestoesArtista.length > 0 && (
+              {mostrarSugestoesArtista && (
                 <ul className="sugestoes-dropdown">
                   {sugestoesArtista.map((sug, idx) => (
-                    <li key={idx} onMouseDown={(e) => {
-                      e.preventDefault();
-                      setForm(prev => ({ ...prev, artista: sug }));
-                      setMostrarSugestoesArtista(false);
-                    }}>{sug}</li>
+                    <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'artista'); }}>{sug}</li>
                   ))}
                 </ul>
               )}
@@ -296,42 +156,20 @@ export default function AdicionarItem() {
               onBlur={() => setTimeout(() => setMostrarSugestoesTitulo(false), 200)}
               autoComplete="off"
             />
-            {mostrarSugestoesTitulo && sugestoesTitulo.length > 0 && (
+            {mostrarSugestoesTitulo && (
               <ul className="sugestoes-dropdown">
-                {sugestoesTitulo.map((sug, idx) => {
-                  const label = (activeTab !== 'dvds' && activeTab !== 'vhs') && sug.artista 
-                    ? `${sug.artista} — ${sug.titulo}` 
-                    : sug.titulo;
-                    
-                  return (
-                    <li key={idx} onMouseDown={(e) => {
-                      e.preventDefault();
-                      
-                      let precoFormatado = '';
-                      if (sug.preco) {
-                        precoFormatado = Math.round(sug.preco).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-                      }
-
-                      setForm(prev => ({ 
-                        ...prev, 
-                        titulo: sug.titulo,
-                        artista: sug.artista || prev.artista,
-                        preco: precoFormatado || prev.preco,
-                        loja: sug.loja || prev.loja
-                      }));
-                      setMostrarSugestoesTitulo(false);
-                    }}>
-                      {label}
-                    </li>
-                  )
-                })}
+                {sugestoesTitulo.map((sug, idx) => (
+                  <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'titulo'); }}>
+                    {(!isVideo && sug.artista) ? `${sug.artista} — ${sug.titulo}` : sug.titulo}
+                  </li>
+                ))}
               </ul>
             )}
           </div>
         </div>
 
         <div className="form-row">
-          {activeTab === 'discos' && (
+          {activeTab === CATEGORY_IDS.DISCOS && (
             <div className="form-group">
               <label>Caixa</label>
               <input 
@@ -343,9 +181,7 @@ export default function AdicionarItem() {
                 placeholder="Ex: 15"
               />
               <datalist id="caixas-list">
-                {caixas.map(c => (
-                  <option key={c} value={c} />
-                ))}
+                {caixas.map(c => <option key={c} value={c} />)}
               </datalist>
             </div>
           )}
@@ -360,12 +196,9 @@ export default function AdicionarItem() {
             <label>Loja (Opcional)</label>
             <select name="loja" value={form.loja} onChange={handleChange}>
               <option value="">Nenhuma / Sem Loja</option>
-              <option value="Loja 1">Loja 1</option>
-              <option value="Loja 2">Loja 2</option>
-              <option value="Anexo">Anexo</option>
+              {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>
-
         </div>
 
         <div className="form-group">

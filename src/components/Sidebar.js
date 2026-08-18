@@ -21,9 +21,9 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="logo_free" style={{ textAlign: 'center', marginBottom: '12px' }}>
-          <Image src="/logo.jpg" alt="Freelancer Discos" width={100} height={100} style={{ borderRadius: '50%' }} />
+        <Image src="/logo.jpg" alt="Freelancer Discos" width={100} height={100} style={{ borderRadius: '50%' }} />
       </div>
-      <div className="sidebar-title">Estoque de Discos</div>
+      <div className="sidebar-title">Estoque Geral</div>
       <nav>
         {links.map((link) => (
           <Link

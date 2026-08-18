@@ -1,60 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
 import { MdHistory } from "react-icons/md";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
+import { movimentacaoService } from '@/services/movimentacaoService';
 
 export default function Movimentacoes() {
   useMobileLeaveConfirm();
   
-  // Histórico states
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [filtroTipoMov, setFiltroTipoMov] = useState('');
-  const [filtroPeriodo, setFiltroPeriodo] = useState('hoje'); // 'hoje' | 'todos'
+  const [filtroPeriodo, setFiltroPeriodo] = useState('hoje');
   const [loadingHist, setLoadingHist] = useState(true);
 
-  // Fetch histórico
-  async function fetchMovimentacoes() {
-    setLoadingHist(true);
-    let query = supabase
-      .from('movimentacoes')
-      .select(`
-        id,
-        tipo,
-        observacao,
-        criado_em,
-        discos ( caixa, artista, titulo ),
-        dvds ( titulo ),
-        cds ( artista, titulo ),
-        vhs ( titulo )
-      `)
-      .order('criado_em', { ascending: false })
-      .limit(100);
-
-    if (filtroPeriodo === 'hoje') {
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-      query = query.gte('criado_em', hoje.toISOString());
-    }
-
-    if (filtroTipoMov) {
-      query = query.eq('tipo', filtroTipoMov);
-    }
-
-    const { data, error } = await query;
-    if (error) {
-      console.error("Erro ao buscar histórico:", error);
-      setMovimentacoes([]);
-    } else {
-      setMovimentacoes(data || []);
-    }
-    setLoadingHist(false);
-  }
-
   useEffect(() => {
+    const fetchMovimentacoes = async () => {
+      setLoadingHist(true);
+      try {
+        const data = await movimentacaoService.fetchMovimentacoes(filtroPeriodo, filtroTipoMov);
+        setMovimentacoes(data);
+      } catch (err) {
+        console.error("Erro ao buscar histórico:", err);
+        setMovimentacoes([]);
+      } finally {
+        setLoadingHist(false);
+      }
+    };
     fetchMovimentacoes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtroTipoMov, filtroPeriodo]);
 
   return (
@@ -71,21 +43,13 @@ export default function Movimentacoes() {
         
         <div style={{ display: 'flex', gap: '8px' }}>
           <div className="form-group" style={{ marginBottom: 0, flex: 'none' }}>
-            <select 
-              value={filtroPeriodo} 
-              onChange={(e) => setFiltroPeriodo(e.target.value)}
-              style={{ width: '130px' }}
-            >
+            <select value={filtroPeriodo} onChange={(e) => setFiltroPeriodo(e.target.value)} style={{ width: '130px' }}>
               <option value="hoje">Hoje</option>
               <option value="todos">Todas</option>
             </select>
           </div>
           <div className="form-group" style={{ marginBottom: 0, flex: 'none' }}>
-            <select 
-              value={filtroTipoMov} 
-              onChange={(e) => setFiltroTipoMov(e.target.value)}
-              style={{ width: '130px' }}
-            >
+            <select value={filtroTipoMov} onChange={(e) => setFiltroTipoMov(e.target.value)} style={{ width: '130px' }}>
               <option value="">Todos Tipos</option>
               <option value="entrada">Entradas</option>
               <option value="saida">Saídas</option>
@@ -115,7 +79,9 @@ export default function Movimentacoes() {
             <tbody>
               {movimentacoes.map((m) => (
                 <tr key={m.id}>
-                  <td data-label="Data" style={{ fontSize: '13px', whiteSpace: 'nowrap' }}>{new Date(m.criado_em.endsWith('Z') ? m.criado_em : m.criado_em + 'Z').toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</td>
+                  <td data-label="Data" style={{ fontSize: '13px', whiteSpace: 'nowrap' }}>
+                    {new Date(m.criado_em.endsWith('Z') ? m.criado_em : m.criado_em + 'Z').toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+                  </td>
                   <td data-label="Tipo">
                     <span className={`badge badge-${m.tipo}`}>
                       {m.tipo === 'entrada' ? '↓ Entrada' : m.tipo === 'exclusao' ? '✖ Exclusão' : '↑ Saída'}

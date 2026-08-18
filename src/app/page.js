@@ -1,30 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
-import { FaEdit, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
+import { useState } from 'react';
 import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
-import { MdDownload, MdDelete } from "react-icons/md";
-import * as XLSX from 'xlsx';
-
-const ITENS_POR_PAGINA = 50;
+import { MdDownload } from "react-icons/md";
+import { useCatalog } from '@/hooks/useCatalog';
+import { useCaixas } from '@/hooks/useCaixas';
+import { itemService } from '@/services/itemService';
+import CategoryTabs from '@/components/CategoryTabs';
+import Pagination from '@/components/Pagination';
+import CatalogTable from '@/components/CatalogTable';
+import { PAGINATION, CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 
 export default function Catalogo() {
-  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds' | 'vhs'
-  const [itens, setItens] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [pagina, setPagina] = useState(1);
-  const [filtroCaixa, setFiltroCaixa] = useState('');
-  const [filtroLoja, setFiltroLoja] = useState('');
-  const [busca, setBusca] = useState('');
-  const [mostrarAtivos, setMostrarAtivos] = useState(true);
-  const [mostrarInativos, setMostrarInativos] = useState(false);
-  const [caixas, setCaixas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { caixas } = useCaixas();
+  const catalog = useCatalog(CATEGORY_IDS.DISCOS);
   const [exportando, setExportando] = useState(false);
 
-  async function exportarEstoque() {
+  const getPageIcon = () => {
+    switch (catalog.activeTab) {
+      case CATEGORY_IDS.DISCOS: return <PiVinylRecord size={28} color="var(--accent)" />;
+      case CATEGORY_IDS.DVDS: return <PiFilmStrip size={28} color="var(--accent)" />;
+      case CATEGORY_IDS.VHS: return <PiCassetteTape size={28} color="var(--accent)" />;
+      default: return <PiDisc size={28} color="var(--accent)" />;
+    }
+  };
+
+  const exportarEstoque = async () => {
     setExportando(true);
     try {
       const { exportarEstoqueCompleto } = await import('@/utils/export');
@@ -32,195 +33,39 @@ export default function Catalogo() {
     } catch (err) {
       console.error(err);
       alert('Erro ao exportar planilha');
+    } finally {
+      setExportando(false);
     }
-    setExportando(false);
-  }
+  };
 
-  // Ordenação: coluna e direção
-  // null = padrão (caixa > artista > titulo), 'asc' = crescente, 'desc' = decrescente
-  const [ordenarColuna, setOrdenarColuna] = useState(null); // 'artista' | 'titulo' | null
-  const [ordenarDirecao, setOrdenarDirecao] = useState(null); // 'asc' | 'desc' | null
-
-  function toggleOrdenacao(coluna) {
-    if (ordenarColuna === coluna) {
-      if (ordenarDirecao === 'asc') {
-        setOrdenarDirecao('desc');
-      } else if (ordenarDirecao === 'desc') {
-        // Voltar ao padrão
-        setOrdenarColuna(null);
-        setOrdenarDirecao(null);
-      }
-    } else {
-      setOrdenarColuna(coluna);
-      setOrdenarDirecao('asc');
-    }
-    setPagina(1);
-  }
-
-  function renderSortIcon(coluna) {
-    if (ordenarColuna !== coluna) {
-      return <FaSort size={16} style={{ marginLeft: '6px', opacity: 0.35 }} />;
-    }
-    if (ordenarDirecao === 'asc') {
-      return <FaSortUp size={16} style={{ marginLeft: '6px', color: 'var(--accent)' }} />;
-    }
-    return <FaSortDown size={16} style={{ marginLeft: '6px', color: 'var(--accent)' }} />;
-  }
-
-  // Buscar lista de caixas disponíveis
-  useEffect(() => {
-    async function fetchCaixas() {
-      const { data } = await supabase
-        .from('caixas_distintas')
-        .select('caixa');
-
-      if (data) {
-        const unicas = [...new Set(data.map(d => d.caixa))];
-        setCaixas(unicas);
-      }
-    }
-    fetchCaixas();
-  }, []);
-
-  // Buscar itens com filtros e paginação
-  useEffect(() => {
-    async function fetchItens() {
-      setLoading(true);
-
-      const columns = (activeTab === 'dvds' || activeTab === 'vhs')
-        ? 'id, titulo, preco, ativo, loja, observacao' 
-        : activeTab === 'cds'
-        ? 'id, artista, titulo, preco, ativo, loja, observacao'
-        : 'id, caixa, artista, titulo, preco, ativo, loja, observacao';
-
-      let query = supabase
-        .from(activeTab)
-        .select(columns, { count: 'exact' })
-        .eq('deletado', false);
-
-      if (mostrarAtivos && !mostrarInativos) {
-        query = query.eq('ativo', true);
-      } else if (!mostrarAtivos && mostrarInativos) {
-        query = query.eq('ativo', false);
-      } else if (!mostrarAtivos && !mostrarInativos) {
-        setItens([]);
-        setTotal(0);
-        setLoading(false);
-        return;
-      }
-      if (filtroCaixa) {
-        query = query.eq('caixa', parseInt(filtroCaixa));
-      }
-      if (filtroLoja) {
-        query = query.eq('loja', filtroLoja);
-      }
-      if (busca) {
-        const words = busca.trim().split(/\s+/);
-        if (activeTab === 'dvds' || activeTab === 'vhs') {
-          words.forEach(word => {
-            query = query.ilike('titulo', `%${word}%`);
-          });
-        } else {
-          words.forEach(word => {
-            query = query.or(`artista.ilike.%${word}%,titulo.ilike.%${word}%`);
-          });
-        }
-      }
-
-      // Aplicar ordenação personalizada ou padrão
-      if (ordenarColuna && ordenarDirecao) {
-        const ascending = ordenarDirecao === 'asc';
-        query = query.order(ordenarColuna, { ascending, nullsFirst: ascending });
-      } else {
-        if (activeTab === 'discos') {
-          query = query.order('caixa');
-        }
-        if (activeTab !== 'dvds' && activeTab !== 'vhs') {
-          query = query.order('artista');
-        }
-        query = query.order('titulo');
-      }
-
-      query = query.range((pagina - 1) * ITENS_POR_PAGINA, pagina * ITENS_POR_PAGINA - 1);
-
-      const { data, count, error } = await query;
-      
-      // Se a tabela não existir, vai dar erro. Tratar graciosamente:
-      if (error) {
-        console.error("Erro ao buscar itens:", error);
-        setItens([]);
-        setTotal(0);
-      } else {
-        setItens(data || []);
-        setTotal(count || 0);
-      }
-      setLoading(false);
-    }
-    fetchItens();
-  }, [pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao, activeTab]);
-
-
-  async function excluirItem(id, titulo) {
+  const excluirItem = async (id, titulo) => {
     if (!confirm(`Tem certeza que deseja excluir "${titulo}" do catálogo? O item não aparecerá mais, mas será mantido nas sugestões de autocompletar e o histórico de saída será preservado.`)) {
       return;
     }
-    setLoading(true);
-    const { error } = await supabase
-      .from(activeTab)
-      .update({ deletado: true })
-      .eq('id', id);
-
-    if (error) {
+    
+    try {
+      await itemService.deleteItem(catalog.activeTab, id);
+      catalog.setItens(catalog.itens.filter(i => i.id !== id));
+      catalog.setTotal(catalog.total - 1);
+    } catch (error) {
       console.error("Erro ao excluir:", error);
       alert("Erro ao excluir item.");
-    } else {
-      setItens(itens.filter(i => i.id !== id));
-      setTotal(total - 1);
     }
-    setLoading(false);
-  }
+  };
 
-  const totalPaginas = Math.max(1, Math.ceil(total / ITENS_POR_PAGINA));
-
-  const itemName = activeTab === 'discos' ? 'discos' : activeTab === 'dvds' ? 'DVDs' : activeTab === 'vhs' ? 'VHS' : 'CDs';
+  const totalPaginas = Math.max(1, Math.ceil(catalog.total / PAGINATION.ITEMS_PER_PAGE));
+  const itemName = catalog.activeTab === 'discos' ? 'discos' : catalog.activeTab === 'dvds' ? 'DVDs' : catalog.activeTab === 'vhs' ? 'VHS' : 'CDs';
+  const isVideo = catalog.activeTab === 'dvds' || catalog.activeTab === 'vhs';
 
   return (
     <div>
       <div className="page-header">
-        {activeTab === 'discos' ? <PiVinylRecord size={28} color="var(--accent)" /> : 
-         activeTab === 'dvds' ? <PiFilmStrip size={28} color="var(--accent)" /> : 
-         activeTab === 'vhs' ? <PiCassetteTape size={28} color="var(--accent)" /> : 
-         <PiDisc size={28} color="var(--accent)" />}
+        {getPageIcon()}
         <h1 className="page-title">Catálogo Completo</h1>
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-        <div className="tabs" style={{ marginBottom: 0 }}>
-          <button 
-            className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('discos'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
-          >
-            <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('dvds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
-          >
-            <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('cds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
-          >
-            <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
-          </button>
-          <button 
-            className={`tab-btn ${activeTab === 'vhs' ? 'active' : ''}`}
-            onClick={() => { setActiveTab('vhs'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
-          >
-            <PiCassetteTape style={{ marginRight: '6px', verticalAlign: 'middle' }} /> VHS
-          </button>
-        </div>
+        <CategoryTabs activeTab={catalog.activeTab} onTabChange={catalog.changeTab} additionalProps={{ style: { marginBottom: 0 } }} />
 
         <button 
           className="btn btn-primary hide-on-mobile"
@@ -240,34 +85,30 @@ export default function Catalogo() {
         </button>
       </div>
 
-    <div className="filters">
-        {activeTab === 'discos' && (
+      <div className="filters">
+        {catalog.activeTab === CATEGORY_IDS.DISCOS && (
           <div className="form-group" style={{ flex: '0 0 220px' }}>
             <label>Filtrar por caixa</label>
-            <select value={filtroCaixa} onChange={(e) => { setFiltroCaixa(e.target.value); setPagina(1); }}>
+            <select value={catalog.filtroCaixa} onChange={(e) => catalog.setFiltroCaixa(e.target.value)}>
               <option value="">Todas</option>
-              {caixas.map(c => (
-                <option key={c} value={c}>Caixa {c}</option>
-              ))}
+              {caixas.map(c => <option key={c} value={c}>Caixa {c}</option>)}
             </select>
           </div>
         )}
         <div className="form-group" style={{ flex: '0 0 160px' }}>
           <label>Filtrar por loja</label>
-          <select value={filtroLoja} onChange={(e) => { setFiltroLoja(e.target.value); setPagina(1); }}>
+          <select value={catalog.filtroLoja} onChange={(e) => catalog.setFiltroLoja(e.target.value)}>
             <option value="">Todas</option>
-            <option value="Loja 1">Loja 1</option>
-            <option value="Loja 2">Loja 2</option>
-            <option value="Anexo">Anexo</option>
+            {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
           </select>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar por {(activeTab === 'dvds' || activeTab === 'vhs') ? 'título' : 'artista ou título'}</label>
+          <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
           <input
             type="text"
-            placeholder={(activeTab === 'dvds' || activeTab === 'vhs') ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
-            value={busca}
-            onChange={(e) => { setBusca(e.target.value); setPagina(1); }}
+            placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
+            value={catalog.busca}
+            onChange={(e) => catalog.setBusca(e.target.value)}
           />
         </div>
         <div className="form-group" style={{ flex: '0 0 auto' }}>
@@ -277,8 +118,8 @@ export default function Catalogo() {
               <input
                 type="checkbox"
                 id="mostrarAtivos"
-                checked={mostrarAtivos}
-                onChange={(e) => { setMostrarAtivos(e.target.checked); setPagina(1); }}
+                checked={catalog.mostrarAtivos}
+                onChange={(e) => catalog.setMostrarAtivos(e.target.checked)}
               />
               <span>Ativos</span>
             </label>
@@ -286,8 +127,8 @@ export default function Catalogo() {
               <input
                 type="checkbox"
                 id="mostrarInativos"
-                checked={mostrarInativos}
-                onChange={(e) => { setMostrarInativos(e.target.checked); setPagina(1); }}
+                checked={catalog.mostrarInativos}
+                onChange={(e) => catalog.setMostrarInativos(e.target.checked)}
               />
               <span>Inativos</span>
             </label>
@@ -295,106 +136,28 @@ export default function Catalogo() {
         </div>
       </div>
 
-      {loading ? (
+      {catalog.loading ? (
         <p>Carregando...</p>
-      ) : itens.length === 0 ? (
-        <div className="empty-state">Nenhum {itemName.slice(0, -1)} encontrado (Tabela `{activeTab}` vazia ou não criada).</div>
       ) : (
         <>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Mostrando {(pagina - 1) * ITENS_POR_PAGINA + 1}–{Math.min(pagina * ITENS_POR_PAGINA, total)} de {total} {itemName}
+            Mostrando {(catalog.pagina - 1) * PAGINATION.ITEMS_PER_PAGE + 1}–{Math.min(catalog.pagina * PAGINATION.ITEMS_PER_PAGE, catalog.total)} de {catalog.total} {itemName}
           </p>
-          <div className="table-responsive">
-            <table>
-            <thead>
-              <tr>
-                {activeTab === 'discos' && <th>Caixa</th>}
-                {(activeTab !== 'dvds' && activeTab !== 'vhs') && (
-                  <th className="th-sortable" onClick={() => toggleOrdenacao('artista')}>
-                    <div className="th-sortable-content">
-                      <span>Artista</span>
-                      {renderSortIcon('artista')}
-                    </div>
-                  </th>
-                )}
-                <th className="th-sortable" onClick={() => toggleOrdenacao('titulo')}>
-                  <div className="th-sortable-content">
-                    <span>Título</span>
-                    {renderSortIcon('titulo')}
-                  </div>
-                </th>
-                <th>Loja</th>
-                <th>Preço</th>
-                <th>Obs.</th>
-                <th>Status</th>
-                <th style={{ width: '40px' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {itens.map((d) => (
-                <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
-                  {activeTab === 'discos' && <td data-label="Caixa">{d.caixa}</td>}
-                  {(activeTab !== 'dvds' && activeTab !== 'vhs') && (
-                    <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista || <span className="text-empty">—</span>}</td>
-                  )}
-                  <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
-                  <td data-label="Loja">
-                    {d.loja ? (
-                      <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{d.loja}</span>
-                    ) : (
-                      <span className="text-empty">—</span>
-                    )}
-                  </td>
-                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
-                  <td data-label="Obs." title={d.observacao || ''}>
-                    {d.observacao ? (
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {d.observacao.length > 20 ? d.observacao.substring(0, 20) + '...' : d.observacao}
-                      </span>
-                    ) : (
-                      <span className="text-empty">—</span>
-                    )}
-                  </td>
-                  <td data-label="Status">
-                    <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`}>
-                      {d.ativo ? 'Ativo' : 'Inativo'}
-                    </span>
-                  </td>
-                  <td data-label="Ação" className="actions-cell">
-                    <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} className="action-btn edit-btn">
-                      <FaEdit />
-                    </Link>
-                    <button 
-                      onClick={() => excluirItem(d.id, d.titulo || d.artista || 'Item')} 
-                      title={`Excluir ${itemName.slice(0, -1)}`}
-                      className="action-btn delete-btn"
-                    >
-                      <MdDelete />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
+          
+          <CatalogTable 
+            itens={catalog.itens}
+            activeTab={catalog.activeTab}
+            ordenarColuna={catalog.ordenarColuna}
+            ordenarDirecao={catalog.ordenarDirecao}
+            onSort={catalog.toggleOrdenacao}
+            onDelete={excluirItem}
+          />
 
-          <div className="pagination">
-            <button
-              className="btn btn-secondary"
-              disabled={pagina <= 1}
-              onClick={() => setPagina(p => p - 1)}
-            >
-              ← Anterior
-            </button>
-            <span>Página {pagina} de {totalPaginas}</span>
-            <button
-              className="btn btn-secondary"
-              disabled={pagina >= totalPaginas}
-              onClick={() => setPagina(p => p + 1)}
-            >
-              Próxima →
-            </button>
-          </div>
+          <Pagination 
+            pagina={catalog.pagina} 
+            totalPaginas={totalPaginas} 
+            onPageChange={catalog.setPagina} 
+          />
         </>
       )}
     </div>
