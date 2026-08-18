@@ -253,16 +253,70 @@ export default function AcoesEmLote() {
         <div className={`alert alert-${mensagem.tipo}`}>{mensagem.texto}</div>
       )}
 
-      {loading && !itensParaMostrar.length && <p>Carregando...</p>}
+      {/* --- SELECIONADOS (chips) --- */}
+      {selecionadosData.length > 0 && (
+        <div style={{ 
+          marginBottom: '16px', 
+          padding: '12px 16px', 
+          border: '1px solid var(--accent)', 
+          borderRadius: '8px', 
+          background: 'rgba(197, 48, 48, 0.05)' 
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent)' }}>
+              {selecionadosData.length} selecionado(s)
+            </span>
+            <button 
+              onClick={limparSelecao} 
+              style={{ 
+                background: 'none', border: 'none', color: 'var(--text-muted)', 
+                cursor: 'pointer', fontSize: '12px', textDecoration: 'underline' 
+              }}
+            >
+              Limpar tudo
+            </button>
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {selecionadosData.map(d => (
+              <span 
+                key={d.id} 
+                style={{ 
+                  display: 'inline-flex', alignItems: 'center', gap: '6px',
+                  padding: '4px 10px', borderRadius: '999px', fontSize: '12px',
+                  background: 'var(--accent)', color: '#fff', fontWeight: 500, 
+                  lineHeight: 1.4
+                }}
+              >
+                {activeTab !== 'dvds' && d.artista ? `${d.artista} — ` : ''}{d.titulo}
+                <button
+                  onClick={() => toggleSelecionar(d.id)}
+                  style={{ 
+                    background: 'none', border: 'none', color: '#fff', cursor: 'pointer', 
+                    padding: '0', fontSize: '14px', lineHeight: 1, fontWeight: 700, opacity: 0.8
+                  }}
+                  title="Remover da seleção"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {!loading && itensParaMostrar.length === 0 && (
+      {loading && !itens.length && <p>Carregando...</p>}
+
+      {!loading && itens.length === 0 && selecionadosData.length === 0 && (
         <div className="empty-state">Nenhum item encontrado.</div>
       )}
 
-      {itensParaMostrar.length > 0 && (
+      {itens.length > 0 && (
         <>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Listando {itensParaMostrar.length} iten(s) {selecionados.length > 0 ? `(${selecionados.length} selecionados)` : ''}
+            {busca || caixaSelecionada 
+              ? `${itens.filter(d => !selecionados.includes(d.id)).length} resultado(s)` 
+              : `Listando ${itens.length} iten(s)`
+            }
           </p>
           <div className="table-responsive" style={{ marginBottom: '120px' }}>
             <table>
@@ -284,7 +338,7 @@ export default function AcoesEmLote() {
                 </tr>
               </thead>
               <tbody>
-                {itensParaMostrar.map((d) => (
+                {itens.map((d) => (
                   <tr key={d.id} style={{ backgroundColor: selecionados.includes(d.id) ? 'rgba(197, 48, 48, 0.08)' : 'transparent', opacity: d.ativo === false ? 0.6 : 1 }}>
                     <td data-label="Selecionar" style={{ textAlign: 'center' }}>
                       <input 
