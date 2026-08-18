@@ -71,23 +71,50 @@ export default function AdicionarItem() {
       return;
     }
 
-    const { data, error } = await supabase
-      .from(activeTab)
-      .select(campo)
-      .ilike(campo, `%${valor.trim()}%`)
-      .limit(20);
+    if (campo === 'artista') {
+      const { data, error } = await supabase
+        .from(activeTab)
+        .select('artista')
+        .ilike('artista', `%${valor.trim()}%`)
+        .limit(20);
 
-    if (error) {
-      console.error("Erro na busca de sugestões:", error);
-      return;
-    }
+      if (error) {
+        console.error("Erro na busca de sugestões de artista:", error);
+        return;
+      }
 
-    if (data) {
-      const unicas = [...new Set(data.map(d => d[campo]).filter(Boolean))];
-      if (campo === 'artista') {
+      if (data) {
+        const unicas = [...new Set(data.map(d => d.artista).filter(Boolean))];
         setSugestoesArtista(unicas);
         setMostrarSugestoesArtista(unicas.length > 0);
-      } else {
+      }
+    } else if (campo === 'titulo') {
+      const colunas = (activeTab === 'dvds' || activeTab === 'vhs') 
+        ? 'titulo, preco, loja' 
+        : 'artista, titulo, preco, loja';
+        
+      const { data, error } = await supabase
+        .from(activeTab)
+        .select(colunas)
+        .ilike('titulo', `%${valor.trim()}%`)
+        .order('id', { ascending: false })
+        .limit(30);
+
+      if (error) {
+        console.error("Erro na busca de sugestões de título:", error);
+        return;
+      }
+
+      if (data) {
+        const unicas = [];
+        const seen = new Set();
+        for (const d of data) {
+          const key = (activeTab === 'dvds' || activeTab === 'vhs') ? d.titulo : `${d.artista}-${d.titulo}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            unicas.push(d);
+          }
+        }
         setSugestoesTitulo(unicas);
         setMostrarSugestoesTitulo(unicas.length > 0);
       }
@@ -255,13 +282,33 @@ export default function AdicionarItem() {
             />
             {mostrarSugestoesTitulo && sugestoesTitulo.length > 0 && (
               <ul className="sugestoes-dropdown">
-                {sugestoesTitulo.map((sug, idx) => (
-                  <li key={idx} onMouseDown={(e) => {
-                    e.preventDefault();
-                    setForm(prev => ({ ...prev, titulo: sug }));
-                    setMostrarSugestoesTitulo(false);
-                  }}>{sug}</li>
-                ))}
+                {sugestoesTitulo.map((sug, idx) => {
+                  const label = (activeTab !== 'dvds' && activeTab !== 'vhs') && sug.artista 
+                    ? `${sug.artista} — ${sug.titulo}` 
+                    : sug.titulo;
+                    
+                  return (
+                    <li key={idx} onMouseDown={(e) => {
+                      e.preventDefault();
+                      
+                      let precoFormatado = '';
+                      if (sug.preco) {
+                        precoFormatado = Math.round(sug.preco).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+                      }
+
+                      setForm(prev => ({ 
+                        ...prev, 
+                        titulo: sug.titulo,
+                        artista: sug.artista || prev.artista,
+                        preco: precoFormatado || prev.preco,
+                        loja: sug.loja || prev.loja
+                      }));
+                      setMostrarSugestoesTitulo(false);
+                    }}>
+                      {label}
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </div>
