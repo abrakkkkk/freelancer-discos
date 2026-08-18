@@ -1214,15 +1214,10 @@ tbody tr:last-child td {
   .bulk-actions-tools {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
     width: 100%;
-    overflow-x: auto;
     padding-bottom: 8px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .bulk-actions-tools::-webkit-scrollbar {
-    display: none;
   }
 
   .bulk-move-group {

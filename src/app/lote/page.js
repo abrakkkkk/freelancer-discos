@@ -402,7 +402,7 @@ export default function AcoesEmLote() {
               </div>
             </div>
             
-            <div className="bulk-actions-tools" style={{ flexWrap: 'nowrap', overflowX: 'auto', paddingBottom: '4px', gap: '12px' }}>
+            <div className="bulk-actions-tools" style={{ flexWrap: 'wrap', paddingBottom: '4px', gap: '12px' }}>
               
               {/* Mover Caixa só para Discos */}
               {activeTab === 'discos' && (
