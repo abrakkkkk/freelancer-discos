@@ -1125,6 +1125,7 @@ tbody tr:last-child td {
     display: block;
     text-align: left;
     padding-right: 70px; /* space for absolute action btns */
+    min-height: 36px; /* evita que a Loja encoste nos botões quando não houver Artista */
     order: 1;
   }
   td[data-label="Título"]::before {
