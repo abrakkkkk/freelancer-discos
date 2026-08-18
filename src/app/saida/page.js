@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MdCurrencyExchange, MdHistory } from "react-icons/md";
 import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
+import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 
 export default function SaidaEHistorico() {
+  useMobileLeaveConfirm();
   const [activeTab, setActiveTab] = useState('discos');
   const [termo, setTermo] = useState('');
   const [filtroCaixa, setFiltroCaixa] = useState('');

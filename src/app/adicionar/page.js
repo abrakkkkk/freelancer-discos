@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
+import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 
 export default function AdicionarItem() {
+  useMobileLeaveConfirm();
   const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds' | 'vhs'
   const [caixas, setCaixas] = useState([]);
   

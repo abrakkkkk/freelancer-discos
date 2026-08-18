@@ -33,6 +33,18 @@ export default function BottomNav() {
     setExportando(false);
   }
 
+  const handleNavigation = (e, targetHref) => {
+    if (window.innerWidth <= 768 && pathname !== targetHref) {
+      const pagesToConfirm = ['/lote', '/saida', '/adicionar'];
+      if (pagesToConfirm.includes(pathname)) {
+        const confirmed = window.confirm("Você tem certeza que quer sair dessa página?");
+        if (!confirmed) {
+          e.preventDefault();
+        }
+      }
+    }
+  };
+
   return (
     <nav className="bottom-nav" aria-label="Navegação móvel inferior">
       <div className="bottom-nav-container">
@@ -43,6 +55,7 @@ export default function BottomNav() {
               key={link.href}
               href={link.href}
               className={`bottom-nav-item ${isActive ? 'active' : ''}`}
+              onClick={(e) => handleNavigation(e, link.href)}
             >
               <div className="bottom-nav-icon-wrapper">
                 {link.icon}
