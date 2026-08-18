@@ -23,11 +23,33 @@ export default function Sidebar() {
   async function exportarEstoque() {
     setExportando(true);
     try {
-      // Busca todos os dados (até 10.000 para não estourar caso cresça)
-      const [ { data: discos }, { data: dvds }, { data: cds } ] = await Promise.all([
-        supabase.from('discos').select('caixa, artista, titulo, loja, preco, ativo').order('artista').limit(10000),
-        supabase.from('dvds').select('titulo, loja, preco, ativo').order('titulo').limit(10000),
-        supabase.from('cds').select('artista, titulo, loja, preco, ativo').order('artista').limit(10000)
+      // Função auxiliar para buscar todos os registros burlando o limite de 1000 do Supabase
+      async function fetchAll(table, select, orderBy) {
+        let allData = [];
+        let from = 0;
+        const step = 1000;
+        while (true) {
+          const { data, error } = await supabase
+            .from(table)
+            .select(select)
+            .order(orderBy)
+            .range(from, from + step - 1);
+            
+          if (error) throw error;
+          if (!data || data.length === 0) break;
+          
+          allData = allData.concat(data);
+          if (data.length < step) break;
+          from += step;
+        }
+        return allData;
+      }
+
+      // Busca todos os dados com paginação
+      const [ discos, dvds, cds ] = await Promise.all([
+        fetchAll('discos', 'caixa, artista, titulo, loja, preco, ativo', 'artista'),
+        fetchAll('dvds', 'titulo, loja, preco, ativo', 'titulo'),
+        fetchAll('cds', 'artista, titulo, loja, preco, ativo', 'artista')
       ]);
 
       const formataStatus = (ativo) => ativo !== false ? 'Ativo (Em Estoque)' : 'Inativo (Saída/Vendido)';
