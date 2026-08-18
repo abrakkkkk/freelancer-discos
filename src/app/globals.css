@@ -939,9 +939,31 @@ tbody tr:last-child td {
 
   .page-header {
     margin: -16px -16px 20px -16px;
-    padding: 14px 16px;
-    justify-content: center;
-    gap: 10px;
+    padding: 16px 20px;
+    justify-content: flex-start;
+    background: transparent;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+
+  .page-title {
+    font-size: 18px;
+    text-transform: none;
+    font-weight: 700;
+  }
+
+  .mobile-header-subtitle {
+    font-size: 9px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--accent);
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    margin-top: 2px;
+    align-self: flex-start;
   }
 
   .btn-back {
