@@ -5,13 +5,14 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { PiVinylRecord } from "react-icons/pi";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { MdCurrencyExchange, MdLayers } from "react-icons/md";
+import { MdCurrencyExchange, MdLayers, MdHistory } from "react-icons/md";
 
 const links = [
   { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={18} /> },
   { href: '/adicionar', label: 'Adicionar Itens', icon: <IoIosAddCircleOutline size={18} /> },
   { href: '/lote', label: 'Alteração em Lote', icon: <MdLayers size={18} /> },
-  { href: '/saida', label: 'Saídas e Histórico', icon: <MdCurrencyExchange size={18} /> },
+  { href: '/saida', label: 'Saída de Discos', icon: <MdCurrencyExchange size={18} /> },
+  { href: '/movimentacoes', label: 'Movimentações', icon: <MdHistory size={18} /> },
 ];
 
 export default function Sidebar() {

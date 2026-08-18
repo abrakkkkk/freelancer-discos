@@ -12,6 +12,7 @@ const links = [
   { href: '/adicionar', label: 'Adicionar', icon: <IoIosAddCircleOutline size={20} /> },
   { href: '/lote', label: 'Lotes', icon: <MdLayers size={20} /> },
   { href: '/saida', label: 'Saída', icon: <MdCurrencyExchange size={20} /> },
+  { href: '/movimentacoes', label: 'Histórico', icon: <MdHistory size={20} /> },
 ];
 
 import { useState } from 'react';
