@@ -190,6 +190,22 @@ export default function AdicionarItem() {
       console.error('Erro ao registrar movimentação:', errMov);
     }
 
+    if (form.observacao && form.observacao.trim()) {
+      const idField = activeTab === 'discos' ? 'disco_id' : activeTab === 'dvds' ? 'dvd_id' : activeTab === 'cds' ? 'cd_id' : 'vhs_id';
+      const obsInsert = {
+        observacao: form.observacao.trim(),
+      };
+      obsInsert[idField] = data.id;
+
+      const { error: errObs } = await supabase
+        .from('observacoes_disco')
+        .insert(obsInsert);
+
+      if (errObs) {
+        console.error('Erro ao salvar observação inicial:', errObs);
+      }
+    }
+
     const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
     setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${(activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : ''}.` });
     setForm({ ...initialForm, caixa: form.caixa, loja: form.loja });

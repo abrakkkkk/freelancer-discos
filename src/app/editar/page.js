@@ -135,15 +135,10 @@ function EditarExcluirContent() {
       caixa: item.caixa || '',
       preco: formatarMoedaParaEdicao(item.preco),
       loja: item.loja || '',
-      observacao: item.observacao || '',
     });
     setMensagem(null);
     setTela('edicao');
-    if (tipo === 'discos') {
-      carregarObservacoes(item.id);
-    } else {
-      setObservacoes([]);
-    }
+    carregarObservacoes(item.id);
   }
 
   function voltarParaBusca() {
@@ -190,7 +185,6 @@ function EditarExcluirContent() {
       titulo: form.titulo.trim(),
       preco: unmaskedPreco,
       loja: form.loja || null,
-      observacao: form.observacao || null,
     };
 
     if (temArtista) updateData.artista = form.artista;
@@ -246,10 +240,11 @@ function EditarExcluirContent() {
 
   async function carregarObservacoes(id) {
     setLoadingObs(true);
+    const idField = tipo === 'discos' ? 'disco_id' : tipo === 'dvds' ? 'dvd_id' : tipo === 'cds' ? 'cd_id' : 'vhs_id';
     const { data } = await supabase
       .from('observacoes_disco')
       .select('*')
-      .eq('disco_id', id)
+      .eq(idField, id)
       .order('criado_em', { ascending: false });
     setObservacoes(data || []);
     setLoadingObs(false);
@@ -258,9 +253,13 @@ function EditarExcluirContent() {
   async function adicionarObservacao() {
     if (!novaObservacao.trim()) return;
     
+    const idField = tipo === 'discos' ? 'disco_id' : tipo === 'dvds' ? 'dvd_id' : tipo === 'cds' ? 'cd_id' : 'vhs_id';
+    const insertData = { observacao: novaObservacao.trim() };
+    insertData[idField] = itemEditando.id;
+
     const { data, error } = await supabase
       .from('observacoes_disco')
-      .insert({ disco_id: itemEditando.id, observacao: novaObservacao.trim() })
+      .insert(insertData)
       .select()
       .single();
       
@@ -326,12 +325,7 @@ function EditarExcluirContent() {
             <span className="edit-info-label">Preço</span>
             <span className="edit-info-value">R$ {Number(itemEditando.preco || 0).toFixed(2).replace('.', ',')}</span>
           </div>
-          {itemEditando.observacao && (
-            <div className="edit-info-item" style={{ gridColumn: '1 / -1' }}>
-              <span className="edit-info-label">Observação</span>
-              <span className="edit-info-value">{itemEditando.observacao}</span>
-            </div>
-          )}
+
           <div className="edit-info-item">
             <span className="edit-info-label">Status</span>
             <span className="edit-info-value">
@@ -405,17 +399,7 @@ function EditarExcluirContent() {
             </div>
           </div>
 
-          <div className="form-group">
-            <label>Observação (Opcional)</label>
-            <textarea 
-              name="observacao" 
-              value={form.observacao} 
-              onChange={handleChange} 
-              rows="2" 
-              style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', resize: 'vertical' }}
-              placeholder="Qualquer detalhe adicional sobre o item..."
-            ></textarea>
-          </div>
+
 
           <div className="edit-actions">
             <button className="btn btn-primary" onClick={salvar}>Salvar Alterações</button>
@@ -434,10 +418,10 @@ function EditarExcluirContent() {
           </div>
         </div>
 
-        {/* Observações — apenas para discos */}
-        {tipo === 'discos' && (
+        {/* Observações */}
+        {true && (
           <div className="edit-form-card" style={{ marginTop: '24px' }}>
-            <h2>Observações do Disco</h2>
+            <h2>Observações do {tipoNome}</h2>
             
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
               <input 
@@ -455,7 +439,7 @@ function EditarExcluirContent() {
             {loadingObs ? (
               <p style={{ color: 'var(--text-muted)' }}>Carregando observações...</p>
             ) : observacoes.length === 0 ? (
-              <p style={{ color: 'var(--text-muted)' }}>Nenhuma observação registrada para este disco.</p>
+              <p style={{ color: 'var(--text-muted)' }}>Nenhuma observação registrada para este {tipoNome.toLowerCase()}.</p>
             ) : (
               <div className="table-responsive">
                 <table>
