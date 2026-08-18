@@ -373,52 +373,88 @@ export default function AcoesEmLote() {
 
       {/* PAINEL FLUTUANTE DE AÇÕES (Se houver selecionados) */}
       {selecionados.length > 0 && (
-        <div className="bulk-actions-panel">
-          <div className="bulk-actions-content">
-            <div className="bulk-actions-info">
-              <span className="badge badge-entrada" style={{ fontSize: '14px' }}>{selecionados.length} selecionados</span>
+      {/* PAINEL FLUTUANTE DE AÇÕES (Se houver selecionados) */}
+      {selecionados.length > 0 && (
+        <div className="bulk-actions-panel" style={{ 
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.4)', 
+          border: '1px solid var(--border)',
+          borderTopColor: 'var(--accent)',
+          borderTopWidth: '3px'
+        }}>
+          <div className="bulk-actions-content" style={{ flexWrap: 'nowrap', gap: '20px' }}>
+            
+            <div className="bulk-actions-info" style={{ display: 'flex', alignItems: 'center', gap: '12px', whiteSpace: 'nowrap' }}>
+              <button 
+                onClick={limparSelecao}
+                style={{
+                  background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%',
+                  width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'var(--text)', cursor: 'pointer', transition: 'background 0.2s'
+                }}
+                title="Cancelar seleção"
+                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+              >
+                ✕
+              </button>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#fff' }}>{selecionados.length} selecionados</span>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Ações em lote</span>
+              </div>
             </div>
             
-            <div className="bulk-actions-tools">
-              {/* Opção de Mover para Loja */}
-              <div className="bulk-move-group" style={{ borderColor: 'var(--accent)' }}>
-                <select 
-                  className="bulk-input" 
-                  style={{ width: '110px' }}
-                  value={lojaDestino}
-                  onChange={(e) => setLojaDestino(e.target.value)}
-                >
-                  <option value="">Lojas...</option>
-                  <option value="Loja 1">Loja 1</option>
-                  <option value="Loja 2">Loja 2</option>
-                  <option value="Anexo">Anexo</option>
-                </select>
-                <button className="btn btn-primary" onClick={migrarParaLoja} disabled={loading}>Transferir Loja</button>
-              </div>
-
+            <div className="bulk-actions-tools" style={{ flexWrap: 'nowrap', overflowX: 'auto', paddingBottom: '4px', gap: '12px' }}>
+              
               {/* Mover Caixa só para Discos */}
               {activeTab === 'discos' && (
-                <div className="bulk-move-group">
+                <div className="bulk-move-group" style={{ borderColor: 'var(--border)', background: 'rgba(255,255,255,0.03)' }}>
                   <input 
                     type="number" 
                     placeholder="Nº da Caixa" 
                     value={novaCaixa} 
                     onChange={(e) => setNovaCaixa(e.target.value)}
                     className="bulk-input"
+                    style={{ width: '100px', color: '#fff' }}
                   />
-                  <button className="btn btn-secondary" onClick={moverSelecionados} disabled={loading}>Mover de Caixa</button>
+                  <button className="btn btn-secondary" style={{ background: 'rgba(255,255,255,0.08)', borderLeft: '1px solid var(--border)', padding: '0 16px' }} onClick={moverSelecionados} disabled={loading}>
+                    Mover
+                  </button>
                 </div>
               )}
+
+              {/* Opção de Mover para Loja */}
+              <div className="bulk-move-group" style={{ borderColor: 'var(--accent)', background: 'rgba(197, 48, 48, 0.1)' }}>
+                <select 
+                  className="bulk-input" 
+                  style={{ width: '120px', color: '#fff' }}
+                  value={lojaDestino}
+                  onChange={(e) => setLojaDestino(e.target.value)}
+                >
+                  <option value="" style={{ color: '#000' }}>Loja destino...</option>
+                  <option value="Loja 1" style={{ color: '#000' }}>Loja 1</option>
+                  <option value="Loja 2" style={{ color: '#000' }}>Loja 2</option>
+                  <option value="Anexo" style={{ color: '#000' }}>Anexo</option>
+                </select>
+                <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px' }} onClick={migrarParaLoja} disabled={loading}>
+                  Transferir
+                </button>
+              </div>
+
+              <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
               
-              <button className="btn btn-secondary" onClick={inativarSelecionados} disabled={loading}>Inativar</button>
+              <button className="btn btn-secondary" style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }} onClick={inativarSelecionados} disabled={loading}>
+                Inativar
+              </button>
               
               {confirmarExclusao ? (
-                <div style={{ display: 'flex', gap: '4px' }}>
-                  <button className="btn btn-danger" onClick={excluirSelecionados} disabled={loading}>Confirmar</button>
-                  <button className="btn btn-secondary" onClick={() => setConfirmarExclusao(false)}>Cancelar</button>
+                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  <button className="btn btn-danger" style={{ whiteSpace: 'nowrap' }} onClick={excluirSelecionados} disabled={loading}>Confirmar</button>
+                  <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', padding: '6px 12px' }} onClick={() => setConfirmarExclusao(false)}>Cancelar</button>
                 </div>
               ) : (
-                <button className="btn btn-danger" onClick={() => setConfirmarExclusao(true)} disabled={loading}>Excluir</button>
+                <button className="btn btn-danger" style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap' }} onClick={() => setConfirmarExclusao(true)} disabled={loading}>
+                  Excluir
+                </button>
               )}
             </div>
           </div>
