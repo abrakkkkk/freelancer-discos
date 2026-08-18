@@ -400,6 +400,32 @@ export default function AcoesEmLote() {
                 <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#fff' }}>{selecionados.length} selecionados</span>
                 <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Ações em lote</span>
               </div>
+              
+              <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px' }}>
+                <button 
+                  className="btn btn-secondary" 
+                  style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} 
+                  onClick={inativarSelecionados} 
+                  disabled={loading}
+                >
+                  Inativar
+                </button>
+                {confirmarExclusao ? (
+                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                    <button className="btn btn-danger" style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} onClick={excluirSelecionados} disabled={loading}>OK</button>
+                    <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} onClick={() => setConfirmarExclusao(false)}>✕</button>
+                  </div>
+                ) : (
+                  <button 
+                    className="btn btn-danger" 
+                    style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} 
+                    onClick={() => setConfirmarExclusao(true)} 
+                    disabled={loading}
+                  >
+                    Excluir
+                  </button>
+                )}
+              </div>
             </div>
             
             <div className="bulk-actions-tools" style={{ flexWrap: 'wrap', paddingBottom: '4px', gap: '12px' }}>
@@ -439,22 +465,6 @@ export default function AcoesEmLote() {
                 </button>
               </div>
 
-              <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
-              
-              <button className="btn btn-secondary" style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }} onClick={inativarSelecionados} disabled={loading}>
-                Inativar
-              </button>
-              
-              {confirmarExclusao ? (
-                <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                  <button className="btn btn-danger" style={{ whiteSpace: 'nowrap' }} onClick={excluirSelecionados} disabled={loading}>Confirmar</button>
-                  <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', padding: '6px 12px' }} onClick={() => setConfirmarExclusao(false)}>Cancelar</button>
-                </div>
-              ) : (
-                <button className="btn btn-danger" style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap' }} onClick={() => setConfirmarExclusao(true)} disabled={loading}>
-                  Excluir
-                </button>
-              )}
             </div>
           </div>
         </div>
