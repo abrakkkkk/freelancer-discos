@@ -351,7 +351,7 @@ export default function SaidaEHistorico() {
           <tbody>
             {movimentacoes.map((m) => (
               <tr key={m.id}>
-                <td data-label="Data" style={{ fontSize: '13px' }}>{new Date(m.criado_em).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</td>
+                <td data-label="Data" style={{ fontSize: '13px' }}>{new Date(m.criado_em.endsWith('Z') ? m.criado_em : m.criado_em + 'Z').toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</td>
                 <td data-label="Tipo">
                   <span className={`badge badge-${m.tipo}`}>
                     {m.tipo === 'entrada' ? '↓ Entrada' : '↑ Saída'}

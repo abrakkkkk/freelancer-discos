@@ -453,7 +453,7 @@ function EditarExcluirContent() {
                     {observacoes.map(obs => (
                       <tr key={obs.id}>
                         <td data-label="Data" style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-                          {new Date(obs.criado_em).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+                          {new Date(obs.criado_em.endsWith('Z') ? obs.criado_em : obs.criado_em + 'Z').toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
                         </td>
                         <td data-label="Observação">{obs.observacao}</td>
                         <td data-label="Excluir" style={{ textAlign: 'center' }}>
