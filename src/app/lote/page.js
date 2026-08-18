@@ -373,8 +373,6 @@ export default function AcoesEmLote() {
 
       {/* PAINEL FLUTUANTE DE AÇÕES (Se houver selecionados) */}
       {selecionados.length > 0 && (
-      {/* PAINEL FLUTUANTE DE AÇÕES (Se houver selecionados) */}
-      {selecionados.length > 0 && (
         <div className="bulk-actions-panel" style={{ 
           boxShadow: '0 -4px 20px rgba(0,0,0,0.4)', 
           border: '1px solid var(--border)',
