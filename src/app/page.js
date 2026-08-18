@@ -4,14 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { FaEdit, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
-import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
+import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 import { MdDownload, MdDelete } from "react-icons/md";
 import * as XLSX from 'xlsx';
 
 const ITENS_POR_PAGINA = 50;
 
 export default function Catalogo() {
-  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds'
+  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds' | 'vhs'
   const [itens, setItens] = useState([]);
   const [total, setTotal] = useState(0);
   const [pagina, setPagina] = useState(1);
@@ -87,7 +87,7 @@ export default function Catalogo() {
     async function fetchItens() {
       setLoading(true);
 
-      const columns = activeTab === 'dvds' 
+      const columns = (activeTab === 'dvds' || activeTab === 'vhs')
         ? 'id, titulo, preco, ativo, loja, observacao' 
         : activeTab === 'cds'
         ? 'id, artista, titulo, preco, ativo, loja, observacao'
@@ -116,7 +116,7 @@ export default function Catalogo() {
       }
       if (busca) {
         const words = busca.trim().split(/\s+/);
-        if (activeTab === 'dvds') {
+        if (activeTab === 'dvds' || activeTab === 'vhs') {
           words.forEach(word => {
             query = query.ilike('titulo', `%${word}%`);
           });
@@ -135,7 +135,7 @@ export default function Catalogo() {
         if (activeTab === 'discos') {
           query = query.order('caixa');
         }
-        if (activeTab !== 'dvds') {
+        if (activeTab !== 'dvds' && activeTab !== 'vhs') {
           query = query.order('artista');
         }
         query = query.order('titulo');
@@ -182,13 +182,14 @@ export default function Catalogo() {
 
   const totalPaginas = Math.max(1, Math.ceil(total / ITENS_POR_PAGINA));
 
-  const itemName = activeTab === 'discos' ? 'discos' : activeTab === 'dvds' ? 'DVDs' : 'CDs';
+  const itemName = activeTab === 'discos' ? 'discos' : activeTab === 'dvds' ? 'DVDs' : activeTab === 'vhs' ? 'VHS' : 'CDs';
 
   return (
     <div>
       <div className="page-header">
         {activeTab === 'discos' ? <PiVinylRecord size={28} color="var(--accent)" /> : 
          activeTab === 'dvds' ? <PiFilmStrip size={28} color="var(--accent)" /> : 
+         activeTab === 'vhs' ? <PiCassetteTape size={28} color="var(--accent)" /> : 
          <PiDisc size={28} color="var(--accent)" />}
         <h1 className="page-title">Catálogo Completo</h1>
       </div>
@@ -212,6 +213,12 @@ export default function Catalogo() {
             onClick={() => { setActiveTab('cds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
           >
             <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'vhs' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('vhs'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
+          >
+            <PiCassetteTape style={{ marginRight: '6px', verticalAlign: 'middle' }} /> VHS
           </button>
         </div>
 
@@ -255,10 +262,10 @@ export default function Catalogo() {
           </select>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar por {activeTab === 'dvds' ? 'título' : 'artista ou título'}</label>
+          <label>Buscar por {(activeTab === 'dvds' || activeTab === 'vhs') ? 'título' : 'artista ou título'}</label>
           <input
             type="text"
-            placeholder={activeTab === 'dvds' ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
+            placeholder={(activeTab === 'dvds' || activeTab === 'vhs') ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
             value={busca}
             onChange={(e) => { setBusca(e.target.value); setPagina(1); }}
           />
@@ -302,7 +309,7 @@ export default function Catalogo() {
             <thead>
               <tr>
                 {activeTab === 'discos' && <th>Caixa</th>}
-                {activeTab !== 'dvds' && (
+                {(activeTab !== 'dvds' && activeTab !== 'vhs') && (
                   <th className="th-sortable" onClick={() => toggleOrdenacao('artista')}>
                     <div className="th-sortable-content">
                       <span>Artista</span>
@@ -327,7 +334,7 @@ export default function Catalogo() {
               {itens.map((d) => (
                 <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
                   {activeTab === 'discos' && <td data-label="Caixa">{d.caixa}</td>}
-                  {activeTab !== 'dvds' && (
+                  {(activeTab !== 'dvds' && activeTab !== 'vhs') && (
                     <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista || <span className="text-empty">—</span>}</td>
                   )}
                   <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>

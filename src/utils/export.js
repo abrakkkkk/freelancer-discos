@@ -24,10 +24,11 @@ export async function exportarEstoqueCompleto() {
     return allData;
   }
 
-  const [ discos, dvds, cds ] = await Promise.all([
+  const [ discos, dvds, cds, vhs ] = await Promise.all([
     fetchAll('discos', 'caixa, artista, titulo, loja, preco, ativo', 'artista'),
     fetchAll('dvds', 'titulo, loja, preco, ativo', 'titulo'),
-    fetchAll('cds', 'artista, titulo, loja, preco, ativo', 'artista')
+    fetchAll('cds', 'artista, titulo, loja, preco, ativo', 'artista'),
+    fetchAll('vhs', 'titulo, loja, preco, ativo', 'titulo')
   ]);
 
   const formataStatus = (ativo) => ativo !== false ? 'Ativo (Em Estoque)' : 'Inativo (Saída/Vendido)';
@@ -57,18 +58,28 @@ export async function exportarEstoqueCompleto() {
     'Status': formataStatus(d.ativo)
   })) || [];
 
+  const vhsData = vhs?.map(d => ({
+    'Título': d.titulo || '-',
+    'Loja': d.loja || '-',
+    'Preço': formataPreco(d.preco),
+    'Status': formataStatus(d.ativo)
+  })) || [];
+
   const wb = XLSX.utils.book_new();
   const wsDiscos = XLSX.utils.json_to_sheet(discosData);
   const wsDvds = XLSX.utils.json_to_sheet(dvdsData);
   const wsCds = XLSX.utils.json_to_sheet(cdsData);
+  const wsVhs = XLSX.utils.json_to_sheet(vhsData);
 
   wsDiscos['!cols'] = [{wch: 8}, {wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
   wsDvds['!cols'] = [{wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
   wsCds['!cols'] = [{wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
+  wsVhs['!cols'] = [{wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
 
   XLSX.utils.book_append_sheet(wb, wsDiscos, "Discos de Vinil");
   XLSX.utils.book_append_sheet(wb, wsDvds, "DVDs");
   XLSX.utils.book_append_sheet(wb, wsCds, "CDs");
+  XLSX.utils.book_append_sheet(wb, wsVhs, "VHS");
 
   const hoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
   XLSX.writeFile(wb, `Estoque_FreelancerDiscos_${hoje}.xlsx`);

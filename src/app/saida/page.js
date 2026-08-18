@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MdCurrencyExchange, MdHistory } from "react-icons/md";
-import { PiVinylRecord, PiFilmStrip, PiDisc } from "react-icons/pi";
+import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 
 export default function SaidaEHistorico() {
   const [activeTab, setActiveTab] = useState('discos');
@@ -48,7 +48,8 @@ export default function SaidaEHistorico() {
         criado_em,
         discos ( caixa, artista, titulo ),
         dvds ( titulo ),
-        cds ( artista, titulo )
+        cds ( artista, titulo ),
+        vhs ( titulo )
       `)
       .order('criado_em', { ascending: false })
       .limit(100);
@@ -90,7 +91,7 @@ export default function SaidaEHistorico() {
       }
       if (termo) {
         const words = termo.trim().split(/\s+/);
-        if (activeTab === 'dvds') {
+        if (activeTab === 'dvds' || activeTab === 'vhs') {
           words.forEach(word => {
             query = query.ilike('titulo', `%${word}%`);
           });
@@ -147,13 +148,14 @@ export default function SaidaEHistorico() {
     if (activeTab === 'discos') movData.disco_id = selecionado.id;
     else if (activeTab === 'dvds') movData.dvd_id = selecionado.id;
     else if (activeTab === 'cds') movData.cd_id = selecionado.id;
+    else if (activeTab === 'vhs') movData.vhs_id = selecionado.id;
 
     const { error: errMov } = await supabase.from('movimentacoes').insert(movData);
     if (errMov) {
       console.error('Erro ao registrar movimentação:', errMov);
     }
 
-    const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD';
+    const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
     setMensagem({ tipo: 'success', texto: `Saída de ${qtdSaida}x ${tipoNome}(s) registrada com sucesso!` });
     setSelecionado(null);
     setQtdSaida(1);
@@ -192,6 +194,12 @@ export default function SaidaEHistorico() {
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
+        <button 
+          className={`tab-btn ${activeTab === 'vhs' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('vhs'); setTermo(''); setFiltroCaixa(''); setFiltroLoja(''); }}
+        >
+          <PiCassetteTape style={{ marginRight: '6px', verticalAlign: 'middle' }} /> VHS
+        </button>
       </div>
 
       {mensagem && (
@@ -221,7 +229,7 @@ export default function SaidaEHistorico() {
           </select>
         </div>
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar por {activeTab === 'dvds' ? 'título' : 'artista ou título'}</label>
+          <label>Buscar por {(activeTab === 'dvds' || activeTab === 'vhs') ? 'título' : 'artista ou título'}</label>
           <input
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
@@ -238,7 +246,7 @@ export default function SaidaEHistorico() {
             <thead>
               <tr>
                 {activeTab === 'discos' && <th>Caixa</th>}
-                {activeTab !== 'dvds' && <th>Artista</th>}
+                {(activeTab !== 'dvds' && activeTab !== 'vhs') && <th>Artista</th>}
                 <th>Título</th>
                 <th>Loja</th>
                 <th>Preço</th>
@@ -249,7 +257,7 @@ export default function SaidaEHistorico() {
               {resultados.map((d) => (
                 <tr key={d.id}>
                   {activeTab === 'discos' && <td data-label="Caixa">{d.caixa}</td>}
-                  {activeTab !== 'dvds' && <td data-label="Artista">{d.artista || '—'}</td>}
+                  {(activeTab !== 'dvds' && activeTab !== 'vhs') && <td data-label="Artista">{d.artista || '—'}</td>}
                   <td data-label="Título">{d.titulo || '—'}</td>
                   <td data-label="Loja">{d.loja || '—'}</td>
                   <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
@@ -276,7 +284,7 @@ export default function SaidaEHistorico() {
               <h3 style={{ margin: '0 0 8px 0' }}>Confirmar Saída</h3>
               <p style={{ margin: 0, color: 'var(--text-muted)' }}>
                 {activeTab === 'discos' ? `[Cx ${selecionado.caixa}] ` : ''} 
-                {activeTab !== 'dvds' && selecionado.artista ? `${selecionado.artista} — ` : ''}
+                {(activeTab !== 'dvds' && activeTab !== 'vhs') && selecionado.artista ? `${selecionado.artista} — ` : ''}
                 {selecionado.titulo}
               </p>
               <p style={{ margin: '4px 0 0 0', fontSize: '13px' }}>
@@ -363,7 +371,7 @@ export default function SaidaEHistorico() {
                 </td>
                 <td data-label="Caixa">{m.discos?.caixa || '—'}</td>
                 <td data-label="Artista">{m.discos?.artista || m.cds?.artista || '—'}</td>
-                <td data-label="Título">{m.discos?.titulo || m.dvds?.titulo || m.cds?.titulo || '—'}</td>
+                <td data-label="Título">{m.discos?.titulo || m.dvds?.titulo || m.cds?.titulo || m.vhs?.titulo || '—'}</td>
                 <td data-label="Observação" style={{ fontSize: '13px' }}>{m.observacao || '—'}</td>
               </tr>
             ))}

@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MdLayers } from "react-icons/md";
-import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
+import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 
 export default function AcoesEmLote() {
-  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds'
+  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds' | 'vhs'
   const [caixas, setCaixas] = useState([]);
   const [caixaSelecionada, setCaixaSelecionada] = useState('');
   const [filtroLoja, setFiltroLoja] = useState('');
@@ -61,7 +61,7 @@ export default function AcoesEmLote() {
     }
     
     if (busca) {
-      if (activeTab === 'dvds') {
+      if (activeTab === 'dvds' || activeTab === 'vhs') {
         query = query.or(`titulo.ilike.%${busca}%`);
       } else {
         query = query.or(`artista.ilike.%${busca}%,titulo.ilike.%${busca}%`);
@@ -231,6 +231,12 @@ export default function AcoesEmLote() {
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
+        <button 
+          className={`tab-btn ${activeTab === 'vhs' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('vhs'); setMensagem(null); setBusca(''); setFiltroLoja(''); limparSelecao(); }}
+        >
+          <PiCassetteTape style={{ marginRight: '6px', verticalAlign: 'middle' }} /> VHS
+        </button>
       </div>
 
       <div className="filters">
@@ -255,10 +261,10 @@ export default function AcoesEmLote() {
           </select>
         </div>
         <div className="form-group" style={{ flex: 1, maxWidth: '400px' }}>
-          <label>Buscar por {activeTab === 'dvds' ? 'título' : 'artista ou título'}</label>
+          <label>Buscar por {(activeTab === 'dvds' || activeTab === 'vhs') ? 'título' : 'artista ou título'}</label>
           <input
             type="text"
-            placeholder={activeTab === 'dvds' ? "Ex: O Poderoso Chefão..." : "Ex: Beatles..."}
+            placeholder={(activeTab === 'dvds' || activeTab === 'vhs') ? "Ex: O Poderoso Chefão..." : "Ex: Beatles..."}
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
           />
@@ -303,7 +309,7 @@ export default function AcoesEmLote() {
                   lineHeight: 1.4
                 }}
               >
-                {activeTab !== 'dvds' && d.artista ? `${d.artista} — ` : ''}{d.titulo}
+                {(activeTab !== 'dvds' && activeTab !== 'vhs') && d.artista ? `${d.artista} — ` : ''}{d.titulo}
                 <button
                   onClick={() => toggleSelecionar(d.id)}
                   style={{ 
@@ -346,7 +352,7 @@ export default function AcoesEmLote() {
                       style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                     />
                   </th>
-                  {activeTab !== 'dvds' && <th>Artista</th>}
+                  {(activeTab !== 'dvds' && activeTab !== 'vhs') && <th>Artista</th>}
                   <th>Título</th>
                   <th>Loja</th>
                   <th>Preço</th>
@@ -373,7 +379,7 @@ export default function AcoesEmLote() {
                         style={{ cursor: 'pointer', width: '18px', height: '18px', margin: 0 }}
                       />
                     </td>
-                    {activeTab !== 'dvds' && <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista}</td>}
+                    {(activeTab !== 'dvds' && activeTab !== 'vhs') && <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista}</td>}
                     <td data-label="Título">{d.titulo}</td>
                     <td data-label="Loja">
                       {d.loja ? (

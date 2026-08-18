@@ -4,15 +4,15 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { TbTools } from "react-icons/tb";
-import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
+import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
 
   // Tipo do item: inicializado pela URL, alterável por abas
   const [tipo, setTipo] = useState(searchParams.get('tipo') || 'discos');
-  const tipoNome = tipo === 'discos' ? 'Disco' : tipo === 'dvds' ? 'DVD' : 'CD';
-  const temArtista = tipo !== 'dvds';
+  const tipoNome = tipo === 'discos' ? 'Disco' : tipo === 'dvds' ? 'DVD' : tipo === 'vhs' ? 'VHS' : 'CD';
+  const temArtista = tipo !== 'dvds' && tipo !== 'vhs';
   const temCaixa = tipo === 'discos';
 
   // Sincronizar tipo quando navegar via URL (ex: vindo do catálogo)
@@ -51,7 +51,7 @@ function EditarExcluirContent() {
   }
 
   function getColumns() {
-    if (tipo === 'dvds') return 'id, titulo, preco, ativo, loja, observacao';
+    if (tipo === 'dvds' || tipo === 'vhs') return 'id, titulo, preco, ativo, loja, observacao';
     if (tipo === 'cds') return 'id, artista, titulo, preco, ativo, loja, observacao';
     return 'id, caixa, artista, titulo, preco, ativo, loja, observacao';
   }
@@ -528,6 +528,12 @@ function EditarExcluirContent() {
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
+        <button 
+          className={`tab-btn ${tipo === 'vhs' ? 'active' : ''}`}
+          onClick={() => { setTipo('vhs'); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }}
+        >
+          <PiCassetteTape style={{ marginRight: '6px', verticalAlign: 'middle' }} /> VHS
+        </button>
       </div>
 
       {mensagem && (
@@ -536,12 +542,12 @@ function EditarExcluirContent() {
 
       <div className="filters">
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar {tipoNome.toLowerCase()} por {temArtista ? 'artista ou título' : 'título'}</label>
+          <label>Buscar por {(tipo === 'dvds' || tipo === 'vhs') ? 'título' : 'artista ou título'}</label>
           <input
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Digite e aperte Enter..."
+            placeholder={(tipo === 'dvds' || tipo === 'vhs') ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road..."}
+            onKeyDown={(e) => e.key === 'Enter' && buscar()}
           />
         </div>
         <button type="button" className="btn btn-primary" onClick={buscar}>Buscar</button>

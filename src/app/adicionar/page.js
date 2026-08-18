@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
+import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 
 export default function AdicionarItem() {
-  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds'
+  const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds' | 'vhs'
   const [caixas, setCaixas] = useState([]);
   
   const initialForm = {
@@ -96,11 +96,15 @@ export default function AdicionarItem() {
     e.preventDefault();
     setMensagem(null);
 
+    if (activeTab !== 'dvds' && activeTab !== 'vhs' && !form.artista) {
+      setMensagem({ tipo: 'error', texto: 'Preencha o artista.' });
+      return;
+    }
+
     if (!form.titulo.trim()) {
       setMensagem({ tipo: 'error', texto: 'O Título é obrigatório.' });
       return;
     }
-
 
     if (activeTab === 'discos' && form.caixa) {
       if (isNaN(Number(form.caixa)) || parseInt(form.caixa) < 0) {
@@ -115,25 +119,19 @@ export default function AdicionarItem() {
       return;
     }
     
-    let payload = {
-      titulo: form.titulo,
-      loja: form.loja || null,
+    const insertData = {
+      titulo: form.titulo.trim(),
       preco: unmaskedPreco,
-      quantidade: 1,
-      observacao: form.observacao || null,
+      loja: form.loja || null,
+      observacao: form.observacao || null
     };
 
-    if (activeTab === 'discos') {
-      payload.caixa = form.caixa ? parseInt(form.caixa) : null;
-    }
-
-    if (activeTab === 'discos' || activeTab === 'cds') {
-      payload.artista = form.artista;
-    }
+    if (activeTab !== 'dvds' && activeTab !== 'vhs') insertData.artista = form.artista.trim();
+    if (activeTab === 'discos') insertData.caixa = form.caixa ? parseInt(form.caixa) : null;
 
     const { data, error } = await supabase
       .from(activeTab)
-      .insert(payload)
+      .insert(insertData)
       .select('id')
       .single();
 
@@ -154,6 +152,8 @@ export default function AdicionarItem() {
       movData.dvd_id = data.id;
     } else if (activeTab === 'cds') {
       movData.cd_id = data.id;
+    } else if (activeTab === 'vhs') {
+      movData.vhs_id = data.id;
     }
 
     const { error: errMov } = await supabase.from('movimentacoes').insert(movData);
@@ -161,7 +161,7 @@ export default function AdicionarItem() {
       console.error('Erro ao registrar movimentação:', errMov);
     }
 
-    const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD';
+    const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
     setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${(activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : ''}.` });
     setForm({ ...initialForm, caixa: form.caixa, loja: form.loja });
   }
@@ -192,6 +192,12 @@ export default function AdicionarItem() {
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
+        <button 
+          className={`tab-btn ${activeTab === 'vhs' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('vhs'); setMensagem(null); setForm(initialForm); setSugestoesArtista([]); setSugestoesTitulo([]); }}
+        >
+          <PiCassetteTape style={{ marginRight: '6px', verticalAlign: 'middle' }} /> VHS
+        </button>
       </div>
 
       {mensagem && (
@@ -200,7 +206,7 @@ export default function AdicionarItem() {
 
       <form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
         <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
-          {(activeTab === 'discos' || activeTab === 'cds') && (
+          {(activeTab !== 'dvds' && activeTab !== 'vhs') && (
             <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={{ marginBottom: 0 }}>Artista</label>
@@ -311,7 +317,7 @@ export default function AdicionarItem() {
 
         <div style={{ marginTop: '8px' }}>
           <button type="submit" className="btn btn-primary" style={{ minWidth: '180px', width: '100%', maxWidth: '320px' }}>
-            Adicionar {activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD'}
+            Adicionar {activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}
           </button>
         </div>
       </form>
