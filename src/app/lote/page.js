@@ -404,7 +404,7 @@ export default function AcoesEmLote() {
               <div className="hide-on-desktop" style={{ marginLeft: 'auto', gap: '6px' }}>
                 <button 
                   className="btn btn-secondary" 
-                  style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} 
+                  style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} 
                   onClick={inativarSelecionados} 
                   disabled={loading}
                 >
@@ -412,13 +412,13 @@ export default function AcoesEmLote() {
                 </button>
                 {confirmarExclusao ? (
                   <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                    <button className="btn btn-danger" style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} onClick={excluirSelecionados} disabled={loading}>OK</button>
-                    <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} onClick={() => setConfirmarExclusao(false)}>✕</button>
+                    <button className="btn btn-danger" style={{ whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} onClick={excluirSelecionados} disabled={loading}>OK</button>
+                    <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} onClick={() => setConfirmarExclusao(false)}>✕</button>
                   </div>
                 ) : (
                   <button 
                     className="btn btn-danger" 
-                    style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px', minHeight: 'auto' }} 
+                    style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} 
                     onClick={() => setConfirmarExclusao(true)} 
                     disabled={loading}
                   >
