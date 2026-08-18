@@ -134,6 +134,7 @@ function EditarExcluirContent() {
       titulo: item.titulo || '',
       caixa: item.caixa || '',
       preco: formatarMoedaParaEdicao(item.preco),
+      loja: item.loja || '',
       observacao: item.observacao || '',
     });
     setMensagem(null);
@@ -185,9 +186,10 @@ function EditarExcluirContent() {
       return;
     }
 
-    let updateData = {
-      titulo: form.titulo,
+    const updateData = {
+      titulo: form.titulo.trim(),
       preco: unmaskedPreco,
+      loja: form.loja || null,
       observacao: form.observacao || null,
     };
 
@@ -388,6 +390,18 @@ function EditarExcluirContent() {
             <div className="form-group">
               <label>Preço (R$)</label>
               <input name="preco" type="text" value={form.preco} onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Loja (Opcional)</label>
+              <select name="loja" value={form.loja || ''} onChange={handleChange}>
+                <option value="">Nenhuma / Sem Loja</option>
+                <option value="Loja 1">Loja 1</option>
+                <option value="Loja 2">Loja 2</option>
+                <option value="Anexo">Anexo</option>
+              </select>
             </div>
           </div>
 
