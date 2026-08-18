@@ -9,6 +9,7 @@ export default function AcoesEmLote() {
   const [activeTab, setActiveTab] = useState('discos'); // 'discos' | 'dvds' | 'cds'
   const [caixas, setCaixas] = useState([]);
   const [caixaSelecionada, setCaixaSelecionada] = useState('');
+  const [filtroLoja, setFiltroLoja] = useState('');
   const [busca, setBusca] = useState('');
   
   const [itens, setItens] = useState([]);
@@ -29,7 +30,7 @@ export default function AcoesEmLote() {
   // Recarregar quando mudar filtros
   useEffect(() => {
     carregarItens();
-  }, [caixaSelecionada, busca, activeTab]);
+  }, [caixaSelecionada, filtroLoja, busca, activeTab]);
 
   async function carregarCaixas() {
     const { data } = await supabase.from('caixas_distintas').select('caixa');
@@ -53,6 +54,10 @@ export default function AcoesEmLote() {
 
     if (activeTab === 'discos' && caixaSelecionada) {
       query = query.eq('caixa', parseInt(caixaSelecionada));
+    }
+
+    if (filtroLoja) {
+      query = query.eq('loja', filtroLoja);
     }
     
     if (busca) {
@@ -209,19 +214,19 @@ export default function AcoesEmLote() {
       <div className="tabs">
         <button 
           className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('discos'); setMensagem(null); setBusca(''); limparSelecao(); }}
+          onClick={() => { setActiveTab('discos'); setMensagem(null); setBusca(''); setFiltroLoja(''); limparSelecao(); }}
         >
           <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
         </button>
         <button 
           className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('dvds'); setMensagem(null); setBusca(''); limparSelecao(); }}
+          onClick={() => { setActiveTab('dvds'); setMensagem(null); setBusca(''); setFiltroLoja(''); limparSelecao(); }}
         >
           <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
         </button>
         <button 
           className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('cds'); setMensagem(null); setBusca(''); limparSelecao(); }}
+          onClick={() => { setActiveTab('cds'); setMensagem(null); setBusca(''); setFiltroLoja(''); limparSelecao(); }}
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
@@ -239,6 +244,15 @@ export default function AcoesEmLote() {
             </select>
           </div>
         )}
+        <div className="form-group" style={{ flex: '0 0 160px' }}>
+          <label>Filtrar por loja</label>
+          <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
+            <option value="">Todas</option>
+            <option value="Loja 1">Loja 1</option>
+            <option value="Loja 2">Loja 2</option>
+            <option value="Anexo">Anexo</option>
+          </select>
+        </div>
         <div className="form-group" style={{ flex: 1, maxWidth: '400px' }}>
           <label>Buscar por {activeTab === 'dvds' ? 'título' : 'artista ou título'}</label>
           <input
