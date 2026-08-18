@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { FaEdit, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
+import { MdDownload } from "react-icons/md";
+import * as XLSX from 'xlsx';
 
 const ITENS_POR_PAGINA = 50;
 
@@ -20,6 +22,87 @@ export default function Catalogo() {
   const [mostrarInativos, setMostrarInativos] = useState(false);
   const [caixas, setCaixas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [exportando, setExportando] = useState(false);
+
+  async function exportarEstoque() {
+    setExportando(true);
+    try {
+      async function fetchAll(table, select, orderBy) {
+        let allData = [];
+        let from = 0;
+        const step = 1000;
+        while (true) {
+          const { data, error } = await supabase
+            .from(table)
+            .select(select)
+            .order(orderBy)
+            .range(from, from + step - 1);
+            
+          if (error) throw error;
+          if (!data || data.length === 0) break;
+          
+          allData = allData.concat(data);
+          if (data.length < step) break;
+          from += step;
+        }
+        return allData;
+      }
+
+      const [ discos, dvds, cds ] = await Promise.all([
+        fetchAll('discos', 'caixa, artista, titulo, loja, preco, ativo', 'artista'),
+        fetchAll('dvds', 'titulo, loja, preco, ativo', 'titulo'),
+        fetchAll('cds', 'artista, titulo, loja, preco, ativo', 'artista')
+      ]);
+
+      const formataStatus = (ativo) => ativo !== false ? 'Ativo (Em Estoque)' : 'Inativo (Saída/Vendido)';
+      const formataPreco = (preco) => preco ? `R$ ${Number(preco).toFixed(2).replace('.', ',')}` : 'R$ 0,00';
+
+      const discosData = discos?.map(d => ({
+        'Caixa': d.caixa || '-',
+        'Artista': d.artista || '-',
+        'Título': d.titulo || '-',
+        'Loja': d.loja || '-',
+        'Preço': formataPreco(d.preco),
+        'Status': formataStatus(d.ativo)
+      })) || [];
+
+      const dvdsData = dvds?.map(d => ({
+        'Título': d.titulo || '-',
+        'Loja': d.loja || '-',
+        'Preço': formataPreco(d.preco),
+        'Status': formataStatus(d.ativo)
+      })) || [];
+
+      const cdsData = cds?.map(d => ({
+        'Artista': d.artista || '-',
+        'Título': d.titulo || '-',
+        'Loja': d.loja || '-',
+        'Preço': formataPreco(d.preco),
+        'Status': formataStatus(d.ativo)
+      })) || [];
+
+      const wb = XLSX.utils.book_new();
+      const wsDiscos = XLSX.utils.json_to_sheet(discosData);
+      const wsDvds = XLSX.utils.json_to_sheet(dvdsData);
+      const wsCds = XLSX.utils.json_to_sheet(cdsData);
+
+      wsDiscos['!cols'] = [{wch: 8}, {wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
+      wsDvds['!cols'] = [{wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
+      wsCds['!cols'] = [{wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
+
+      XLSX.utils.book_append_sheet(wb, wsDiscos, "Discos de Vinil");
+      XLSX.utils.book_append_sheet(wb, wsDvds, "DVDs");
+      XLSX.utils.book_append_sheet(wb, wsCds, "CDs");
+
+      const hoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+      XLSX.writeFile(wb, `Estoque_FreelancerDiscos_${hoje}.xlsx`);
+
+    } catch (err) {
+      console.error("Erro ao exportar:", err);
+      alert("Houve um erro ao gerar a planilha. Tente novamente.");
+    }
+    setExportando(false);
+  }
 
   // Ordenação: coluna e direção
   // null = padrão (caixa > artista > titulo), 'asc' = crescente, 'desc' = decrescente
@@ -158,28 +241,47 @@ export default function Catalogo() {
         <h1 className="page-title">Catálogo Completo</h1>
       </div>
 
-      <div className="tabs">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
+        <div className="tabs" style={{ marginBottom: 0 }}>
+          <button 
+            className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('discos'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
+          >
+            <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('dvds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
+          >
+            <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
+          </button>
+          <button 
+            className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
+            onClick={() => { setActiveTab('cds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
+          >
+            <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
+          </button>
+        </div>
+
         <button 
-          className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('discos'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
+          className="btn btn-primary"
+          onClick={exportarEstoque} 
+          disabled={exportando}
+          style={{ 
+            display: 'flex', alignItems: 'center', gap: '8px', 
+            padding: '10px 16px', borderRadius: '8px',
+            background: 'var(--accent)', color: '#fff', border: 'none',
+            cursor: exportando ? 'not-allowed' : 'pointer', fontSize: '14px',
+            fontWeight: 600, opacity: exportando ? 0.7 : 1, transition: '0.2s',
+            marginLeft: 'auto'
+          }}
         >
-          <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('dvds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
-        >
-          <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
-        </button>
-        <button 
-          className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-          onClick={() => { setActiveTab('cds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
-        >
-          <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
+          <MdDownload size={18} />
+          {exportando ? 'Gerando...' : 'Exportar Excel'}
         </button>
       </div>
 
-      <div className="filters">
+    <div className="filters">
         {activeTab === 'discos' && (
           <div className="form-group" style={{ flex: '0 0 220px' }}>
             <label>Filtrar por caixa</label>

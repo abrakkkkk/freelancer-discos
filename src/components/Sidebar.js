@@ -1,13 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PiVinylRecord } from "react-icons/pi";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { MdCurrencyExchange, MdLayers, MdDownload } from "react-icons/md";
-import { supabase } from '@/lib/supabase';
-import * as XLSX from 'xlsx';
+import { MdCurrencyExchange, MdLayers } from "react-icons/md";
 
 const links = [
   { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={18} /> },
@@ -18,93 +15,6 @@ const links = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [exportando, setExportando] = useState(false);
-
-  async function exportarEstoque() {
-    setExportando(true);
-    try {
-      // Função auxiliar para buscar todos os registros burlando o limite de 1000 do Supabase
-      async function fetchAll(table, select, orderBy) {
-        let allData = [];
-        let from = 0;
-        const step = 1000;
-        while (true) {
-          const { data, error } = await supabase
-            .from(table)
-            .select(select)
-            .order(orderBy)
-            .range(from, from + step - 1);
-            
-          if (error) throw error;
-          if (!data || data.length === 0) break;
-          
-          allData = allData.concat(data);
-          if (data.length < step) break;
-          from += step;
-        }
-        return allData;
-      }
-
-      // Busca todos os dados com paginação
-      const [ discos, dvds, cds ] = await Promise.all([
-        fetchAll('discos', 'caixa, artista, titulo, loja, preco, ativo', 'artista'),
-        fetchAll('dvds', 'titulo, loja, preco, ativo', 'titulo'),
-        fetchAll('cds', 'artista, titulo, loja, preco, ativo', 'artista')
-      ]);
-
-      const formataStatus = (ativo) => ativo !== false ? 'Ativo (Em Estoque)' : 'Inativo (Saída/Vendido)';
-      const formataPreco = (preco) => preco ? `R$ ${Number(preco).toFixed(2).replace('.', ',')}` : 'R$ 0,00';
-
-      const discosData = discos?.map(d => ({
-        'Caixa': d.caixa || '-',
-        'Artista': d.artista || '-',
-        'Título': d.titulo || '-',
-        'Loja': d.loja || '-',
-        'Preço': formataPreco(d.preco),
-        'Status': formataStatus(d.ativo)
-      })) || [];
-
-      const dvdsData = dvds?.map(d => ({
-        'Título': d.titulo || '-',
-        'Loja': d.loja || '-',
-        'Preço': formataPreco(d.preco),
-        'Status': formataStatus(d.ativo)
-      })) || [];
-
-      const cdsData = cds?.map(d => ({
-        'Artista': d.artista || '-',
-        'Título': d.titulo || '-',
-        'Loja': d.loja || '-',
-        'Preço': formataPreco(d.preco),
-        'Status': formataStatus(d.ativo)
-      })) || [];
-
-      // Cria a planilha (Workbook) e as abas (Worksheets)
-      const wb = XLSX.utils.book_new();
-      
-      const wsDiscos = XLSX.utils.json_to_sheet(discosData);
-      const wsDvds = XLSX.utils.json_to_sheet(dvdsData);
-      const wsCds = XLSX.utils.json_to_sheet(cdsData);
-
-      // Ajusta largura aproximada das colunas pra ficar bonitinho
-      wsDiscos['!cols'] = [{wch: 8}, {wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
-      wsDvds['!cols'] = [{wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
-      wsCds['!cols'] = [{wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
-
-      XLSX.utils.book_append_sheet(wb, wsDiscos, "Discos de Vinil");
-      XLSX.utils.book_append_sheet(wb, wsDvds, "DVDs");
-      XLSX.utils.book_append_sheet(wb, wsCds, "CDs");
-
-      // Força o download
-      const hoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-      XLSX.writeFile(wb, `Estoque_FreelancerDiscos_${hoje}.xlsx`);
-
-    } catch (err) {
-      console.error("Erro ao exportar:", err);
-      alert("Houve um erro ao gerar a planilha. Tente novamente.");
-    }
-    setExportando(false);
-  }
 
   return (
     <aside className="sidebar">
@@ -125,23 +35,6 @@ export default function Sidebar() {
           </Link>
         ))}
       </nav>
-
-      <div style={{ marginTop: 'auto', paddingTop: '20px', borderTop: '1px solid var(--border)' }}>
-        <button 
-          onClick={exportarEstoque} 
-          disabled={exportando}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px', 
-            width: '100%', padding: '12px 16px', borderRadius: '8px',
-            background: 'var(--accent)', color: '#fff', border: 'none',
-            cursor: exportando ? 'not-allowed' : 'pointer', fontSize: '14px',
-            fontWeight: 600, opacity: exportando ? 0.7 : 1, transition: '0.2s'
-          }}
-        >
-          <MdDownload size={18} />
-          {exportando ? 'Gerando Planilha...' : 'Exportar Excel (.xlsx)'}
-        </button>
-      </div>
     </aside>
   );
 }
