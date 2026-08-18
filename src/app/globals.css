@@ -1220,9 +1220,11 @@ tbody tr:last-child td {
   td[data-label="Selecionar"] {
     justify-content: space-between;
     border-top: none;
+    border-bottom: 1px solid var(--border);
     margin-top: 0;
     padding-top: 8px;
     padding-bottom: 8px;
+    order: 3;
   }
 
   /* Painel flutuante de lote no celular */

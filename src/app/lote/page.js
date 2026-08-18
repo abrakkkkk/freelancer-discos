@@ -340,12 +340,21 @@ export default function AcoesEmLote() {
               </thead>
               <tbody>
                 {itens.map((d) => (
-                  <tr key={d.id} style={{ backgroundColor: selecionados.includes(d.id) ? 'rgba(197, 48, 48, 0.08)' : 'transparent', opacity: d.ativo === false ? 0.6 : 1 }}>
+                  <tr 
+                    key={d.id} 
+                    onClick={() => toggleSelecionar(d.id)}
+                    style={{ 
+                      backgroundColor: selecionados.includes(d.id) ? 'rgba(197, 48, 48, 0.08)' : 'transparent', 
+                      opacity: d.ativo === false ? 0.6 : 1,
+                      cursor: 'pointer'
+                    }}
+                  >
                     <td data-label="Selecionar" style={{ textAlign: 'center' }}>
                       <input 
                         type="checkbox" 
                         checked={selecionados.includes(d.id)}
-                        onChange={() => toggleSelecionar(d.id)}
+                        onChange={() => {}} // State toggled by tr onClick
+                        onClick={(e) => { e.stopPropagation(); toggleSelecionar(d.id); }} // Allows direct checkbox click without double trigger
                         style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                       />
                     </td>
