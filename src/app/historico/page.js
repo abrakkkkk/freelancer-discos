@@ -18,7 +18,6 @@ export default function Historico() {
         .select(`
           id,
           tipo,
-          quantidade,
           observacao,
           criado_em,
           discos ( caixa, artista, titulo ),
@@ -75,7 +74,6 @@ export default function Historico() {
                 <th>Caixa</th>
                 <th>Artista</th>
                 <th>Título</th>
-                <th>Qtd</th>
                 <th>Observação</th>
               </tr>
             </thead>
@@ -91,7 +89,6 @@ export default function Historico() {
                   <td data-label="Caixa">{m.discos?.caixa || '—'}</td>
                   <td data-label="Artista">{m.discos?.artista || m.cds?.artista || '—'}</td>
                   <td data-label="Título">{m.discos?.titulo || m.dvds?.titulo || m.cds?.titulo || '—'}</td>
-                  <td data-label="Qtd">{m.quantidade}</td>
                   <td data-label="Observação">{m.observacao || '—'}</td>
                 </tr>
               ))}

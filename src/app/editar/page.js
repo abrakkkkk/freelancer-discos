@@ -3,11 +3,25 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { FaEdit, FaTrash } from 'react-icons/fa';
 import { TbTools } from "react-icons/tb";
+import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
+
+  // Tipo do item: inicializado pela URL, alterável por abas
+  const [tipo, setTipo] = useState(searchParams.get('tipo') || 'discos');
+  const tipoNome = tipo === 'discos' ? 'Disco' : tipo === 'dvds' ? 'DVD' : 'CD';
+  const temArtista = tipo !== 'dvds';
+  const temCaixa = tipo === 'discos';
+
+  // Sincronizar tipo quando navegar via URL (ex: vindo do catálogo)
+  useEffect(() => {
+    const urlTipo = searchParams.get('tipo');
+    if (urlTipo && urlTipo !== tipo) {
+      setTipo(urlTipo);
+    }
+  }, [searchParams]);
 
   // Estado geral
   const [tela, setTela] = useState('busca'); // 'busca' ou 'edicao'
@@ -19,17 +33,17 @@ function EditarExcluirContent() {
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
 
   // Estado da edição
-  const [discoEditando, setDiscoEditando] = useState(null);
+  const [itemEditando, setItemEditando] = useState(null);
   const [form, setForm] = useState({});
   const [observacoes, setObservacoes] = useState([]);
   const [novaObservacao, setNovaObservacao] = useState('');
   const [loadingObs, setLoadingObs] = useState(false);
 
-  // Carregar disco direto se vier com ?id= na URL
+  // Carregar item direto se vier com ?id= na URL
   useEffect(() => {
     const id = searchParams.get('id');
     if (id) {
-      carregarDiscoPorId(parseInt(id));
+      carregarItemPorId(parseInt(id));
     }
   }, [searchParams]);
 
@@ -42,12 +56,18 @@ function EditarExcluirContent() {
     }
   }
 
-  async function carregarDiscoPorId(id) {
+  function getColumns() {
+    if (tipo === 'dvds') return 'id, titulo, preco, ativo, loja, observacao';
+    if (tipo === 'cds') return 'id, artista, titulo, preco, ativo, loja, observacao';
+    return 'id, caixa, artista, titulo, preco, ativo, loja, observacao';
+  }
+
+  async function carregarItemPorId(id) {
     await carregarCaixas();
 
     const { data } = await supabase
-      .from('discos')
-      .select('id, caixa, artista, titulo, preco, quantidade, ativo, observacao')
+      .from(tipo)
+      .select(getColumns())
       .eq('id', id)
       .single();
 
@@ -62,16 +82,27 @@ function EditarExcluirContent() {
     await carregarCaixas();
 
     let query = supabase
-      .from('discos')
-      .select('id, caixa, artista, titulo, preco, quantidade, ativo, observacao');
-      
+      .from(tipo)
+      .select(getColumns());
+
+    // Filtrar inativos no servidor quando checkbox desmarcado
+    if (!mostrarInativos) {
+      query = query.eq('ativo', true);
+    }
+
     const words = termo.trim().split(/\s+/);
-    words.forEach(word => {
-      query = query.or(`artista.ilike.%${word}%,titulo.ilike.%${word}%`);
-    });
+    if (temArtista) {
+      words.forEach(word => {
+        query = query.or(`artista.ilike.%${word}%,titulo.ilike.%${word}%`);
+      });
+    } else {
+      words.forEach(word => {
+        query = query.ilike('titulo', `%${word}%`);
+      });
+    }
 
     const { data } = await query
-      .order('artista')
+      .order(temArtista ? 'artista' : 'titulo')
       .limit(50);
 
     setResultados(data || []);
@@ -93,23 +124,26 @@ function EditarExcluirContent() {
     return str;
   }
 
-  function abrirEdicao(disco) {
-    setDiscoEditando(disco);
+  function abrirEdicao(item) {
+    setItemEditando(item);
     setForm({
-      artista: disco.artista || '',
-      titulo: disco.titulo || '',
-      caixa: disco.caixa || '',
-      preco: formatarMoedaParaEdicao(disco.preco),
-      quantidade: disco.quantidade || 0,
-      observacao: disco.observacao || '',
+      artista: item.artista || '',
+      titulo: item.titulo || '',
+      caixa: item.caixa || '',
+      preco: formatarMoedaParaEdicao(item.preco),
+      observacao: item.observacao || '',
     });
     setMensagem(null);
     setTela('edicao');
-    carregarObservacoes(disco.id);
+    if (tipo === 'discos') {
+      carregarObservacoes(item.id);
+    } else {
+      setObservacoes([]);
+    }
   }
 
   function voltarParaBusca() {
-    setDiscoEditando(null);
+    setItemEditando(null);
     setTela('busca');
   }
 
@@ -135,13 +169,7 @@ function EditarExcluirContent() {
       return;
     }
 
-    const qtd = parseInt(form.quantidade);
-    if (isNaN(qtd) || qtd < 0) {
-      setMensagem({ tipo: 'error', texto: 'A quantidade não pode ser negativa.' });
-      return;
-    }
-
-    if (form.caixa) {
+    if (temCaixa && form.caixa) {
       if (isNaN(Number(form.caixa)) || parseInt(form.caixa) < 0) {
         setMensagem({ tipo: 'error', texto: 'Número da caixa inválido.' });
         return;
@@ -154,57 +182,60 @@ function EditarExcluirContent() {
       return;
     }
 
+    let updateData = {
+      titulo: form.titulo,
+      preco: unmaskedPreco,
+      observacao: form.observacao || null,
+    };
+
+    if (temArtista) updateData.artista = form.artista;
+    if (temCaixa) updateData.caixa = form.caixa ? parseInt(form.caixa) : null;
+
     const { error } = await supabase
-      .from('discos')
-      .update({
-        artista: form.artista,
-        titulo: form.titulo,
-        caixa: form.caixa ? parseInt(form.caixa) : null,
-        preco: unmaskedPreco,
-        quantidade: parseInt(form.quantidade) || 0,
-        observacao: form.observacao || null,
-      })
-      .eq('id', discoEditando.id);
+      .from(tipo)
+      .update(updateData)
+      .eq('id', itemEditando.id);
 
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
       return;
     }
 
-    setMensagem({ tipo: 'success', texto: 'Disco atualizado com sucesso!' });
-    // Atualiza o disco na lista de resultados
+    const updatedItem = { ...itemEditando, ...updateData };
+    setItemEditando(updatedItem);
+    setMensagem({ tipo: 'success', texto: `${tipoNome} atualizado com sucesso!` });
     setResultados(prev => prev.map(d =>
-      d.id === discoEditando.id
-        ? { ...d, artista: form.artista, titulo: form.titulo, caixa: form.caixa ? parseInt(form.caixa) : null, preco: unmaskedPreco, quantidade: parseInt(form.quantidade) || 0, observacao: form.observacao || null }
-        : d
+      d.id === itemEditando.id ? updatedItem : d
     ));
   }
 
   async function excluir(id) {
-    const { error } = await supabase.from('discos').delete().eq('id', id);
+    const { error } = await supabase.from(tipo).delete().eq('id', id);
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
       return;
     }
-    setMensagem({ tipo: 'success', texto: 'Disco excluído.' });
+    setMensagem({ tipo: 'success', texto: `${tipoNome} excluído.` });
     setConfirmarExclusao(null);
     setResultados(prev => prev.filter(d => d.id !== id));
   }
 
-  async function toggleAtivo(disco) {
-    const novoStatus = !disco.ativo;
+  async function toggleAtivo(item) {
+    const novoStatus = !item.ativo;
     const { error } = await supabase
-      .from('discos')
+      .from(tipo)
       .update({ ativo: novoStatus })
-      .eq('id', disco.id);
+      .eq('id', item.id);
 
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
       return;
     }
-    setMensagem({ tipo: 'success', texto: novoStatus ? 'Disco reativado!' : 'Disco inativado!' });
+    const updatedItem = { ...item, ativo: novoStatus };
+    setItemEditando(updatedItem);
+    setMensagem({ tipo: 'success', texto: novoStatus ? `${tipoNome} reativado!` : `${tipoNome} inativado!` });
     setResultados(prev => prev.map(d =>
-      d.id === disco.id ? { ...d, ativo: novoStatus } : d
+      d.id === item.id ? updatedItem : d
     ));
   }
 
@@ -224,7 +255,7 @@ function EditarExcluirContent() {
     
     const { data, error } = await supabase
       .from('observacoes_disco')
-      .insert({ disco_id: discoEditando.id, observacao: novaObservacao.trim() })
+      .insert({ disco_id: itemEditando.id, observacao: novaObservacao.trim() })
       .select()
       .single();
       
@@ -254,7 +285,7 @@ function EditarExcluirContent() {
   // =============================================
   //  TELA DE EDIÇÃO
   // =============================================
-  if (tela === 'edicao' && discoEditando) {
+  if (tela === 'edicao' && itemEditando) {
     return (
       <div>
         <div className="page-header">
@@ -262,7 +293,7 @@ function EditarExcluirContent() {
             ← Voltar
           </button>
           <TbTools size={28} color="var(--accent)" />
-          <h1 className="page-title">Editando Disco</h1>
+          <h1 className="page-title">Editando {tipoNome}</h1>
         </div>
 
         {mensagem && (
@@ -270,37 +301,37 @@ function EditarExcluirContent() {
         )}
 
         <div className="edit-info">
-          <div className="edit-info-item">
-            <span className="edit-info-label">Artista</span>
-            <span className="edit-info-value">{discoEditando.artista || '—'}</span>
-          </div>
+          {temArtista && (
+            <div className="edit-info-item">
+              <span className="edit-info-label">Artista</span>
+              <span className="edit-info-value">{itemEditando.artista || '—'}</span>
+            </div>
+          )}
           <div className="edit-info-item">
             <span className="edit-info-label">Título</span>
-            <span className="edit-info-value">{discoEditando.titulo}</span>
+            <span className="edit-info-value">{itemEditando.titulo}</span>
           </div>
-          <div className="edit-info-item">
-            <span className="edit-info-label">Caixa</span>
-            <span className="edit-info-value">{discoEditando.caixa || '—'}</span>
-          </div>
+          {temCaixa && (
+            <div className="edit-info-item">
+              <span className="edit-info-label">Caixa</span>
+              <span className="edit-info-value">{itemEditando.caixa || '—'}</span>
+            </div>
+          )}
           <div className="edit-info-item">
             <span className="edit-info-label">Preço</span>
-            <span className="edit-info-value">R$ {Number(discoEditando.preco || 0).toFixed(2)}</span>
+            <span className="edit-info-value">R$ {Number(itemEditando.preco || 0).toFixed(2).replace('.', ',')}</span>
           </div>
-          <div className="edit-info-item">
-            <span className="edit-info-label">Quantidade</span>
-            <span className="edit-info-value">{discoEditando.quantidade}</span>
-          </div>
-          {discoEditando.observacao && (
+          {itemEditando.observacao && (
             <div className="edit-info-item" style={{ gridColumn: '1 / -1' }}>
               <span className="edit-info-label">Observação</span>
-              <span className="edit-info-value">{discoEditando.observacao}</span>
+              <span className="edit-info-value">{itemEditando.observacao}</span>
             </div>
           )}
           <div className="edit-info-item">
             <span className="edit-info-label">Status</span>
             <span className="edit-info-value">
-              <span className={`badge ${discoEditando.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
-                {discoEditando.ativo !== false ? 'Ativo' : 'Inativo'}
+              <span className={`badge ${itemEditando.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
+                {itemEditando.ativo !== false ? 'Ativo' : 'Inativo'}
               </span>
             </span>
           </div>
@@ -310,20 +341,22 @@ function EditarExcluirContent() {
           <h2>Alterar dados</h2>
 
           <div className="form-row">
-            <div className="form-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label style={{ marginBottom: 0 }}>Artista</label>
-                <button 
-                  type="button" 
-                  onClick={() => setForm(prev => ({ ...prev, artista: prev.titulo }))}
-                  style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}
-                  title="Copiar título para o campo artista (para discos self-titled)"
-                >
-                  Usar Título
-                </button>
+            {temArtista && (
+              <div className="form-group">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <label style={{ marginBottom: 0 }}>Artista</label>
+                  <button 
+                    type="button" 
+                    onClick={() => setForm(prev => ({ ...prev, artista: prev.titulo }))}
+                    style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}
+                    title="Copiar título para o campo artista (para discos self-titled)"
+                  >
+                    Usar Título
+                  </button>
+                </div>
+                <input name="artista" value={form.artista} onChange={handleChange} />
               </div>
-              <input name="artista" value={form.artista} onChange={handleChange} />
-            </div>
+            )}
             <div className="form-group">
               <label>Título *</label>
               <input name="titulo" value={form.titulo} onChange={handleChange} />
@@ -331,34 +364,28 @@ function EditarExcluirContent() {
           </div>
 
           <div className="form-row">
-            <div className="form-group">
-              <label>Caixa</label>
-              <input 
-                name="caixa" 
-                type="number" 
-                list="caixas-list"
-                value={form.caixa || ''} 
-                onChange={handleChange}
-                placeholder="Ex: 15"
-              />
-              <datalist id="caixas-list">
-                {caixas.map(c => (
-                  <option key={c} value={c} />
-                ))}
-              </datalist>
-            </div>
+            {temCaixa && (
+              <div className="form-group">
+                <label>Caixa</label>
+                <input 
+                  name="caixa" 
+                  type="number" 
+                  list="caixas-list"
+                  value={form.caixa || ''} 
+                  onChange={handleChange}
+                  placeholder="Ex: 15"
+                />
+                <datalist id="caixas-list">
+                  {caixas.map(c => (
+                    <option key={c} value={c} />
+                  ))}
+                </datalist>
+              </div>
+            )}
             <div className="form-group">
               <label>Preço (R$)</label>
               <input name="preco" type="text" value={form.preco} onChange={handleChange} />
             </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Quantidade</label>
-              <input name="quantidade" type="number" min="0" value={form.quantidade} onChange={handleChange} />
-            </div>
-            <div className="form-group"></div>
           </div>
 
           <div className="form-group">
@@ -378,71 +405,74 @@ function EditarExcluirContent() {
 
             <div className="edit-actions-right">
               <button
-                className={`btn ${discoEditando.ativo !== false ? 'btn-secondary' : 'btn-primary'}`}
-                onClick={() => toggleAtivo(discoEditando)}
+                className={`btn ${itemEditando.ativo !== false ? 'btn-secondary' : 'btn-primary'}`}
+                onClick={() => toggleAtivo(itemEditando)}
               >
-                {discoEditando.ativo !== false ? 'Inativar' : 'Reativar'}
+                {itemEditando.ativo !== false ? 'Inativar' : 'Reativar'}
               </button>
-              <button className="btn btn-danger" onClick={() => setConfirmarExclusao(discoEditando.id)}>
+              <button className="btn btn-danger" onClick={() => setConfirmarExclusao(itemEditando.id)}>
                 Excluir
               </button>
             </div>
           </div>
         </div>
 
-        <div className="edit-form-card" style={{ marginTop: '24px' }}>
-          <h2>Observações do Disco</h2>
-          
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-            <input 
-              style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--bg-card)', color: 'var(--text)' }}
-              placeholder="Digite uma nova observação..." 
-              value={novaObservacao} 
-              onChange={(e) => setNovaObservacao(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && adicionarObservacao()}
-            />
-            <button className="btn btn-primary" onClick={adicionarObservacao} disabled={!novaObservacao.trim()}>
-              Adicionar
-            </button>
-          </div>
-
-          {loadingObs ? (
-            <p style={{ color: 'var(--text-muted)' }}>Carregando observações...</p>
-          ) : observacoes.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)' }}>Nenhuma observação registrada para este disco.</p>
-          ) : (
-            <div className="table-responsive">
-              <table>
-                <thead>
-                  <tr>
-                    <th style={{ width: '180px' }}>Data</th>
-                    <th>Observação</th>
-                    <th style={{ width: '40px' }}></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {observacoes.map(obs => (
-                    <tr key={obs.id}>
-                      <td data-label="Data" style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-                        {new Date(obs.criado_em).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
-                      </td>
-                      <td data-label="Observação">{obs.observacao}</td>
-                      <td data-label="Excluir" style={{ textAlign: 'center' }}>
-                        <button
-                          onClick={() => excluirObservacao(obs.id)}
-                          title="Excluir observação"
-                          style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '16px', padding: '10px' }}
-                        >
-                          ✕
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        {/* Observações — apenas para discos */}
+        {tipo === 'discos' && (
+          <div className="edit-form-card" style={{ marginTop: '24px' }}>
+            <h2>Observações do Disco</h2>
+            
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+              <input 
+                style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border)', borderRadius: '4px', background: 'var(--bg-card)', color: 'var(--text)' }}
+                placeholder="Digite uma nova observação..." 
+                value={novaObservacao} 
+                onChange={(e) => setNovaObservacao(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && adicionarObservacao()}
+              />
+              <button className="btn btn-primary" onClick={adicionarObservacao} disabled={!novaObservacao.trim()}>
+                Adicionar
+              </button>
             </div>
-          )}
-        </div>
+
+            {loadingObs ? (
+              <p style={{ color: 'var(--text-muted)' }}>Carregando observações...</p>
+            ) : observacoes.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)' }}>Nenhuma observação registrada para este disco.</p>
+            ) : (
+              <div className="table-responsive">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style={{ width: '180px' }}>Data</th>
+                      <th>Observação</th>
+                      <th style={{ width: '40px' }}></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {observacoes.map(obs => (
+                      <tr key={obs.id}>
+                        <td data-label="Data" style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
+                          {new Date(obs.criado_em).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+                        </td>
+                        <td data-label="Observação">{obs.observacao}</td>
+                        <td data-label="Excluir" style={{ textAlign: 'center' }}>
+                          <button
+                            onClick={() => excluirObservacao(obs.id)}
+                            title="Excluir observação"
+                            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '16px', padding: '10px' }}
+                          >
+                            ✕
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Modal de confirmação de exclusão */}
         {confirmarExclusao && (
@@ -451,7 +481,7 @@ function EditarExcluirContent() {
               <h3>Confirmar Exclusão</h3>
               <p>
                 Tem certeza que deseja excluir{' '}
-                <strong>{discoEditando.artista} — {discoEditando.titulo}</strong>?
+                <strong>{temArtista && itemEditando.artista ? `${itemEditando.artista} — ` : ''}{itemEditando.titulo}</strong>?
                 <br />
                 Esta ação não pode ser desfeita.
               </p>
@@ -473,7 +503,28 @@ function EditarExcluirContent() {
     <div>
       <div className="page-header">
         <TbTools size={28} color="var(--accent)" />
-        <h1 className="page-title">Editar ou Excluir Disco</h1>
+        <h1 className="page-title">Editar ou Excluir</h1>
+      </div>
+
+      <div className="tabs">
+        <button 
+          className={`tab-btn ${tipo === 'discos' ? 'active' : ''}`}
+          onClick={() => { setTipo('discos'); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }}
+        >
+          <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
+        </button>
+        <button 
+          className={`tab-btn ${tipo === 'dvds' ? 'active' : ''}`}
+          onClick={() => { setTipo('dvds'); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }}
+        >
+          <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
+        </button>
+        <button 
+          className={`tab-btn ${tipo === 'cds' ? 'active' : ''}`}
+          onClick={() => { setTipo('cds'); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }}
+        >
+          <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
+        </button>
       </div>
 
       {mensagem && (
@@ -482,7 +533,7 @@ function EditarExcluirContent() {
 
       <div className="filters">
         <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar disco por artista ou título</label>
+          <label>Buscar {tipoNome.toLowerCase()} por {temArtista ? 'artista ou título' : 'título'}</label>
           <input
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
@@ -509,11 +560,10 @@ function EditarExcluirContent() {
           <table>
             <thead>
               <tr>
-                <th>Caixa</th>
-                <th>Artista</th>
+                {temCaixa && <th>Caixa</th>}
+                {temArtista && <th>Artista</th>}
                 <th>Título</th>
                 <th>Preço</th>
-                <th>Qtd</th>
                 <th>Status</th>
                 <th style={{ width: '80px' }}>Ação</th>
               </tr>
@@ -523,11 +573,10 @@ function EditarExcluirContent() {
                 .filter(d => mostrarInativos || d.ativo !== false)
                 .map((d) => (
                 <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
-                  <td data-label="Caixa">{d.caixa}</td>
-                  <td data-label="Artista">{d.artista}</td>
+                  {temCaixa && <td data-label="Caixa">{d.caixa}</td>}
+                  {temArtista && <td data-label="Artista">{d.artista}</td>}
                   <td data-label="Título">{d.titulo}</td>
-                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2)}</td>
-                  <td data-label="Qtd">{d.quantidade}</td>
+                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                   <td data-label="Status">
                     <span className={`badge ${d.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
                       {d.ativo !== false ? 'Ativo' : 'Inativo'}

@@ -63,6 +63,11 @@ export default function SaidaDeDiscos() {
     if (!selecionado) return;
     setMensagem(null);
 
+    if (!qtdSaida || qtdSaida < 1 || isNaN(qtdSaida)) {
+      setMensagem({ tipo: 'error', texto: 'A quantidade deve ser pelo menos 1.' });
+      return;
+    }
+
     if (qtdSaida > selecionado.quantidade) {
       setMensagem({ tipo: 'error', texto: 'Quantidade maior que o estoque disponível.' });
       return;
@@ -87,7 +92,10 @@ export default function SaidaDeDiscos() {
     else if (activeTab === 'dvds') movData.dvd_id = selecionado.id;
     else if (activeTab === 'cds') movData.cd_id = selecionado.id;
 
-    await supabase.from('movimentacoes').insert(movData);
+    const { error: errMov } = await supabase.from('movimentacoes').insert(movData);
+    if (errMov) {
+      console.error('Erro ao registrar movimentação:', errMov);
+    }
 
     const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD';
     setMensagem({ tipo: 'success', texto: `Saída de ${qtdSaida}x ${tipoNome}(s) registrada com sucesso!` });
@@ -171,7 +179,6 @@ export default function SaidaDeDiscos() {
                 {activeTab !== 'dvds' && <th>Artista</th>}
                 <th>Título</th>
                 <th>Loja</th>
-                <th>Qtd</th>
                 <th>Preço</th>
                 <th>Ação</th>
               </tr>
@@ -183,8 +190,7 @@ export default function SaidaDeDiscos() {
                   {activeTab !== 'dvds' && <td data-label="Artista">{d.artista || '—'}</td>}
                   <td data-label="Título">{d.titulo || '—'}</td>
                   <td data-label="Loja">{d.loja || '—'}</td>
-                  <td data-label="Qtd">{d.quantidade}</td>
-                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2)}</td>
+                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                   <td data-label="Ação">
                     <button
                       className="btn btn-primary"
@@ -208,7 +214,7 @@ export default function SaidaDeDiscos() {
             {activeTab !== 'dvds' && selecionado.artista ? `${selecionado.artista} — ` : ''}
             {selecionado.titulo}
             <br />
-            <strong>Estoque atual:</strong> {selecionado.quantidade} | <strong>Preço unitário:</strong> R$ {Number(selecionado.preco || 0).toFixed(2)}
+            <strong>Estoque atual:</strong> {selecionado.quantidade} | <strong>Preço unitário:</strong> R$ {Number(selecionado.preco || 0).toFixed(2).replace('.', ',')}
           </div>
 
           <div className="form-row" style={{ maxWidth: '500px' }}>
@@ -233,7 +239,7 @@ export default function SaidaDeDiscos() {
           </div>
 
           <div className="summary-box">
-            <strong>Resumo:</strong> {qtdSaida}x a R$ {Number(selecionado.preco || 0).toFixed(2)} = R$ {(qtdSaida * Number(selecionado.preco || 0)).toFixed(2)} | Estoque após saída: {selecionado.quantidade - qtdSaida}
+            <strong>Resumo:</strong> {qtdSaida}x a R$ {Number(selecionado.preco || 0).toFixed(2).replace('.', ',')} = R$ {(qtdSaida * Number(selecionado.preco || 0)).toFixed(2).replace('.', ',')} | Estoque após saída: {selecionado.quantidade - qtdSaida}
           </div>
 
           <button className="btn btn-primary" onClick={confirmarSaida}>Confirmar Saída</button>

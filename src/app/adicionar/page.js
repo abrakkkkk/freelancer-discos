@@ -15,7 +15,6 @@ export default function AdicionarItem() {
     caixa: '',
     loja: '',
     preco: '',
-    quantidade: '1',
     observacao: '',
   };
   const [form, setForm] = useState(initialForm);
@@ -102,11 +101,6 @@ export default function AdicionarItem() {
       return;
     }
 
-    const qtd = parseInt(form.quantidade);
-    if (isNaN(qtd) || qtd < 1) {
-      setMensagem({ tipo: 'error', texto: 'A quantidade deve ser de pelo menos 1.' });
-      return;
-    }
 
     if (activeTab === 'discos' && form.caixa) {
       if (isNaN(Number(form.caixa)) || parseInt(form.caixa) < 0) {
@@ -125,7 +119,7 @@ export default function AdicionarItem() {
       titulo: form.titulo,
       loja: form.loja || null,
       preco: unmaskedPreco,
-      quantidade: parseInt(form.quantidade) || 1,
+      quantidade: 1,
       observacao: form.observacao || null,
     };
 
@@ -150,7 +144,7 @@ export default function AdicionarItem() {
 
     const movData = {
       tipo: 'entrada',
-      quantidade: parseInt(form.quantidade) || 1,
+      quantidade: 1,
       observacao: 'Cadastro inicial',
     };
 
@@ -162,7 +156,10 @@ export default function AdicionarItem() {
       movData.cd_id = data.id;
     }
 
-    await supabase.from('movimentacoes').insert(movData);
+    const { error: errMov } = await supabase.from('movimentacoes').insert(movData);
+    if (errMov) {
+      console.error('Erro ao registrar movimentação:', errMov);
+    }
 
     const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : 'CD';
     setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${(activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : ''}.` });
@@ -297,10 +294,7 @@ export default function AdicionarItem() {
               <option value="Anexo">Anexo</option>
             </select>
           </div>
-          <div className="form-group">
-            <label>Quantidade</label>
-            <input name="quantidade" type="number" min="1" value={form.quantidade} onChange={handleChange} />
-          </div>
+
         </div>
 
         <div className="form-group">

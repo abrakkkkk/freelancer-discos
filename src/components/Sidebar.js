@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PiVinylRecord } from "react-icons/pi";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { MdCurrencyExchange, MdHistory, MdOutlineWbSunny, MdLayers } from "react-icons/md";
+import { MdCurrencyExchange, MdHistory, MdLayers } from "react-icons/md";
 import { TbTools } from "react-icons/tb";
-import { FaMoon } from "react-icons/fa6";
 
 const links = [
   { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={18} /> },
@@ -17,11 +16,8 @@ const links = [
   { href: '/historico', label: 'Histórico', icon: <MdHistory size={18} /> },
 ];
 
-import { useTheme } from '@/components/ThemeProvider';
-
 export default function Sidebar() {
   const pathname = usePathname();
-  const { theme, toggleTheme } = useTheme();
 
   return (
     <aside className="sidebar">

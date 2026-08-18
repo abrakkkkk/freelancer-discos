@@ -73,10 +73,10 @@ export default function Catalogo() {
       setLoading(true);
 
       const columns = activeTab === 'dvds' 
-        ? 'id, titulo, preco, quantidade, ativo, loja, observacao' 
+        ? 'id, titulo, preco, ativo, loja, observacao' 
         : activeTab === 'cds'
-        ? 'id, artista, titulo, preco, quantidade, ativo, loja, observacao'
-        : 'id, caixa, artista, titulo, preco, quantidade, ativo, loja, observacao';
+        ? 'id, artista, titulo, preco, ativo, loja, observacao'
+        : 'id, caixa, artista, titulo, preco, ativo, loja, observacao';
 
       let query = supabase
         .from(activeTab)
@@ -143,10 +143,7 @@ export default function Catalogo() {
     fetchItens();
   }, [pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao, activeTab]);
 
-  // Resetar página e ordenação ao mudar filtros ou abas
-  useEffect(() => {
-    setPagina(1);
-  }, [filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, activeTab]);
+
 
   const totalPaginas = Math.max(1, Math.ceil(total / ITENS_POR_PAGINA));
 
@@ -164,19 +161,19 @@ export default function Catalogo() {
       <div className="tabs">
         <button 
           className={`tab-btn ${activeTab === 'discos' ? 'active' : ''}`}
-          onClick={() => setActiveTab('discos')}
+          onClick={() => { setActiveTab('discos'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
         >
           <PiVinylRecord style={{ marginRight: '6px', verticalAlign: 'middle' }} /> Discos
         </button>
         <button 
           className={`tab-btn ${activeTab === 'dvds' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dvds')}
+          onClick={() => { setActiveTab('dvds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
         >
           <PiFilmStrip style={{ marginRight: '6px', verticalAlign: 'middle' }} /> DVDs
         </button>
         <button 
           className={`tab-btn ${activeTab === 'cds' ? 'active' : ''}`}
-          onClick={() => setActiveTab('cds')}
+          onClick={() => { setActiveTab('cds'); setPagina(1); setOrdenarColuna(null); setOrdenarDirecao(null); }}
         >
           <PiDisc style={{ marginRight: '6px', verticalAlign: 'middle' }} /> CDs
         </button>
@@ -186,7 +183,7 @@ export default function Catalogo() {
         {activeTab === 'discos' && (
           <div className="form-group" style={{ flex: '0 0 220px' }}>
             <label>Filtrar por caixa</label>
-            <select value={filtroCaixa} onChange={(e) => setFiltroCaixa(e.target.value)}>
+            <select value={filtroCaixa} onChange={(e) => { setFiltroCaixa(e.target.value); setPagina(1); }}>
               <option value="">Todas</option>
               {caixas.map(c => (
                 <option key={c} value={c}>Caixa {c}</option>
@@ -196,7 +193,7 @@ export default function Catalogo() {
         )}
         <div className="form-group" style={{ flex: '0 0 160px' }}>
           <label>Filtrar por loja</label>
-          <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
+          <select value={filtroLoja} onChange={(e) => { setFiltroLoja(e.target.value); setPagina(1); }}>
             <option value="">Todas</option>
             <option value="Loja 1">Loja 1</option>
             <option value="Loja 2">Loja 2</option>
@@ -209,7 +206,7 @@ export default function Catalogo() {
             type="text"
             placeholder={activeTab === 'dvds' ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
             value={busca}
-            onChange={(e) => setBusca(e.target.value)}
+            onChange={(e) => { setBusca(e.target.value); setPagina(1); }}
           />
         </div>
         <div className="form-group" style={{ flex: '0 0 auto' }}>
@@ -220,7 +217,7 @@ export default function Catalogo() {
                 type="checkbox"
                 id="mostrarAtivos"
                 checked={mostrarAtivos}
-                onChange={(e) => setMostrarAtivos(e.target.checked)}
+                onChange={(e) => { setMostrarAtivos(e.target.checked); setPagina(1); }}
               />
               <span>Ativos</span>
             </label>
@@ -229,7 +226,7 @@ export default function Catalogo() {
                 type="checkbox"
                 id="mostrarInativos"
                 checked={mostrarInativos}
-                onChange={(e) => setMostrarInativos(e.target.checked)}
+                onChange={(e) => { setMostrarInativos(e.target.checked); setPagina(1); }}
               />
               <span>Inativos</span>
             </label>
@@ -267,7 +264,6 @@ export default function Catalogo() {
                 </th>
                 <th>Loja</th>
                 <th>Preço</th>
-                <th>Qtd</th>
                 <th>Obs.</th>
                 <th>Status</th>
                 <th style={{ width: '40px' }}></th>
@@ -288,8 +284,7 @@ export default function Catalogo() {
                       <span className="text-empty">—</span>
                     )}
                   </td>
-                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2)}</td>
-                  <td data-label="Qtd">{d.quantidade}</td>
+                  <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                   <td data-label="Obs." title={d.observacao || ''}>
                     {d.observacao ? (
                       <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
