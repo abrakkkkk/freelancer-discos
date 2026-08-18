@@ -12,8 +12,6 @@ const links = [
   { href: '/adicionar', label: 'Adicionar', icon: <IoIosAddCircleOutline size={20} /> },
   { href: '/lote', label: 'Lotes', icon: <MdLayers size={20} /> },
   { href: '/saida', label: 'Saída', icon: <MdCurrencyExchange size={20} /> },
-  { href: '/editar', label: 'Editar', icon: <TbTools size={20} /> },
-  { href: '/historico', label: 'Histórico', icon: <MdHistory size={20} /> },
 ];
 
 export default function BottomNav() {

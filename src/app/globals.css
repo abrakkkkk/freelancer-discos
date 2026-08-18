@@ -1035,13 +1035,13 @@ tbody tr:last-child td {
   }
 
   tr {
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
+    border-radius: 8px;
+    padding: 12px;
     background: var(--bg-card);
     position: relative;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* More elevated card look */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Lighter shadow */
     display: flex;
     flex-direction: column;
   }
@@ -1052,9 +1052,9 @@ tbody tr:last-child td {
     align-items: center;
     border: none;
     border-bottom: 1px dashed var(--border-light);
-    padding: 8px 0;
+    padding: 6px 0;
     text-align: right;
-    font-size: 14px;
+    font-size: 13px;
     order: 10; /* Padrão para os que não tem ordem definida */
   }
   
@@ -1075,14 +1075,14 @@ tbody tr:last-child td {
 
   /* Título como cabeçalho do Card */
   td[data-label="Título"] {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--text);
     padding: 0 0 4px 0;
     border-bottom: none;
     display: block;
     text-align: left;
-    padding-right: 40px; /* space for absolute action btn */
+    padding-right: 70px; /* space for absolute action btns */
     order: 1;
   }
   td[data-label="Título"]::before {
@@ -1091,25 +1091,29 @@ tbody tr:last-child td {
 
   /* Artista como subtítulo */
   td[data-label="Artista"] {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--text-muted);
-    padding: 0 0 12px 0;
+    padding: 0 0 10px 0;
     border-bottom: 1px solid var(--border-light);
     display: block;
     text-align: left;
+    padding-right: 70px;
     order: 2;
   }
   td[data-label="Artista"]::before {
     display: none;
   }
 
+  /* Esconder Caixa e Obs para economizar espaço */
+  td[data-label="Caixa"], td[data-label="Obs."] {
+    display: none !important;
+  }
+
   /* Outros itens específicos para garantir a ordem */
-  td[data-label="Caixa"] { order: 3; }
   td[data-label="Loja"] { order: 4; }
   td[data-label="Preço"] { order: 5; }
   td[data-label="Qtd"] { order: 6; }
-  td[data-label="Obs."] { order: 7; }
   td[data-label="Status"] { order: 8; }
 
   /* Ação / Editar no canto superior direito do Card */
@@ -1121,17 +1125,21 @@ tbody tr:last-child td {
     padding: 0;
     margin: 0;
     width: auto;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
   }
 
-  td[data-label="Ação"] a, td[data-label="Excluir"] button {
+  td[data-label="Ação"] a, td[data-label="Ação"] button, td[data-label="Excluir"] button {
     background: var(--bg);
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    font-size: 15px !important;
   }
 
   td[data-label="Ação"]::before, td[data-label="Excluir"]::before {
