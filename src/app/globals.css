@@ -921,6 +921,10 @@ tbody tr:last-child td {
     width: 100%;
   }
 
+  .hide-on-mobile {
+    display: none !important;
+  }
+
   .main-content {
     padding: 16px;
     padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 16px) + 24px);

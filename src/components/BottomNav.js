@@ -14,8 +14,24 @@ const links = [
   { href: '/saida', label: 'Saída', icon: <MdCurrencyExchange size={20} /> },
 ];
 
+import { useState } from 'react';
+import { MdDownload } from "react-icons/md";
+
 export default function BottomNav() {
   const pathname = usePathname();
+  const [exportando, setExportando] = useState(false);
+
+  async function handleExport() {
+    setExportando(true);
+    try {
+      const { exportarEstoqueCompleto } = await import('@/utils/export');
+      await exportarEstoqueCompleto();
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao exportar planilha');
+    }
+    setExportando(false);
+  }
 
   return (
     <nav className="bottom-nav" aria-label="Navegação móvel inferior">
@@ -35,6 +51,17 @@ export default function BottomNav() {
             </Link>
           );
         })}
+        <button 
+          className="bottom-nav-item" 
+          onClick={handleExport}
+          disabled={exportando}
+          style={{ background: 'none', border: 'none', cursor: exportando ? 'wait' : 'pointer', fontFamily: 'inherit' }}
+        >
+          <div className="bottom-nav-icon-wrapper">
+            <MdDownload size={20} />
+          </div>
+          <span className="bottom-nav-label">{exportando ? '...' : 'Exportar'}</span>
+        </button>
       </div>
     </nav>
   );
