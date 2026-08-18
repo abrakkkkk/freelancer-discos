@@ -455,11 +455,49 @@ tbody tr:last-child td {
   gap: 6px;
 }
 
-/* Empty cell indicator */
 .text-empty {
   color: var(--text-muted);
   opacity: 0.5;
   font-style: italic;
+}
+
+/* ========== TABLE ACTION BUTTONS ========== */
+.actions-cell {
+  white-space: nowrap;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  margin: 0 4px;
+}
+
+.edit-btn {
+  color: var(--text-muted);
+}
+.edit-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+[data-theme='light'] .edit-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.delete-btn {
+  color: var(--danger);
+  background: rgba(243, 139, 168, 0.1); /* Faint red background */
+  font-size: 17px;
+}
+.delete-btn:hover {
+  background: rgba(243, 139, 168, 0.2);
 }
 
 /* ========== BADGES ========== */
@@ -1130,16 +1168,15 @@ tbody tr:last-child td {
     justify-content: flex-end;
   }
 
-  td[data-label="Ação"] a, td[data-label="Ação"] button, td[data-label="Excluir"] button {
-    background: var(--bg);
-    border-radius: 50%;
+  /* Remover o fundo var(--bg) genérico para que as classes .edit-btn e .delete-btn prevaleçam */
+  td[data-label="Ação"] .action-btn {
     width: 32px;
     height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    font-size: 15px !important;
+  }
+  
+  td[data-label="Ação"] .edit-btn {
+    background: var(--bg);
   }
 
   td[data-label="Ação"]::before, td[data-label="Excluir"]::before {

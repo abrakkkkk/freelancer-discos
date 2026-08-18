@@ -422,12 +422,14 @@ export default function Catalogo() {
                       {d.ativo ? 'Ativo' : 'Inativo'}
                     </span>
                   </td>
-                  <td data-label="Ação" style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
-                    <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} style={{ fontSize: '16px', padding: '10px' }}><FaEdit color="var(--text-muted)" /></Link>
+                  <td data-label="Ação" className="actions-cell">
+                    <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} className="action-btn edit-btn">
+                      <FaEdit />
+                    </Link>
                     <button 
                       onClick={() => excluirItem(d.id, d.titulo || d.artista || 'Item')} 
                       title={`Excluir ${itemName.slice(0, -1)}`}
-                      style={{ fontSize: '18px', padding: '10px', background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4d' }}
+                      className="action-btn delete-btn"
                     >
                       <MdDelete />
                     </button>
