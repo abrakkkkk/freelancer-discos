@@ -72,6 +72,7 @@ export default function AcoesEmLote() {
       
     if (error) {
       console.error(error);
+      setMensagem({ tipo: 'error', texto: 'Erro ao carregar itens: ' + error.message });
       setItens([]);
     } else {
       setItens(data || []);

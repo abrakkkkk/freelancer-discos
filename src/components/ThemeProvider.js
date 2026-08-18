@@ -8,13 +8,16 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('dark'); // Default to dark since they liked it
 
   useEffect(() => {
-    const saved = localStorage.getItem('app_theme');
-    if (saved) {
-      setTheme(saved);
-      document.documentElement.setAttribute('data-theme', saved);
-    } else {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    const timer = setTimeout(() => {
+      const saved = localStorage.getItem('app_theme');
+      if (saved) {
+        setTheme(saved);
+        document.documentElement.setAttribute('data-theme', saved);
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleTheme = () => {

@@ -68,7 +68,11 @@ export default function SaidaEHistorico() {
   }
 
   useEffect(() => {
-    fetchMovimentacoes();
+    const timer = setTimeout(() => {
+      fetchMovimentacoes();
+    }, 0);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtroTipoMov]);
 
   // Pesquisa Otimizada (Auto-fetch)

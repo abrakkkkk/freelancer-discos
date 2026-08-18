@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { PiVinylRecord } from "react-icons/pi";
 import { IoIosAddCircleOutline } from "react-icons/io";
@@ -19,7 +20,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="logo_free" style={{ textAlign: 'center', marginBottom: '12px' }}>
-          <img src="/logo.jpg" alt="Freelancer Discos" style={{ maxWidth: '100px', borderRadius: '50%' }} />
+          <Image src="/logo.jpg" alt="Freelancer Discos" width={100} height={100} style={{ borderRadius: '50%' }} />
       </div>
       <div className="sidebar-title">Estoque de Discos</div>
       <nav>

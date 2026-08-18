@@ -19,8 +19,10 @@ function EditarExcluirContent() {
   useEffect(() => {
     const urlTipo = searchParams.get('tipo');
     if (urlTipo && urlTipo !== tipo) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTipo(urlTipo);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   // Estado geral
@@ -38,14 +40,6 @@ function EditarExcluirContent() {
   const [observacoes, setObservacoes] = useState([]);
   const [novaObservacao, setNovaObservacao] = useState('');
   const [loadingObs, setLoadingObs] = useState(false);
-
-  // Carregar item direto se vier com ?id= na URL
-  useEffect(() => {
-    const id = searchParams.get('id');
-    if (id) {
-      carregarItemPorId(parseInt(id));
-    }
-  }, [searchParams]);
 
   async function carregarCaixas() {
     const { data: caixaData } = await supabase
@@ -76,6 +70,15 @@ function EditarExcluirContent() {
       abrirEdicao(data);
     }
   }
+
+  // Carregar item direto se vier com ?id= na URL
+  useEffect(() => {
+    const id = searchParams.get('id');
+    if (id) {
+      carregarItemPorId(parseInt(id));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   async function buscar() {
     if (!termo) return;
