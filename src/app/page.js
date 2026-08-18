@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { FaEdit, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 import { PiVinylRecord, PiDisc, PiFilmStrip } from "react-icons/pi";
-import { MdDownload } from "react-icons/md";
+import { MdDownload, MdDelete } from "react-icons/md";
 import * as XLSX from 'xlsx';
 
 const ITENS_POR_PAGINA = 50;
@@ -35,6 +35,7 @@ export default function Catalogo() {
           const { data, error } = await supabase
             .from(table)
             .select(select)
+            .eq('deletado', false)
             .order(orderBy)
             .range(from, from + step - 1);
             
@@ -163,7 +164,8 @@ export default function Catalogo() {
 
       let query = supabase
         .from(activeTab)
-        .select(columns, { count: 'exact' });
+        .select(columns, { count: 'exact' })
+        .eq('deletado', false);
 
       if (mostrarAtivos && !mostrarInativos) {
         query = query.eq('ativo', true);
@@ -227,6 +229,25 @@ export default function Catalogo() {
   }, [pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao, activeTab]);
 
 
+  async function excluirItem(id, titulo) {
+    if (!confirm(`Tem certeza que deseja excluir "${titulo}" do catálogo? O item não aparecerá mais, mas será mantido nas sugestões de autocompletar e o histórico de saída será preservado.`)) {
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase
+      .from(activeTab)
+      .update({ deletado: true })
+      .eq('id', id);
+
+    if (error) {
+      console.error("Erro ao excluir:", error);
+      alert("Erro ao excluir item.");
+    } else {
+      setItens(itens.filter(i => i.id !== id));
+      setTotal(total - 1);
+    }
+    setLoading(false);
+  }
 
   const totalPaginas = Math.max(1, Math.ceil(total / ITENS_POR_PAGINA));
 
@@ -401,8 +422,15 @@ export default function Catalogo() {
                       {d.ativo ? 'Ativo' : 'Inativo'}
                     </span>
                   </td>
-                  <td data-label="Ação" style={{ textAlign: 'center' }}>
+                  <td data-label="Ação" style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                     <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} style={{ fontSize: '16px', padding: '10px' }}><FaEdit color="var(--text-muted)" /></Link>
+                    <button 
+                      onClick={() => excluirItem(d.id, d.titulo || d.artista || 'Item')} 
+                      title={`Excluir ${itemName.slice(0, -1)}`}
+                      style={{ fontSize: '18px', padding: '10px', background: 'none', border: 'none', cursor: 'pointer', color: '#ff4d4d' }}
+                    >
+                      <MdDelete />
+                    </button>
                   </td>
                 </tr>
               ))}

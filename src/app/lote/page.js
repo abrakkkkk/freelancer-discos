@@ -47,6 +47,7 @@ export default function AcoesEmLote() {
     let query = supabase
       .from(activeTab)
       .select('*')
+      .eq('deletado', false)
       .order('titulo', { ascending: true })
       .limit(3000); // Increased limit to allow larger bulk actions
 
@@ -179,13 +180,13 @@ export default function AcoesEmLote() {
     setLoading(true);
     const { error } = await supabase
       .from(activeTab)
-      .delete()
+      .update({ deletado: true })
       .in('id', selecionados);
       
     if (error) {
       setMensagem({ tipo: 'error', texto: error.message });
     } else {
-      setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) excluídos definitivamente.` });
+      setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) excluídos (ocultados do catálogo).` });
       setConfirmarExclusao(false);
       limparSelecao();
       carregarItens();

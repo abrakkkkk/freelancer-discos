@@ -76,7 +76,7 @@ export default function SaidaEHistorico() {
     async function buscar() {
       setLoadingPesquisa(true);
       setMensagem(null);
-      let query = supabase.from(activeTab).select('*');
+      let query = supabase.from(activeTab).select('*').eq('deletado', false);
 
       if (activeTab === 'discos' && filtroCaixa) {
         query = query.eq('caixa', parseInt(filtroCaixa));
