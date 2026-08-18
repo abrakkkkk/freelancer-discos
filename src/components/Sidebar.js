@@ -12,7 +12,6 @@ const links = [
   { href: '/adicionar', label: 'Adicionar Itens', icon: <IoIosAddCircleOutline size={18} /> },
   { href: '/lote', label: 'Alteração em Lote', icon: <MdLayers size={18} /> },
   { href: '/saida', label: 'Saídas e Histórico', icon: <MdCurrencyExchange size={18} /> },
-  { href: '/editar', label: 'Editar / Excluir', icon: <TbTools size={18} /> },
 ];
 
 export default function Sidebar() {
