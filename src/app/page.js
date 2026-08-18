@@ -236,7 +236,7 @@ export default function Catalogo() {
           }}
         >
           <MdDownload size={18} />
-          {exportando ? 'Gerando...' : 'Exportar Excel'}
+          {exportando ? 'Gerando...' : 'Exportar (.xlsx)'}
         </button>
       </div>
 
