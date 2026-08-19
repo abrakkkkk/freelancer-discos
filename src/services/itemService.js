@@ -46,9 +46,20 @@ export const itemService = {
       query = query.order('titulo');
     }
 
-    // Se houver busca, nós pegamos tudo (até um limite alto) para filtrar no JS ignorando acentos
+    // Se houver busca, aplicamos um pré-filtro no BD usando curingas (_) nas vogais.
+    // Isso evita o problema do limite de 1000/5000 itens não retornar resultados que estão mais no fim do banco.
     if (busca) {
-      query = query.limit(5000); // Limite alto para cobrir resultados, já que limitamos a busca
+      const words = removeAcentos(busca).trim().split(/\s+/);
+      words.forEach(word => {
+        // Substitui vogais por curinga do SQL '_' que representa exatamente 1 caractere
+        const wildcardWord = word.replace(/[aeiou]/g, '_');
+        if (isVideo) {
+          query = query.ilike('titulo', `%${wildcardWord}%`);
+        } else {
+          query = query.or(`titulo.ilike.%${wildcardWord}%,artista.ilike.%${wildcardWord}%`);
+        }
+      });
+      query = query.limit(5000); // Mantemos limite alto para cobrir falsos positivos
     } else {
       // Apply pagination here ONLY IF NO BUSCA
       query = query.range((pagina - 1) * itensPorPagina, pagina * itensPorPagina - 1);
