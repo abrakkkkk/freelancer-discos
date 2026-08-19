@@ -366,10 +366,6 @@ input[type="checkbox"] {
   box-shadow: 0 0 0 2px rgba(197, 48, 48, 0.2);
 }
 
-select option {
-  background: var(--bg-card);
-  color: var(--text);
-}
 
 .form-row {
   display: flex;
