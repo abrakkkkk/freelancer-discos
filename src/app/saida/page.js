@@ -183,6 +183,14 @@ export default function Saida() {
       <div className="hide-on-mobile">{selecionadosChipsBlock}</div>
 
       {resultados.length > 0 && (
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '12px' }}>
+          <button className="btn btn-secondary" onClick={toggleSelecionarTodos} style={{ padding: '6px 12px', fontSize: '13px', minHeight: 'auto' }}>
+            {(resultados.length > 0 && resultados.every(d => selecionados.includes(d.id))) ? 'Desmarcar Todos' : 'Selecionar Todos'}
+          </button>
+        </div>
+      )}
+
+      {resultados.length > 0 && (
         <div className="table-responsive" style={{ maxHeight: '500px', overflowY: 'auto', marginBottom: '24px' }}>
           <table>
             <thead>

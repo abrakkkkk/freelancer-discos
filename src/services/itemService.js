@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { removeAcentos } from '@/utils/stringUtils';
 
 export const itemService = {
   /**
@@ -35,16 +36,7 @@ export const itemService = {
     if (category === 'discos' && filtroCaixa) query = query.eq('caixa', parseInt(filtroCaixa));
     if (filtroLoja) query = query.eq('loja', filtroLoja);
     
-    if (busca) {
-      const words = busca.trim().split(/\s+/);
-      if (isVideo) {
-        words.forEach(word => query = query.ilike('titulo', `%${word}%`));
-      } else {
-        words.forEach(word => query = query.or(`artista.ilike.%${word}%,titulo.ilike.%${word}%`));
-      }
-    }
-
-    // Apply sorting
+    // Apply sorting BEFORE JS filtering
     if (ordenarColuna && ordenarDirecao) {
       const ascending = ordenarDirecao === 'asc';
       query = query.order(ordenarColuna, { ascending, nullsFirst: ascending });
@@ -54,13 +46,44 @@ export const itemService = {
       query = query.order('titulo');
     }
 
-    // Apply pagination
-    query = query.range((pagina - 1) * itensPorPagina, pagina * itensPorPagina - 1);
+    // Se houver busca, nós pegamos tudo (até um limite alto) para filtrar no JS ignorando acentos
+    if (busca) {
+      query = query.limit(5000); // Limite alto para cobrir resultados, já que limitamos a busca
+    } else {
+      // Apply pagination here ONLY IF NO BUSCA
+      query = query.range((pagina - 1) * itensPorPagina, pagina * itensPorPagina - 1);
+    }
 
     const { data, count, error } = await query;
     if (error) throw error;
     
-    return { data, count };
+    let filteredData = data || [];
+    
+    // JS Filtering for accent insensitive search
+    if (busca) {
+      const words = removeAcentos(busca).trim().split(/\s+/);
+      filteredData = filteredData.filter(item => {
+        const itemTitulo = removeAcentos(item.titulo || '');
+        const itemArtista = removeAcentos(item.artista || '');
+        
+        return words.every(word => {
+          if (isVideo) {
+            return itemTitulo.includes(word);
+          } else {
+            return itemTitulo.includes(word) || itemArtista.includes(word);
+          }
+        });
+      });
+    }
+
+    // Apply pagination if JS filtering was used
+    let paginatedData = filteredData;
+    if (busca) {
+       const startIndex = (pagina - 1) * itensPorPagina;
+       paginatedData = filteredData.slice(startIndex, startIndex + itensPorPagina);
+    }
+    
+    return { data: paginatedData, count: busca ? filteredData.length : count };
   },
 
   /**
@@ -110,16 +133,20 @@ export const itemService = {
    */
   async searchSuggestions(category, campo, valor) {
     if (!valor || valor.trim().length < 2) return [];
+    const buscaTratada = removeAcentos(valor).trim();
 
     if (campo === 'artista') {
+      // Fetch 500 latest artist entries and filter client side
       const { data, error } = await supabase
         .from(category)
         .select('artista')
-        .ilike('artista', `%${valor.trim()}%`)
-        .limit(20);
+        .order('id', { ascending: false })
+        .limit(1000);
       
       if (error) throw error;
-      return [...new Set(data.map(d => d.artista).filter(Boolean))];
+      
+      const filtered = data.filter(d => removeAcentos(d.artista).includes(buscaTratada));
+      return [...new Set(filtered.map(d => d.artista).filter(Boolean))].slice(0, 20);
     } 
     
     if (campo === 'titulo') {
@@ -129,15 +156,17 @@ export const itemService = {
       const { data, error } = await supabase
         .from(category)
         .select(colunas)
-        .ilike('titulo', `%${valor.trim()}%`)
         .order('id', { ascending: false })
-        .limit(30);
+        .limit(1000);
 
       if (error) throw error;
       
+      const filtered = data.filter(d => removeAcentos(d.titulo).includes(buscaTratada));
+      
       const unicas = [];
       const seen = new Set();
-      for (const d of data) {
+      for (const d of filtered) {
+        if (unicas.length >= 30) break;
         const key = isVideo ? d.titulo : `${d.artista}-${d.titulo}`;
         if (!seen.has(key)) {
           seen.add(key);

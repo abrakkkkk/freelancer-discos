@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MdLayers } from "react-icons/md";
+import { MdLayers, MdUndo } from "react-icons/md";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
@@ -10,6 +10,7 @@ import { supabase } from '@/lib/supabase';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
+import { removeAcentos } from '@/utils/stringUtils';
 
 export default function AcoesEmLote() {
   useMobileLeaveConfirm();
@@ -30,6 +31,11 @@ export default function AcoesEmLote() {
   const [novaCaixa, setNovaCaixa] = useState('');
   const [lojaDestino, setLojaDestino] = useState('');
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
+  const [confirmarExclusaoNaoSelecionados, setConfirmarExclusaoNaoSelecionados] = useState(false);
+
+  // Histórico para desfazer
+  const [historico, setHistorico] = useState(null);
+  const [confirmarDesfazer, setConfirmarDesfazer] = useState(false);
 
   useEffect(() => {
     carregarItens();
@@ -44,15 +50,25 @@ export default function AcoesEmLote() {
       if (activeTab === CATEGORY_IDS.DISCOS && caixaSelecionada) query = query.eq('caixa', parseInt(caixaSelecionada));
       if (filtroLoja) query = query.eq('loja', filtroLoja);
       
-      if (busca) {
-        const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
-        if (isVideo) query = query.or(`titulo.ilike.%${busca}%`);
-        else query = query.or(`artista.ilike.%${busca}%,titulo.ilike.%${busca}%`);
-      }
-
       const { data, error } = await query;
       if (error) throw error;
-      setItens(data || []);
+
+      let itensFiltrados = data || [];
+
+      if (busca) {
+        const words = removeAcentos(busca).trim().split(/\s+/);
+        const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
+        itensFiltrados = itensFiltrados.filter(item => {
+          const itemTitulo = removeAcentos(item.titulo || '');
+          const itemArtista = removeAcentos(item.artista || '');
+          return words.every(word => {
+            if (isVideo) return itemTitulo.includes(word);
+            return itemTitulo.includes(word) || itemArtista.includes(word);
+          });
+        });
+      }
+
+      setItens(itensFiltrados);
     } catch (err) {
       console.error(err);
       setMensagem({ tipo: 'error', texto: 'Erro ao carregar itens: ' + err.message });
@@ -101,11 +117,18 @@ export default function AcoesEmLote() {
     setSelecionadosData([]);
   };
 
-  const handleBulkAction = async (actionFn, successMsgBuilder) => {
+  const handleBulkAction = async (actionFn, successMsgBuilder, itensAfetados) => {
     setLoading(true);
     try {
+      if (itensAfetados && itensAfetados.length > 0) {
+        setHistorico({
+          itens: JSON.parse(JSON.stringify(itensAfetados)),
+          tab: activeTab
+        });
+      }
+
       await actionFn();
-      setMensagem({ tipo: 'success', texto: successMsgBuilder(selecionados.length) });
+      setMensagem({ tipo: 'success', texto: successMsgBuilder(itensAfetados ? itensAfetados.length : selecionados.length) });
       limparSelecao();
       await carregarItens();
     } catch (err) {
@@ -115,45 +138,93 @@ export default function AcoesEmLote() {
     }
   };
 
-  const moverSelecionados = () => {
-    if (!novaCaixa || isNaN(Number(novaCaixa)) || parseInt(novaCaixa) < 0) {
-      return setMensagem({ tipo: 'error', texto: 'Digite um número válido e positivo para a nova caixa.' });
+  const aplicarMudancas = () => {
+    if (!novaCaixa && !lojaDestino) {
+      return setMensagem({ tipo: 'error', texto: 'Selecione uma loja ou digite uma caixa para aplicar.' });
     }
-    handleBulkAction(
-      () => itemService.bulkUpdate(activeTab, selecionados, { caixa: parseInt(novaCaixa) }),
-      (count) => `${count} item(ns) movidos para a Caixa ${novaCaixa}.`
-    ).then(() => setNovaCaixa(''));
-  };
+    
+    let updateData = {};
+    if (novaCaixa) {
+      if (isNaN(Number(novaCaixa)) || parseInt(novaCaixa) < 0) {
+        return setMensagem({ tipo: 'error', texto: 'Digite um número válido e positivo para a nova caixa.' });
+      }
+      updateData.caixa = parseInt(novaCaixa);
+    }
+    if (lojaDestino) {
+      updateData.loja = lojaDestino;
+    }
 
-  const migrarParaLoja = () => {
-    if (!lojaDestino) return setMensagem({ tipo: 'error', texto: 'Selecione a loja de destino.' });
     handleBulkAction(
-      () => itemService.bulkUpdate(activeTab, selecionados, { loja: lojaDestino }),
-      (count) => `${count} item(ns) migrados para ${lojaDestino}.`
-    ).then(() => setLojaDestino(''));
+      () => itemService.bulkUpdate(activeTab, selecionados, updateData),
+      (count) => `${count} item(ns) atualizado(s) com sucesso.`,
+      selecionadosData
+    ).then(() => {
+      setNovaCaixa('');
+      setLojaDestino('');
+    });
   };
 
   const inativarSelecionados = () => {
     handleBulkAction(
       () => itemService.bulkUpdate(activeTab, selecionados, { ativo: false }),
-      (count) => `${count} item(ns) inativados.`
+      (count) => `${count} item(ns) inativados.`,
+      selecionadosData
     );
   };
 
   const excluirSelecionados = async () => {
+    handleBulkAction(
+      async () => {
+        await itemService.bulkUpdate(activeTab, selecionados, { deletado: true, quantidade: 0 });
+        const movements = selecionadosData.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'exclusao', item.quantidade || 1, 'Exclusão em lote'));
+        await supabase.from('movimentacoes').insert(movements);
+      },
+      (count) => `${count} item(ns) excluídos (ocultados do catálogo).`,
+      selecionadosData
+    ).then(() => setConfirmarExclusao(false));
+  };
+
+  const excluirNaoSelecionados = async () => {
+    const naoSelecionados = itens.filter(d => !selecionados.includes(d.id));
+    if (naoSelecionados.length === 0) return;
+    
+    const ids = naoSelecionados.map(i => i.id);
+    
+    handleBulkAction(
+      async () => {
+        await itemService.bulkUpdate(activeTab, ids, { deletado: true, quantidade: 0 });
+        const movements = naoSelecionados.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'exclusao', item.quantidade || 1, 'Exclusão de não selecionados'));
+        await supabase.from('movimentacoes').insert(movements);
+      },
+      (count) => `${count} item(ns) não selecionados excluídos.`,
+      naoSelecionados
+    ).then(() => setConfirmarExclusaoNaoSelecionados(false));
+  };
+
+  const desfazerUltimaAcao = async () => {
+    if (!historico) return;
     setLoading(true);
     try {
-      await itemService.bulkUpdate(activeTab, selecionados, { deletado: true, quantidade: 0 });
-      
-      const movements = selecionadosData.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'exclusao', item.quantidade || 1, 'Exclusão em lote'));
-      await supabase.from('movimentacoes').insert(movements);
-
-      setMensagem({ tipo: 'success', texto: `${selecionados.length} item(ns) excluídos (ocultados do catálogo).` });
-      setConfirmarExclusao(false);
-      limparSelecao();
+      const promises = historico.itens.map(item => {
+        const updateData = {
+          titulo: item.titulo,
+          preco: item.preco,
+          ativo: item.ativo,
+          deletado: item.deletado,
+          quantidade: item.quantidade,
+          loja: item.loja,
+          caixa: item.caixa,
+          artista: item.artista
+        };
+        return supabase.from(historico.tab).update(updateData).eq('id', item.id);
+      });
+      await Promise.all(promises);
+      setMensagem({ tipo: 'success', texto: 'Última ação desfeita com sucesso.' });
+      setHistorico(null);
+      setConfirmarDesfazer(false);
       await carregarItens();
     } catch (err) {
-      setMensagem({ tipo: 'error', texto: err.message });
+      setMensagem({ tipo: 'error', texto: 'Erro ao desfazer: ' + err.message });
     } finally {
       setLoading(false);
     }
@@ -210,6 +281,14 @@ export default function AcoesEmLote() {
 
       <AlertMessage message={mensagem} />
 
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
+        {historico && (
+          <button className="btn btn-secondary" style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', fontSize: '13px' }} onClick={() => setConfirmarDesfazer(true)}>
+            <MdUndo size={16} /> Desfazer última ação
+          </button>
+        )}
+      </div>
+
       <div className="hide-on-mobile">{selecionadosChipsBlock}</div>
 
       {loading && !itens.length && <p>Carregando...</p>}
@@ -217,9 +296,14 @@ export default function AcoesEmLote() {
 
       {itens.length > 0 && (
         <>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            {busca || caixaSelecionada ? `${itens.filter(d => !selecionados.includes(d.id)).length} resultado(s)` : `Listando ${itens.length} iten(s)`}
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
+              {busca || caixaSelecionada ? `${itens.filter(d => !selecionados.includes(d.id)).length} resultado(s)` : `Listando ${itens.length} iten(s)`}
+            </p>
+            <button className="btn btn-secondary" onClick={toggleSelecionarTodos} style={{ padding: '6px 12px', fontSize: '13px', minHeight: 'auto' }}>
+              {(itens.length > 0 && itens.every(d => selecionados.includes(d.id))) ? 'Desmarcar Todos' : 'Selecionar Todos'}
+            </button>
+          </div>
           <div className="table-responsive" style={{ marginBottom: '16px' }}>
             <table>
               <thead>
@@ -275,18 +359,15 @@ export default function AcoesEmLote() {
               </div>
             </div>
             <div className="bulk-actions-tools" style={{ flexWrap: 'wrap', paddingBottom: '4px', gap: '12px' }}>
-              {activeTab === CATEGORY_IDS.DISCOS && (
-                <div className="bulk-move-group" style={{ borderColor: 'var(--border)', background: 'rgba(255,255,255,0.03)' }}>
-                  <input type="number" placeholder="Nº da Caixa" value={novaCaixa} onChange={(e) => setNovaCaixa(e.target.value)} className="bulk-input" style={{ width: '100px', color: '#fff' }} />
-                  <button className="btn btn-secondary" style={{ background: 'rgba(255,255,255,0.08)', borderLeft: '1px solid var(--border)', padding: '0 16px' }} onClick={moverSelecionados} disabled={loading}>Mover</button>
-                </div>
-              )}
-              <div className="bulk-move-group" style={{ borderColor: 'var(--accent)', background: 'rgba(197, 48, 48, 0.1)' }}>
-                <select className="bulk-input" style={{ width: '120px', color: '#fff' }} value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
-                  <option value="" style={{ color: '#000' }}>Loja destino...</option>
+              <div className="bulk-move-group" style={{ borderColor: 'var(--accent)', background: 'rgba(255,255,255,0.03)', flexWrap: 'nowrap' }}>
+                {activeTab === CATEGORY_IDS.DISCOS && (
+                  <input type="number" placeholder="Caixa" value={novaCaixa} onChange={(e) => setNovaCaixa(e.target.value)} className="bulk-input" style={{ width: '80px', color: '#fff' }} />
+                )}
+                <select className="bulk-input" style={{ width: '120px', color: '#fff', borderLeft: activeTab === CATEGORY_IDS.DISCOS ? '1px solid rgba(255,255,255,0.1)' : 'none' }} value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
+                  <option value="" style={{ color: '#000' }}>Loja...</option>
                   {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: '#000' }}>{opt.label}</option>)}
                 </select>
-                <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px' }} onClick={migrarParaLoja} disabled={loading}>Transferir</button>
+                <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px' }} onClick={aplicarMudancas} disabled={loading}>Aplicar</button>
               </div>
               <div className="hide-on-mobile" style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
               <button className="btn btn-secondary hide-on-mobile" style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }} onClick={inativarSelecionados} disabled={loading}>Inativar</button>
@@ -298,6 +379,35 @@ export default function AcoesEmLote() {
               ) : (
                 <button className="btn btn-danger hide-on-mobile" style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap' }} onClick={() => setConfirmarExclusao(true)} disabled={loading}>Excluir</button>
               )}
+
+              {activeTab === CATEGORY_IDS.DISCOS && caixaSelecionada && (
+                <>
+                  <div className="hide-on-mobile" style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
+                  {confirmarExclusaoNaoSelecionados ? (
+                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                      <button className="btn btn-danger" style={{ whiteSpace: 'nowrap' }} onClick={excluirNaoSelecionados} disabled={loading}>Excluir o Resto</button>
+                      <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', padding: '6px 12px' }} onClick={() => setConfirmarExclusaoNaoSelecionados(false)}>Cancelar</button>
+                    </div>
+                  ) : (
+                    <button className="btn btn-danger" style={{ background: 'var(--danger)', color: '#fff', whiteSpace: 'nowrap' }} onClick={() => setConfirmarExclusaoNaoSelecionados(true)} disabled={loading}>
+                      Apagar não marcados
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmarDesfazer && (
+        <div className="modal-overlay" onClick={() => setConfirmarDesfazer(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Desfazer última ação</h3>
+            <p>Tem certeza que deseja reverter as mudanças nos <strong>{historico?.itens.length}</strong> itens afetados pela sua última ação em lote?</p>
+            <div className="modal-actions">
+              <button className="btn btn-secondary" onClick={() => setConfirmarDesfazer(false)}>Cancelar</button>
+              <button className="btn btn-primary" onClick={desfazerUltimaAcao}>Sim, Reverter</button>
             </div>
           </div>
         </div>
