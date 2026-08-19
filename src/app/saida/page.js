@@ -25,7 +25,6 @@ export default function Saida() {
   const [selecionados, setSelecionados] = useState([]);
   const [selecionadosData, setSelecionadosData] = useState([]);
   
-  const [qtdSaida, setQtdSaida] = useState(1);
   const [observacao, setObservacao] = useState('');
   const [mensagem, setMensagem] = useState(null);
   const [loadingPesquisa, setLoadingPesquisa] = useState(false);
@@ -97,23 +96,14 @@ export default function Saida() {
     if (selecionadosData.length === 0) return;
     setMensagem(null);
 
-    if (!qtdSaida || qtdSaida < 1 || isNaN(qtdSaida)) {
-      return setMensagem({ tipo: 'error', texto: 'A quantidade deve ser pelo menos 1.' });
-    }
-
-    const insufficientStock = selecionadosData.filter(item => qtdSaida > (item.quantidade || 0));
-    if (insufficientStock.length > 0) {
-      return setMensagem({ tipo: 'error', texto: `Quantidade maior que o estoque disponível para: ${insufficientStock.map(i => i.titulo).join(', ')}.` });
-    }
-
     setLoadingPesquisa(true);
     try {
       const updates = selecionadosData.map(item => 
-        supabase.from(activeTab).update({ quantidade: (item.quantidade || 0) - qtdSaida }).eq('id', item.id)
+        supabase.from(activeTab).update({ quantidade: (item.quantidade || 0) - 1 }).eq('id', item.id)
       );
       
       const movements = selecionadosData.map(item => 
-        movimentacaoService.createMovementPayload(activeTab, item.id, 'saida', qtdSaida, observacao)
+        movimentacaoService.createMovementPayload(activeTab, item.id, 'saida', 1, observacao)
       );
 
       const updateResults = await Promise.all(updates);
@@ -125,12 +115,11 @@ export default function Saida() {
       await supabase.from('movimentacoes').insert(movements);
 
       const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
-      setMensagem({ tipo: 'success', texto: `Saída de ${qtdSaida}x ${selecionadosData.length} ${tipoNome}(s) registrada com sucesso!` });
+      setMensagem({ tipo: 'success', texto: `Saída de ${selecionadosData.length} ${tipoNome}(s) registrada com sucesso!` });
       
-      setResultados(resultados.map(r => selecionados.includes(r.id) ? { ...r, quantidade: (r.quantidade || 0) - qtdSaida } : r));
+      setResultados(resultados.map(r => selecionados.includes(r.id) ? { ...r, quantidade: (r.quantidade || 0) - 1 } : r));
       
       limparSelecao();
-      setQtdSaida(1);
       setObservacao('');
     } catch (err) {
       setMensagem({ tipo: 'error', texto: `Erro ao registrar saída: ${err.message}` });
@@ -235,11 +224,7 @@ export default function Saida() {
             </div>
           </div>
           <div className="form-row" style={{ maxWidth: '600px' }}>
-            <div className="form-group">
-              <label>Qtd a retirar (cada)</label>
-              <input type="number" min="1" value={qtdSaida} onChange={(e) => setQtdSaida(parseInt(e.target.value) || 1)} />
-            </div>
-            <div className="form-group">
+            <div className="form-group" style={{ flex: 1 }}>
               <label>Observação (opcional)</label>
               <input value={observacao} onChange={(e) => setObservacao(e.target.value)} placeholder="ex: venda balcão, troca..." />
             </div>
