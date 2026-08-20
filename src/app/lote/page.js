@@ -12,6 +12,7 @@ import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { removeAcentos } from '@/utils/stringUtils';
 import { useUndo } from '@/contexts/UndoContext';
+import SuccessModal from '@/components/SuccessModal';
 
 export default function AcoesEmLote() {
   useMobileLeaveConfirm();
@@ -33,6 +34,7 @@ export default function AcoesEmLote() {
   const [lojaDestino, setLojaDestino] = useState('');
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [confirmarExclusaoNaoSelecionados, setConfirmarExclusaoNaoSelecionados] = useState(false);
+  const [successModalMessage, setSuccessModalMessage] = useState('');
 
   const { registerUndo } = useUndo();
 
@@ -126,7 +128,14 @@ export default function AcoesEmLote() {
       }
 
       await actionFn();
-      setMensagem({ tipo: 'success', texto: successMsgBuilder(itensAfetados ? itensAfetados.length : selecionados.length) });
+      const msg = successMsgBuilder(itensAfetados ? itensAfetados.length : selecionados.length);
+      setMensagem({ tipo: 'success', texto: msg });
+      
+      // Mostrar Modal apenas se a ação for uma exclusão/inativação (quando actionFn é exclusão o modal se sobressai melhor)
+      if (msg.includes('excluídos') || msg.includes('inativados')) {
+        setSuccessModalMessage(msg);
+      }
+      
       limparSelecao();
       await carregarItens();
     } catch (err) {
@@ -250,6 +259,12 @@ export default function AcoesEmLote() {
       </div>
 
       <AlertMessage message={mensagem} />
+
+      <SuccessModal 
+        isOpen={!!successModalMessage} 
+        message={successModalMessage} 
+        onClose={() => setSuccessModalMessage('')} 
+      />
 
       <div className="hide-on-mobile">{selecionadosChipsBlock}</div>
 
