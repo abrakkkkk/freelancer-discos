@@ -54,16 +54,20 @@ export default function AdicionarItem() {
     return null;
   };
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) return;
+    
     setMensagem(null);
-
     const errorMsg = validateForm();
     if (errorMsg) {
       setMensagem({ tipo: 'error', texto: errorMsg });
       return;
     }
 
+    setIsSubmitting(true);
     try {
       // 1. Inserir item
       const insertData = {
@@ -100,6 +104,8 @@ export default function AdicionarItem() {
     } catch (err) {
       console.error(err);
       setMensagem({ tipo: 'error', texto: `Erro: ${err.message}` });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -214,8 +220,8 @@ export default function AdicionarItem() {
         </div>
 
         <div style={{ marginTop: '8px' }}>
-          <button type="submit" className="btn btn-primary" style={{ minWidth: '180px', width: '100%', maxWidth: '320px' }}>
-            Adicionar {activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}
+          <button type="submit" className="btn btn-primary" style={{ minWidth: '180px', width: '100%', maxWidth: '320px', opacity: isSubmitting ? 0.7 : 1 }} disabled={isSubmitting}>
+            {isSubmitting ? 'Adicionando...' : `Adicionar ${activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}`}
           </button>
         </div>
       </form>
