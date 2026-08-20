@@ -126,8 +126,9 @@ export const itemService = {
   async bulkUpdate(category, ids, updateData) {
     if (!ids || ids.length === 0) return;
     
-    // Divide os IDs em pedaços (chunks) de 100 para evitar erro de URL muito longa no PostgREST
-    const chunkSize = 100;
+    // Divide os IDs em pedaços (chunks) menores para evitar erro de URL muito longa no PostgREST
+    // Limite da URL é geralmente 2048 chars. Se o ID for UUID (36 chars), 30 IDs = ~1110 chars.
+    const chunkSize = 30;
     for (let i = 0; i < ids.length; i += chunkSize) {
       const chunk = ids.slice(i, i + chunkSize);
       const { error } = await supabase.from(category).update(updateData).in('id', chunk);
