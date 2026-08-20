@@ -123,12 +123,16 @@ export const itemService = {
     if (error) throw error;
   },
 
-  /**
-   * Bulk updates items by their IDs
-   */
   async bulkUpdate(category, ids, updateData) {
-    const { error } = await supabase.from(category).update(updateData).in('id', ids);
-    if (error) throw error;
+    if (!ids || ids.length === 0) return;
+    
+    // Divide os IDs em pedaços (chunks) de 100 para evitar erro de URL muito longa no PostgREST
+    const chunkSize = 100;
+    for (let i = 0; i < ids.length; i += chunkSize) {
+      const chunk = ids.slice(i, i + chunkSize);
+      const { error } = await supabase.from(category).update(updateData).in('id', chunk);
+      if (error) throw error;
+    }
   },
 
   /**

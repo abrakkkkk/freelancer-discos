@@ -173,7 +173,7 @@ export default function AcoesEmLote() {
   const excluirSelecionados = async () => {
     handleBulkAction(
       async () => {
-        await itemService.bulkUpdate(activeTab, selecionados, { deletado: true, quantidade: 0 });
+        await itemService.bulkUpdate(activeTab, selecionados, { deletado: true });
         const movements = selecionadosData.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'exclusao', item.quantidade || 1, 'Exclusão em lote'));
         await supabase.from('movimentacoes').insert(movements);
       },
@@ -190,7 +190,7 @@ export default function AcoesEmLote() {
     
     handleBulkAction(
       async () => {
-        await itemService.bulkUpdate(activeTab, ids, { deletado: true, quantidade: 0 });
+        await itemService.bulkUpdate(activeTab, ids, { deletado: true });
         const movements = naoSelecionados.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'exclusao', item.quantidade || 1, 'Exclusão de não selecionados'));
         await supabase.from('movimentacoes').insert(movements);
       },
@@ -347,7 +347,7 @@ export default function AcoesEmLote() {
                   <div className="hide-on-mobile" style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
                   {confirmarExclusaoNaoSelecionados ? (
                     <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                      <button className="btn btn-danger" style={{ whiteSpace: 'nowrap' }} onClick={excluirNaoSelecionados} disabled={loading}>Excluir o Resto</button>
+                      <button className="btn btn-danger" style={{ whiteSpace: 'nowrap' }} onClick={excluirNaoSelecionados} disabled={loading}>Confirmar</button>
                       <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', padding: '6px 12px' }} onClick={() => setConfirmarExclusaoNaoSelecionados(false)}>Cancelar</button>
                     </div>
                   ) : (
