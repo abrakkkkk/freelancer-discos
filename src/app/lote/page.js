@@ -23,6 +23,14 @@ export default function AcoesEmLote() {
   const [caixaSelecionada, setCaixaSelecionada] = useState('');
   const [filtroLoja, setFiltroLoja] = useState('');
   const [busca, setBusca] = useState('');
+  const [buscaDebounced, setBuscaDebounced] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setBuscaDebounced(busca);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [busca]);
   
   const [itens, setItens] = useState([]);
   const [selecionados, setSelecionados] = useState([]);
@@ -43,17 +51,32 @@ export default function AcoesEmLote() {
     setMensagem(null);
     
     try {
-      let query = supabase.from(activeTab).select('*').eq('deletado', false).order('titulo', { ascending: true }).limit(3000);
+      let query = supabase.from(activeTab).select('*').eq('deletado', false).order('titulo', { ascending: true });
       if (activeTab === CATEGORY_IDS.DISCOS && caixaSelecionada) query = query.eq('caixa', parseInt(caixaSelecionada));
       if (filtroLoja) query = query.eq('loja', filtroLoja);
+      
+      if (buscaDebounced) {
+        const words = removeAcentos(buscaDebounced).trim().split(/\s+/);
+        const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
+        words.forEach(word => {
+          const wildcardWord = word.replace(/[aeiou]/g, '_');
+          if (isVideo) {
+            query = query.ilike('titulo', `%${wildcardWord}%`);
+          } else {
+            query = query.or(`titulo.ilike.%${wildcardWord}%,artista.ilike.%${wildcardWord}%`);
+          }
+        });
+      }
+
+      query = query.limit(10000);
       
       const { data, error } = await query;
       if (error) throw error;
 
       let itensFiltrados = data || [];
 
-      if (busca) {
-        const words = removeAcentos(busca).trim().split(/\s+/);
+      if (buscaDebounced) {
+        const words = removeAcentos(buscaDebounced).trim().split(/\s+/);
         const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
         itensFiltrados = itensFiltrados.filter(item => {
           const itemTitulo = removeAcentos(item.titulo || '');
@@ -73,7 +96,7 @@ export default function AcoesEmLote() {
     } finally {
       setLoading(false);
     }
-  }, [activeTab, caixaSelecionada, filtroLoja, busca]);
+  }, [activeTab, caixaSelecionada, filtroLoja, buscaDebounced]);
 
   useEffect(() => {
     carregarItens();
