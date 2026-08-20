@@ -2,15 +2,15 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import { TbTools } from "react-icons/tb";
-import { MdUndo } from "react-icons/md";
+import { supabase } from '@/lib/supabase';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
 import { movimentacaoService } from '@/services/movimentacaoService';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
+import { useUndo } from '@/contexts/UndoContext';
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
@@ -24,8 +24,7 @@ function EditarExcluirContent() {
   const [mensagem, setMensagem] = useState(null);
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
 
-  const [historico, setHistorico] = useState(null);
-  const [confirmarDesfazer, setConfirmarDesfazer] = useState(false);
+  const { registerUndo } = useUndo();
 
   const [itemEditando, setItemEditando] = useState(null);
   const [form, setForm] = useState({});
@@ -129,12 +128,16 @@ function EditarExcluirContent() {
     if (temCaixa) updateData.caixa = form.caixa ? parseInt(form.caixa) : null;
 
     try {
-      setHistorico({ item: JSON.parse(JSON.stringify(itemEditando)), tab: tipo });
+      const snapshotAntes = JSON.parse(JSON.stringify(itemEditando));
       await itemService.updateItem(tipo, itemEditando.id, updateData);
       const updatedItem = { ...itemEditando, ...updateData };
       setItemEditando(updatedItem);
       setMensagem({ tipo: 'success', texto: `${tipoNome} atualizado com sucesso!` });
       setResultados(prev => prev.map(d => d.id === itemEditando.id ? updatedItem : d));
+      registerUndo(tipo, [snapshotAntes], () => {
+        carregarItemPorId(itemEditando.id);
+        buscar();
+      });
     } catch (err) {
       setMensagem({ tipo: 'error', texto: err.message });
     }
@@ -143,7 +146,7 @@ function EditarExcluirContent() {
   const excluir = async (id) => {
     try {
       const itemParaExcluir = resultados.find(d => d.id === id) || itemEditando;
-      setHistorico({ item: JSON.parse(JSON.stringify(itemParaExcluir)), tab: tipo });
+      const snapshotAntes = JSON.parse(JSON.stringify(itemParaExcluir));
       
       await itemService.deleteItem(tipo, id);
       
@@ -153,6 +156,12 @@ function EditarExcluirContent() {
       setMensagem({ tipo: 'success', texto: `${tipoNome} excluído.` });
       setConfirmarExclusao(null);
       setResultados(prev => prev.filter(d => d.id !== id));
+      registerUndo(tipo, [snapshotAntes], () => {
+        if (itemEditando && itemEditando.id === id) {
+          carregarItemPorId(id);
+        }
+        buscar();
+      });
     } catch (err) {
       setMensagem({ tipo: 'error', texto: err.message });
     }
@@ -161,54 +170,21 @@ function EditarExcluirContent() {
   const toggleAtivo = async (item) => {
     const novoStatus = !item.ativo;
     try {
-      setHistorico({ item: JSON.parse(JSON.stringify(item)), tab: tipo });
+      const snapshotAntes = JSON.parse(JSON.stringify(item));
       await itemService.updateItem(tipo, item.id, { ativo: novoStatus });
       const updatedItem = { ...item, ativo: novoStatus };
       setItemEditando(updatedItem);
       setMensagem({ tipo: 'success', texto: novoStatus ? `${tipoNome} reativado!` : `${tipoNome} inativado!` });
       setResultados(prev => prev.map(d => d.id === item.id ? updatedItem : d));
+      registerUndo(tipo, [snapshotAntes], () => {
+        carregarItemPorId(item.id);
+        buscar();
+      });
     } catch (err) {
       setMensagem({ tipo: 'error', texto: err.message });
     }
   };
 
-  const desfazerUltimaAcao = async () => {
-    if (!historico) return;
-    try {
-      const { item, tab } = historico;
-      const updateData = {
-        titulo: item.titulo,
-        preco: item.preco,
-        ativo: item.ativo,
-        deletado: item.deletado,
-        quantidade: item.quantidade,
-        loja: item.loja,
-        caixa: item.caixa,
-        artista: item.artista
-      };
-      await supabase.from(tab).update(updateData).eq('id', item.id);
-      
-      if (itemEditando && itemEditando.id === item.id) {
-        setItemEditando(item);
-        if (tela === 'edicao') {
-          setForm({
-            artista: item.artista || '',
-            titulo: item.titulo || '',
-            caixa: item.caixa || '',
-            preco: formatarMoeda(item.preco),
-            loja: item.loja || '',
-          });
-        }
-      }
-      
-      setMensagem({ tipo: 'success', texto: 'Ação desfeita com sucesso.' });
-      setHistorico(null);
-      setConfirmarDesfazer(false);
-      buscar(); // Atualiza a lista
-    } catch (err) {
-      setMensagem({ tipo: 'error', texto: 'Erro ao desfazer: ' + err.message });
-    }
-  };
 
   const getObsField = () => tipo === 'discos' ? 'disco_id' : tipo === 'dvds' ? 'dvd_id' : tipo === 'cds' ? 'cd_id' : 'vhs_id';
 
@@ -251,13 +227,7 @@ function EditarExcluirContent() {
 
         <AlertMessage message={mensagem} />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-          {historico && (
-            <button className="btn btn-secondary" style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', fontSize: '13px' }} onClick={() => setConfirmarDesfazer(true)}>
-              <MdUndo size={16} /> Desfazer alteração
-            </button>
-          )}
-        </div>
+
 
         <div className="edit-info">
           {temArtista && <div className="edit-info-item"><span className="edit-info-label">Artista</span><span className="edit-info-value">{itemEditando.artista || '—'}</span></div>}
@@ -347,18 +317,7 @@ function EditarExcluirContent() {
           </div>
         )}
 
-        {confirmarDesfazer && (
-          <div className="modal-overlay" onClick={() => setConfirmarDesfazer(false)}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Desfazer última ação</h3>
-              <p>Tem certeza que deseja reverter as mudanças feitas em <strong>{historico?.item.titulo}</strong>?</p>
-              <div className="modal-actions">
-                <button className="btn btn-secondary" onClick={() => setConfirmarDesfazer(false)}>Cancelar</button>
-                <button className="btn btn-primary" onClick={desfazerUltimaAcao}>Sim, Reverter</button>
-              </div>
-            </div>
-          </div>
-        )}
+
       </div>
     );
   }
@@ -373,13 +332,7 @@ function EditarExcluirContent() {
       <CategoryTabs activeTab={tipo} onTabChange={(t) => { setTipo(t); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }} />
       <AlertMessage message={mensagem} />
 
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-        {historico && (
-          <button className="btn btn-secondary" style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', fontSize: '13px' }} onClick={() => setConfirmarDesfazer(true)}>
-            <MdUndo size={16} /> Desfazer última exclusão/alteração
-          </button>
-        )}
-      </div>
+
 
       <div className="filters">
         <div className="form-group" style={{ flex: 1 }}>
@@ -423,18 +376,7 @@ function EditarExcluirContent() {
         </div>
       )}
 
-      {confirmarDesfazer && (
-        <div className="modal-overlay" onClick={() => setConfirmarDesfazer(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Desfazer última ação</h3>
-            <p>Tem certeza que deseja reverter as mudanças feitas em <strong>{historico?.item.titulo}</strong>?</p>
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setConfirmarDesfazer(false)}>Cancelar</button>
-              <button className="btn btn-primary" onClick={desfazerUltimaAcao}>Sim, Reverter</button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

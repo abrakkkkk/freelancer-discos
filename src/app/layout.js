@@ -4,6 +4,8 @@ import BottomNav from '@/components/BottomNav';
 import MobileHeader from '@/components/MobileHeader';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import ThemeToggle from '@/components/ThemeToggle';
+import { UndoProvider } from '@/contexts/UndoContext';
+import UndoToast from '@/components/UndoToast';
 import './globals.css';
 
 const inter = Inter({
@@ -31,19 +33,22 @@ export default function RootLayout({ children }) {
     <html lang="pt-BR" className={inter.variable}>
       <body>
         <ThemeProvider>
-          <div className="app-layout">
-            <Sidebar />
-            <div className="main-wrapper">
-              <MobileHeader />
-              <main className="main-content">
-                <div className="desktop-theme-toggle">
-                  <ThemeToggle />
-                </div>
-                {children}
-              </main>
+          <UndoProvider>
+            <div className="app-layout">
+              <Sidebar />
+              <div className="main-wrapper">
+                <MobileHeader />
+                <main className="main-content">
+                  <div className="desktop-theme-toggle">
+                    <ThemeToggle />
+                  </div>
+                  {children}
+                </main>
+              </div>
+              <BottomNav />
+              <UndoToast />
             </div>
-            <BottomNav />
-          </div>
+          </UndoProvider>
         </ThemeProvider>
       </body>
     </html>

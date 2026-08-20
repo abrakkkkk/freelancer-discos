@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { MdHistory } from "react-icons/md";
-import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { movimentacaoService } from '@/services/movimentacaoService';
 
 export default function Movimentacoes() {
-  useMobileLeaveConfirm();
-  
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [filtroTipoMov, setFiltroTipoMov] = useState('');
   const [filtroPeriodo, setFiltroPeriodo] = useState('hoje');

@@ -6,15 +6,18 @@ import { MdDownload } from "react-icons/md";
 import { useCatalog } from '@/hooks/useCatalog';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
+import { movimentacaoService } from '@/services/movimentacaoService';
 import CategoryTabs from '@/components/CategoryTabs';
 import Pagination from '@/components/Pagination';
 import CatalogTable from '@/components/CatalogTable';
 import { PAGINATION, CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
+import { useUndo } from '@/contexts/UndoContext';
 
 export default function Catalogo() {
   const { caixas } = useCaixas();
   const catalog = useCatalog(CATEGORY_IDS.DISCOS);
   const [exportando, setExportando] = useState(false);
+  const { registerUndo } = useUndo();
 
   const getPageIcon = () => {
     switch (catalog.activeTab) {
@@ -44,9 +47,20 @@ export default function Catalogo() {
     }
     
     try {
+      const itemToDelete = catalog.itens.find(i => i.id === id);
       await itemService.deleteItem(catalog.activeTab, id);
+      
+      const movData = movimentacaoService.createMovementPayload(catalog.activeTab, id, 'exclusao', itemToDelete?.quantidade || 1, 'Exclusão do catálogo (Tela principal)');
+      await movimentacaoService.registerMovement(movData);
+
       catalog.setItens(catalog.itens.filter(i => i.id !== id));
       catalog.setTotal(catalog.total - 1);
+      
+      if (itemToDelete) {
+        registerUndo(catalog.activeTab, [itemToDelete], () => {
+          catalog.refresh();
+        });
+      }
     } catch (error) {
       console.error("Erro ao excluir:", error);
       alert("Erro ao excluir item.");

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { MdLayers, MdUndo } from "react-icons/md";
+import { useState, useEffect, useCallback } from 'react';
+import { MdLayers } from "react-icons/md";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
@@ -11,6 +11,7 @@ import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { removeAcentos } from '@/utils/stringUtils';
+import { useUndo } from '@/contexts/UndoContext';
 
 export default function AcoesEmLote() {
   useMobileLeaveConfirm();
@@ -33,15 +34,9 @@ export default function AcoesEmLote() {
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [confirmarExclusaoNaoSelecionados, setConfirmarExclusaoNaoSelecionados] = useState(false);
 
-  // Histórico para desfazer
-  const [historico, setHistorico] = useState(null);
-  const [confirmarDesfazer, setConfirmarDesfazer] = useState(false);
+  const { registerUndo } = useUndo();
 
-  useEffect(() => {
-    carregarItens();
-  }, [caixaSelecionada, filtroLoja, busca, activeTab]);
-
-  const carregarItens = async () => {
+  const carregarItens = useCallback(async () => {
     setLoading(true);
     setMensagem(null);
     
@@ -76,7 +71,11 @@ export default function AcoesEmLote() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, caixaSelecionada, filtroLoja, busca]);
+
+  useEffect(() => {
+    carregarItens();
+  }, [carregarItens]);
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -121,9 +120,8 @@ export default function AcoesEmLote() {
     setLoading(true);
     try {
       if (itensAfetados && itensAfetados.length > 0) {
-        setHistorico({
-          itens: JSON.parse(JSON.stringify(itensAfetados)),
-          tab: activeTab
+        registerUndo(activeTab, itensAfetados, () => {
+          carregarItens();
         });
       }
 
@@ -201,34 +199,6 @@ export default function AcoesEmLote() {
     ).then(() => setConfirmarExclusaoNaoSelecionados(false));
   };
 
-  const desfazerUltimaAcao = async () => {
-    if (!historico) return;
-    setLoading(true);
-    try {
-      const promises = historico.itens.map(item => {
-        const updateData = {
-          titulo: item.titulo,
-          preco: item.preco,
-          ativo: item.ativo,
-          deletado: item.deletado,
-          quantidade: item.quantidade,
-          loja: item.loja,
-          caixa: item.caixa,
-          artista: item.artista
-        };
-        return supabase.from(historico.tab).update(updateData).eq('id', item.id);
-      });
-      await Promise.all(promises);
-      setMensagem({ tipo: 'success', texto: 'Última ação desfeita com sucesso.' });
-      setHistorico(null);
-      setConfirmarDesfazer(false);
-      await carregarItens();
-    } catch (err) {
-      setMensagem({ tipo: 'error', texto: 'Erro ao desfazer: ' + err.message });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const selecionadosChipsBlock = selecionadosData.length > 0 ? (
     <div style={{ marginBottom: '16px', padding: '12px 16px', border: '1px solid var(--accent)', borderRadius: '8px', background: 'rgba(197, 48, 48, 0.05)' }}>
@@ -280,14 +250,6 @@ export default function AcoesEmLote() {
       </div>
 
       <AlertMessage message={mensagem} />
-
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '12px' }}>
-        {historico && (
-          <button className="btn btn-secondary" style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', fontSize: '13px' }} onClick={() => setConfirmarDesfazer(true)}>
-            <MdUndo size={16} /> Desfazer última ação
-          </button>
-        )}
-      </div>
 
       <div className="hide-on-mobile">{selecionadosChipsBlock}</div>
 
@@ -395,19 +357,6 @@ export default function AcoesEmLote() {
                   )}
                 </>
               )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {confirmarDesfazer && (
-        <div className="modal-overlay" onClick={() => setConfirmarDesfazer(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Desfazer última ação</h3>
-            <p>Tem certeza que deseja reverter as mudanças nos <strong>{historico?.itens.length}</strong> itens afetados pela sua última ação em lote?</p>
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setConfirmarDesfazer(false)}>Cancelar</button>
-              <button className="btn btn-primary" onClick={desfazerUltimaAcao}>Sim, Reverter</button>
             </div>
           </div>
         </div>
