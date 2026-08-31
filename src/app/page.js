@@ -169,8 +169,7 @@ export default function CatalogoClone() {
           <h1>Catálogo Completo</h1>
         </div>
 
-        <div className="headerActions">
-
+        <div className="headerActions hide-on-mobile">
           <button 
             onClick={exportarEstoque} 
             disabled={exportando}

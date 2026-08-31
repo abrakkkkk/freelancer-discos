@@ -80,15 +80,15 @@ export default function CatalogTable({
         <tbody>
           {itens.map((d) => (
             <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
-              <td>{getDisplayCaixa(d)}</td>
+              <td data-label="Local">{getDisplayCaixa(d)}</td>
               {!isVideo && (
-                <td className={!d.artista ? "empty-artist" : ""}>
+                <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>
                   {d.artista || <span className="text-empty">—</span>}
                 </td>
               )}
-              <td>{d.titulo || <span className="text-empty">—</span>}</td>
+              <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
               {showLoja && (
-                <td>
+                <td data-label="Loja">
                   {d.loja ? (
                     <span className={d.loja === 'Loja 1' ? "lojaText" : ''} style={d.loja !== 'Loja 1' ? { color: getStoreColor(d.loja) } : {}}>
                       {d.loja}
@@ -98,13 +98,13 @@ export default function CatalogTable({
                   )}
                 </td>
               )}
-              <td>R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
-              <td>
+              <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
+              <td data-label="Status">
                 <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
                   {d.ativo ? 'Ativo' : 'Inativo'}
                 </span>
               </td>
-              <td>
+              <td data-label="Ação">
                 <div className="actionBtnRow">
                   <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} className="iconBtn">
                     <FaEdit size={14} />

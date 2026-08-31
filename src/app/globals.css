@@ -902,7 +902,7 @@ tbody tr:last-child td {
     display: none;
   }
 
-  /* Exibir cabeÃ§alho mÃ³vel */
+  /* Exibir cabeçalho mÃ³vel */
   .mobile-header {
     display: flex;
   }
@@ -996,8 +996,7 @@ tbody tr:last-child td {
     flex: none !important;
   }
 
-  .pageContainer {
-    padding: 12px 16px;
+  .pageContainer { padding: 8px 8px;
   }
 
   .topHeader {
@@ -1008,7 +1007,7 @@ tbody tr:last-child td {
   }
 
   .mainCard, .filterCard {
-    padding: 16px;
+    padding: 10px;
   }
 
   .filter-checkboxes {
@@ -1101,10 +1100,10 @@ tbody tr:last-child td {
   }
 
   tr {
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 12px;
+    padding: 10px;
     background: var(--bg-card);
     position: relative;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Lighter shadow */
@@ -1114,14 +1113,17 @@ tbody tr:last-child td {
 
   td {
     display: flex;
+    min-width: 0;
     justify-content: space-between;
+    gap: 8px;
+    word-break: break-word;
     align-items: center;
     border: none;
     border-bottom: 1px solid var(--border);
-    padding: 6px 0;
+    padding: 4px 0;
     text-align: right;
-    font-size: 13px;
-    order: 10; /* PadrÃ£o para os que nÃ£o tem ordem definida */
+    font-size: 12px;
+    order: 10; /* Padrão para os que nÃ£o tem ordem definida */
   }
   
   td:last-child {
@@ -1139,40 +1141,40 @@ tbody tr:last-child td {
     flex-shrink: 0;
   }
 
-  /* TÃ­tulo como cabeÃ§alho do Card */
-  td[data-label="TÃ­tulo"] {
-    font-size: 15px;
+  /* Título como cabeçalho do Card */
+  td[data-label="Título"] {
+    font-size: 14px;
     font-weight: 700;
     color: var(--text);
     padding: 0 0 2px 0;
     border-bottom: none;
     display: block;
     text-align: left;
-    padding-right: 70px; /* space for absolute action btns */
-    min-height: 36px; /* evita que a Loja encoste nos botÃµes quando nÃ£o houver Artista */
+    padding-right: 40px; /* space for absolute action btns */
+    min-height: 36px; /* evita que a Loja encoste nos botões quando nÃ£o houver Artista */
     order: 1;
   }
-  td[data-label="TÃ­tulo"]::before {
+  td[data-label="Título"]::before {
     display: none;
   }
 
-  /* Artista como subtÃ­tulo */
+  /* Artista como subtítulo */
   td[data-label="Artista"] {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-muted);
     padding: 0 0 8px 0;
     border-bottom: 1px solid var(--border);
     display: block;
     text-align: left;
-    padding-right: 70px;
+    padding-right: 40px;
     order: 2;
   }
   td[data-label="Artista"]::before {
     display: none;
   }
 
-  /* Esconder Obs para economizar espaÃ§o e artistas vazios */
+  /* Esconder Obs para economizar espaço e artistas vazios */
   td[data-label="Obs."], td.empty-artist {
     display: none !important;
   }
@@ -1182,13 +1184,13 @@ tbody tr:last-child td {
   td[data-label="Tipo"] { order: 4; }
   td[data-label="Local"] { order: 5; }
   td[data-label="Loja"] { order: 6; }
-  td[data-label="PreÃ§o"] { order: 7; }
+  td[data-label="Preço"] { order: 7; }
   td[data-label="Qtd"] { order: 8; }
   td[data-label="Status"] { order: 9; }
-  td[data-label="ObservaÃ§Ã£o"] { order: 10; }
+  td[data-label="Observação"] { order: 10; }
 
-  /* AÃ§Ã£o / Editar no canto superior direito do Card */
-  td[data-label="AÃ§Ã£o"], td[data-label="Excluir"] {
+  /* Ação / Editar no canto superior direito do Card */
+  td[data-label="Ação"], td[data-label="Excluir"] {
     position: absolute;
     top: 12px;
     right: 12px;
@@ -1201,18 +1203,18 @@ tbody tr:last-child td {
     justify-content: flex-end;
   }
 
-  /* Remover o fundo var(--bg) genÃ©rico para que as classes .edit-btn e .delete-btn prevaleÃ§am */
-  td[data-label="AÃ§Ã£o"] .action-btn {
+  /* Remover o fundo var(--bg) genérico para que as classes .edit-btn e .delete-btn prevaleçam */
+  td[data-label="Ação"] .action-btn {
     width: 32px;
     height: 32px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
   
-  td[data-label="AÃ§Ã£o"] .edit-btn {
+  td[data-label="Ação"] .edit-btn {
     background: var(--bg);
   }
 
-  td[data-label="AÃ§Ã£o"]::before, td[data-label="Excluir"]::before {
+  td[data-label="Ação"]::before, td[data-label="Excluir"]::before {
     display: none;
   }
 
@@ -1331,7 +1333,7 @@ tbody tr:last-child td {
     min-height: 44px;
   }
 
-  /* PaginaÃ§Ã£o */
+  /* Paginação */
   .pagination {
     gap: 12px;
     padding: 10px 0;
