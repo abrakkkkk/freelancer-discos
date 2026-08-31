@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 import { MdDownload } from "react-icons/md";
 import { useCatalog } from '@/hooks/useCatalog';
@@ -12,12 +12,19 @@ import Pagination from '@/components/Pagination';
 import CatalogTable from '@/components/CatalogTable';
 import { PAGINATION, CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
+import { useStore } from '@/contexts/StoreContext';
 
 export default function Catalogo() {
   const { caixas } = useCaixas();
   const catalog = useCatalog(CATEGORY_IDS.DISCOS);
   const [exportando, setExportando] = useState(false);
   const { registerUndo } = useUndo();
+  const { activeStore } = useStore();
+
+  // Sync global store filter with catalog
+  useEffect(() => {
+    catalog.setFiltroLoja(activeStore);
+  }, [activeStore]);
 
   const getPageIcon = () => {
     switch (catalog.activeTab) {
@@ -32,7 +39,7 @@ export default function Catalogo() {
     setExportando(true);
     try {
       const { exportarEstoqueCompleto } = await import('@/utils/export');
-      await exportarEstoqueCompleto();
+      await exportarEstoqueCompleto(activeStore);
     } catch (err) {
       console.error(err);
       alert('Erro ao exportar planilha');
@@ -42,7 +49,7 @@ export default function Catalogo() {
   };
 
   const excluirItem = async (id, titulo) => {
-    if (!confirm(`Tem certeza que deseja excluir "${titulo}" do catálogo? O item não aparecerá mais, mas será mantido nas sugestões de autocompletar e o histórico de saída será preservado.`)) {
+    if (!confirm(`Tem certeza que deseja registrar a saída de "${titulo}"? O item não aparecerá mais no catálogo, mas o histórico de saída será preservado.`)) {
       return;
     }
     
@@ -50,7 +57,7 @@ export default function Catalogo() {
       const itemToDelete = catalog.itens.find(i => i.id === id);
       await itemService.deleteItem(catalog.activeTab, id);
       
-      const movData = movimentacaoService.createMovementPayload(catalog.activeTab, id, 'exclusao', itemToDelete?.quantidade || 1, 'Exclusão do catálogo (Tela principal)');
+      const movData = movimentacaoService.createMovementPayload(catalog.activeTab, id, 'saida', itemToDelete?.quantidade || 1, 'Saída (Excluído via Catálogo)');
       await movimentacaoService.registerMovement(movData);
 
       catalog.setItens(catalog.itens.filter(i => i.id !== id));
@@ -66,10 +73,12 @@ export default function Catalogo() {
       alert("Erro ao excluir item.");
     }
   };
-
   const totalPaginas = Math.max(1, Math.ceil(catalog.total / PAGINATION.ITEMS_PER_PAGE));
   const itemName = catalog.activeTab === 'discos' ? 'discos' : catalog.activeTab === 'dvds' ? 'DVDs' : catalog.activeTab === 'vhs' ? 'VHS' : 'CDs';
   const isVideo = catalog.activeTab === 'dvds' || catalog.activeTab === 'vhs';
+  
+  const isLoja1Discos = activeStore === 'Loja 1' && catalog.activeTab === CATEGORY_IDS.DISCOS;
+  const localLabel = isLoja1Discos ? 'Caixa' : 'Localização';
 
   return (
     <div>
@@ -100,22 +109,26 @@ export default function Catalogo() {
       </div>
 
       <div className="filters">
-        {catalog.activeTab === CATEGORY_IDS.DISCOS && (
-          <div className="form-group" style={{ flex: '0 0 220px' }}>
-            <label>Filtrar por caixa</label>
-            <select value={catalog.filtroCaixa} onChange={(e) => catalog.setFiltroCaixa(e.target.value)}>
+        <div className="form-group" style={{ flex: '0 0 220px' }}>
+          <label>Filtrar por {localLabel.toLowerCase()}</label>
+          <select value={catalog.filtroCaixa} onChange={(e) => catalog.setFiltroCaixa(e.target.value)}>
+            <option value="">Todas</option>
+            {caixas.map(c => (
+              <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>
+                {c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}
+              </option>
+            ))}
+          </select>
+        </div>
+        {!activeStore && (
+          <div className="form-group" style={{ flex: '0 0 160px' }}>
+            <label>Filtrar por loja</label>
+            <select value={catalog.filtroLoja} onChange={(e) => catalog.setFiltroLoja(e.target.value)}>
               <option value="">Todas</option>
-              {caixas.map(c => <option key={c} value={c}>Caixa {c}</option>)}
+              {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>
         )}
-        <div className="form-group" style={{ flex: '0 0 160px' }}>
-          <label>Filtrar por loja</label>
-          <select value={catalog.filtroLoja} onChange={(e) => catalog.setFiltroLoja(e.target.value)}>
-            <option value="">Todas</option>
-            {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-          </select>
-        </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
           <input
@@ -165,6 +178,8 @@ export default function Catalogo() {
             ordenarDirecao={catalog.ordenarDirecao}
             onSort={catalog.toggleOrdenacao}
             onDelete={excluirItem}
+            showLoja={!activeStore}
+            localLabel={localLabel}
           />
 
           <Pagination 

@@ -11,7 +11,6 @@ const links = [
   { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={20} /> },
   { href: '/adicionar', label: 'Adicionar', icon: <IoIosAddCircleOutline size={20} /> },
   { href: '/lote', label: 'Lotes', icon: <MdLayers size={20} /> },
-  { href: '/saida', label: 'Saída', icon: <MdCurrencyExchange size={20} /> },
   { href: '/movimentacoes', label: 'Histórico', icon: <MdHistory size={20} /> },
 ];
 
@@ -36,7 +35,7 @@ export default function BottomNav() {
 
   const handleNavigation = (e, targetHref) => {
     if (window.innerWidth <= 768 && pathname !== targetHref) {
-      const pagesToConfirm = ['/lote', '/saida', '/adicionar'];
+      const pagesToConfirm = ['/lote', '/adicionar'];
       if (pagesToConfirm.includes(pathname)) {
         const confirmed = window.confirm("Você tem certeza que quer sair dessa página?");
         if (!confirmed) {

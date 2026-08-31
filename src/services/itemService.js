@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase';
 import { removeAcentos } from '@/utils/stringUtils';
+import { caixaService } from '@/services/caixaService';
 
 export const itemService = {
   /**
@@ -19,11 +20,9 @@ export const itemService = {
     
     // Determine columns based on category
     const isVideo = category === 'dvds' || category === 'vhs';
-    const isCd = category === 'cds';
     
-    let columns = 'id, titulo, preco, ativo, loja, observacao';
+    let columns = 'id, titulo, preco, ativo, loja, observacao, caixa';
     if (!isVideo) columns += ', artista';
-    if (category === 'discos') columns += ', caixa';
 
     let query = supabase.from(category).select(columns, { count: 'exact' }).eq('deletado', false);
 
@@ -33,7 +32,7 @@ export const itemService = {
     else if (!mostrarAtivos && !mostrarInativos) return { data: [], count: 0 };
 
     // Apply other filters
-    if (category === 'discos' && filtroCaixa) query = query.eq('caixa', parseInt(filtroCaixa));
+    if (filtroCaixa) query = query.eq('caixa', filtroCaixa);
     if (filtroLoja) query = query.eq('loja', filtroLoja);
     
     // Apply sorting BEFORE JS filtering
@@ -112,6 +111,7 @@ export const itemService = {
   async addItem(category, insertData) {
     const { data, error } = await supabase.from(category).insert(insertData).select('id').single();
     if (error) throw error;
+    caixaService.invalidateCache();
     return data;
   },
 
@@ -121,6 +121,7 @@ export const itemService = {
   async updateItem(category, id, updateData) {
     const { error } = await supabase.from(category).update(updateData).eq('id', id);
     if (error) throw error;
+    caixaService.invalidateCache();
   },
 
   async bulkUpdate(category, ids, updateData) {
@@ -134,6 +135,7 @@ export const itemService = {
       const { error } = await supabase.from(category).update(updateData).in('id', chunk);
       if (error) throw error;
     }
+    caixaService.invalidateCache();
   },
 
   /**
@@ -142,6 +144,7 @@ export const itemService = {
   async deleteItem(category, id) {
     const { error } = await supabase.from(category).update({ deletado: true }).eq('id', id);
     if (error) throw error;
+    caixaService.invalidateCache();
   },
 
   /**

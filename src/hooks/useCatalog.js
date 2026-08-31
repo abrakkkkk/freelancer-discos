@@ -70,7 +70,6 @@ export function useCatalog(initialCategory = 'discos') {
     setOrdenarColuna(null);
     setOrdenarDirecao(null);
     setFiltroCaixa('');
-    setFiltroLoja('');
     setBusca('');
   };
 

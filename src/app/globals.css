@@ -1182,10 +1182,14 @@ tbody tr:last-child td {
   }
 
   /* Outros itens específicos para garantir a ordem */
-  td[data-label="Loja"] { order: 4; }
-  td[data-label="Preço"] { order: 5; }
-  td[data-label="Qtd"] { order: 6; }
-  td[data-label="Status"] { order: 8; }
+  td[data-label="Data"] { order: 3; }
+  td[data-label="Tipo"] { order: 4; }
+  td[data-label="Local"] { order: 5; }
+  td[data-label="Loja"] { order: 6; }
+  td[data-label="Preço"] { order: 7; }
+  td[data-label="Qtd"] { order: 8; }
+  td[data-label="Status"] { order: 9; }
+  td[data-label="Observação"] { order: 10; }
 
   /* Ação / Editar no canto superior direito do Card */
   td[data-label="Ação"], td[data-label="Excluir"] {
@@ -1371,7 +1375,22 @@ tbody tr:last-child td {
     width: 100%;
     min-height: 42px;
   }
+  
+  .mobile-header-title {
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+  
+  .mobile-header-actions select {
+    max-width: 90px !important;
+    font-size: 14px !important; /* Safari will zoom on 14px, but space is limited */
+    padding: 4px;
+  }
 }
+
 
 /* ========== AUTOCOMPLETE DROPDOWN ========== */
 .sugestoes-dropdown {

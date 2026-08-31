@@ -10,6 +10,7 @@ import { movimentacaoService } from '@/services/movimentacaoService';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
+import { useStore } from '@/contexts/StoreContext';
 
 const INITIAL_FORM = {
   artista: '',
@@ -26,20 +27,23 @@ export default function AdicionarItem() {
   const [activeTab, setActiveTab] = useState(CATEGORY_IDS.DISCOS);
   const { caixas } = useCaixas();
   const [mensagem, setMensagem] = useState(null);
+  const { activeStore } = useStore();
+
+  const initialFormWithStore = { ...INITIAL_FORM, loja: activeStore || '' };
 
   const {
     form, setForm, handleChange,
     sugestoesArtista, mostrarSugestoesArtista, setMostrarSugestoesArtista,
     sugestoesTitulo, mostrarSugestoesTitulo, setMostrarSugestoesTitulo,
     selectSuggestion, getUnmaskedPreco
-  } = useItemForm(INITIAL_FORM, activeTab);
+  } = useItemForm(initialFormWithStore, activeTab);
 
   const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setMensagem(null);
-    setForm(INITIAL_FORM);
+    setForm({ ...INITIAL_FORM, loja: activeStore || '' });
     setMostrarSugestoesArtista(false);
     setMostrarSugestoesTitulo(false);
   };
@@ -47,9 +51,7 @@ export default function AdicionarItem() {
   const validateForm = () => {
     if (!isVideo && !form.artista) return 'Preencha o artista.';
     if (!form.titulo.trim()) return 'O Título é obrigatório.';
-    if (activeTab === CATEGORY_IDS.DISCOS && form.caixa) {
-      if (isNaN(Number(form.caixa)) || parseInt(form.caixa) < 0) return 'Número da caixa inválido.';
-    }
+    if (!form.loja) return 'Selecione uma loja.';
     if (getUnmaskedPreco() < 0) return 'O preço não pode ser negativo.';
     return null;
   };
@@ -74,11 +76,11 @@ export default function AdicionarItem() {
         titulo: form.titulo.trim(),
         preco: getUnmaskedPreco(),
         loja: form.loja || null,
-        observacao: form.observacao || null
+        observacao: form.observacao || null,
+        caixa: form.caixa?.trim() || null,
       };
 
       if (!isVideo) insertData.artista = form.artista.trim();
-      if (activeTab === CATEGORY_IDS.DISCOS) insertData.caixa = form.caixa ? parseInt(form.caixa) : null;
 
       const itemInfo = await itemService.addItem(activeTab, insertData);
 
@@ -97,9 +99,9 @@ export default function AdicionarItem() {
 
       // Sucesso
       const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
-      const caixaText = (activeTab === 'discos' && form.caixa) ? ` na Caixa ${form.caixa}` : '';
+      const localText = form.caixa ? ` em "${form.caixa}"` : '';
       
-      setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${caixaText}.` });
+      setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${localText} (${form.loja}).` });
       setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja });
     } catch (err) {
       console.error(err);
@@ -123,17 +125,7 @@ export default function AdicionarItem() {
         <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
           {!isVideo && (
             <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label style={{ marginBottom: 0 }}>Artista</label>
-                <button 
-                  type="button" 
-                  onClick={() => setForm(prev => ({ ...prev, artista: prev.titulo }))}
-                  style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}
-                  title="Copiar título para o campo artista"
-                >
-                  Usar Título
-                </button>
-              </div>
+              <label>Artista</label>
               <input 
                 name="artista" 
                 value={form.artista} 
@@ -153,7 +145,19 @@ export default function AdicionarItem() {
           )}
           
           <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesTitulo ? 60 : 1 }}>
-            <label>Título *</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label style={{ marginBottom: 0 }}>Título *</label>
+              {!isVideo && (
+                <button 
+                  type="button" 
+                  onClick={() => setForm(prev => ({ ...prev, titulo: prev.artista }))}
+                  style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}
+                  title="Copiar artista para o campo título"
+                >
+                  Usar Artista
+                </button>
+              )}
+            </div>
             <input 
               name="titulo" 
               value={form.titulo} 
@@ -175,22 +179,20 @@ export default function AdicionarItem() {
         </div>
 
         <div className="form-row">
-          {activeTab === CATEGORY_IDS.DISCOS && (
-            <div className="form-group">
-              <label>Caixa</label>
-              <input 
-                name="caixa" 
-                type="number" 
-                list="caixas-list"
-                value={form.caixa || ''} 
-                onChange={handleChange}
-                placeholder="Ex: 15"
-              />
-              <datalist id="caixas-list">
-                {caixas.map(c => <option key={c} value={c} />)}
-              </datalist>
-            </div>
-          )}
+          <div className="form-group">
+            <label>{form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? 'Caixa' : 'Localização'} {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}</label>
+            <input 
+              name="caixa" 
+              type="text" 
+              list="caixas-list"
+              value={form.caixa || ''} 
+              onChange={handleChange}
+              placeholder={form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? "Ex: 15" : "Ex: 15, Estante A, Prateleira 3..."}
+            />
+            <datalist id="caixas-list">
+              {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+            </datalist>
+          </div>
           <div className="form-group">
             <label>Preço (R$)</label>
             <input name="preco" type="text" value={form.preco} onChange={handleChange} />
@@ -199,9 +201,9 @@ export default function AdicionarItem() {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Loja (Opcional)</label>
+            <label>Loja *</label>
             <select name="loja" value={form.loja} onChange={handleChange}>
-              <option value="">Nenhuma / Sem Loja</option>
+              <option value="">Selecione uma loja</option>
               {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>

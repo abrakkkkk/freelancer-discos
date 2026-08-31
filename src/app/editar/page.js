@@ -11,10 +11,13 @@ import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
+import { useStore } from '@/contexts/StoreContext';
+import { formatCaixa } from '@/utils/stringUtils';
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
   const { caixas } = useCaixas();
+  const { activeStore } = useStore();
 
   const [tipo, setTipo] = useState(searchParams.get('tipo') || CATEGORY_IDS.DISCOS);
   const [tela, setTela] = useState('busca'); 
@@ -34,7 +37,6 @@ function EditarExcluirContent() {
 
   const tipoNome = tipo === CATEGORY_IDS.DISCOS ? 'Disco' : tipo === CATEGORY_IDS.DVDS ? 'DVD' : tipo === CATEGORY_IDS.VHS ? 'VHS' : 'CD';
   const temArtista = tipo !== CATEGORY_IDS.DVDS && tipo !== CATEGORY_IDS.VHS;
-  const temCaixa = tipo === CATEGORY_IDS.DISCOS;
 
   useEffect(() => {
     const urlTipo = searchParams.get('tipo');
@@ -114,7 +116,6 @@ function EditarExcluirContent() {
 
   const salvar = async () => {
     if (!form.titulo?.trim()) return setMensagem({ tipo: 'error', texto: 'O Título é obrigatório.' });
-    if (temCaixa && form.caixa && (isNaN(Number(form.caixa)) || parseInt(form.caixa) < 0)) return setMensagem({ tipo: 'error', texto: 'Número da caixa inválido.' });
     
     const unmaskedPreco = form.preco ? parseFloat(String(form.preco).replace(/\./g, '').replace(',', '.')) : 0;
     if (unmaskedPreco < 0) return setMensagem({ tipo: 'error', texto: 'O preço não pode ser negativo.' });
@@ -123,9 +124,9 @@ function EditarExcluirContent() {
       titulo: form.titulo.trim(),
       preco: unmaskedPreco,
       loja: form.loja || null,
+      caixa: form.caixa?.trim() || null,
     };
     if (temArtista) updateData.artista = form.artista;
-    if (temCaixa) updateData.caixa = form.caixa ? parseInt(form.caixa) : null;
 
     try {
       const snapshotAntes = JSON.parse(JSON.stringify(itemEditando));
@@ -150,10 +151,10 @@ function EditarExcluirContent() {
       
       await itemService.deleteItem(tipo, id);
       
-      const movData = movimentacaoService.createMovementPayload(tipo, id, 'exclusao', itemParaExcluir?.quantidade || 1, 'Exclusão do catálogo');
+      const movData = movimentacaoService.createMovementPayload(tipo, id, 'saida', itemParaExcluir?.quantidade || 1, 'Saída (Excluído via Edição)');
       await movimentacaoService.registerMovement(movData);
 
-      setMensagem({ tipo: 'success', texto: `${tipoNome} excluído.` });
+      setMensagem({ tipo: 'success', texto: `Saída do ${tipoNome} registrada.` });
       setConfirmarExclusao(null);
       setResultados(prev => prev.filter(d => d.id !== id));
       registerUndo(tipo, [snapshotAntes], () => {
@@ -232,7 +233,8 @@ function EditarExcluirContent() {
         <div className="edit-info">
           {temArtista && <div className="edit-info-item"><span className="edit-info-label">Artista</span><span className="edit-info-value">{itemEditando.artista || '—'}</span></div>}
           <div className="edit-info-item"><span className="edit-info-label">Título</span><span className="edit-info-value">{itemEditando.titulo}</span></div>
-          {temCaixa && <div className="edit-info-item"><span className="edit-info-label">Caixa</span><span className="edit-info-value">{itemEditando.caixa || '—'}</span></div>}
+          <div className="edit-info-item"><span className="edit-info-label">{itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</span><span className="edit-info-value">{formatCaixa(itemEditando.caixa, itemEditando.loja)}</span></div>
+          <div className="edit-info-item"><span className="edit-info-label">Loja</span><span className="edit-info-value">{itemEditando.loja || '—'}</span></div>
           <div className="edit-info-item"><span className="edit-info-label">Preço</span><span className="edit-info-value">R$ {Number(itemEditando.preco || 0).toFixed(2).replace('.', ',')}</span></div>
           <div className="edit-info-item"><span className="edit-info-label">Status</span><span className="edit-info-value"><span className={`badge ${itemEditando.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>{itemEditando.ativo !== false ? 'Ativo' : 'Inativo'}</span></span></div>
         </div>
@@ -242,28 +244,31 @@ function EditarExcluirContent() {
           <div className="form-row">
             {temArtista && (
               <div className="form-group">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <label style={{ marginBottom: 0 }}>Artista</label>
-                  <button type="button" onClick={() => setForm(prev => ({ ...prev, artista: prev.titulo }))} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}>Usar Título</button>
-                </div>
+                <label>Artista</label>
                 <input name="artista" value={form.artista} onChange={handleChange} />
               </div>
             )}
-            <div className="form-group"><label>Título *</label><input name="titulo" value={form.titulo} onChange={handleChange} /></div>
+            <div className="form-group">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label style={{ marginBottom: 0 }}>Título *</label>
+                {temArtista && (
+                  <button type="button" onClick={() => setForm(prev => ({ ...prev, titulo: prev.artista }))} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}>Usar Artista</button>
+                )}
+              </div>
+              <input name="titulo" value={form.titulo} onChange={handleChange} />
+            </div>
           </div>
           <div className="form-row">
-            {temCaixa && (
-              <div className="form-group">
-                <label>Caixa</label>
-                <input name="caixa" type="number" list="caixas-list" value={form.caixa || ''} onChange={handleChange} />
-                <datalist id="caixas-list">{caixas.map(c => <option key={c} value={c} />)}</datalist>
-              </div>
-            )}
+            <div className="form-group">
+              <label>{itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</label>
+              <input name="caixa" type="text" list="caixas-list" value={form.caixa || ''} onChange={handleChange} placeholder={itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? "Ex: 15" : "Ex: 15, Estante A..."} />
+              <datalist id="caixas-list">{caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}</datalist>
+            </div>
             <div className="form-group"><label>Preço (R$)</label><input name="preco" type="text" value={form.preco} onChange={handleChange} /></div>
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label>Loja (Opcional)</label>
+              <label>Loja</label>
               <select name="loja" value={form.loja || ''} onChange={handleChange}>
                 <option value="">Nenhuma / Sem Loja</option>
                 {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
@@ -279,7 +284,7 @@ function EditarExcluirContent() {
           </div>
         </div>
 
-        {/* Observações Omitidas por brevidade, mas devem continuar intactas. */}
+        {/* Observações */}
         <div className="edit-form-card" style={{ marginTop: '24px' }}>
           <h2>Observações do {tipoNome}</h2>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
@@ -307,11 +312,11 @@ function EditarExcluirContent() {
         {confirmarExclusao && (
           <div className="modal-overlay" onClick={() => setConfirmarExclusao(null)}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Confirmar Exclusão</h3>
-              <p>Tem certeza que deseja excluir <strong>{temArtista && itemEditando.artista ? `${itemEditando.artista} — ` : ''}{itemEditando.titulo}</strong>?<br/>Esta ação não pode ser desfeita, exceto com o histórico atual.</p>
+              <h3>Confirmar Saída</h3>
+              <p>Tem certeza que deseja registrar a saída de <strong>{temArtista && itemEditando.artista ? `${itemEditando.artista} — ` : ''}{itemEditando.titulo}</strong>?<br/>Esta ação não pode ser desfeita, exceto com o histórico atual.</p>
               <div className="modal-actions">
                 <button className="btn btn-secondary" onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
-                <button className="btn btn-danger" onClick={() => { excluir(confirmarExclusao); voltarParaBusca(); }}>Sim, excluir</button>
+                <button className="btn btn-danger" onClick={() => { excluir(confirmarExclusao); voltarParaBusca(); }}>Sim, registrar saída</button>
               </div>
             </div>
           </div>
@@ -352,9 +357,10 @@ function EditarExcluirContent() {
           <table>
             <thead>
               <tr>
-                {temCaixa && <th>Caixa</th>}
+                <th>Localização</th>
                 {temArtista && <th>Artista</th>}
                 <th>Título</th>
+                <th>Loja</th>
                 <th>Preço</th>
                 <th>Status</th>
                 <th style={{ width: '80px' }}>Ação</th>
@@ -363,9 +369,10 @@ function EditarExcluirContent() {
             <tbody>
               {resultados.filter(d => mostrarInativos || d.ativo !== false).map((d) => (
                 <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
-                  {temCaixa && <td data-label="Caixa">{d.caixa}</td>}
+                  <td data-label="Local">{formatCaixa(d.caixa, d.loja)}</td>
                   {temArtista && <td data-label="Artista">{d.artista}</td>}
                   <td data-label="Título">{d.titulo}</td>
+                  <td data-label="Loja">{d.loja || '—'}</td>
                   <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                   <td data-label="Status"><span className={`badge ${d.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>{d.ativo !== false ? 'Ativo' : 'Inativo'}</span></td>
                   <td data-label="Ação"><button className="btn btn-primary" onClick={() => abrirEdicao(d)}>Editar</button></td>

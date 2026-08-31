@@ -3,15 +3,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import ThemeToggle from './ThemeToggle';
+import { useStore } from '@/contexts/StoreContext';
+import { STORE_OPTIONS } from '@/constants/config';
 
 import { usePathname } from 'next/navigation';
 
 export default function MobileHeader() {
   const pathname = usePathname();
+  const { activeStore, setActiveStore } = useStore();
 
   const handleNavigation = (e) => {
     if (window.innerWidth <= 768 && pathname !== '/') {
-      const pagesToConfirm = ['/lote', '/saida', '/adicionar'];
+      const pagesToConfirm = ['/lote', '/adicionar'];
       if (pagesToConfirm.includes(pathname)) {
         const confirmed = window.confirm("Você tem certeza que quer sair dessa página?");
         if (!confirmed) {
@@ -20,6 +23,8 @@ export default function MobileHeader() {
       }
     }
   };
+
+  const activeLabel = activeStore ? STORE_OPTIONS.find(o => o.value === activeStore)?.label : 'Todas';
 
   return (
     <header className="mobile-header">
@@ -30,13 +35,32 @@ export default function MobileHeader() {
           width={40}
           height={40}
           className="mobile-header-logo"
+          unoptimized={true}
         />
         <div className="mobile-header-text">
           <span className="mobile-header-title">Freelancer Discos</span>
-          <span className="mobile-header-subtitle">Estoque</span>
+          <span className="mobile-header-subtitle">{activeLabel}</span>
         </div>
       </Link>
-      <div className="mobile-header-actions">
+      <div className="mobile-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <select
+          value={activeStore}
+          onChange={(e) => setActiveStore(e.target.value)}
+          style={{
+            padding: '4px 6px',
+            borderRadius: '6px',
+            border: '1px solid var(--border)',
+            background: 'var(--bg-card)',
+            color: 'var(--text)',
+            fontSize: '16px',
+            fontWeight: 600,
+            cursor: 'pointer',
+            maxWidth: '120px',
+          }}
+        >
+          <option value="">Todas</option>
+          {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        </select>
         <ThemeToggle />
       </div>
     </header>

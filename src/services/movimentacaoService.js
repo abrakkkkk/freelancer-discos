@@ -18,20 +18,20 @@ export const movimentacaoService = {
   },
 
   /**
-   * Fetches movement history
+   * Fetches movement history with optional store filter
    */
-  async fetchMovimentacoes(filtroPeriodo, filtroTipoMov) {
+  async fetchMovimentacoes(filtroPeriodo, filtroTipoMov, filtroLoja = '') {
     let query = supabase
       .from('movimentacoes')
       .select(`
         id, tipo, observacao, criado_em,
-        discos ( caixa, artista, titulo ),
-        dvds ( titulo ),
-        cds ( artista, titulo ),
-        vhs ( titulo )
+        discos ( caixa, artista, titulo, loja ),
+        dvds ( titulo, loja, caixa ),
+        cds ( artista, titulo, loja, caixa ),
+        vhs ( titulo, loja, caixa )
       `)
       .order('criado_em', { ascending: false })
-      .limit(100);
+      .limit(200);
 
     if (filtroPeriodo === 'hoje') {
       const hoje = new Date();
@@ -42,7 +42,18 @@ export const movimentacaoService = {
 
     const { data, error } = await query;
     if (error) throw error;
-    return data || [];
+    
+    let results = data || [];
+    
+    // Filter by store on the client side since the join makes server-side filtering complex
+    if (filtroLoja) {
+      results = results.filter(m => {
+        const item = m.discos || m.dvds || m.cds || m.vhs;
+        return item && item.loja === filtroLoja;
+      });
+    }
+    
+    return results;
   },
 
   /**

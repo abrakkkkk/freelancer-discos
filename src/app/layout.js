@@ -5,6 +5,7 @@ import MobileHeader from '@/components/MobileHeader';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import ThemeToggle from '@/components/ThemeToggle';
 import { UndoProvider } from '@/contexts/UndoContext';
+import { StoreProvider } from '@/contexts/StoreContext';
 import UndoToast from '@/components/UndoToast';
 import './globals.css';
 
@@ -34,20 +35,22 @@ export default function RootLayout({ children }) {
       <body>
         <ThemeProvider>
           <UndoProvider>
-            <div className="app-layout">
-              <Sidebar />
-              <div className="main-wrapper">
-                <MobileHeader />
-                <main className="main-content">
-                  <div className="desktop-theme-toggle">
-                    <ThemeToggle />
-                  </div>
-                  {children}
-                </main>
+            <StoreProvider>
+              <div className="app-layout">
+                <Sidebar />
+                <div className="main-wrapper">
+                  <MobileHeader />
+                  <main className="main-content">
+                    <div className="desktop-theme-toggle">
+                      <ThemeToggle />
+                    </div>
+                    {children}
+                  </main>
+                </div>
+                <BottomNav />
+                <UndoToast />
               </div>
-              <BottomNav />
-              <UndoToast />
-            </div>
+            </StoreProvider>
           </UndoProvider>
         </ThemeProvider>
       </body>

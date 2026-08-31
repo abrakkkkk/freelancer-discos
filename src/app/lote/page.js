@@ -9,21 +9,28 @@ import { movimentacaoService } from '@/services/movimentacaoService';
 import { supabase } from '@/lib/supabase';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
-import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
-import { removeAcentos } from '@/utils/stringUtils';
+import { CATEGORY_IDS, STORE_OPTIONS, getStoreColor } from '@/constants/config';
+import { removeAcentos, formatCaixa } from '@/utils/stringUtils';
 import { useUndo } from '@/contexts/UndoContext';
 import SuccessModal from '@/components/SuccessModal';
+import { useStore } from '@/contexts/StoreContext';
 
 export default function AcoesEmLote() {
   useMobileLeaveConfirm();
   
   const [activeTab, setActiveTab] = useState(CATEGORY_IDS.DISCOS);
   const { caixas, loading: loadingCaixas } = useCaixas();
+  const { activeStore } = useStore();
   
   const [caixaSelecionada, setCaixaSelecionada] = useState('');
-  const [filtroLoja, setFiltroLoja] = useState('');
+  const [filtroLoja, setFiltroLoja] = useState(activeStore || '');
   const [busca, setBusca] = useState('');
   const [buscaDebounced, setBuscaDebounced] = useState('');
+
+  // Sync with global store
+  useEffect(() => {
+    setFiltroLoja(activeStore || '');
+  }, [activeStore]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -38,7 +45,7 @@ export default function AcoesEmLote() {
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   
-  const [novaCaixa, setNovaCaixa] = useState('');
+  const [novaLocalizacao, setNovaLocalizacao] = useState('');
   const [lojaDestino, setLojaDestino] = useState('');
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [confirmarExclusaoNaoSelecionados, setConfirmarExclusaoNaoSelecionados] = useState(false);
@@ -52,7 +59,7 @@ export default function AcoesEmLote() {
     
     try {
       let query = supabase.from(activeTab).select('*').eq('deletado', false).order('titulo', { ascending: true });
-      if (activeTab === CATEGORY_IDS.DISCOS && caixaSelecionada) query = query.eq('caixa', parseInt(caixaSelecionada));
+      if (caixaSelecionada) query = query.eq('caixa', caixaSelecionada);
       if (filtroLoja) query = query.eq('loja', filtroLoja);
       
       if (buscaDebounced) {
@@ -106,7 +113,7 @@ export default function AcoesEmLote() {
     setActiveTab(tab);
     setMensagem(null);
     setBusca('');
-    setFiltroLoja('');
+    setCaixaSelecionada('');
     limparSelecao();
   };
 
@@ -154,7 +161,6 @@ export default function AcoesEmLote() {
       const msg = successMsgBuilder(itensAfetados ? itensAfetados.length : selecionados.length);
       setMensagem({ tipo: 'success', texto: msg });
       
-      // Mostrar Modal apenas se a ação for uma exclusão/inativação (quando actionFn é exclusão o modal se sobressai melhor)
       if (msg.includes('excluídos') || msg.includes('inativados')) {
         setSuccessModalMessage(msg);
       }
@@ -169,16 +175,13 @@ export default function AcoesEmLote() {
   };
 
   const aplicarMudancas = () => {
-    if (!novaCaixa && !lojaDestino) {
-      return setMensagem({ tipo: 'error', texto: 'Selecione uma loja ou digite uma caixa para aplicar.' });
+    if (!novaLocalizacao && !lojaDestino) {
+      return setMensagem({ tipo: 'error', texto: 'Selecione uma loja ou digite uma localização para aplicar.' });
     }
     
     let updateData = {};
-    if (novaCaixa) {
-      if (isNaN(Number(novaCaixa)) || parseInt(novaCaixa) < 0) {
-        return setMensagem({ tipo: 'error', texto: 'Digite um número válido e positivo para a nova caixa.' });
-      }
-      updateData.caixa = parseInt(novaCaixa);
+    if (novaLocalizacao) {
+      updateData.caixa = novaLocalizacao.trim();
     }
     if (lojaDestino) {
       updateData.loja = lojaDestino;
@@ -189,7 +192,7 @@ export default function AcoesEmLote() {
       (count) => `${count} item(ns) atualizado(s) com sucesso.`,
       selecionadosData
     ).then(() => {
-      setNovaCaixa('');
+      setNovaLocalizacao('');
       setLojaDestino('');
     });
   };
@@ -231,6 +234,7 @@ export default function AcoesEmLote() {
     ).then(() => setConfirmarExclusaoNaoSelecionados(false));
   };
 
+  const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
 
   const selecionadosChipsBlock = selecionadosData.length > 0 ? (
     <div style={{ marginBottom: '16px', padding: '12px 16px', border: '1px solid var(--accent)', borderRadius: '8px', background: 'rgba(197, 48, 48, 0.05)' }}>
@@ -241,7 +245,7 @@ export default function AcoesEmLote() {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
         {selecionadosData.map(d => (
           <span key={d.id} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '999px', fontSize: '12px', background: 'var(--accent)', color: '#fff', fontWeight: 500, lineHeight: 1.4 }}>
-            {(activeTab !== CATEGORY_IDS.DVDS && activeTab !== CATEGORY_IDS.VHS) && d.artista ? `${d.artista} — ` : ''}{d.titulo}
+            {!isVideo && d.artista ? `${d.artista} — ` : ''}{d.titulo}
             <button onClick={() => toggleSelecionar(d.id)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '0', fontSize: '14px', lineHeight: 1, fontWeight: 700, opacity: 0.8 }} title="Remover da seleção">×</button>
           </span>
         ))}
@@ -259,24 +263,24 @@ export default function AcoesEmLote() {
       <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
       <div className="filters">
-        {activeTab === CATEGORY_IDS.DISCOS && (
-          <div className="form-group" style={{ flex: '0 0 200px' }}>
-            <label>Filtrar por Caixa</label>
-            <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
+        <div className="form-group" style={{ flex: '0 0 200px' }}>
+          <label>Filtrar por Localização</label>
+          <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
+            <option value="">Todas</option>
+            {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa} style={c.loja ? { color: getStoreColor(c.loja), fontWeight: '500' } : {}}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+          </select>
+        </div>
+        {!activeStore && (
+          <div className="form-group" style={{ flex: '0 0 160px' }}>
+            <label>Filtrar por loja</label>
+            <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
               <option value="">Todas</option>
-              {caixas.map(c => <option key={c} value={c}>Caixa {c}</option>)}
+              {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: opt.color, fontWeight: '500' }}>{opt.label}</option>)}
             </select>
           </div>
         )}
-        <div className="form-group" style={{ flex: '0 0 160px' }}>
-          <label>Filtrar por loja</label>
-          <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
-            <option value="">Todas</option>
-            {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-          </select>
-        </div>
         <div className="form-group" style={{ flex: 1, maxWidth: '400px' }}>
-          <label>Buscar por {(activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS) ? 'título' : 'artista ou título'}</label>
+          <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
           <input type="text" placeholder="Ex: Beatles..." value={busca} onChange={(e) => setBusca(e.target.value)} />
         </div>
       </div>
@@ -311,9 +315,10 @@ export default function AcoesEmLote() {
                   <th style={{ width: '40px', textAlign: 'center' }}>
                     <input type="checkbox" checked={itens.length > 0 && itens.every(d => selecionados.includes(d.id))} onChange={toggleSelecionarTodos} style={{ cursor: 'pointer', width: '16px', height: '16px' }} />
                   </th>
-                  {(activeTab !== CATEGORY_IDS.DVDS && activeTab !== CATEGORY_IDS.VHS) && <th>Artista</th>}
+                  <th>Localização</th>
+                  {!isVideo && <th>Artista</th>}
                   <th>Título</th>
-                  <th>Loja</th>
+                  {!activeStore && <th>Loja</th>}
                   <th>Preço</th>
                   <th>Status</th>
                 </tr>
@@ -322,9 +327,10 @@ export default function AcoesEmLote() {
                 {itens.map((d) => (
                   <tr key={d.id} onClick={() => toggleSelecionar(d.id)} style={{ backgroundColor: selecionados.includes(d.id) ? 'rgba(197, 48, 48, 0.08)' : 'transparent', opacity: d.ativo === false ? 0.6 : 1, cursor: 'pointer' }}>
                     <td data-label="Selecionar" style={{ textAlign: 'center' }}><input type="checkbox" checked={selecionados.includes(d.id)} onChange={() => {}} onClick={(e) => { e.stopPropagation(); toggleSelecionar(d.id); }} style={{ cursor: 'pointer', width: '18px', height: '18px', margin: 0 }} /></td>
-                    {(activeTab !== CATEGORY_IDS.DVDS && activeTab !== CATEGORY_IDS.VHS) && <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista}</td>}
+                    <td data-label="Local">{formatCaixa(d.caixa, d.loja)}</td>
+                    {!isVideo && <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista}</td>}
                     <td data-label="Título">{d.titulo}</td>
-                    <td data-label="Loja">{d.loja ? <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{d.loja}</span> : <span className="text-empty">—</span>}</td>
+                    {!activeStore && <td data-label="Loja">{d.loja ? <span style={{ fontWeight: 600, color: getStoreColor(d.loja) }}>{d.loja}</span> : <span className="text-empty">—</span>}</td>}
                     <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                     <td data-label="Status"><span className={`badge ${d.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>{d.ativo !== false ? 'Ativo' : 'Inativo'}</span></td>
                   </tr>
@@ -360,12 +366,13 @@ export default function AcoesEmLote() {
             </div>
             <div className="bulk-actions-tools" style={{ flexWrap: 'wrap', paddingBottom: '4px', gap: '12px' }}>
               <div className="bulk-move-group" style={{ borderColor: 'var(--accent)', background: 'rgba(255,255,255,0.03)', flexWrap: 'nowrap' }}>
-                {activeTab === CATEGORY_IDS.DISCOS && (
-                  <input type="number" placeholder="Caixa" value={novaCaixa} onChange={(e) => setNovaCaixa(e.target.value)} className="bulk-input" style={{ width: '80px', color: '#fff' }} />
-                )}
-                <select className="bulk-input" style={{ width: '120px', color: '#fff', borderLeft: activeTab === CATEGORY_IDS.DISCOS ? '1px solid rgba(255,255,255,0.1)' : 'none' }} value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
+                <input type="text" placeholder="Localização" value={novaLocalizacao} onChange={(e) => setNovaLocalizacao(e.target.value)} className="bulk-input" style={{ width: '110px', color: '#fff' }} list="caixas-list-lote" />
+                <datalist id="caixas-list-lote">
+                  {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+                </datalist>
+                <select className="bulk-input" style={{ width: '120px', color: '#fff', borderLeft: '1px solid rgba(255,255,255,0.1)' }} value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
                   <option value="" style={{ color: '#000' }}>Loja...</option>
-                  {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: '#000' }}>{opt.label}</option>)}
+                  {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: opt.color, fontWeight: '500' }}>{opt.label}</option>)}
                 </select>
                 <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px' }} onClick={aplicarMudancas} disabled={loading}>Aplicar</button>
               </div>
@@ -380,7 +387,7 @@ export default function AcoesEmLote() {
                 <button className="btn btn-danger hide-on-mobile" style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap' }} onClick={() => setConfirmarExclusao(true)} disabled={loading}>Excluir</button>
               )}
 
-              {activeTab === CATEGORY_IDS.DISCOS && caixaSelecionada && (
+              {caixaSelecionada && (
                 <>
                   <div className="hide-on-mobile" style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
                   {confirmarExclusaoNaoSelecionados ? (

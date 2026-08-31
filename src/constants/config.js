@@ -17,10 +17,15 @@ export const CATEGORY_IDS = {
 };
 
 export const STORE_OPTIONS = [
-  { value: 'Loja 1', label: 'Loja 1' },
-  { value: 'Loja 2', label: 'Loja 2' },
-  { value: 'Anexo', label: 'Anexo' },
+  { value: 'Loja 1', label: 'Loja 1', color: '#c53030' },
+  { value: 'Loja 2', label: 'Loja 2', color: '#3182ce' },
+  { value: 'Anexo', label: 'Anexo', color: '#38a169' },
 ];
+
+export const getStoreColor = (storeName) => {
+  const store = STORE_OPTIONS.find(opt => opt.value === storeName);
+  return store ? store.color : 'inherit';
+};
 
 export const STATUS_OPTIONS = {
   ACTIVE: 'ativo',

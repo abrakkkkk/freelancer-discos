@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { FaEdit, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { getStoreColor } from '@/constants/config';
 
 export default function CatalogTable({ 
   itens, 
@@ -8,7 +9,9 @@ export default function CatalogTable({
   ordenarColuna, 
   ordenarDirecao, 
   onSort, 
-  onDelete 
+  onDelete,
+  showLoja = true,
+  localLabel = 'Localização'
 }) {
   const isVideo = activeTab === 'dvds' || activeTab === 'vhs';
   const itemName = activeTab === 'discos' ? 'discos' : activeTab === 'dvds' ? 'DVDs' : activeTab === 'vhs' ? 'VHS' : 'CDs';
@@ -22,6 +25,15 @@ export default function CatalogTable({
       : <FaSortDown size={16} style={{ marginLeft: '6px', color: 'var(--accent)' }} />;
   };
 
+  const getDisplayCaixa = (d) => {
+    if (!d.caixa) return <span className="text-empty">—</span>;
+    const isNumeric = !isNaN(Number(d.caixa)) && String(d.caixa).trim() !== '';
+    if (d.loja === 'Loja 1' && isNumeric) {
+      return `Caixa ${d.caixa}`;
+    }
+    return d.caixa;
+  };
+
   if (itens.length === 0) {
     return <div className="empty-state">Nenhum {itemName.slice(0, -1)} encontrado.</div>;
   }
@@ -31,7 +43,7 @@ export default function CatalogTable({
       <table>
         <thead>
           <tr>
-            {activeTab === 'discos' && <th>Caixa</th>}
+            <th>{localLabel.toUpperCase()}</th>
             {!isVideo && (
               <th className="th-sortable" onClick={() => onSort('artista')}>
                 <div className="th-sortable-content">
@@ -46,7 +58,7 @@ export default function CatalogTable({
                 {renderSortIcon('titulo')}
               </div>
             </th>
-            <th>Loja</th>
+            {showLoja && <th>Loja</th>}
             <th>Preço</th>
             <th>Obs.</th>
             <th>Status</th>
@@ -56,20 +68,22 @@ export default function CatalogTable({
         <tbody>
           {itens.map((d) => (
             <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
-              {activeTab === 'discos' && <td data-label="Caixa">{d.caixa}</td>}
+              <td data-label="Local">{getDisplayCaixa(d)}</td>
               {!isVideo && (
                 <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>
                   {d.artista || <span className="text-empty">—</span>}
                 </td>
               )}
               <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
-              <td data-label="Loja">
-                {d.loja ? (
-                  <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{d.loja}</span>
-                ) : (
-                  <span className="text-empty">—</span>
-                )}
-              </td>
+              {showLoja && (
+                <td data-label="Loja">
+                  {d.loja ? (
+                    <span style={{ fontWeight: 600, color: getStoreColor(d.loja) }}>{d.loja}</span>
+                  ) : (
+                    <span className="text-empty">—</span>
+                  )}
+                </td>
+              )}
               <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
               <td data-label="Obs." title={d.observacao || ''}>
                 {d.observacao ? (
