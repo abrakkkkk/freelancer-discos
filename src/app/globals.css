@@ -1120,7 +1120,7 @@ tbody tr:last-child td {
     align-items: center;
     border: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    padding: 1px 0;
+    padding: 4px 0;
     text-align: right;
     font-size: 12px;
     order: 10; /* Padrão para os que não tem ordem definida */
