@@ -568,9 +568,9 @@ tbody tr:last-child td {
   background: transparent;
   border: 1px solid transparent;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 8px 18px;
+  padding: 6px 14px;
   cursor: pointer;
   border-radius: var(--radius-sm);
   transition: all 0.15s ease;
@@ -578,7 +578,7 @@ tbody tr:last-child td {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 38px;
+  min-height: 32px;
   -webkit-tap-highlight-color: transparent;
 }
 

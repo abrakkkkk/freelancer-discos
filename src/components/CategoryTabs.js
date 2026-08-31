@@ -4,10 +4,10 @@ import { CATEGORIES } from '@/constants/config';
 const getIcon = (iconType) => {
   const style = { marginRight: '6px', verticalAlign: 'middle' };
   switch (iconType) {
-    case 'vinyl': return <PiVinylRecord size={22} style={style} />;
-    case 'film': return <PiFilmStrip size={22} style={style} />;
-    case 'disc': return <PiDisc size={22} style={style} />;
-    case 'cassette': return <PiCassetteTape size={22} style={style} />;
+    case 'vinyl': return <PiVinylRecord size={18} style={style} />;
+    case 'film': return <PiFilmStrip size={18} style={style} />;
+    case 'disc': return <PiDisc size={18} style={style} />;
+    case 'cassette': return <PiCassetteTape size={18} style={style} />;
     default: return null;
   }
 };
