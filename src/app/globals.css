@@ -1103,7 +1103,7 @@ tbody tr:last-child td {
     margin-bottom: 8px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 8px 10px;
+    padding: 6px 10px;
     background: var(--bg-card);
     position: relative;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Lighter shadow */
@@ -1119,8 +1119,8 @@ tbody tr:last-child td {
     word-break: break-word;
     align-items: center;
     border: none;
-    border-bottom: 1px solid var(--border);
-    padding: 2px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 1px 0;
     text-align: right;
     font-size: 12px;
     order: 10; /* Padrão para os que não tem ordem definida */
@@ -1598,7 +1598,13 @@ tbody tr:last-child td {
 }
 
 .styledTable tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: transparent;
+}
+
+@media (min-width: 769px) {
+  .styledTable tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
 }
 
 /* Red Loja */
