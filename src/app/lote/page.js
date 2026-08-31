@@ -267,26 +267,27 @@ export default function AcoesEmLote() {
 
         <div className="filterCard" style={{ marginTop: '24px' }}>
           <div className="filters">
-        <div className="form-group" style={{ flex: '0 0 200px' }}>
-          <label>Filtrar por Localização</label>
-          <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
-            <option value="">Todas</option>
-            {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa} style={c.loja ? { color: getStoreColor(c.loja), fontWeight: '500' } : {}}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
-          </select>
-        </div>
-        {!activeStore && (
-          <div className="form-group" style={{ flex: '0 0 160px' }}>
-            <label>Filtrar por loja</label>
-            <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
-              <option value="">Todas</option>
-              {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: opt.color, fontWeight: '500' }}>{opt.label}</option>)}
-            </select>
-          </div>
-        )}
-        <div className="form-group" style={{ flex: 1, maxWidth: '400px' }}>
-          <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
-          <input type="text" placeholder="Ex: Beatles..." value={busca} onChange={(e) => setBusca(e.target.value)} />
-        </div>
+            <div className="form-group" style={{ flex: '1 1 100%' }}>
+              <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
+              <input type="text" placeholder="Ex: Beatles..." value={busca} onChange={(e) => setBusca(e.target.value)} />
+            </div>
+
+            <div className="form-group" style={{ flex: 1 }}>
+              <label>Filtrar por Localização</label>
+              <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
+                <option value="">Todas</option>
+                {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa} style={c.loja ? { color: getStoreColor(c.loja), fontWeight: '500' } : {}}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+              </select>
+            </div>
+            {!activeStore && (
+              <div className="form-group" style={{ flex: 1 }}>
+                <label>Filtrar por loja</label>
+                <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
+                  <option value="">Todas</option>
+                  {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: opt.color, fontWeight: '500' }}>{opt.label}</option>)}
+                </select>
+              </div>
+            )}
           </div>
         </div>
 

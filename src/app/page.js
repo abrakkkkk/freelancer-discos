@@ -194,6 +194,19 @@ export default function CatalogoClone() {
 
         <div className="filterCard">
           <div className="filtersRow">
+            <div className="filterGroup" style={{ flex: '1 1 100%' }}>
+              <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
+              <div className="searchInputWrapper">
+                <input
+                  type="text"
+                  placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
+                  value={catalog.busca}
+                  onChange={(e) => catalog.setBusca(e.target.value)}
+                />
+                <FiSearch size={18} className="searchIcon" />
+              </div>
+            </div>
+
             <div className="filterGroup">
               <label>Filtrar por caixa</label>
               <select value={catalog.filtroCaixa} onChange={(e) => catalog.setFiltroCaixa(e.target.value)}>
@@ -215,19 +228,6 @@ export default function CatalogoClone() {
                 </select>
               </div>
             )}
-            
-            <div className="filterGroup" style={{ flex: 2 }}>
-              <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
-              <div className="searchInputWrapper">
-                <input
-                  type="text"
-                  placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
-                  value={catalog.busca}
-                  onChange={(e) => catalog.setBusca(e.target.value)}
-                />
-                <FiSearch size={18} className="searchIcon" />
-              </div>
-            </div>
             
             <div className="filterGroup" style={{ flex: '0 0 auto' }}>
               <label>Exibição</label>
