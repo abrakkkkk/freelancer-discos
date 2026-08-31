@@ -219,18 +219,18 @@ function EditarExcluirContent() {
 
   if (tela === 'edicao' && itemEditando) {
     return (
-      <div>
-        <div className="page-header">
-          <button className="btn btn-secondary btn-back" onClick={voltarParaBusca}>← Voltar</button>
-          <TbTools size={28} color="var(--accent)" />
-          <h1 className="page-title">Editando {tipoNome}</h1>
+      <div className="pageContainer">
+        <div className="topHeader">
+          <div className="titleGroup">
+            <button className="btn btn-secondary btn-back" onClick={voltarParaBusca}>← Voltar</button>
+            <TbTools size={28} color="var(--accent)" />
+            <h1 className="page-title">Editando {tipoNome}</h1>
+          </div>
         </div>
 
         <AlertMessage message={mensagem} />
 
-
-
-        <div className="edit-info">
+        <div className="mainCard">
           {temArtista && <div className="edit-info-item"><span className="edit-info-label">Artista</span><span className="edit-info-value">{itemEditando.artista || '—'}</span></div>}
           <div className="edit-info-item"><span className="edit-info-label">Título</span><span className="edit-info-value">{itemEditando.titulo}</span></div>
           <div className="edit-info-item"><span className="edit-info-label">{itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</span><span className="edit-info-value">{formatCaixa(itemEditando.caixa, itemEditando.loja)}</span></div>
@@ -322,34 +322,36 @@ function EditarExcluirContent() {
           </div>
         )}
 
-
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="page-header">
-        <TbTools size={28} color="var(--accent)" />
-        <h1 className="page-title">Editar ou Excluir</h1>
+    <div className="pageContainer">
+      <div className="topHeader">
+        <div className="titleGroup">
+          <TbTools size={28} color="var(--accent)" />
+          <h1 className="page-title">Editar ou Excluir</h1>
+        </div>
       </div>
 
-      <CategoryTabs activeTab={tipo} onTabChange={(t) => { setTipo(t); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }} />
-      <AlertMessage message={mensagem} />
+      <div className="mainCard">
+        <CategoryTabs activeTab={tipo} onTabChange={(t) => { setTipo(t); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }} />
+        <AlertMessage message={mensagem} />
 
-
-
-      <div className="filters">
+        <div className="filterCard" style={{ marginTop: '24px' }}>
+          <div className="filters">
         <div className="form-group" style={{ flex: 1 }}>
           <label>Buscar por {(tipo === CATEGORY_IDS.DVDS || tipo === CATEGORY_IDS.VHS) ? 'título' : 'artista ou título'}</label>
           <input value={termo} onChange={(e) => setTermo(e.target.value)} placeholder="Ex: Beatles..." onKeyDown={(e) => e.key === 'Enter' && buscar()} />
         </div>
-        <button type="button" className="btn btn-primary" onClick={buscar}>Buscar</button>
-      </div>
+          <button type="button" className="btn btn-primary" onClick={buscar}>Buscar</button>
+        </div>
 
-      <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <input type="checkbox" id="mostrarInativos" checked={mostrarInativos} onChange={(e) => setMostrarInativos(e.target.checked)} style={{ width: 'auto' }} />
-        <label htmlFor="mostrarInativos" style={{ fontSize: '13px' }}>Incluir inativos na busca</label>
+        <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <input type="checkbox" id="mostrarInativos" checked={mostrarInativos} onChange={(e) => setMostrarInativos(e.target.checked)} style={{ width: 'auto' }} />
+          <label htmlFor="mostrarInativos" style={{ fontSize: '13px' }}>Incluir inativos na busca</label>
+        </div>
       </div>
 
       {resultados.length > 0 && (
@@ -381,8 +383,8 @@ function EditarExcluirContent() {
             </tbody>
           </table>
         </div>
-      )}
-
+        )}
+      </div>
 
     </div>
   );

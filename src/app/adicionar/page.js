@@ -112,16 +112,19 @@ export default function AdicionarItem() {
   };
 
   return (
-    <div>
-      <div className="page-header">
-        <IoIosAddCircleOutline size={28} color="var(--accent)" />
-        <h1 className="page-title">Adicionar Item</h1>
+    <div className="pageContainer">
+      <div className="topHeader">
+        <div className="titleGroup">
+          <IoIosAddCircleOutline size={28} color="var(--accent)" />
+          <h1 className="page-title">Adicionar Item</h1>
+        </div>
       </div>
       
-      <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
-      <AlertMessage message={mensagem} />
+      <div className="mainCard">
+        <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
+        <AlertMessage message={mensagem} />
 
-      <form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
+        <form onSubmit={handleSubmit} style={{ maxWidth: '600px', marginTop: '24px' }}>
         <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
           {!isVideo && (
             <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
@@ -227,6 +230,7 @@ export default function AdicionarItem() {
           </button>
         </div>
       </form>
+      </div>
     </div>
   );
 }

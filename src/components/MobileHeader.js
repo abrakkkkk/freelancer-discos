@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import ThemeToggle from './ThemeToggle';
+
 import { useStore } from '@/contexts/StoreContext';
 import { STORE_OPTIONS } from '@/constants/config';
 
@@ -61,7 +61,7 @@ export default function MobileHeader() {
           <option value="">Todas</option>
           {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
         </select>
-        <ThemeToggle />
+        
       </div>
     </header>
   );

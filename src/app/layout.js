@@ -2,8 +2,6 @@ import { Inter } from 'next/font/google';
 import Sidebar from '@/components/Sidebar';
 import BottomNav from '@/components/BottomNav';
 import MobileHeader from '@/components/MobileHeader';
-import { ThemeProvider } from '@/components/ThemeProvider';
-import ThemeToggle from '@/components/ThemeToggle';
 import { UndoProvider } from '@/contexts/UndoContext';
 import { StoreProvider } from '@/contexts/StoreContext';
 import UndoToast from '@/components/UndoToast';
@@ -23,36 +21,28 @@ export const viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#09090b' },
-  ],
+  themeColor: '#09090b',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" className={inter.variable}>
+    <html lang="pt-BR" className={inter.variable} data-theme="dark">
       <body>
-        <ThemeProvider>
-          <UndoProvider>
-            <StoreProvider>
-              <div className="app-layout">
-                <Sidebar />
-                <div className="main-wrapper">
-                  <MobileHeader />
-                  <main className="main-content">
-                    <div className="desktop-theme-toggle">
-                      <ThemeToggle />
-                    </div>
-                    {children}
-                  </main>
-                </div>
-                <BottomNav />
-                <UndoToast />
+        <UndoProvider>
+          <StoreProvider>
+            <div className="app-layout">
+              <Sidebar />
+              <div className="main-wrapper">
+                <MobileHeader />
+                <main className="main-content">
+                  {children}
+                </main>
               </div>
-            </StoreProvider>
-          </UndoProvider>
-        </ThemeProvider>
+              <BottomNav />
+              <UndoToast />
+            </div>
+          </StoreProvider>
+        </UndoProvider>
       </body>
     </html>
   );

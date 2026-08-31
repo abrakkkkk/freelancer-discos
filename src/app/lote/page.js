@@ -254,15 +254,19 @@ export default function AcoesEmLote() {
   ) : null;
 
   return (
-    <div>
-      <div className="page-header">
-        <MdLayers size={28} color="var(--accent)" />
-        <h1 className="page-title">Alteração em Lote</h1>
+    <div className="pageContainer">
+      <div className="topHeader">
+        <div className="titleGroup">
+          <MdLayers size={28} color="var(--accent)" />
+          <h1 className="page-title">Alteração em Lote</h1>
+        </div>
       </div>
       
-      <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
+      <div className="mainCard">
+        <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
-      <div className="filters">
+        <div className="filterCard" style={{ marginTop: '24px' }}>
+          <div className="filters">
         <div className="form-group" style={{ flex: '0 0 200px' }}>
           <label>Filtrar por Localização</label>
           <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
@@ -283,9 +287,10 @@ export default function AcoesEmLote() {
           <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
           <input type="text" placeholder="Ex: Beatles..." value={busca} onChange={(e) => setBusca(e.target.value)} />
         </div>
-      </div>
+          </div>
+        </div>
 
-      <AlertMessage message={mensagem} />
+        <AlertMessage message={mensagem} />
 
       <SuccessModal 
         isOpen={!!successModalMessage} 
@@ -405,7 +410,9 @@ export default function AcoesEmLote() {
             </div>
           </div>
         </div>
-      )}
+        )}
+
+      </div>
     </div>
   );
 }

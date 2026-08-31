@@ -3,21 +3,23 @@
 import { useState, useEffect } from 'react';
 import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 import { MdDownload } from "react-icons/md";
+import { FiSearch } from "react-icons/fi";
 import { useCatalog } from '@/hooks/useCatalog';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
 import { movimentacaoService } from '@/services/movimentacaoService';
 import CategoryTabs from '@/components/CategoryTabs';
-import Pagination from '@/components/Pagination';
 import CatalogTable from '@/components/CatalogTable';
 import { PAGINATION, CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 
-export default function Catalogo() {
+
+export default function CatalogoClone() {
   const { caixas } = useCaixas();
   const catalog = useCatalog(CATEGORY_IDS.DISCOS);
   const [exportando, setExportando] = useState(false);
+
   const { registerUndo } = useUndo();
   const { activeStore } = useStore();
 
@@ -28,10 +30,10 @@ export default function Catalogo() {
 
   const getPageIcon = () => {
     switch (catalog.activeTab) {
-      case CATEGORY_IDS.DISCOS: return <PiVinylRecord size={28} color="var(--accent)" />;
-      case CATEGORY_IDS.DVDS: return <PiFilmStrip size={28} color="var(--accent)" />;
-      case CATEGORY_IDS.VHS: return <PiCassetteTape size={28} color="var(--accent)" />;
-      default: return <PiDisc size={28} color="var(--accent)" />;
+      case CATEGORY_IDS.DISCOS: return <PiVinylRecord size={34} color="var(--accent)" />;
+      case CATEGORY_IDS.DVDS: return <PiFilmStrip size={34} color="var(--accent)" />;
+      case CATEGORY_IDS.VHS: return <PiCassetteTape size={34} color="var(--accent)" />;
+      default: return <PiDisc size={34} color="var(--accent)" />;
     }
   };
 
@@ -73,6 +75,7 @@ export default function Catalogo() {
       alert("Erro ao excluir item.");
     }
   };
+  
   const totalPaginas = Math.max(1, Math.ceil(catalog.total / PAGINATION.ITEMS_PER_PAGE));
   const itemName = catalog.activeTab === 'discos' ? 'discos' : catalog.activeTab === 'dvds' ? 'DVDs' : catalog.activeTab === 'vhs' ? 'VHS' : 'CDs';
   const isVideo = catalog.activeTab === 'dvds' || catalog.activeTab === 'vhs';
@@ -80,115 +83,202 @@ export default function Catalogo() {
   const isLoja1Discos = activeStore === 'Loja 1' && catalog.activeTab === CATEGORY_IDS.DISCOS;
   const localLabel = isLoja1Discos ? 'Caixa' : 'Localização';
 
-  return (
-    <div>
-      <div className="page-header">
-        {getPageIcon()}
-        <h1 className="page-title">Catálogo Completo</h1>
-      </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
-        <CategoryTabs activeTab={catalog.activeTab} onTabChange={catalog.changeTab} additionalProps={{ style: { marginBottom: 0 } }} />
-
-        <button 
-          className="btn btn-primary hide-on-mobile"
-          onClick={exportarEstoque} 
-          disabled={exportando}
-          style={{ 
-            display: 'flex', alignItems: 'center', gap: '8px', 
-            padding: '10px 16px', borderRadius: '8px',
-            background: 'var(--accent)', color: '#fff', border: 'none',
-            cursor: exportando ? 'not-allowed' : 'pointer', fontSize: '14px',
-            fontWeight: 600, opacity: exportando ? 0.7 : 1, transition: '0.2s',
-            marginLeft: 'auto'
-          }}
-        >
-          <MdDownload size={18} />
-          {exportando ? 'Gerando...' : 'Exportar (.xlsx)'}
-        </button>
-      </div>
-
-      <div className="filters">
-        <div className="form-group" style={{ flex: '0 0 220px' }}>
-          <label>Filtrar por {localLabel.toLowerCase()}</label>
-          <select value={catalog.filtroCaixa} onChange={(e) => catalog.setFiltroCaixa(e.target.value)}>
-            <option value="">Todas</option>
-            {caixas.map(c => (
-              <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>
-                {c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}
-              </option>
-            ))}
+  // Custom Pagination logic matching the mockup
+  const renderPagination = () => {
+    if (totalPaginas <= 1) return null;
+    
+    let pages = [];
+    // Show a few pages for the mockup look
+    for (let i = 1; i <= Math.min(3, totalPaginas); i++) {
+      pages.push(i);
+    }
+    
+    return (
+      <div className="paginationRow">
+        <div>
+          Itens por página: 
+          <select className="pageItemsSelect" style={{ marginLeft: '8px' }}>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
           </select>
         </div>
-        {!activeStore && (
-          <div className="form-group" style={{ flex: '0 0 160px' }}>
-            <label>Filtrar por loja</label>
-            <select value={catalog.filtroLoja} onChange={(e) => catalog.setFiltroLoja(e.target.value)}>
-              <option value="">Todas</option>
-              {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
-          </div>
-        )}
-        <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
-          <input
-            type="text"
-            placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
-            value={catalog.busca}
-            onChange={(e) => catalog.setBusca(e.target.value)}
-          />
+        
+        <div className="paginationControls">
+          <button 
+            className="pageBtn" 
+            disabled={catalog.pagina === 1}
+            onClick={() => catalog.setPagina(catalog.pagina - 1)}
+          >
+            &lt;
+          </button>
+          
+          {pages.map(p => (
+            <button 
+              key={p} 
+              className={`${"pageBtn"} ${catalog.pagina === p ? "active" : ''}`}
+              onClick={() => catalog.setPagina(p)}
+            >
+              {p}
+            </button>
+          ))}
+          
+          {totalPaginas > 3 && (
+            <>
+              <span style={{ padding: '0 8px' }}>...</span>
+              <button 
+                className={`${"pageBtn"} ${catalog.pagina === totalPaginas ? "active" : ''}`}
+                onClick={() => catalog.setPagina(totalPaginas)}
+              >
+                {totalPaginas}
+              </button>
+            </>
+          )}
+
+          <button 
+            className="pageBtn" 
+            disabled={catalog.pagina === totalPaginas}
+            onClick={() => catalog.setPagina(catalog.pagina + 1)}
+          >
+            &gt;
+          </button>
         </div>
-        <div className="form-group" style={{ flex: '0 0 auto' }}>
-          <label>Exibição</label>
-          <div className="filter-checkboxes">
-            <label className="filter-checkbox-item" htmlFor="mostrarAtivos">
-              <input
-                type="checkbox"
-                id="mostrarAtivos"
-                checked={catalog.mostrarAtivos}
-                onChange={(e) => catalog.setMostrarAtivos(e.target.checked)}
-              />
-              <span>Ativos</span>
-            </label>
-            <label className="filter-checkbox-item" htmlFor="mostrarInativos">
-              <input
-                type="checkbox"
-                id="mostrarInativos"
-                checked={catalog.mostrarInativos}
-                onChange={(e) => catalog.setMostrarInativos(e.target.checked)}
-              />
-              <span>Inativos</span>
-            </label>
-          </div>
+
+        <div>
+          Ir para página:
+          <input 
+            type="number" 
+            min="1" 
+            max={totalPaginas} 
+            defaultValue="1" 
+            className="pageItemsSelect" 
+            style={{ width: '50px', margin: '0 8px' }} 
+          />
+          <button className="pageItemsSelect" style={{ cursor: 'pointer' }}>Ir</button>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="pageContainer">
+      <style dangerouslySetInnerHTML={{ __html: `.desktop-theme-toggle { display: none !important; }` }} />
+      <div className="topHeader">
+        <div className="titleGroup">
+          {getPageIcon()}
+          <h1>Catálogo Completo</h1>
+        </div>
+
+        <div className="headerActions">
+
+          <button 
+            onClick={exportarEstoque} 
+            disabled={exportando}
+            style={{ 
+              display: 'flex', alignItems: 'center', gap: '8px', 
+              padding: '8px 16px', borderRadius: '8px',
+              background: 'var(--accent)', color: '#fff', border: 'none',
+              cursor: exportando ? 'not-allowed' : 'pointer', fontSize: '14px',
+              fontWeight: 600, opacity: exportando ? 0.7 : 1, transition: '0.2s'
+            }}
+          >
+            <MdDownload size={18} />
+            {exportando ? 'Exportando...' : 'Exportar (.xlsx)'}
+          </button>
         </div>
       </div>
 
-      {catalog.loading ? (
-        <p>Carregando...</p>
-      ) : (
-        <>
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-            Mostrando {(catalog.pagina - 1) * PAGINATION.ITEMS_PER_PAGE + 1}–{Math.min(catalog.pagina * PAGINATION.ITEMS_PER_PAGE, catalog.total)} de {catalog.total} {itemName}
-          </p>
-          
-          <CatalogTable 
-            itens={catalog.itens}
-            activeTab={catalog.activeTab}
-            ordenarColuna={catalog.ordenarColuna}
-            ordenarDirecao={catalog.ordenarDirecao}
-            onSort={catalog.toggleOrdenacao}
-            onDelete={excluirItem}
-            showLoja={!activeStore}
-            localLabel={localLabel}
-          />
+      <div className="mainCard">
+        <div className="tabsRow">
+          <CategoryTabs activeTab={catalog.activeTab} onTabChange={catalog.changeTab} additionalProps={{ style: { margin: 0, padding: 0, borderBottom: 'none' } }} />
+        </div>
 
-          <Pagination 
-            pagina={catalog.pagina} 
-            totalPaginas={totalPaginas} 
-            onPageChange={catalog.setPagina} 
-          />
-        </>
-      )}
+        <div className="filterCard">
+          <div className="filtersRow">
+            <div className="filterGroup">
+              <label>Filtrar por caixa</label>
+              <select value={catalog.filtroCaixa} onChange={(e) => catalog.setFiltroCaixa(e.target.value)}>
+                <option value="">Todas</option>
+                {caixas.map(c => (
+                  <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>
+                    {c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {!activeStore && (
+              <div className="filterGroup">
+                <label>Filtrar por loja</label>
+                <select value={catalog.filtroLoja} onChange={(e) => catalog.setFiltroLoja(e.target.value)}>
+                  <option value="">Todas</option>
+                  {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                </select>
+              </div>
+            )}
+            
+            <div className="filterGroup" style={{ flex: 2 }}>
+              <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
+              <div className="searchInputWrapper">
+                <input
+                  type="text"
+                  placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
+                  value={catalog.busca}
+                  onChange={(e) => catalog.setBusca(e.target.value)}
+                />
+                <FiSearch size={18} className="searchIcon" />
+              </div>
+            </div>
+            
+            <div className="filterGroup" style={{ flex: '0 0 auto' }}>
+              <label>Exibição</label>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center', height: '100%' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: 'var(--text)', fontSize: '13px', fontWeight: 500 }}>
+                  <input
+                    type="checkbox"
+                    checked={catalog.mostrarAtivos}
+                    onChange={(e) => catalog.setMostrarAtivos(e.target.checked)}
+                    style={{ accentColor: 'var(--accent)' }}
+                  />
+                  Ativos
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', color: 'var(--text)', fontSize: '13px', fontWeight: 500 }}>
+                  <input
+                    type="checkbox"
+                    checked={catalog.mostrarInativos}
+                    onChange={(e) => catalog.setMostrarInativos(e.target.checked)}
+                    style={{ accentColor: 'var(--accent)' }}
+                  />
+                  Inativos
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {catalog.loading ? (
+          <p style={{ color: 'var(--text-muted)' }}>Carregando...</p>
+        ) : (
+          <>
+            <div className="tableHeader">
+              <span>Mostrando {(catalog.pagina - 1) * PAGINATION.ITEMS_PER_PAGE + 1}–{Math.min(catalog.pagina * PAGINATION.ITEMS_PER_PAGE, catalog.total)} de {catalog.total} {itemName}</span>
+            </div>
+            
+            <CatalogTable 
+              itens={catalog.itens}
+              activeTab={catalog.activeTab}
+              ordenarColuna={catalog.ordenarColuna}
+              ordenarDirecao={catalog.ordenarDirecao}
+              onSort={catalog.toggleOrdenacao}
+              onDelete={excluirItem}
+              showLoja={!activeStore}
+              localLabel={localLabel}
+            />
+
+            {renderPagination()}
+          </>
+        )}
+      </div>
     </div>
   );
 }

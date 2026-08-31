@@ -47,17 +47,21 @@ export default function Movimentacoes() {
   };
 
   return (
-    <div>
-      <div className="page-header">
-        <MdHistory size={28} color="var(--accent)" />
-        <h1 className="page-title">Histórico de Movimentações</h1>
+    <div className="pageContainer">
+      <div className="topHeader">
+        <div className="titleGroup">
+          <MdHistory size={28} color="var(--accent)" />
+          <h1 className="page-title">Histórico de Movimentações</h1>
+        </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>Últimas Atividades</h2>
-      </div>
+      <div className="mainCard">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+          <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>Últimas Atividades</h2>
+        </div>
 
-      <div className="filters">
+        <div className="filterCard">
+          <div className="filters">
         <div className="form-group">
           <select value={filtroPeriodo} onChange={(e) => setFiltroPeriodo(e.target.value)}>
             <option value="hoje">Hoje</option>
@@ -80,7 +84,8 @@ export default function Movimentacoes() {
             </select>
           </div>
         )}
-      </div>
+          </div>
+        </div>
 
       {loadingHist ? (
         <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Carregando histórico...</p>
@@ -125,6 +130,7 @@ export default function Movimentacoes() {
           </table>
         </div>
       )}
+      </div>
     </div>
   );
 }
