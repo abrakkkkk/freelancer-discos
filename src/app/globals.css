@@ -1101,7 +1101,7 @@ tbody tr:last-child td {
 
   tr {
     margin-bottom: 16px;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 8px;
     padding: 6px 10px;
     background: var(--bg-card);
