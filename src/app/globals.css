@@ -168,6 +168,8 @@ a {
   align-items: center;
   gap: 10px;
   text-decoration: none;
+  min-width: 0;
+  flex: 1;
 }
 
 .mobile-header-logo {
@@ -182,6 +184,7 @@ a {
   display: flex;
   flex-direction: column;
   line-height: 1.15;
+  min-width: 0;
 }
 
 .mobile-header-title {
@@ -1381,7 +1384,7 @@ tbody tr:last-child td {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100px;
+    /* Remover max-width fixo para não cortar o título */
   }
   
   .mobile-header-actions select {
