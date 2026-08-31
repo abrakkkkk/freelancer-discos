@@ -1694,3 +1694,9 @@ tbody tr:last-child td {
   outline: none;
 }
 
+@media (max-width: 768px) {
+  .paginationRow {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
