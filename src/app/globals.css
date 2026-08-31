@@ -1160,9 +1160,9 @@ tbody tr:last-child td {
 
   /* Artista como subtítulo */
   td[data-label="Artista"] {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
-    color: var(--text-muted);
+    color: rgba(255, 255, 255, 0.75);
     padding: 0 0 4px 0;
     border-bottom: 1px solid var(--border);
     display: block;
