@@ -1103,7 +1103,7 @@ tbody tr:last-child td {
     margin-bottom: 8px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 10px;
+    padding: 8px 10px;
     background: var(--bg-card);
     position: relative;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Lighter shadow */
@@ -1120,10 +1120,10 @@ tbody tr:last-child td {
     align-items: center;
     border: none;
     border-bottom: 1px solid var(--border);
-    padding: 4px 0;
+    padding: 2px 0;
     text-align: right;
     font-size: 12px;
-    order: 10; /* Padrão para os que nÃ£o tem ordem definida */
+    order: 10; /* Padrão para os que não tem ordem definida */
   }
   
   td:last-child {
@@ -1150,8 +1150,8 @@ tbody tr:last-child td {
     border-bottom: none;
     display: block;
     text-align: left;
-    padding-right: 40px; /* space for absolute action btns */
-    min-height: 36px; /* evita que a Loja encoste nos botões quando nÃ£o houver Artista */
+    padding-right: 76px; /* space for absolute action btns */
+    min-height: 32px; /* evita que a Loja encoste nos botões quando não houver Artista */
     order: 1;
   }
   td[data-label="Título"]::before {
@@ -1163,11 +1163,11 @@ tbody tr:last-child td {
     font-size: 12px;
     font-weight: 500;
     color: var(--text-muted);
-    padding: 0 0 8px 0;
+    padding: 0 0 4px 0;
     border-bottom: 1px solid var(--border);
     display: block;
     text-align: left;
-    padding-right: 40px;
+    padding-right: 76px;
     order: 2;
   }
   td[data-label="Artista"]::before {
@@ -1190,10 +1190,10 @@ tbody tr:last-child td {
   td[data-label="Observação"] { order: 10; }
 
   /* Ação / Editar no canto superior direito do Card */
-  td[data-label="Ação"], td[data-label="Excluir"] {
+  td[data-label="Ação"], td[data-label="Excluir"], td[data-label="Selecionar"] {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 8px;
+    right: 8px;
     border: none;
     padding: 0;
     margin: 0;
@@ -1218,17 +1218,7 @@ tbody tr:last-child td {
     display: none;
   }
 
-  td[data-label="Selecionar"] {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    border: none;
-    padding: 0;
-    margin: 0;
-    width: auto;
-    display: flex;
-    justify-content: flex-end;
-  }
+
 
   td[data-label="Selecionar"]::before {
     display: none;
