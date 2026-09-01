@@ -220,14 +220,14 @@ function EditarExcluirContent() {
     }
   };
 
-  if (tela === 'edicao' && itemEditando) {
+    if (tela === 'edicao' && itemEditando) {
     return (
       <div className="pageContainer">
-        <div className="topHeader" style={{ position: 'relative', justifyContent: 'center' }}>
-          <button className="btn btn-secondary btn-back" style={{ position: 'absolute', left: 0 }} onClick={voltarParaBusca}>← Voltar</button>
-          <div className="titleGroup">
-            <TbTools size={28} color="var(--accent)" />
-            <h1 className="page-title">Editando {tipoNome}</h1>
+        <div className="topHeader" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary btn-back" style={{ flexShrink: 0 }} onClick={voltarParaBusca}>← Voltar</button>
+          <div className="titleGroup" style={{ flex: 1, minWidth: '200px' }}>
+            <TbTools size={24} color="var(--accent)" />
+            <h1 className="page-title" style={{ textAlign: 'left', margin: 0, fontSize: '20px' }}>Editando {tipoNome}</h1>
           </div>
         </div>
 
@@ -321,12 +321,12 @@ function EditarExcluirContent() {
             </div>
           </div>
 
-          <div className="edit-actions" style={{ marginTop: '24px' }}>
-            <div className="edit-actions-right">
-              <button className={`btn ${itemEditando.ativo !== false ? 'btn-warning' : 'btn-primary'}`} style={{ flex: '0 1 auto' }} onClick={() => toggleAtivo(itemEditando)}>{itemEditando.ativo !== false ? 'Inativar' : 'Reativar'}</button>
-              <button className="btn btn-danger" style={{ flex: '0 1 auto' }} onClick={() => setConfirmarExclusao(itemEditando.id)}>Excluir</button>
+          <div className="edit-actions" style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'space-between', alignItems: 'stretch' }}>
+            <div className="edit-actions-right" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', flex: 1, minWidth: '200px' }}>
+              <button className={`btn ${itemEditando.ativo !== false ? 'btn-warning' : 'btn-primary'}`} style={{ flex: 1 }} onClick={() => toggleAtivo(itemEditando)}>{itemEditando.ativo !== false ? 'Inativar' : 'Reativar'}</button>
+              <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => setConfirmarExclusao(itemEditando.id)}>Excluir</button>
             </div>
-            <button className="btn btn-primary" style={{ flex: '0 1 auto', minWidth: '160px' }} onClick={salvar}>Salvar</button>
+            <button className="btn btn-primary" style={{ flex: 1, minWidth: '160px' }} onClick={salvar}>Salvar</button>
           </div>
         </div>
 
