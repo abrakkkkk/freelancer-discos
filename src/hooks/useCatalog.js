@@ -2,19 +2,46 @@ import { useState, useEffect } from 'react';
 import { itemService } from '@/services/itemService';
 import { PAGINATION } from '@/constants/config';
 
+const getStorageItem = (key, defaultValue) => {
+  if (typeof window === 'undefined') return defaultValue;
+  const saved = sessionStorage.getItem(`catalog_${key}`);
+  if (saved !== null) {
+    try {
+      return JSON.parse(saved);
+    } catch (e) {
+      return saved;
+    }
+  }
+  return defaultValue;
+};
+
 export function useCatalog(initialCategory = 'discos') {
-  const [activeTab, setActiveTab] = useState(initialCategory);
+  const [activeTab, setActiveTab] = useState(() => getStorageItem('activeTab', initialCategory));
   const [itens, setItens] = useState([]);
   const [total, setTotal] = useState(0);
-  const [pagina, setPagina] = useState(1);
-  const [filtroCaixa, setFiltroCaixa] = useState('');
-  const [filtroLoja, setFiltroLoja] = useState('');
-  const [busca, setBusca] = useState('');
-  const [mostrarAtivos, setMostrarAtivos] = useState(true);
-  const [mostrarInativos, setMostrarInativos] = useState(false);
-  const [ordenarColuna, setOrdenarColuna] = useState(null);
-  const [ordenarDirecao, setOrdenarDirecao] = useState(null);
+  const [pagina, setPagina] = useState(() => getStorageItem('pagina', 1));
+  const [filtroCaixa, setFiltroCaixa] = useState(() => getStorageItem('filtroCaixa', ''));
+  const [filtroLoja, setFiltroLoja] = useState(() => getStorageItem('filtroLoja', ''));
+  const [busca, setBusca] = useState(() => getStorageItem('busca', ''));
+  const [mostrarAtivos, setMostrarAtivos] = useState(() => getStorageItem('mostrarAtivos', true));
+  const [mostrarInativos, setMostrarInativos] = useState(() => getStorageItem('mostrarInativos', false));
+  const [ordenarColuna, setOrdenarColuna] = useState(() => getStorageItem('ordenarColuna', null));
+  const [ordenarDirecao, setOrdenarDirecao] = useState(() => getStorageItem('ordenarDirecao', null));
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('catalog_activeTab', JSON.stringify(activeTab));
+      sessionStorage.setItem('catalog_pagina', JSON.stringify(pagina));
+      sessionStorage.setItem('catalog_filtroCaixa', JSON.stringify(filtroCaixa));
+      sessionStorage.setItem('catalog_filtroLoja', JSON.stringify(filtroLoja));
+      sessionStorage.setItem('catalog_busca', JSON.stringify(busca));
+      sessionStorage.setItem('catalog_mostrarAtivos', JSON.stringify(mostrarAtivos));
+      sessionStorage.setItem('catalog_mostrarInativos', JSON.stringify(mostrarInativos));
+      sessionStorage.setItem('catalog_ordenarColuna', JSON.stringify(ordenarColuna));
+      sessionStorage.setItem('catalog_ordenarDirecao', JSON.stringify(ordenarDirecao));
+    }
+  }, [activeTab, pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao]);
 
   const fetchCatalogItems = async () => {
     setLoading(true);

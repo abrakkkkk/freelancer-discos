@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { TbTools } from "react-icons/tb";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { supabase } from '@/lib/supabase';
@@ -18,6 +18,7 @@ import { formatCaixa } from '@/utils/stringUtils';
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { caixas } = useCaixas();
   const { activeStore } = useStore();
 
@@ -33,6 +34,8 @@ function EditarExcluirContent() {
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
   const [discogsResults, setDiscogsResults] = useState([]);
   const [showDiscogsDropdown, setShowDiscogsDropdown] = useState(false);
+
+  const [loadedWithId] = useState(!!searchParams.get('id'));
 
   const { registerUndo } = useUndo();
 
@@ -120,11 +123,15 @@ function EditarExcluirContent() {
   };
 
   const voltarParaBusca = () => {
-    setItemEditando(null);
-    setTela('busca');
-    setShowDiscogsDropdown(false);
-    setDiscogsResults([]);
-    setQueryDiscogs('');
+    if (loadedWithId) {
+      router.push('/');
+    } else {
+      setItemEditando(null);
+      setTela('busca');
+      setShowDiscogsDropdown(false);
+      setDiscogsResults([]);
+      setQueryDiscogs('');
+    }
   };
 
   const searchDiscogs = async (e) => {
