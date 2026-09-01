@@ -23,7 +23,7 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="logo_free" style={{ textAlign: 'center', marginBottom: '12px' }}>
-        <Image src="/logo.jpg" alt="Freelancer Discos" width={100} height={100} style={{ borderRadius: '50%' }} unoptimized={true} />
+        <Image src="/logo.jpg" alt="Freelancer Discos" width={100} height={100} style={{ borderRadius: '50%' }} unoptimized={true} priority />
       </div>
       <div className="sidebar-title">Estoque Geral</div>
 

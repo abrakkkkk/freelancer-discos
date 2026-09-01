@@ -36,6 +36,7 @@ export default function MobileHeader() {
           height={40}
           className="mobile-header-logo"
           unoptimized={true}
+          priority
         />
         <div className="mobile-header-text">
           <span className="mobile-header-title">Freelancer Discos</span>
