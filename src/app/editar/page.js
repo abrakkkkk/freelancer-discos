@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { TbTools } from "react-icons/tb";
+import { FaMagnifyingGlass } from "react-icons/fa6";
 import { supabase } from '@/lib/supabase';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
@@ -27,6 +28,11 @@ function EditarExcluirContent() {
   const [mostrarInativos, setMostrarInativos] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
+
+  const [queryDiscogs, setQueryDiscogs] = useState('');
+  const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
+  const [discogsResults, setDiscogsResults] = useState([]);
+  const [showDiscogsDropdown, setShowDiscogsDropdown] = useState(false);
 
   const { registerUndo } = useUndo();
 
@@ -116,6 +122,60 @@ function EditarExcluirContent() {
   const voltarParaBusca = () => {
     setItemEditando(null);
     setTela('busca');
+    setShowDiscogsDropdown(false);
+    setDiscogsResults([]);
+    setQueryDiscogs('');
+  };
+
+  const searchDiscogs = async (e) => {
+    if (e) e.preventDefault();
+    if (!queryDiscogs.trim()) return;
+    setIsSearchingDiscogs(true);
+    setDiscogsResults([]);
+    setShowDiscogsDropdown(false);
+    try {
+      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryDiscogs)}`);
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        setDiscogsResults(data.results);
+        setShowDiscogsDropdown(true);
+      } else {
+        setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado no Discogs.' });
+      }
+    } catch (err) {
+      console.error(err);
+      setMensagem({ tipo: 'error', texto: 'Erro ao buscar no Discogs.' });
+    } finally {
+      setIsSearchingDiscogs(false);
+    }
+  };
+
+  const handleSelectDiscogsResult = (result) => {
+    const parts = result.title.split(' - ');
+    let artista = '';
+    let titulo = result.title;
+    
+    if (parts.length > 1) {
+      artista = parts[0].trim();
+      titulo = parts.slice(1).join(' - ').trim();
+    }
+
+    const year = result.year ? `Ano: ${result.year}` : '';
+    
+    const newObs = novaObservacao 
+      ? (year ? `${novaObservacao}\n${year}` : novaObservacao)
+      : year;
+    
+    if (newObs) setNovaObservacao(newObs);
+
+    setForm(prev => ({
+      ...prev,
+      artista,
+      titulo,
+    }));
+    
+    setShowDiscogsDropdown(false);
+    setQueryDiscogs('');
   };
   const salvar = async () => {
     if (!form.titulo?.trim()) return setMensagem({ tipo: 'error', texto: 'O Título é obrigatório.' });
@@ -234,6 +294,50 @@ function EditarExcluirContent() {
         <AlertMessage message={mensagem} />
 
         <div className="mainCard">
+          {(tipo === CATEGORY_IDS.DISCOS || tipo === CATEGORY_IDS.CDS) && (
+            <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
+              <div className="form-group" style={{ width: '100%', marginBottom: '20px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs (Catálogo, Matrix, Artista ou Título)</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input 
+                    type="text" 
+                    value={queryDiscogs} 
+                    onChange={(e) => setQueryDiscogs(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchDiscogs(); } }}
+                    placeholder="Ex: COLP 12225, Tim Maia Racional..."
+                    autoComplete="off"
+                  />
+                  <button 
+                    type="button" 
+                    onClick={searchDiscogs}
+                    className="btn btn-secondary"
+                    style={{ whiteSpace: 'nowrap', opacity: isSearchingDiscogs ? 0.7 : 1, cursor: 'pointer' }}
+                    disabled={isSearchingDiscogs}
+                  >
+                    {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
+                  </button>
+                </div>
+                {showDiscogsDropdown && discogsResults.length > 0 && (
+                  <ul className="sugestoes-dropdown" style={{ top: '100%', left: 0, right: 0, maxHeight: '300px', overflowY: 'auto' }}>
+                    <li style={{ background: 'var(--bg-card)', padding: '8px', fontSize: '12px', borderBottom: '1px solid var(--border)', textAlign: 'right' }}>
+                      <button type="button" onClick={() => setShowDiscogsDropdown(false)} style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>Fechar (X)</button>
+                    </li>
+                    {discogsResults.map((result) => (
+                      <li key={result.id} onMouseDown={(e) => { e.preventDefault(); handleSelectDiscogsResult(result); }} style={{ padding: '8px', display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontWeight: 'bold' }}>{result.title}</span>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                          {result.year && `${result.year} • `}
+                          {result.catno && `${result.catno} • `}
+                          {result.format?.join(', ')}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
             {temArtista && (
               <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
