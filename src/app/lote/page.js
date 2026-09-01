@@ -308,7 +308,7 @@ export default function AcoesEmLote() {
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
-              {busca || caixaSelecionada ? `${itens.filter(d => !selecionados.includes(d.id)).length} resultado(s)` : `Listando ${itens.length} iten(s)`}
+              {busca || caixaSelecionada ? `${itens.filter(d => !selecionados.includes(d.id)).length} resultado(s)` : null}
             </p>
             <button className="btn btn-secondary" onClick={toggleSelecionarTodos} style={{ padding: '6px 12px', fontSize: '13px', minHeight: 'auto' }}>
               {(itens.length > 0 && itens.every(d => selecionados.includes(d.id))) ? 'Desmarcar Todos' : 'Selecionar Todos'}

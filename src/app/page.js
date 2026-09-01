@@ -94,68 +94,48 @@ export default function CatalogoClone() {
     }
     
     return (
-      <div className="paginationRow">
-        <div>
-          Itens por página: 
-          <select className="pageItemsSelect" style={{ marginLeft: '8px' }}>
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-          </select>
-        </div>
+      <div className="paginationRow" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px 0', gap: '8px', borderTop: '1px solid var(--border)', marginTop: '16px' }}>
+        <button 
+          className="pageBtn" 
+          disabled={catalog.pagina === 1}
+          onClick={() => catalog.setPagina(catalog.pagina - 1)}
+          style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+        >
+          &lt;
+        </button>
         
-        <div className="paginationControls">
+        {pages.map(p => (
           <button 
-            className="pageBtn" 
-            disabled={catalog.pagina === 1}
-            onClick={() => catalog.setPagina(catalog.pagina - 1)}
+            key={p} 
+            className={`${"pageBtn"} ${catalog.pagina === p ? "active" : ''}`}
+            onClick={() => catalog.setPagina(p)}
+            style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
           >
-            &lt;
+            {p}
           </button>
-          
-          {pages.map(p => (
+        ))}
+        
+        {totalPaginas > 3 && (
+          <>
+            <span style={{ padding: '0 4px', color: 'var(--text-muted)' }}>...</span>
             <button 
-              key={p} 
-              className={`${"pageBtn"} ${catalog.pagina === p ? "active" : ''}`}
-              onClick={() => catalog.setPagina(p)}
+              className={`${"pageBtn"} ${catalog.pagina === totalPaginas ? "active" : ''}`}
+              onClick={() => catalog.setPagina(totalPaginas)}
+              style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
             >
-              {p}
+              {totalPaginas}
             </button>
-          ))}
-          
-          {totalPaginas > 3 && (
-            <>
-              <span style={{ padding: '0 8px' }}>...</span>
-              <button 
-                className={`${"pageBtn"} ${catalog.pagina === totalPaginas ? "active" : ''}`}
-                onClick={() => catalog.setPagina(totalPaginas)}
-              >
-                {totalPaginas}
-              </button>
-            </>
-          )}
+          </>
+        )}
 
-          <button 
-            className="pageBtn" 
-            disabled={catalog.pagina === totalPaginas}
-            onClick={() => catalog.setPagina(catalog.pagina + 1)}
-          >
-            &gt;
-          </button>
-        </div>
-
-        <div>
-          Ir para página:
-          <input 
-            type="number" 
-            min="1" 
-            max={totalPaginas} 
-            defaultValue="1" 
-            className="pageItemsSelect" 
-            style={{ width: '50px', margin: '0 8px' }} 
-          />
-          <button className="pageItemsSelect" style={{ cursor: 'pointer' }}>Ir</button>
-        </div>
+        <button 
+          className="pageBtn" 
+          disabled={catalog.pagina === totalPaginas}
+          onClick={() => catalog.setPagina(catalog.pagina + 1)}
+          style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+        >
+          &gt;
+        </button>
       </div>
     );
   };
@@ -208,7 +188,7 @@ export default function CatalogoClone() {
             </div>
 
             <div className="filterGroup">
-              <label>Filtrar por caixa</label>
+              <label>Filtrar por {localLabel.toLowerCase()}</label>
               <select value={catalog.filtroCaixa} onChange={(e) => catalog.setFiltroCaixa(e.target.value)}>
                 <option value="">Todas</option>
                 {caixas.map(c => (

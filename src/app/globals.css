@@ -243,8 +243,7 @@ a {
 }
 
 .btn-back {
-  position: absolute;
-  left: 40px;
+  /* position absolute removed so it flows inline */
 }
 
 .page-title {
@@ -309,6 +308,15 @@ a {
 }
 .btn-danger:hover:not(:disabled) {
   background: #e27d99;
+}
+
+.btn-warning {
+  background: var(--warning);
+  color: #1a1a2e;
+  font-weight: 600;
+}
+.btn-warning:hover:not(:disabled) {
+  background: #e2c17d;
 }
 
 /* ========== FORMS ========== */
@@ -955,7 +963,6 @@ tbody tr:last-child td {
   }
 
   .btn-back {
-    left: 14px;
     padding: 6px 10px;
     font-size: 12.5px;
     min-height: 32px;
@@ -1309,27 +1316,7 @@ tbody tr:last-child td {
     padding: 16px;
   }
 
-  .edit-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
 
-  .edit-actions .btn-primary {
-    width: 100%;
-    min-height: 44px;
-  }
-
-  .edit-actions-right {
-    width: 100%;
-    display: flex;
-    gap: 8px;
-  }
-
-  .edit-actions-right .btn {
-    flex: 1;
-    min-height: 44px;
-  }
 
   /* Paginação */
   .pagination {
@@ -1704,7 +1691,9 @@ tbody tr:last-child td {
 
 @media (max-width: 768px) {
   .paginationRow {
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
   }
 }

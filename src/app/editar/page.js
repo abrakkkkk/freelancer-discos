@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
 import { movimentacaoService } from '@/services/movimentacaoService';
+import { useItemForm } from '@/hooks/useItemForm';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
@@ -30,7 +31,19 @@ function EditarExcluirContent() {
   const { registerUndo } = useUndo();
 
   const [itemEditando, setItemEditando] = useState(null);
-  const [form, setForm] = useState({});
+  const {
+    form, setForm, handleChange,
+    sugestoesArtista, mostrarSugestoesArtista, setMostrarSugestoesArtista,
+    sugestoesTitulo, mostrarSugestoesTitulo, setMostrarSugestoesTitulo,
+    selectSuggestion, getUnmaskedPreco
+  } = useItemForm({
+    artista: '',
+    titulo: '',
+    caixa: '',
+    preco: '',
+    loja: ''
+  }, tipo);
+
   const [observacoes, setObservacoes] = useState([]);
   const [novaObservacao, setNovaObservacao] = useState('');
   const [loadingObs, setLoadingObs] = useState(false);
@@ -104,20 +117,10 @@ function EditarExcluirContent() {
     setItemEditando(null);
     setTela('busca');
   };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'preco') {
-      setForm({ ...form, preco: formatarMoeda(value) });
-      return;
-    }
-    setForm({ ...form, [name]: value });
-  };
-
   const salvar = async () => {
     if (!form.titulo?.trim()) return setMensagem({ tipo: 'error', texto: 'O Título é obrigatório.' });
     
-    const unmaskedPreco = form.preco ? parseFloat(String(form.preco).replace(/\./g, '').replace(',', '.')) : 0;
+    const unmaskedPreco = getUnmaskedPreco();
     if (unmaskedPreco < 0) return setMensagem({ tipo: 'error', texto: 'O preço não pode ser negativo.' });
 
     const updateData = {
@@ -220,9 +223,9 @@ function EditarExcluirContent() {
   if (tela === 'edicao' && itemEditando) {
     return (
       <div className="pageContainer">
-        <div className="topHeader">
+        <div className="topHeader" style={{ position: 'relative', justifyContent: 'center' }}>
+          <button className="btn btn-secondary btn-back" style={{ position: 'absolute', left: 0 }} onClick={voltarParaBusca}>← Voltar</button>
           <div className="titleGroup">
-            <button className="btn btn-secondary btn-back" onClick={voltarParaBusca}>← Voltar</button>
             <TbTools size={28} color="var(--accent)" />
             <h1 className="page-title">Editando {tipoNome}</h1>
           </div>
@@ -231,56 +234,99 @@ function EditarExcluirContent() {
         <AlertMessage message={mensagem} />
 
         <div className="mainCard">
-          {temArtista && <div className="edit-info-item"><span className="edit-info-label">Artista</span><span className="edit-info-value">{itemEditando.artista || '—'}</span></div>}
-          <div className="edit-info-item"><span className="edit-info-label">Título</span><span className="edit-info-value">{itemEditando.titulo}</span></div>
-          <div className="edit-info-item"><span className="edit-info-label">{itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</span><span className="edit-info-value">{formatCaixa(itemEditando.caixa, itemEditando.loja)}</span></div>
-          <div className="edit-info-item"><span className="edit-info-label">Loja</span><span className="edit-info-value">{itemEditando.loja || '—'}</span></div>
-          <div className="edit-info-item"><span className="edit-info-label">Preço</span><span className="edit-info-value">R$ {Number(itemEditando.preco || 0).toFixed(2).replace('.', ',')}</span></div>
-          <div className="edit-info-item"><span className="edit-info-label">Status</span><span className="edit-info-value"><span className={`badge ${itemEditando.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>{itemEditando.ativo !== false ? 'Ativo' : 'Inativo'}</span></span></div>
-        </div>
-
-        <div className="edit-form-card">
-          <h2>Alterar dados</h2>
-          <div className="form-row">
+          <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
             {temArtista && (
-              <div className="form-group">
+              <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
                 <label>Artista</label>
-                <input name="artista" value={form.artista} onChange={handleChange} />
+                <input 
+                  name="artista" 
+                  value={form.artista} 
+                  onChange={handleChange} 
+                  onFocus={() => { if (sugestoesArtista.length > 0) setMostrarSugestoesArtista(true); }}
+                  onBlur={() => setTimeout(() => setMostrarSugestoesArtista(false), 200)}
+                  autoComplete="off"
+                />
+                {mostrarSugestoesArtista && (
+                  <ul className="sugestoes-dropdown">
+                    {sugestoesArtista.map((sug, idx) => (
+                      <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'artista'); }}>{sug}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
-            <div className="form-group">
+            
+            <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesTitulo ? 60 : 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <label style={{ marginBottom: 0 }}>Título *</label>
                 {temArtista && (
-                  <button type="button" onClick={() => setForm(prev => ({ ...prev, titulo: prev.artista }))} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}>Usar Artista</button>
+                  <button 
+                    type="button" 
+                    onClick={() => setForm(prev => ({ ...prev, titulo: prev.artista }))}
+                    style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}
+                    title="Copiar artista para o campo título"
+                  >
+                    Usar Artista
+                  </button>
                 )}
               </div>
-              <input name="titulo" value={form.titulo} onChange={handleChange} />
+              <input 
+                name="titulo" 
+                value={form.titulo} 
+                onChange={handleChange} 
+                onFocus={() => { if (sugestoesTitulo.length > 0) setMostrarSugestoesTitulo(true); }}
+                onBlur={() => setTimeout(() => setMostrarSugestoesTitulo(false), 200)}
+                autoComplete="off"
+              />
+              {mostrarSugestoesTitulo && (
+                <ul className="sugestoes-dropdown">
+                  {sugestoesTitulo.map((sug, idx) => (
+                    <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'titulo'); }}>
+                      {(temArtista && sug.artista) ? `${sug.artista} — ${sug.titulo}` : sug.titulo}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
+
           <div className="form-row">
             <div className="form-group">
               <label>{itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</label>
-              <input name="caixa" type="text" list="caixas-list" value={form.caixa || ''} onChange={handleChange} placeholder={itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? "Ex: 15" : "Ex: 15, Estante A..."} />
-              <datalist id="caixas-list">{caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}</datalist>
+              <input 
+                name="caixa" 
+                type="text" 
+                list="caixas-list"
+                value={form.caixa || ''} 
+                onChange={handleChange}
+                placeholder={itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? "Ex: 15" : "Ex: 15, Estante A..."}
+              />
+              <datalist id="caixas-list">
+                {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+              </datalist>
             </div>
-            <div className="form-group"><label>Preço (R$)</label><input name="preco" type="text" value={form.preco} onChange={handleChange} /></div>
+            <div className="form-group">
+              <label>Preço (R$)</label>
+              <input name="preco" type="text" value={form.preco} onChange={handleChange} />
+            </div>
           </div>
+
           <div className="form-row">
             <div className="form-group">
-              <label>Loja</label>
+              <label>Loja *</label>
               <select name="loja" value={form.loja || ''} onChange={handleChange}>
                 <option value="">Nenhuma / Sem Loja</option>
                 {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
             </div>
           </div>
-          <div className="edit-actions">
-            <button className="btn btn-primary" onClick={salvar}>Salvar Alterações</button>
+
+          <div className="edit-actions" style={{ marginTop: '24px' }}>
             <div className="edit-actions-right">
-              <button className={`btn ${itemEditando.ativo !== false ? 'btn-secondary' : 'btn-primary'}`} onClick={() => toggleAtivo(itemEditando)}>{itemEditando.ativo !== false ? 'Inativar' : 'Reativar'}</button>
-              <button className="btn btn-danger" onClick={() => setConfirmarExclusao(itemEditando.id)}>Excluir</button>
+              <button className={`btn ${itemEditando.ativo !== false ? 'btn-warning' : 'btn-primary'}`} style={{ flex: '0 1 auto' }} onClick={() => toggleAtivo(itemEditando)}>{itemEditando.ativo !== false ? 'Inativar' : 'Reativar'}</button>
+              <button className="btn btn-danger" style={{ flex: '0 1 auto' }} onClick={() => setConfirmarExclusao(itemEditando.id)}>Excluir</button>
             </div>
+            <button className="btn btn-primary" style={{ flex: '0 1 auto', minWidth: '160px' }} onClick={salvar}>Salvar</button>
           </div>
         </div>
 
