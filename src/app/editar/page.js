@@ -302,7 +302,7 @@ function EditarExcluirContent() {
           {(tipo === CATEGORY_IDS.DISCOS || tipo === CATEGORY_IDS.CDS) && (
             <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
               <div className="form-group" style={{ width: '100%', marginBottom: '20px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs (Catálogo ou Nome)</label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <input 
                     type="text" 
