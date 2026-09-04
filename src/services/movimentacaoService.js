@@ -18,33 +18,63 @@ export const movimentacaoService = {
   },
 
   /**
-   * Fetches movement history with optional store filter
+   * Fetches movement history with optional store and period filter
    */
-  async fetchMovimentacoes(filtroPeriodo, filtroTipoMov, filtroLoja = '') {
-    let query = supabase
-      .from('movimentacoes')
-      .select(`
-        id, tipo, observacao, criado_em,
-        discos ( caixa, artista, titulo, loja ),
-        dvds ( titulo, loja, caixa ),
-        cds ( artista, titulo, loja, caixa ),
-        vhs ( titulo, loja, caixa )
-      `)
-      .order('criado_em', { ascending: false })
-      .limit(200);
+  async fetchMovimentacoes(filtroPeriodo = 'semana', filtroTipoMov = '', filtroLoja = '') {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
 
+    let dateFilter = null;
     if (filtroPeriodo === 'hoje') {
-      const hoje = new Date();
-      hoje.setHours(0, 0, 0, 0);
-      query = query.gte('criado_em', hoje.toISOString());
+      dateFilter = hoje.toISOString();
+    } else if (filtroPeriodo === 'semana') {
+      const semana = new Date();
+      semana.setDate(semana.getDate() - 7);
+      semana.setHours(0, 0, 0, 0);
+      dateFilter = semana.toISOString();
+    } else if (filtroPeriodo === 'mes') {
+      const mes = new Date();
+      mes.setDate(mes.getDate() - 30);
+      mes.setHours(0, 0, 0, 0);
+      dateFilter = mes.toISOString();
     }
-    if (filtroTipoMov) query = query.eq('tipo', filtroTipoMov);
 
-    const { data, error } = await query;
-    if (error) throw error;
-    
-    let results = data || [];
-    
+    let allData = [];
+    let from = 0;
+    const step = 1000;
+    const maxRows = filtroPeriodo === 'todos' ? 3000 : 5000;
+
+    while (allData.length < maxRows) {
+      let query = supabase
+        .from('movimentacoes')
+        .select(`
+          id, tipo, observacao, criado_em,
+          discos ( caixa, artista, titulo, loja ),
+          dvds ( titulo, loja, caixa ),
+          cds ( artista, titulo, loja, caixa ),
+          vhs ( titulo, loja, caixa )
+        `)
+        .order('criado_em', { ascending: false })
+        .range(from, from + step - 1);
+
+      if (dateFilter) {
+        query = query.gte('criado_em', dateFilter);
+      }
+      if (filtroTipoMov) {
+        query = query.eq('tipo', filtroTipoMov);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+
+      allData = allData.concat(data);
+      if (data.length < step) break;
+      from += step;
+    }
+
+    let results = allData;
+
     // Filter by store on the client side since the join makes server-side filtering complex
     if (filtroLoja) {
       results = results.filter(m => {
@@ -52,7 +82,7 @@ export const movimentacaoService = {
         return item && item.loja === filtroLoja;
       });
     }
-    
+
     return results;
   },
 
