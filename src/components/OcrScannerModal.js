@@ -193,74 +193,108 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     await startCamera(nextCam.deviceId);
   };
 
-  // Filtro inteligente de extração de códigos de catálogo
-  // Suporta números puros (6349050, 4036001, 1030001, 064422894, 138001),
-  // números com pontuação/espaço (6349 050, 103.0001, 403.6001, 064 422894, 825 000-1),
-  // e letras com números em linha única (COLP 12225, SMOFB 3749, 31C 064 422894, XSLP 1001)
-  const extrairCodigoCatalogo = (textoBruto) => {
-    if (!textoBruto) return '';
+  // Auxiliar para evitar que anos de prensagem (1940 a 2030) sejam confundidos com código
+  const ehAno = (str) => {
+    const n = parseInt(str, 10);
+    return str.length === 4 && n >= 1940 && n <= 2030;
+  };
 
-    // Normalizar texto
-    let texto = textoBruto.replace(/[^A-Za-z0-9\-\.\s\/]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
+  // Avalia individualmente uma linha de texto com pontuação de relevância
+  const extrairCodigoCatalogoLinha = (linha) => {
+    if (!linha) return null;
+    const limpo = linha.replace(/[^A-Za-z0-9\-\.\s\/]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
+    if (limpo.length < 3 || limpo.length > 30) return null;
+
+    // Ignora termos jurídicos/empresariais (CGC, CNPJ)
+    if (/CGC|CNPJ|\/000\d/.test(limpo)) return null;
+
+    // Ignora expressões de capa comuns que não são códigos
+    const ignorarExatos = [
+      'DISCO E CULTURA', 'DISCO E CULTURA', 'STEREO', 'MONO', '33 RPM', '45 RPM',
+      'LADO 1', 'LADO 2', 'LADO A', 'LADO B', 'SERIE LUXO', 'SOM IND E COM'
+    ];
+    if (ignorarExatos.includes(limpo)) return null;
 
     // 1. Prefixo especial estilo EMI-Odeon: 31C 064 422894
-    const matchEmi = texto.match(/\b(\d{2}[A-Z][\s\-\.]+\d{2,4}[\s\-\.]+\d{4,8})\b/i);
-    if (matchEmi) return matchEmi[1].trim();
+    const matchEmi = limpo.match(/\b(\d{2}[A-Z][\s\-\.]+\d{2,4}[\s\-\.]+\d{4,8})\b/i);
+    if (matchEmi) return { codigo: matchEmi[1].trim(), score: 100 };
 
-    // 2. Padrão Letras clássico + Números (ex: COLP 12225, SMOFB 3749, XSLP 1001, BBL 1300, LLP 500)
-    const matchPrefixoLetras = texto.match(/\b([A-Z]{2,6}[\s\-\.]+\d{3,8}(?:[\s\-\.]\d{1,4})?)\b/i);
-    if (matchPrefixoLetras) {
-      const p = matchPrefixoLetras[1].trim();
-      const ignorar = ['STEREO', 'MONO', 'DISCOS', 'SERIE', 'BRASIL', 'EDICAO', 'SOM', 'LIVRE', 'GRAVACOES', 'PRODUCOES'];
-      if (!ignorar.includes(p.split(/[\s\-\.]+/)[0])) {
-        return p;
+    // 2. Letras clássicas + Números (ex: COLP 82383, COLP 12225, SMOFB 3749, XSLP 1001, BBL 1300)
+    const matchLetras = limpo.match(/\b([A-Z]{2,6}[\s\-\.]+(\d{3,8})(?:[\s\-\.]\d{1,4})?)\b/i);
+    if (matchLetras) {
+      const p = matchLetras[1].trim();
+      const digitos = matchLetras[2];
+      const prefixo = p.split(/[\s\-\.]+/)[0];
+      const ignorarPrefixos = ['STEREO', 'MONO', 'DISCOS', 'SERIE', 'BRASIL', 'EDICAO', 'SOM', 'LIVRE', 'GRAVACOES', 'PRODUCOES', 'LADO', 'FAIXA'];
+      if (!ignorarPrefixos.includes(prefixo) && !ehAno(digitos)) {
+        return { codigo: p, score: 95 };
       }
     }
 
-    // 3. Padrão Numérico Composto com pontuação ou espaço (ex: 6349 050, 103.0001, 064 422894, 825 000-1, 403.6001, 2-04-405-012)
-    const matchNumericoComposto = texto.match(/\b(\d{2,6}[\s\.\-]+\d{2,6}(?:[\s\.\-]\d{1,4})?)\b/);
-    if (matchNumericoComposto) {
-      return matchNumericoComposto[1].trim();
+    // 3. Numérico Composto com pontuação ou espaço (ex: 6349 050, 103.0001, 403.6001, 825 000-1)
+    const matchComposto = limpo.match(/\b(\d{2,6}[\s\.\-]+\d{2,6}(?:[\s\.\-]\d{1,4})?)\b/);
+    if (matchComposto) {
+      return { codigo: matchComposto[1].trim(), score: 90 };
     }
 
-    // 4. Padrão Numérico Puro contínuo (5 a 10 dígitos) - ex: 6349050, 4036001, 1030001, 064422894, 138001
-    const matchNumericoPuro = texto.match(/\b(\d{5,10})\b/);
-    if (matchNumericoPuro) {
-      return matchNumericoPuro[1].trim();
+    // 4. Numérico Puro contínuo (5 a 10 dígitos) - ex: 6349050, 4036001, 1030001, 064422894, 138001
+    const matchPuro = limpo.match(/\b(\d{5,10})\b/);
+    if (matchPuro) {
+      return { codigo: matchPuro[1].trim(), score: 85 };
     }
 
-    // 5. Tratamento para códigos numéricos com confusão típica de OCR (ex: '6349 O5O' ou '4O36OO1' ou 'IO3.OOOI')
-    const palavras = texto.split(/\s+/);
+    // 5. Letras juntas com números (ex: COLP82383, SMOFB3749)
+    const matchJunto = limpo.match(/\b([A-Z]{2,6}(\d{3,8}))\b/i);
+    if (matchJunto && !ehAno(matchJunto[2])) {
+      return { codigo: matchJunto[1], score: 80 };
+    }
+
+    // 6. Tratamento para códigos numéricos com confusão típica de OCR (ex: '6349 O5O' ou '4O36OO1')
+    const palavras = limpo.split(/\s+/);
     for (let i = 0; i < palavras.length; i++) {
       const w = palavras[i];
-      const normalizada = w.replace(/O/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5');
-      if (/^\d{5,10}$/.test(normalizada)) {
-        return normalizada;
+      const norm = w.replace(/O/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5');
+      if (/^\d{5,10}$/.test(norm)) {
+        return { codigo: norm, score: 75 };
       }
       if (i < palavras.length - 1) {
         const w2 = palavras[i + 1];
         const norm2 = (w + ' ' + w2).replace(/O/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5');
         if (/^\d{2,6}\s\d{2,6}$/.test(norm2)) {
-          return norm2;
+          return { codigo: norm2, score: 75 };
         }
       }
     }
 
-    // 6. Letras juntas com números: COLP12225, SMOFB3749
-    const matchJunto = texto.match(/\b([A-Z]{2,6}\d{3,8})\b/i);
-    if (matchJunto) return matchJunto[1];
+    return null;
+  };
 
-    // 7. Fallback de 4 dígitos não-ano (ex: 6349, 1300)
-    const numeros4 = texto.match(/\b(\d{4})\b/g);
-    if (numeros4) {
-      const naoAno = numeros4.find(n => {
-        const v = parseInt(n, 10);
-        return v < 1940 || v > 2030;
-      });
-      if (naoAno) return naoAno;
+  // Filtro inteligente de extração de códigos de catálogo
+  // Analisa linha por linha para isolar o código mesmo se houver textos ou rabiscos acima/abaixo
+  const extrairCodigoCatalogo = (textoBruto) => {
+    if (!textoBruto) return '';
+
+    const linhas = textoBruto.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    let melhorResultado = null;
+
+    for (const linha of linhas) {
+      const res = extrairCodigoCatalogoLinha(linha);
+      if (res) {
+        if (!melhorResultado || res.score > melhorResultado.score) {
+          melhorResultado = res;
+        }
+      }
     }
 
-    return texto.slice(0, 25);
+    if (melhorResultado) {
+      return melhorResultado.codigo;
+    }
+
+    // Fallback: se nenhuma linha isolada deu match, tenta na string completa normalizada
+    const resTotal = extrairCodigoCatalogoLinha(textoBruto.replace(/\s+/g, ' '));
+    if (resTotal) return resTotal.codigo;
+
+    return '';
   };
 
   // Pré-processamento: escala de cinza com Auto-Níveis e contraste equilibrado (sem ruído de convolução)
@@ -318,7 +352,13 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
       const textoLido = ret?.data?.text || '';
       const codigoEncontrado = extrairCodigoCatalogo(textoLido);
 
-      const resultadoFinal = codigoEncontrado || textoLido.trim();
+      let resultadoFinal = codigoEncontrado;
+      if (!resultadoFinal) {
+        // Pega a linha mais curta que contenha caracteres alfanuméricos válidos
+        const linhas = textoLido.split(/\r?\n/).map(l => l.trim()).filter(l => l.length >= 4 && l.length <= 20);
+        resultadoFinal = linhas[0] || '';
+      }
+
       if (resultadoFinal) {
         playBeep();
       }
@@ -338,9 +378,9 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     const vWidth = video.videoWidth || 1280;
     const vHeight = video.videoHeight || 720;
 
-    // Recorta a faixa central onde a mira visual está posicionada
+    // Recorta a faixa central onde a mira visual está posicionada (faixa mais restrita de 22% de altura para evitar pegar textos acima ou abaixo)
     const cropWidth = Math.floor(vWidth * 0.78);
-    const cropHeight = Math.floor(vHeight * 0.32);
+    const cropHeight = Math.floor(vHeight * 0.22);
     const cropX = Math.floor((vWidth - cropWidth) / 2);
     const cropY = Math.floor((vHeight - cropHeight) / 2);
 
