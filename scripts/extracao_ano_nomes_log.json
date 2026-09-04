@@ -1,0 +1,10052 @@
+[
+  {
+    "id": 22224,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "Fagner",
+      "titulo": "Fagner (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fagner",
+      "titulo": "Fagner",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 13112,
+    "loja": "Loja 1",
+    "caixa": "36",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gilson de Souza 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gilson de Souza",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 21631,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 22236,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "Raimundo Fagner",
+      "titulo": "Raimundo Fagner (1976)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Raimundo Fagner",
+      "titulo": "Raimundo Fagner",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 22239,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "Pepeu Gomes",
+      "titulo": "Pepeu Gomes (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Pepeu Gomes",
+      "titulo": "Pepeu Gomes",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22250,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes (1980)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 22257,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "Raimundo Fagner",
+      "titulo": "Raimundo Fagner (1976)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Raimundo Fagner",
+      "titulo": "Raimundo Fagner",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 21634,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Wanderley",
+      "titulo": "Wanderley (1970)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Wanderley",
+      "titulo": "Wanderley",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 10762,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "",
+      "titulo": "Eliane 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Eliane",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22275,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Banda Baião de 2",
+      "titulo": "Banda Baião de 2 (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Banda Baião de 2",
+      "titulo": "Banda Baião de 2",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 22284,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22286,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Beto Barbosa",
+      "titulo": "Beto Barbosa (1992)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Beto Barbosa",
+      "titulo": "Beto Barbosa",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 22289,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Sivuca",
+      "titulo": "Forró e Frevo (1980)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sivuca",
+      "titulo": "Forró e Frevo",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 22298,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Os Gatões do Forró",
+      "titulo": "Os Gatões do Forró (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Os Gatões do Forró",
+      "titulo": "Os Gatões do Forró",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 22299,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Os Gatões do Forró",
+      "titulo": "Os Gatões do Forró (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Os Gatões do Forró",
+      "titulo": "Os Gatões do Forró",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 22300,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Banda Forró Bronzeado",
+      "titulo": "Banda Forró Bronzeado (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Banda Forró Bronzeado",
+      "titulo": "Banda Forró Bronzeado",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 22307,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Forró Boi com Abóbora",
+      "titulo": "Forró Boi com Abóbora (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Forró Boi com Abóbora",
+      "titulo": "Forró Boi com Abóbora",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 11256,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 21636,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado (1972)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 22287,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Beto Barbosa",
+      "titulo": "Beto Barbosa (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Beto Barbosa",
+      "titulo": "Beto Barbosa",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22319,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22322,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Luzirene",
+      "titulo": "Luzirene (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Luzirene",
+      "titulo": "Luzirene",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22328,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Suzamar",
+      "titulo": "Suzamar (1990)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Suzamar",
+      "titulo": "Suzamar",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 22330,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Selminha",
+      "titulo": "Selminha (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Selminha",
+      "titulo": "Selminha",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22331,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Kássia",
+      "titulo": "Kássia (1992)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Kássia",
+      "titulo": "Kássia",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 22361,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "Só Pra Contrariar",
+      "titulo": "Só Pra Contrariar (1992)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Só Pra Contrariar",
+      "titulo": "Só Pra Contrariar",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 22345,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "Helen Patricia",
+      "titulo": "Helen Patricia (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Helen Patricia",
+      "titulo": "Helen Patricia",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 22359,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "Banda Mel",
+      "titulo": "Banda Mel (1992)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Banda Mel",
+      "titulo": "Banda Mel",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 7583,
+    "loja": "Loja 1",
+    "caixa": "6",
+    "anterior": {
+      "artista": "Led Zeppelin",
+      "titulo": "BBC Session 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Led Zeppelin",
+      "titulo": "BBC Session",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 22373,
+    "loja": "Loja 1",
+    "caixa": "6",
+    "anterior": {
+      "artista": "Yes",
+      "titulo": "Yes (1976)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Yes",
+      "titulo": "Yes",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 22376,
+    "loja": "Loja 1",
+    "caixa": "6",
+    "anterior": {
+      "artista": "KC And The Sunshine Band",
+      "titulo": "KC And The Sunshine Band (1978)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "KC And The Sunshine Band",
+      "titulo": "KC And The Sunshine Band",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 22439,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Eliane",
+      "titulo": "Eliane (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Eliane",
+      "titulo": "Eliane",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22429,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Luiza Caldas",
+      "titulo": "Luiza Caldas (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Luiza Caldas",
+      "titulo": "Luiza Caldas",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 22433,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Silvia Patricia",
+      "titulo": "Silvia Patricia (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Silvia Patricia",
+      "titulo": "Silvia Patricia",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22450,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Eliane",
+      "titulo": "Eliane (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Eliane",
+      "titulo": "Eliane",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 13280,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "Luiz Gonzaga",
+      "titulo": "Sao Joao do Araripe 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Luiz Gonzaga",
+      "titulo": "Sao Joao do Araripe",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 13355,
+    "loja": "Loja 1",
+    "caixa": "38",
+    "anterior": {
+      "artista": "",
+      "titulo": "Noel 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Noel",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 13392,
+    "loja": "Loja 1",
+    "caixa": "38",
+    "anterior": {
+      "artista": "",
+      "titulo": "Feliciano 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Feliciano",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 13484,
+    "loja": "Loja 1",
+    "caixa": "39",
+    "anterior": {
+      "artista": "",
+      "titulo": "Johnny Gill 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Johnny Gill",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 13486,
+    "loja": "Loja 1",
+    "caixa": "39",
+    "anterior": {
+      "artista": "Simon And the Garfunkel",
+      "titulo": "Greatests hits 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Simon And the Garfunkel",
+      "titulo": "Greatests hits",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 13482,
+    "loja": "Loja 1",
+    "caixa": "39",
+    "anterior": {
+      "artista": "Bruce Springsteen",
+      "titulo": "Special edition 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Bruce Springsteen",
+      "titulo": "Special edition",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 13707,
+    "loja": "Loja 1",
+    "caixa": "41",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gypsy Kings Cover 1992",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gypsy Kings Cover",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 13711,
+    "loja": "Loja 1",
+    "caixa": "41",
+    "anterior": {
+      "artista": "Ivon",
+      "titulo": "De corpo inteiro 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Ivon",
+      "titulo": "De corpo inteiro",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 20890,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Tribalistas",
+      "titulo": "Tribalistas (2017)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tribalistas",
+      "titulo": "Tribalistas",
+      "ano": "2017"
+    }
+  },
+  {
+    "id": 13795,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "",
+      "titulo": "Halley Flamarion 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Halley Flamarion",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 13817,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "",
+      "titulo": "Eddie Holman 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Eddie Holman",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 13832,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "",
+      "titulo": "Louisiana's Le Roux 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Louisiana's Le Roux",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 13815,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rock Follies 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rock Follies",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 13971,
+    "loja": "Loja 1",
+    "caixa": "43",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fathers and Sons 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fathers and Sons",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 13960,
+    "loja": "Loja 1",
+    "caixa": "43",
+    "anterior": {
+      "artista": "",
+      "titulo": "Luciano Pavarotti 1992",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Luciano Pavarotti",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 13964,
+    "loja": "Loja 1",
+    "caixa": "43",
+    "anterior": {
+      "artista": "",
+      "titulo": "Luciano Pavorotti 1992",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Luciano Pavorotti",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 22463,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Hellen Patricia",
+      "titulo": "Hellen Patricia (1991)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Hellen Patricia",
+      "titulo": "Hellen Patricia",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 13993,
+    "loja": "Loja 1",
+    "caixa": "43",
+    "anterior": {
+      "artista": "",
+      "titulo": "Demis Roussos 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Demis Roussos",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 14000,
+    "loja": "Loja 1",
+    "caixa": "43",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Real Pearl Bailey recorded in 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Real Pearl Bailey recorded in 1968",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 20891,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia (1972)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 14104,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Lena Zavaroni 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Lena Zavaroni",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 14108,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Maquina do Tempo 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Maquina do Tempo",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 14120,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ornella Varoni 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ornella Varoni",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 14133,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Mireille Mathieu 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Mireille Mathieu",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 14153,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Patti Dahlstrom 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Patti Dahlstrom",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 14142,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tukley 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tukley",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 14162,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Song for Anna 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Song for Anna",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 14254,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alipio Martins 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alipio Martins",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 14197,
+    "loja": "Loja 1",
+    "caixa": "44",
+    "anterior": {
+      "artista": "",
+      "titulo": "Stephane Grappelli 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Stephane Grappelli",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 14275,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alipio Martins 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alipio Martins",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 14286,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "Coral Sao Joao",
+      "titulo": "Sao Luiz do Maranhao 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Coral Sao Joao",
+      "titulo": "Sao Luiz do Maranhao",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 16017,
+    "loja": null,
+    "caixa": "9",
+    "anterior": {
+      "artista": "Nara Leão 1968",
+      "titulo": "Nara Leão 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Nara Leão",
+      "titulo": "Nara Leão",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 14394,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fernando Mendes 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fernando Mendes",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 14403,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "",
+      "titulo": "Pim 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Pim",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 14407,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "",
+      "titulo": "Magalhaes e sua Guitarra 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Magalhaes e sua Guitarra",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 14428,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Chitaozinho e Xororo 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Chitaozinho e Xororo",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 14432,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Poly",
+      "titulo": "O Violao e a Saudade 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Poly",
+      "titulo": "O Violao e a Saudade",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 14454,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Clara Nunes 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Clara Nunes",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 16173,
+    "loja": null,
+    "caixa": "10",
+    "anterior": {
+      "artista": "José Augusto 1973",
+      "titulo": "José Augusto 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "José Augusto",
+      "titulo": "José Augusto",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 14467,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Wilson de Assis 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Wilson de Assis",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 14478,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Elizeth Cardoso 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Elizeth Cardoso",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 14483,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Renato e seus Blue Caps 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Renato e seus Blue Caps",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 14476,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Claudio Roberto 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Claudio Roberto",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 14485,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Luiz Camilo 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Luiz Camilo",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 14505,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Cesar Augusto 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Cesar Augusto",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 14506,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Joao Albertto 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Joao Albertto",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 14507,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Banda de Rodagem 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Banda de Rodagem",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 14533,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Maria da Paz 1993",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Maria da Paz",
+      "ano": "1993"
+    }
+  },
+  {
+    "id": 21154,
+    "loja": "Loja 1",
+    "caixa": "51",
+    "anterior": {
+      "artista": "Tamba Trio",
+      "titulo": "Tamba Trio (1968)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tamba Trio",
+      "titulo": "Tamba Trio",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 14551,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Terry Winter 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Terry Winter",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 14572,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Samara 1992",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Samara",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 14574,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Claudia Novais 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Claudia Novais",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 14575,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Zaira 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Zaira",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 14625,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "Suka 1993",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Suka",
+      "ano": "1993"
+    }
+  },
+  {
+    "id": 16474,
+    "loja": null,
+    "caixa": "12",
+    "anterior": {
+      "artista": "Antônio Carlos Jobim 1962",
+      "titulo": "Antônio Carlos Jobim 1962",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Antônio Carlos Jobim",
+      "titulo": "Antônio Carlos Jobim",
+      "ano": "1962"
+    }
+  },
+  {
+    "id": 14653,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "Heraldo Correa 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Heraldo Correa",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 14661,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "As 14 Mais do Festival de San Remo 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "As 14 Mais do Festival de San Remo",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 14710,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "Axe Bahia Axe 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Axe Bahia Axe",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 14691,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "Francis Dalva 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Francis Dalva",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 14721,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "Angel 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Angel",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 14734,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Melhores 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Melhores",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 14760,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "",
+      "titulo": "Erasmo Carlos 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Erasmo Carlos",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 22472,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Banda Ská",
+      "titulo": "Banda Ská (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Banda Ská",
+      "titulo": "Banda Ská",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 7768,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "",
+      "titulo": "Cast 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Cast",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 7821,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "",
+      "titulo": "Crosby Stills & Nash 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Crosby Stills & Nash",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 17255,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Taylor Swift 2006",
+      "titulo": "Taylor Swift 2006",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Taylor Swift",
+      "titulo": "Taylor Swift",
+      "ano": "2006"
+    }
+  },
+  {
+    "id": 22480,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "Paul Simon",
+      "titulo": "Paul Simon (1972)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paul Simon",
+      "titulo": "Paul Simon",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 22482,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "Cast",
+      "titulo": "Cast (1980)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Cast",
+      "titulo": "Cast",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 17297,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Raça Negra 1992",
+      "titulo": "Raça Negra 1992",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Raça Negra",
+      "titulo": "Raça Negra",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 21416,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque (1984)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 7670,
+    "loja": "Loja 1",
+    "caixa": "6",
+    "anterior": {
+      "artista": "Steppenwolf",
+      "titulo": "1967 - 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Steppenwolf",
+      "titulo": "1967",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 17472,
+    "loja": null,
+    "caixa": "19",
+    "anterior": {
+      "artista": "Patativa do Assaré 1979",
+      "titulo": "Patativa do Assaré 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Patativa do Assaré",
+      "titulo": "Patativa do Assaré",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22516,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "Perla",
+      "titulo": "Perla (1972)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Perla",
+      "titulo": "Perla",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 7991,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "Beatles 1962",
+      "titulo": "1966",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Beatles",
+      "titulo": "1966",
+      "ano": "1962"
+    }
+  },
+  {
+    "id": 21423,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "Pholhas",
+      "titulo": "Pholhas (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Pholhas",
+      "titulo": "Pholhas",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 20907,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Gilberto Gil",
+      "titulo": "Gilberto Gil (1971)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Gilberto Gil",
+      "titulo": "Gilberto Gil",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 21422,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque (1984)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 21662,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Leny Andrade",
+      "titulo": "Leny Andrade (1984)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Leny Andrade",
+      "titulo": "Leny Andrade",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 17920,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Raça Negra 1996",
+      "titulo": "Raça Negra 1996",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Raça Negra",
+      "titulo": "Raça Negra",
+      "ano": "1996"
+    }
+  },
+  {
+    "id": 17921,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "Raça Negra 1994",
+      "titulo": "Raça Negra 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Raça Negra",
+      "titulo": "Raça Negra",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 9126,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "Papete 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Papete",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 9131,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "Mirian Cunha 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Mirian Cunha",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 9166,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "Joao Silva 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Joao Silva",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 9168,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "Trio Nordestino Primeiro e Unico 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Trio Nordestino Primeiro e Unico",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 11118,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alipio Martins 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alipio Martins",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 9242,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gerson e seu 8 Baixos 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gerson e seu 8 Baixos",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 22530,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "Crosby, Stills & Nash",
+      "titulo": "CSN (1977)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Crosby, Stills & Nash",
+      "titulo": "CSN",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 18169,
+    "loja": null,
+    "caixa": "26",
+    "anterior": {
+      "artista": "José Augusto 1977",
+      "titulo": "José Augusto 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "José Augusto",
+      "titulo": "José Augusto",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 11265,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rita Lee 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rita Lee",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 18300,
+    "loja": null,
+    "caixa": "26",
+    "anterior": {
+      "artista": "Maria Bethânia 1971",
+      "titulo": "Maria Bethânia 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Maria Bethânia",
+      "titulo": "Maria Bethânia",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 11691,
+    "loja": "Loja 1",
+    "caixa": "29",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Supremes 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Supremes",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 10695,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "Banda Mel",
+      "titulo": "Brasil 2000",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Banda Mel",
+      "titulo": "Brasil",
+      "ano": "2000"
+    }
+  },
+  {
+    "id": 11785,
+    "loja": "Loja 1",
+    "caixa": "29",
+    "anterior": {
+      "artista": "",
+      "titulo": "Passion 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Passion",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 18966,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "Mario Gonçalves 1987",
+      "titulo": "Mario Gonçalves 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Mario Gonçalves",
+      "titulo": "Mario Gonçalves",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 11927,
+    "loja": "Loja 1",
+    "caixa": "28",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rickie Lee Jones 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rickie Lee Jones",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 11939,
+    "loja": "Loja 1",
+    "caixa": "28",
+    "anterior": {
+      "artista": "",
+      "titulo": "Revelation 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Revelation",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 13876,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "Antigua Jazz Band",
+      "titulo": "Jazz Caliente 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Antigua Jazz Band",
+      "titulo": "Jazz Caliente",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 13882,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "Antigua Jazz Band",
+      "titulo": "Jazz Caliente 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Antigua Jazz Band",
+      "titulo": "Jazz Caliente",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 8121,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Aldo Sena e seu Conjunto 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Aldo Sena e seu Conjunto",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8250,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Djavan 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Djavan",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 6818,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "Christophe 1966",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Christophe",
+      "ano": "1966"
+    }
+  },
+  {
+    "id": 6914,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "Billy Joe Thomas 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Billy Joe Thomas",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 6943,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "Carpenters 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Carpenters",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 6949,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "Information Society 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Information Society",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 6958,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "The Plastic Ono Band",
+      "titulo": "Live Peace in Toronto 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "The Plastic Ono Band",
+      "titulo": "Live Peace in Toronto",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 6919,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "Earth Wind and Fire 1984",
+      "titulo": "Earth Wind and Fire 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Earth Wind and Fire",
+      "titulo": "Earth Wind and Fire",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 6983,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Grass Roots 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Grass Roots",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 22599,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "Ednardo",
+      "titulo": "Ednardo (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Ednardo",
+      "titulo": "Ednardo",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 7000,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Spin Doctors 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Spin Doctors",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 7029,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Carole King Thoroughbred 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Carole King Thoroughbred",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 22596,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 7035,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Georgia Satellites 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Georgia Satellites",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 7038,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rock Esperto 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rock Esperto",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 7086,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "KC and the Sunshine Band 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "KC and the Sunshine Band",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 22603,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "Djavan",
+      "titulo": "Djavan (1989)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Djavan",
+      "titulo": "Djavan",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 7112,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Mercedes Sosa 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Mercedes Sosa",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 7113,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Mercedes Sosa 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Mercedes Sosa",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 7088,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Peter Gabriel 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Peter Gabriel",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 7101,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Family 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Family",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 7104,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Roberta Flack 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Roberta Flack",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 22607,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "Adoniran Barbosa",
+      "titulo": "Adoniran Barbosa (1980)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Adoniran Barbosa",
+      "titulo": "Adoniran Barbosa",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 7174,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sammy Hagar 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sammy Hagar",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 7168,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "",
+      "titulo": "Metal Church 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Metal Church",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 7354,
+    "loja": "Loja 1",
+    "caixa": "5",
+    "anterior": {
+      "artista": "",
+      "titulo": "Whitney Houston 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Whitney Houston",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 7622,
+    "loja": "Loja 1",
+    "caixa": "6",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Dream Academy 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Dream Academy",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 7618,
+    "loja": "Loja 1",
+    "caixa": "6",
+    "anterior": {
+      "artista": "",
+      "titulo": "KC and the Sunshine Band 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "KC and the Sunshine Band",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 7590,
+    "loja": "Loja 1",
+    "caixa": "6",
+    "anterior": {
+      "artista": "",
+      "titulo": "Yes 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Yes",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 7710,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tom Fogerty 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tom Fogerty",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 7740,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "McGuinn",
+      "titulo": "Clark & Hillman 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "McGuinn",
+      "titulo": "Clark & Hillman",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 7763,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "",
+      "titulo": "Pholhas 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Pholhas",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 7827,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "Emerson",
+      "titulo": "Lake & Powell 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Emerson",
+      "titulo": "Lake & Powell",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 7891,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Monkees 1966",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Monkees",
+      "ano": "1966"
+    }
+  },
+  {
+    "id": 20922,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Elza Soares",
+      "titulo": "Elza Soares (1974)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elza Soares",
+      "titulo": "Elza Soares",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 7931,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "Can",
+      "titulo": "Live in Stuttgart 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Can",
+      "titulo": "Live in Stuttgart",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 7941,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "",
+      "titulo": "Snail 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Snail",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 7947,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "",
+      "titulo": "Aquarius Band 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Aquarius Band",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 8058,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Leno e Lilian 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Leno e Lilian",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 8063,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fagner 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fagner",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 8066,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Diana 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Diana",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 8069,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Nara Leão 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Nara Leão",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 8070,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Odair Jose 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Odair Jose",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 8081,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Odair Jose 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Odair Jose",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 8140,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ronnie Von 1966",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ronnie Von",
+      "ano": "1966"
+    }
+  },
+  {
+    "id": 22616,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "Odair José",
+      "titulo": "Odair José (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Odair José",
+      "titulo": "Odair José",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22617,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "Odair José",
+      "titulo": "Odair José (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Odair José",
+      "titulo": "Odair José",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 22618,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "Odair José",
+      "titulo": "Odair José (1993)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Odair José",
+      "titulo": "Odair José",
+      "ano": "1993"
+    }
+  },
+  {
+    "id": 22621,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "Música Popular Brasileira",
+      "titulo": "Música Popular Brasileira (1978)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Música Popular Brasileira",
+      "titulo": "Música Popular Brasileira",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 8249,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Roberto Ribeiro 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Roberto Ribeiro",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 8166,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Clemilda 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Clemilda",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 16290,
+    "loja": null,
+    "caixa": "10",
+    "anterior": {
+      "artista": "Os Caçulas 1968",
+      "titulo": "Os Caçulas 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Os Caçulas",
+      "titulo": "Os Caçulas",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 8261,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Chico Buarque 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Chico Buarque",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 8310,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Arnaud Rodrigues 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Arnaud Rodrigues",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 8316,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Samjazz Quintet 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Samjazz Quintet",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 8302,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Geraldo Azevedo 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Geraldo Azevedo",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 8294,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 8366,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Joao do Vale 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Joao do Vale",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 8376,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Elza",
+      "titulo": "Miltinho e Samba 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elza",
+      "titulo": "Miltinho e Samba",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 8405,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ronnie Von 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ronnie Von",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 8401,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Erasmo Carlos",
+      "titulo": "Projeto Salva Terra 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Erasmo Carlos",
+      "titulo": "Projeto Salva Terra",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 8407,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raimundo Fagner 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raimundo Fagner",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 8527,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sergio Souto 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sergio Souto",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 8535,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fernando Mendes 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fernando Mendes",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 22624,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "Genival Santos",
+      "titulo": "Genival Santos (1980)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Genival Santos",
+      "titulo": "Genival Santos",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 8470,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Vinicius & Toquinho 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Vinicius & Toquinho",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 8574,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Dorival Caymmi 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Dorival Caymmi",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 8584,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Noel Rosa 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Noel Rosa",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 8597,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Milton Banana 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Milton Banana",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 8701,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Antônio Carlos Jobim 1962",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Antônio Carlos Jobim",
+      "ano": "1962"
+    }
+  },
+  {
+    "id": 8693,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Miss Lene 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Miss Lene",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 8702,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Edson Cordeiro 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Edson Cordeiro",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 8769,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ze Ketti 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ze Ketti",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 8813,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Isolda 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Isolda",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 8991,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "O Espirito da Coisa 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "O Espirito da Coisa",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8884,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "HANOI HANOI 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "HANOI HANOI",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8924,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rita Lee e Roberto de Carvalho 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rita Lee e Roberto de Carvalho",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 8940,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sandra Sa 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sandra Sa",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8941,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sampa Crew 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sampa Crew",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 8947,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rita Lee e Roberto 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rita Lee e Roberto",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 8948,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Uns e Outros 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Uns e Outros",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22635,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "José Augusto",
+      "titulo": "José Augusto (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "José Augusto",
+      "titulo": "José Augusto",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22636,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "Odair José",
+      "titulo": "Odair José (1990)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Odair José",
+      "titulo": "Odair José",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 9347,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Carmen Costa 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Carmen Costa",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 9351,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Edu da Gaita 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Edu da Gaita",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 9356,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Vieira e seu Conjunto 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Vieira e seu Conjunto",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 9362,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Clemilda 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Clemilda",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 9704,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Wando 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Wando",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 8358,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Banda Santaren 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Banda Santaren",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 9824,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Jonnata Doll e os Garotos Solventes 2014",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Jonnata Doll e os Garotos Solventes",
+      "ano": "2014"
+    }
+  },
+  {
+    "id": 9840,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fagner 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fagner",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 9862,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "MPB 4 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "MPB 4",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 9829,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sergio Ricardo 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sergio Ricardo",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10054,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Franco 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Franco",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 10059,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Paulinho Tapajos 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Paulinho Tapajos",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 9930,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raça Negra 1992",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raça Negra",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 9861,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Taylor Swift ",
+      "titulo": "Taylor Swift (2006)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Taylor Swift",
+      "titulo": "Taylor Swift",
+      "ano": "2006"
+    }
+  },
+  {
+    "id": 9985,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Arena Canta Zumbi 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Arena Canta Zumbi",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 8429,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Claudia Telles 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Claudia Telles",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 10122,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Joao Gilberto 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Joao Gilberto",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10065,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tempo 7 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tempo 7",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 10149,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Candeia 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Candeia",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 10147,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Celia 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Celia",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 10142,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Doris Monteiro 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Doris Monteiro",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 22649,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Elza Soares e Miltinho",
+      "titulo": "Elza, Miltinho e Samba (1967)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elza Soares e Miltinho",
+      "titulo": "Elza, Miltinho e Samba",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 10289,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Nana Caymmi 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Nana Caymmi",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 10293,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Elza",
+      "titulo": "Miltinho & Samba 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elza",
+      "titulo": "Miltinho & Samba",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 22657,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Reginaldo Rossi",
+      "titulo": "Reginaldo Rossi (1974)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Reginaldo Rossi",
+      "titulo": "Reginaldo Rossi",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 22659,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Os Caçulas",
+      "titulo": "Os Caçulas (1968)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Os Caçulas",
+      "titulo": "Os Caçulas",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 10333,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Marcia 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Marcia",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10337,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tom e Dito 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tom e Dito",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 10346,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Mano Decio 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Mano Decio",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 10344,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Geronimo 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Geronimo",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 10359,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Bossa Rio 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Bossa Rio",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 22665,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Soro",
+      "titulo": "Soro (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Soro",
+      "titulo": "Soro",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22669,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Caetano Veloso",
+      "titulo": "Caetano Veloso (1969)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Caetano Veloso",
+      "titulo": "Caetano Veloso",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 22670,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "João do Vale",
+      "titulo": "João do Vale (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "João do Vale",
+      "titulo": "João do Vale",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 10753,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "",
+      "titulo": "Luzes Neon 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Luzes Neon",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 10752,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "",
+      "titulo": "Forro Bom! E do ABC!! 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Forro Bom! E do ABC!!",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 10893,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Banda Mel do Brasil 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Banda Mel do Brasil",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 10896,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Novidades Brasil 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Novidades Brasil",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 11069,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Demonios da Garoa 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Demonios da Garoa",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 11067,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "",
+      "titulo": "Luiz Americano e seu Conjunto 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Luiz Americano e seu Conjunto",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 11102,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "Sivuca",
+      "titulo": "Forro e Frevo 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sivuca",
+      "titulo": "Forro e Frevo",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 11019,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Incriveis 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Incriveis",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 22683,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia (1985)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 22684,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 11181,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "",
+      "titulo": "Abel Ferreira e seu Conjunto 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Abel Ferreira e seu Conjunto",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 6701,
+    "loja": "Loja 1",
+    "caixa": "1",
+    "anterior": {
+      "artista": "The Rolling Stones",
+      "titulo": "Rolling Stones 1964",
+      "ano": null
+    },
+    "novo": {
+      "artista": "The Rolling Stones",
+      "titulo": "Rolling Stones",
+      "ano": "1964"
+    }
+  },
+  {
+    "id": 11377,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "",
+      "titulo": "Odair José 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Odair José",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 22687,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Marina Lima",
+      "titulo": "Marina Lima (1991)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Marina Lima",
+      "titulo": "Marina Lima",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 11706,
+    "loja": "Loja 1",
+    "caixa": "29",
+    "anterior": {
+      "artista": "",
+      "titulo": "Jeremaine 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Jeremaine",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 11923,
+    "loja": "Loja 1",
+    "caixa": "28",
+    "anterior": {
+      "artista": "",
+      "titulo": "Hannibal and the Sunrise Orchestra 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Hannibal and the Sunrise Orchestra",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 10298,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Miucha 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Miucha",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 12019,
+    "loja": "Loja 1",
+    "caixa": "30",
+    "anterior": {
+      "artista": "",
+      "titulo": "UB40 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "UB40",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 21454,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque (1984)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 10283,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "ClaudetteSoares 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "ClaudetteSoares",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 10309,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alaide Costa 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alaide Costa",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 12091,
+    "loja": "Loja 1",
+    "caixa": "30",
+    "anterior": {
+      "artista": "Blood",
+      "titulo": "Sweat Tears 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Blood",
+      "titulo": "Sweat Tears",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 12099,
+    "loja": "Loja 1",
+    "caixa": "30",
+    "anterior": {
+      "artista": "",
+      "titulo": "Bernie Lyon 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Bernie Lyon",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 13272,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "",
+      "titulo": "Marion Duarte 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Marion Duarte",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 20930,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Face Ácida",
+      "titulo": "Face Ácida – 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Face Ácida",
+      "titulo": "Face Ácida",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 21369,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "Oswaldinho",
+      "titulo": "Oswaldinho (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Oswaldinho",
+      "titulo": "Oswaldinho",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 6737,
+    "loja": "Loja 1",
+    "caixa": "1",
+    "anterior": {
+      "artista": "After The Beatles",
+      "titulo": "1969 - 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "After The Beatles",
+      "titulo": "1969",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 6847,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "Emerson Lake & Powell 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Emerson Lake & Powell",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 6849,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "GTR 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "GTR",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 6900,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rainbirds 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rainbirds",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 21470,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola (1978)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 7227,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "Within Reach",
+      "titulo": "Within Reach (1976)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Within Reach",
+      "titulo": "Within Reach",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 7277,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "",
+      "titulo": "Heavy Metal Thunder 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Heavy Metal Thunder",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 21471,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "Elis Regina",
+      "titulo": "Elis (1977)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elis Regina",
+      "titulo": "Elis",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 21472,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "Rap Brasil",
+      "titulo": "Rap Brasil (1995)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Rap Brasil",
+      "titulo": "Rap Brasil",
+      "ano": "1995"
+    }
+  },
+  {
+    "id": 7267,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "",
+      "titulo": "SORO 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "SORO",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 7290,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "",
+      "titulo": "Whitesnake 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Whitesnake",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 20942,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque (1978)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 7386,
+    "loja": "Loja 1",
+    "caixa": "5",
+    "anterior": {
+      "artista": "",
+      "titulo": "Dire Straits 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Dire Straits",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 7330,
+    "loja": "Loja 1",
+    "caixa": "5",
+    "anterior": {
+      "artista": "",
+      "titulo": "Dire Straits 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Dire Straits",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 20944,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "Ney Matogrosso",
+      "titulo": "Mato Grosso (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Ney Matogrosso",
+      "titulo": "Mato Grosso",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 7493,
+    "loja": "Loja 1",
+    "caixa": "5",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tracy Chapman 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tracy Chapman",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 11393,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "",
+      "titulo": "Katia 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Katia",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 18229,
+    "loja": null,
+    "caixa": "26",
+    "anterior": {
+      "artista": "Odair José 1980",
+      "titulo": "Odair José 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Odair José",
+      "titulo": "Odair José",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 13103,
+    "loja": "Loja 1",
+    "caixa": "36",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ai Vem Diluvio 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ai Vem Diluvio",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 13115,
+    "loja": "Loja 1",
+    "caixa": "36",
+    "anterior": {
+      "artista": "",
+      "titulo": "Altemar Dutra 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Altemar Dutra",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 7700,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Beatles 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Beatles",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 10413,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Quinteto Violado 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Quinteto Violado",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 10414,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Marlos Nobre",
+      "titulo": "Quaerteto de cordas  1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Marlos Nobre",
+      "titulo": "Quaerteto de cordas",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 8542,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 10513,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Vento Norte 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Vento Norte",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 10517,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tim Maia 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tim Maia",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 10544,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Quinteto Violado 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Quinteto Violado",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 20951,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Edu Lobo",
+      "titulo": "Edu Lobo (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Edu Lobo",
+      "titulo": "Edu Lobo",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 7855,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "",
+      "titulo": "Kangaroo 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Kangaroo",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 7846,
+    "loja": "Loja 1",
+    "caixa": "7",
+    "anterior": {
+      "artista": "",
+      "titulo": "Pual Simon 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Pual Simon",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 10565,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Nova Bossa Nova 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Nova Bossa Nova",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 10569,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Wanderley 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Wanderley",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 22763,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "Wilson Simonal",
+      "titulo": "Alegria, Alegria! (1967)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Wilson Simonal",
+      "titulo": "Alegria, Alegria!",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 22765,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque (1989)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 7970,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "",
+      "titulo": "Peter Gabriel 2016",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Peter Gabriel",
+      "ano": "2016"
+    }
+  },
+  {
+    "id": 8017,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gaz 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gaz",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 8021,
+    "loja": "Loja 1",
+    "caixa": "8",
+    "anterior": {
+      "artista": "",
+      "titulo": "SANTANA 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "SANTANA",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 22772,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 22774,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "Edino Krieger & Herivelto Martins",
+      "titulo": "Prêmio Shell para a música brasileira 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Edino Krieger & Herivelto Martins",
+      "titulo": "Prêmio Shell para a música brasileira",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22793,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Wando",
+      "titulo": "Wando (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Wando",
+      "titulo": "Wando",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 22815,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Odair José",
+      "titulo": "Odair José (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Odair José",
+      "titulo": "Odair José",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22816,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Reginaldo Rossi",
+      "titulo": "Reginaldo Rossi (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Reginaldo Rossi",
+      "titulo": "Reginaldo Rossi",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 21684,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Robertinho de Recife e Emilinha",
+      "titulo": "Robertinho de Recife e Emilinha (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Robertinho de Recife e Emilinha",
+      "titulo": "Robertinho de Recife e Emilinha",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 22786,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Wando",
+      "titulo": "Wando (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Wando",
+      "titulo": "Wando",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 21483,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "Zé Geraldo",
+      "titulo": "Zé Geraldo (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Zé Geraldo",
+      "titulo": "Zé Geraldo",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 22808,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 22812,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Santa Morena",
+      "titulo": "Santa Morena (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Santa Morena",
+      "titulo": "Santa Morena",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 8158,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gaya 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gaya",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 8163,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Adriana 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Adriana",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 8224,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Jesse 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Jesse",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 8227,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "Elis Regina",
+      "titulo": "Elis 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elis Regina",
+      "titulo": "Elis",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 12290,
+    "loja": "Loja 1",
+    "caixa": "31",
+    "anterior": {
+      "artista": "",
+      "titulo": "Dave Brubeck Quartet 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Dave Brubeck Quartet",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 13298,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "",
+      "titulo": "Adelino Nascimento 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Adelino Nascimento",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 8267,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "TIM MAIA 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "TIM MAIA",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 8274,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "José Augusto 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "José Augusto",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 21490,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "Zé Geraldo",
+      "titulo": "Zé Geraldo (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Zé Geraldo",
+      "titulo": "Zé Geraldo",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 8272,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Zimbo Trio 1965",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Zimbo Trio",
+      "ano": "1965"
+    }
+  },
+  {
+    "id": 8380,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Toinho e seus Animais 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Toinho e seus Animais",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 12257,
+    "loja": "Loja 1",
+    "caixa": "31",
+    "anterior": {
+      "artista": "",
+      "titulo": "Lennie Tristano 1956",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Lennie Tristano",
+      "ano": "1956"
+    }
+  },
+  {
+    "id": 8383,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Joao Lopes 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Joao Lopes",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 8386,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Bendego 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Bendego",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 12275,
+    "loja": "Loja 1",
+    "caixa": "31",
+    "anterior": {
+      "artista": "Elvis Presley",
+      "titulo": "On Stage February 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elvis Presley",
+      "titulo": "On Stage February",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 8378,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ednardo 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ednardo",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 21500,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "Sandra de Sá",
+      "titulo": "Sandra de Sá (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sandra de Sá",
+      "titulo": "Sandra de Sá",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 8445,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sandra Sa 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sandra Sa",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 8441,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Caçulas 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Caçulas",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 8821,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Belchior 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Belchior",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22832,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "Egberto Gismonti",
+      "titulo": "Egberto Gismonti (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Egberto Gismonti",
+      "titulo": "Egberto Gismonti",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 22834,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "Elza Soares e Miltinho",
+      "titulo": "Elza, Miltinho e Samba (1967)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elza Soares e Miltinho",
+      "titulo": "Elza, Miltinho e Samba",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 22844,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "Vários Artistas",
+      "titulo": "Soro (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Vários Artistas",
+      "titulo": "Soro",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 21694,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Carnaval da Ilha",
+      "titulo": "Carnaval da Ilha (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Carnaval da Ilha",
+      "titulo": "Carnaval da Ilha",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 22858,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola (1971)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 22857,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "Adelino Nascimento",
+      "titulo": "Adelino Nascimento (1990)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Adelino Nascimento",
+      "titulo": "Adelino Nascimento",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 8617,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Neneo 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Neneo",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 8644,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "Roberto Carlos importado 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Roberto Carlos importado",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 8639,
+    "loja": "Loja 1",
+    "caixa": "11",
+    "anterior": {
+      "artista": "",
+      "titulo": "MONARCO 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "MONARCO",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 22889,
+    "loja": "Loja 1",
+    "caixa": "36",
+    "anterior": {
+      "artista": "Sivuca",
+      "titulo": "Forró e Frevo (1980)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sivuca",
+      "titulo": "Forró e Frevo",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 22891,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "Oseas e sua guitarra maravilhosa",
+      "titulo": "Oseas e sua guitarra maravilhosa (1983)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Oseas e sua guitarra maravilhosa",
+      "titulo": "Oseas e sua guitarra maravilhosa",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 22886,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "Oseas e sua guitarra maravilhosa",
+      "titulo": "Oseas e sua guitarra maravilhosa (1983)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Oseas e sua guitarra maravilhosa",
+      "titulo": "Oseas e sua guitarra maravilhosa",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 20966,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Sandy & Junior",
+      "titulo": "Sandy & Junior (2006)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sandy & Junior",
+      "titulo": "Sandy & Junior",
+      "ano": "2006"
+    }
+  },
+  {
+    "id": 8726,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alma Negra 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alma Negra",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22906,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "Fagner",
+      "titulo": "Fagner (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fagner",
+      "titulo": "Fagner",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 20967,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Sandy & Junior",
+      "titulo": "Sandy & Junior (2001)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sandy & Junior",
+      "titulo": "Sandy & Junior",
+      "ano": "2001"
+    }
+  },
+  {
+    "id": 8779,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Som Pixinguinha 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Som Pixinguinha",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 8840,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Eduardo Araujo 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Eduardo Araujo",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 8841,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tim Maia 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tim Maia",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8866,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Moleque De Rua 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Moleque De Rua",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 8835,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Caetano Veloso 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Caetano Veloso",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 8838,
+    "loja": "Loja 1",
+    "caixa": "12",
+    "anterior": {
+      "artista": "",
+      "titulo": "Teti 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Teti",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 8867,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Cassia Eller 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Cassia Eller",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 8870,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Claudio Zoli 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Claudio Zoli",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8876,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Plebe Rude 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Plebe Rude",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 8862,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Robertinho de Recife e Emilinha 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Robertinho de Recife e Emilinha",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 8873,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Rita Lee 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Rita Lee",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22907,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "Fagner",
+      "titulo": "Fagner (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fagner",
+      "titulo": "Fagner",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8893,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tubarao 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tubarao",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 8906,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Paulo Ricardo 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Paulo Ricardo",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 8907,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Garotos da Rua 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Garotos da Rua",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 8910,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sandra de Sa 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sandra de Sa",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 8888,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "TNT 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "TNT",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 8916,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Implosao De Rock 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Implosao De Rock",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 16713,
+    "loja": null,
+    "caixa": "13",
+    "anterior": {
+      "artista": "Lobão 1991",
+      "titulo": "Lobão 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Lobão",
+      "titulo": "Lobão",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 8955,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Egotrip 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Egotrip",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 8986,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "rita lee e roberto carvalho 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "rita lee e roberto carvalho",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 9015,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Baby Consuelo & Pepeu Gomes 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Baby Consuelo & Pepeu Gomes",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 12379,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Perla 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Perla",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 9019,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Camisa de Venus 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Camisa de Venus",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 13383,
+    "loja": "Loja 1",
+    "caixa": "38",
+    "anterior": {
+      "artista": "",
+      "titulo": "Loredana Berte 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Loredana Berte",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 21706,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Alaide Costa",
+      "titulo": "Alaide Costa (1989)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Alaide Costa",
+      "titulo": "Alaide Costa",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 9149,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "Francis Dalva 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Francis Dalva",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 8929,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Buana 4 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Buana 4",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 20974,
+    "loja": "Loja 1",
+    "caixa": "49",
+    "anterior": {
+      "artista": "Tamba Trio",
+      "titulo": "Tamba Trio (1968)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tamba Trio",
+      "titulo": "Tamba Trio",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 9059,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raita Lee e Roberto Carvalho 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raita Lee e Roberto Carvalho",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 9205,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "Egberto Gismonti 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Egberto Gismonti",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 9274,
+    "loja": "Loja 1",
+    "caixa": "14",
+    "anterior": {
+      "artista": "",
+      "titulo": "ELOIDES 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "ELOIDES",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 9315,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 10507,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Katia Cilene 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Katia Cilene",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 10508,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fabiana 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fabiana",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 10511,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Dino Rossi 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Dino Rossi",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 10548,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Antonio Carlos e Jocafi 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Antonio Carlos e Jocafi",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10553,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Claudette Soares 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Claudette Soares",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 22923,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Capital Inicial",
+      "titulo": "Capital Inicial (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Capital Inicial",
+      "titulo": "Capital Inicial",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 22930,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Trepidant's",
+      "titulo": "Trepidant's (1995)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Trepidant's",
+      "titulo": "Trepidant's",
+      "ano": "1995"
+    }
+  },
+  {
+    "id": 9381,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Oswaldo Montenegro 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Oswaldo Montenegro",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 9384,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Clara Nunes 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Clara Nunes",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 22932,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Raio Laser",
+      "titulo": "Raio Laser (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Raio Laser",
+      "titulo": "Raio Laser",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 9406,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raimundo Soldado 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raimundo Soldado",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 9397,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raimundo Fagner 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raimundo Fagner",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 10574,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Caramuju Som 1993",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Caramuju Som",
+      "ano": "1993"
+    }
+  },
+  {
+    "id": 22940,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Camisa de Vênus",
+      "titulo": "Camisa de Vênus (1985)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Camisa de Vênus",
+      "titulo": "Camisa de Vênus",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 12380,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Trio Nordestino 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Trio Nordestino",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 22925,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Hanoi-Hanoi",
+      "titulo": "Hanoi-Hanoi (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Hanoi-Hanoi",
+      "titulo": "Hanoi-Hanoi",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 22933,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Abalo Cínico",
+      "titulo": "Abalo Cínico (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Abalo Cínico",
+      "titulo": "Abalo Cínico",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22934,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Intelligence",
+      "titulo": "Intelligence (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Intelligence",
+      "titulo": "Intelligence",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 22942,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Hanoi-Hanoi",
+      "titulo": "Hanoi-Hanoi (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Hanoi-Hanoi",
+      "titulo": "Hanoi-Hanoi",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 9518,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "",
+      "titulo": "Paulinho da Viola 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Paulinho da Viola",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 9542,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ze Geraldo 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ze Geraldo",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 21710,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Milton Banana Trio",
+      "titulo": "Milton Banana Trio (1971)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Milton Banana Trio",
+      "titulo": "Milton Banana Trio",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 22948,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Edson Cordeiro",
+      "titulo": "Edson Cordeiro (1992)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Edson Cordeiro",
+      "titulo": "Edson Cordeiro",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 9507,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "",
+      "titulo": "Pepeu Gomes 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Pepeu Gomes",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 22984,
+    "loja": "Loja 1",
+    "caixa": "38",
+    "anterior": {
+      "artista": "The 3 Tenors",
+      "titulo": "In Concert (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "The 3 Tenors",
+      "titulo": "In Concert",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 9549,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "",
+      "titulo": "Aparecida 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Aparecida",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 9552,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "",
+      "titulo": "Inimigos do Rei 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Inimigos do Rei",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 22962,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Lobão",
+      "titulo": "Lobão (1991)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Lobão",
+      "titulo": "Lobão",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 22967,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Heróis da Resistência",
+      "titulo": "Heróis da Resistência (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Heróis da Resistência",
+      "titulo": "Heróis da Resistência",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 9562,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "",
+      "titulo": "Lobao 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Lobao",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 9561,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "",
+      "titulo": "Tokyo 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Tokyo",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 22985,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Kleiton & Kledir",
+      "titulo": "Kleiton & Kledir (1983)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Kleiton & Kledir",
+      "titulo": "Kleiton & Kledir",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 9629,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Grupo Axis 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Grupo Axis",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 9653,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fatima Guedes 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fatima Guedes",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 21713,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Folclore Fluminense",
+      "titulo": "Folclore Fluminense (1977)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Folclore Fluminense",
+      "titulo": "Folclore Fluminense",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 9665,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Chico Buarque 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Chico Buarque",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 13528,
+    "loja": "Loja 1",
+    "caixa": "39",
+    "anterior": {
+      "artista": "",
+      "titulo": "Cock Robin 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Cock Robin",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 9682,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Banda Oxentemusic 1995",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Banda Oxentemusic",
+      "ano": "1995"
+    }
+  },
+  {
+    "id": 9677,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Katia Lee 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Katia Lee",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 9686,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raizes do Pelo 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raizes do Pelo",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 9694,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Paulinho da Viola 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Paulinho da Viola",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 9779,
+    "loja": "Loja 1",
+    "caixa": "17",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ze Ramalho 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ze Ramalho",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 9809,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 9800,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Gil Scott-Heron with Brian Jackson & The midnight band",
+      "titulo": "Live at wrvr village gate 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Gil Scott-Heron with Brian Jackson & The midnight band",
+      "titulo": "Live at wrvr village gate",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 9801,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Festival da Bossa 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Festival da Bossa",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 9811,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "O Terno 2014",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "O Terno",
+      "ano": "2014"
+    }
+  },
+  {
+    "id": 9912,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Claudio Carter 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Claudio Carter",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 9907,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Guilherme Arantes 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Guilherme Arantes",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 9886,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Paulo Diniz 1970 1971 1972 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Paulo Diniz 1970 1971 1972",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 9889,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ronnie Von 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ronnie Von",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10011,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "ELIS REGINA 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "ELIS REGINA",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 13579,
+    "loja": "Loja 1",
+    "caixa": "40",
+    "anterior": {
+      "artista": "",
+      "titulo": "Carpenters 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Carpenters",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 13601,
+    "loja": "Loja 1",
+    "caixa": "40",
+    "anterior": {
+      "artista": "",
+      "titulo": "Dalida 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Dalida",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 10013,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Def Leppard 2015",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Def Leppard",
+      "ano": "2015"
+    }
+  },
+  {
+    "id": 10023,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Face Acida 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Face Acida",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 10028,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Martins 2019",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Martins",
+      "ano": "2019"
+    }
+  },
+  {
+    "id": 13631,
+    "loja": "Loja 1",
+    "caixa": "40",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alain Delorme 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alain Delorme",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 10049,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Edu Lobo 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Edu Lobo",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10048,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Milton Banana 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Milton Banana",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 21767,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Tom e Dito",
+      "titulo": "Tom e Dito (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tom e Dito",
+      "titulo": "Tom e Dito",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 21769,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Egberto Gismonti",
+      "titulo": "Egberto Gismonti (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Egberto Gismonti",
+      "titulo": "Egberto Gismonti",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 21528,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "Mistura Brazil",
+      "titulo": "Mistura Brazil (1993)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Mistura Brazil",
+      "titulo": "Mistura Brazil",
+      "ano": "1993"
+    }
+  },
+  {
+    "id": 10104,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Cobras 1960",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Cobras",
+      "ano": "1960"
+    }
+  },
+  {
+    "id": 21745,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Selma Reis",
+      "titulo": "Selma Reis (1990)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Selma Reis",
+      "titulo": "Selma Reis",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 21775,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Paulo Diniz",
+      "titulo": "Paulo Diniz (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paulo Diniz",
+      "titulo": "Paulo Diniz",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 10166,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Antonio Carlos Jobim 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Antonio Carlos Jobim",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 21538,
+    "loja": "Loja 1",
+    "caixa": "16",
+    "anterior": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paulinho da Viola",
+      "titulo": "Paulinho da Viola",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 10175,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gilberto Gil 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gilberto Gil",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 10159,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Pery Ribeiro 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Pery Ribeiro",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 21783,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Quinteto Violado",
+      "titulo": "Quinteto Violado",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 21790,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Teca Calazans",
+      "titulo": "Teca Calazans (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Teca Calazans",
+      "titulo": "Teca Calazans",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 10218,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "",
+      "titulo": "Patativa do Assaré 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Patativa do Assaré",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 21798,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Zé Côco do Riachão",
+      "titulo": "Zé Côco do Riachão (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Zé Côco do Riachão",
+      "titulo": "Zé Côco do Riachão",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 14703,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "Ary Lobo",
+      "titulo": "Ari Lobo 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Ary Lobo",
+      "titulo": "Ari Lobo",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 21828,
+    "loja": "Loja 1",
+    "caixa": "1",
+    "anterior": {
+      "artista": "Rod Stewart",
+      "titulo": "Rod Stewart (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Rod Stewart",
+      "titulo": "Rod Stewart",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 23041,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "Trio Nordestino",
+      "titulo": "Trio Nordestino (1974)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Trio Nordestino",
+      "titulo": "Trio Nordestino",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 23048,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes (1991)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 23030,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 23039,
+    "loja": "Loja 1",
+    "caixa": "47",
+    "anterior": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes (1983)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 10318,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Doris Monteiro 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Doris Monteiro",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 10320,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Selma Reis 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Selma Reis",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 10321,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "O Quarteto 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "O Quarteto",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 21832,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris Monteiro (1974)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris Monteiro",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 10373,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Monarco 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Monarco",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 10375,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Monsueto 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Monsueto",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10404,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Saltimbancos 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Saltimbancos",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 21534,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Ronnie Von",
+      "titulo": "Ronnie Von (1967)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Ronnie Von",
+      "titulo": "Ronnie Von",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 21837,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 21840,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Carlos Cachaça",
+      "titulo": "Carlos Cachaça (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Carlos Cachaça",
+      "titulo": "Carlos Cachaça",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 12128,
+    "loja": "Loja 1",
+    "caixa": "30",
+    "anterior": {
+      "artista": "",
+      "titulo": "Syreeta 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Syreeta",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 10482,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "As Aventuras do Laranjeiras 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "As Aventuras do Laranjeiras",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 10474,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Umbanda Querida 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Umbanda Querida",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 23073,
+    "loja": "Loja 1",
+    "caixa": "41",
+    "anterior": {
+      "artista": "Nancy Shanx",
+      "titulo": "Nancy Shanx (1978)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Nancy Shanx",
+      "titulo": "Nancy Shanx",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 10533,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alberto Nepomuceno 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alberto Nepomuceno",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 10536,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Antonio Carlos Jobim 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Antonio Carlos Jobim",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 10537,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Celia 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Celia",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 10612,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "",
+      "titulo": "Forro Legal 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Forro Legal",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 10579,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ronnie Von 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ronnie Von",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 10652,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ruan Carlos 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ruan Carlos",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 21544,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Marília Medalha",
+      "titulo": "Marilia Medalha (1968)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Marília Medalha",
+      "titulo": "Marilia Medalha",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 13834,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "",
+      "titulo": "Harmony Cats 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Harmony Cats",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 13828,
+    "loja": "Loja 1",
+    "caixa": "42",
+    "anterior": {
+      "artista": "",
+      "titulo": "Stella Levitt 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Stella Levitt",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 21868,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Grande Parada",
+      "titulo": "Grande Parada (1967)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Grande Parada",
+      "titulo": "Grande Parada",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 10741,
+    "loja": "Loja 1",
+    "caixa": "22",
+    "anterior": {
+      "artista": "",
+      "titulo": "Pedrinho da Flor 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Pedrinho da Flor",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 14489,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "",
+      "titulo": "Festa do Chapeu do Couro 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Festa do Chapeu do Couro",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 23081,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Orquestra Armorial",
+      "titulo": "Orquestra Armorial (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Orquestra Armorial",
+      "titulo": "Orquestra Armorial",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 10793,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Asas da America 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Asas da America",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 10829,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Banda Mel 1992",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Banda Mel",
+      "ano": "1992"
+    }
+  },
+  {
+    "id": 23094,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Sidney Magal",
+      "titulo": "Sidney Magal (1978)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sidney Magal",
+      "titulo": "Sidney Magal",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 10839,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Central Africana 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Central Africana",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 23103,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Luiz Gonzaga",
+      "titulo": "Sua Sanfona e sua Simpatia (1966)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Luiz Gonzaga",
+      "titulo": "Sua Sanfona e sua Simpatia",
+      "ano": "1966"
+    }
+  },
+  {
+    "id": 10905,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Vieira e seu Conjunto 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Vieira e seu Conjunto",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 21006,
+    "loja": "Loja 1",
+    "caixa": "50",
+    "anterior": {
+      "artista": "Jonnata Doll e os Garotos Solventes",
+      "titulo": "Jonnata Doll e os Garotos Solventes 2014",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Jonnata Doll e os Garotos Solventes",
+      "titulo": "Jonnata Doll e os Garotos Solventes",
+      "ano": "2014"
+    }
+  },
+  {
+    "id": 21548,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Antonio Carlos e Jocafi",
+      "titulo": "Antonio Carlos e Jocafi (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Antonio Carlos e Jocafi",
+      "titulo": "Antonio Carlos e Jocafi",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 21885,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Milton Banana",
+      "titulo": "Milton Banana (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Milton Banana",
+      "titulo": "Milton Banana",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 21888,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Milton Banana",
+      "titulo": "Milton Banana (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Milton Banana",
+      "titulo": "Milton Banana",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 10918,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raça Negra 1996",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raça Negra",
+      "ano": "1996"
+    }
+  },
+  {
+    "id": 10920,
+    "loja": "Loja 1",
+    "caixa": "23",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raça Negra 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raça Negra",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 6891,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "Genesis 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Genesis",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 6911,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "",
+      "titulo": "The American Breed 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The American Breed",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 11030,
+    "loja": "Loja 1",
+    "caixa": "24",
+    "anterior": {
+      "artista": "",
+      "titulo": "Clara Sverner e Paulo Moura 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Clara Sverner e Paulo Moura",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 23106,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Odair José",
+      "titulo": "Odair José (1990)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Odair José",
+      "titulo": "Odair José",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 23107,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Adelino Nascimento",
+      "titulo": "Adelino Nascimento (1989)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Adelino Nascimento",
+      "titulo": "Adelino Nascimento",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 23108,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Adelino Nascimento",
+      "titulo": "Adelino Nascimento (1991)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Adelino Nascimento",
+      "titulo": "Adelino Nascimento",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 11219,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "",
+      "titulo": "Chico Buarque 1984",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Chico Buarque",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 23118,
+    "loja": "Loja 1",
+    "caixa": "46",
+    "anterior": {
+      "artista": "Cláudio Roberto",
+      "titulo": "Cláudio Roberto (1974)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Cláudio Roberto",
+      "titulo": "Cláudio Roberto",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 11277,
+    "loja": "Loja 1",
+    "caixa": "25",
+    "anterior": {
+      "artista": "",
+      "titulo": "Diana Pequeno 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Diana Pequeno",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 11297,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "",
+      "titulo": "José Augusto 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "José Augusto",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 11312,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "Sivuca",
+      "titulo": "Forro e frevo 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sivuca",
+      "titulo": "Forro e frevo",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 11434,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "",
+      "titulo": "Raio Laser 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Raio Laser",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 11407,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "",
+      "titulo": "Conexao Japeri 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Conexao Japeri",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 11419,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "",
+      "titulo": "Nazareno 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Nazareno",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 11487,
+    "loja": "Loja 1",
+    "caixa": "26",
+    "anterior": {
+      "artista": "",
+      "titulo": "Maria Bethânia 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Maria Bethânia",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 11523,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "MÁRCIA 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "MÁRCIA",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 11556,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Paulinho da Viola 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Paulinho da Viola",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 11575,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Maysa 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Maysa",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 11514,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Flavio Carvalho 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Flavio Carvalho",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 11565,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Walmir Lima 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Walmir Lima",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 11573,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Beth Carvalho 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Beth Carvalho",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 11602,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Grace Jones 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Grace Jones",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 11634,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Biriba Boys 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Biriba Boys",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 11599,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Eugenia Melo e Castro 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Eugenia Melo e Castro",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 11601,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Batuqueiros 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Batuqueiros",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 21940,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris Monteiro (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Doris Monteiro",
+      "titulo": "Doris Monteiro",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 21563,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Paulo Diniz",
+      "titulo": "Paulo Diniz (1971)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paulo Diniz",
+      "titulo": "Paulo Diniz",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 23144,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "Nenéo",
+      "titulo": "Nenéo (1978)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Nenéo",
+      "titulo": "Nenéo",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 21565,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Ronnie Von",
+      "titulo": "Ronnie Von (1966)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Ronnie Von",
+      "titulo": "Ronnie Von",
+      "ano": "1966"
+    }
+  },
+  {
+    "id": 23145,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "Os Batuqueiros",
+      "titulo": "Os Batuqueiros (1976)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Os Batuqueiros",
+      "titulo": "Os Batuqueiros",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 23146,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "José Orlando",
+      "titulo": "Parabéns pra você (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "José Orlando",
+      "titulo": "Parabéns pra você",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 12026,
+    "loja": "Loja 1",
+    "caixa": "30",
+    "anterior": {
+      "artista": "",
+      "titulo": "Elvis Presley 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Elvis Presley",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 23151,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "José Orlando",
+      "titulo": "Parabéns pra você (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "José Orlando",
+      "titulo": "Parabéns pra você",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 23153,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 23155,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes (1977)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fernando Mendes",
+      "titulo": "Fernando Mendes",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 12247,
+    "loja": "Loja 1",
+    "caixa": "31",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Floaters 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Floaters",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 21956,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Wilson Simonal",
+      "titulo": "Simonal (1983)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Wilson Simonal",
+      "titulo": "Simonal",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 12392,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fatima Melo 1995",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fatima Melo",
+      "ano": "1995"
+    }
+  },
+  {
+    "id": 12295,
+    "loja": "Loja 1",
+    "caixa": "31",
+    "anterior": {
+      "artista": "",
+      "titulo": "The Real Pearl Bailey recorded 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "The Real Pearl Bailey recorded",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 12296,
+    "loja": "Loja 1",
+    "caixa": "31",
+    "anterior": {
+      "artista": "",
+      "titulo": "Teresa Graves 1970",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Teresa Graves",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 23173,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "Martinho da Vila",
+      "titulo": "Martinho da Vila (1969)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Martinho da Vila",
+      "titulo": "Martinho da Vila",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 12400,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alipio Martins 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alipio Martins",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 23177,
+    "loja": "Loja 1",
+    "caixa": "45",
+    "anterior": {
+      "artista": "Alípio Martins",
+      "titulo": "Alípio Martins (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Alípio Martins",
+      "titulo": "Alípio Martins",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 21576,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "As Aventuras do Laranjeiras",
+      "titulo": "As Aventuras do Laranjeiras (1977)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "As Aventuras do Laranjeiras",
+      "titulo": "As Aventuras do Laranjeiras",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 12446,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Agnaldo Timoteo 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Agnaldo Timoteo",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 12432,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Reginaldo Rossi",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 12453,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Frevos 1967",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Frevos",
+      "ano": "1967"
+    }
+  },
+  {
+    "id": 12454,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Elizeth Cardoso 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Elizeth Cardoso",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 12459,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Carnaval 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Carnaval",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 12461,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ana Belen 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ana Belen",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 12458,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "OS Vips 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "OS Vips",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 12473,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Mario Gonçalves 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Mario Gonçalves",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 12479,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Abdias como Antigamente 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Abdias como Antigamente",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 12484,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Cesar Veneno 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Cesar Veneno",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 12493,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Beto Barbosa 1993",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Beto Barbosa",
+      "ano": "1993"
+    }
+  },
+  {
+    "id": 12504,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Antonio Marcos 1969",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Antonio Marcos",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 12495,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Henrique Cazes 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Henrique Cazes",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 12483,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Marcia Ferreira 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Marcia Ferreira",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 12509,
+    "loja": "Loja 1",
+    "caixa": "32",
+    "anterior": {
+      "artista": "",
+      "titulo": "Trio Nordestino 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Trio Nordestino",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 21583,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Célia",
+      "titulo": "Célia (1977)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Célia",
+      "titulo": "Célia",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 22000,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Manassés",
+      "titulo": "Manassés (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Manassés",
+      "titulo": "Manassés",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22001,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Tim Maia",
+      "titulo": "Tim Maia",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 12533,
+    "loja": "Loja 1",
+    "caixa": "33",
+    "anterior": {
+      "artista": "",
+      "titulo": "Carnaval Recife 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Carnaval Recife",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 12549,
+    "loja": "Loja 1",
+    "caixa": "33",
+    "anterior": {
+      "artista": "",
+      "titulo": "Genival Santos 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Genival Santos",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 11804,
+    "loja": "Loja 1",
+    "caixa": "29",
+    "anterior": {
+      "artista": "",
+      "titulo": "Village People 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Village People",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 9866,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gracinha Leporace 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gracinha Leporace",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 13282,
+    "loja": "Loja 1",
+    "caixa": "37",
+    "anterior": {
+      "artista": "",
+      "titulo": "Amado Batista 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Amado Batista",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 22018,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Elis Regina",
+      "titulo": "Elis (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Elis Regina",
+      "titulo": "Elis",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 22034,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Almir Sater",
+      "titulo": "Almir Sater (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Almir Sater",
+      "titulo": "Almir Sater",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 7034,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "New England 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "New England",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 7079,
+    "loja": "Loja 1",
+    "caixa": "3",
+    "anterior": {
+      "artista": "",
+      "titulo": "Emerson Lake & Palmer 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Emerson Lake & Palmer",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 22033,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Sergio Ricardo",
+      "titulo": "Sergio Ricardo (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Sergio Ricardo",
+      "titulo": "Sergio Ricardo",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 12645,
+    "loja": "Loja 1",
+    "caixa": "33",
+    "anterior": {
+      "artista": "",
+      "titulo": "Jayne 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Jayne",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 12643,
+    "loja": "Loja 1",
+    "caixa": "33",
+    "anterior": {
+      "artista": "",
+      "titulo": "Trio Petrolina 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Trio Petrolina",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 22053,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "Mercedes Sosa",
+      "titulo": "Mercedes Sosa (1976)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Mercedes Sosa",
+      "titulo": "Mercedes Sosa",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 22057,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "Rod Stewart",
+      "titulo": "Rod Stewart (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Rod Stewart",
+      "titulo": "Rod Stewart",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 12693,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Carmen Silva 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Carmen Silva",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22065,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque (1984)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Chico Buarque",
+      "titulo": "Chico Buarque",
+      "ano": "1984"
+    }
+  },
+  {
+    "id": 12731,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Dicro 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Dicro",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 12746,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fernando Mendes 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fernando Mendes",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 12755,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Genival Santos 1980",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Genival Santos",
+      "ano": "1980"
+    }
+  },
+  {
+    "id": 12781,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Mercedes Sosa 1976",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Mercedes Sosa",
+      "ano": "1976"
+    }
+  },
+  {
+    "id": 12809,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Adelino Nascimento 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Adelino Nascimento",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 12794,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Maria Creuza 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Maria Creuza",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 12807,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Julia Graciela 1982",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Julia Graciela",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 12791,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Paulinho Soares 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Paulinho Soares",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 12792,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sidney Magal 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sidney Magal",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 12793,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Sidney Magal 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Sidney Magal",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 12802,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Jose Augusto 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Jose Augusto",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 12814,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Geizi Bel 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Geizi Bel",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 12821,
+    "loja": "Loja 1",
+    "caixa": "34",
+    "anterior": {
+      "artista": "",
+      "titulo": "Gilberto Montenegro 1971",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Gilberto Montenegro",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 22096,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Fagner",
+      "titulo": "Fagner (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fagner",
+      "titulo": "Fagner",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 15417,
+    "loja": null,
+    "caixa": "4",
+    "anterior": {
+      "artista": "Led Zeppelin 1977",
+      "titulo": "Led Zeppelin 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Led Zeppelin",
+      "titulo": "Led Zeppelin",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 22098,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Moraes Moreira",
+      "titulo": "Moraes Moreira (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Moraes Moreira",
+      "titulo": "Moraes Moreira",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 22105,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Claudio Cartier",
+      "titulo": "Claudio Cartier (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Claudio Cartier",
+      "titulo": "Claudio Cartier",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 7222,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "",
+      "titulo": "Kiss 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Kiss",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 22122,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "Skarlat",
+      "titulo": "Banda Skarlat (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Skarlat",
+      "titulo": "Banda Skarlat",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 22132,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Só Pra Contrariar",
+      "titulo": "Só Pra Contrariar (1993)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Só Pra Contrariar",
+      "titulo": "Só Pra Contrariar",
+      "ano": "1993"
+    }
+  },
+  {
+    "id": 22145,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Paulo Diniz",
+      "titulo": "Paulo Diniz (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Paulo Diniz",
+      "titulo": "Paulo Diniz",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 22147,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "Emerson, Lake & Palmer",
+      "titulo": "Emerson, Lake & Palmer (1970)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Emerson, Lake & Palmer",
+      "titulo": "Emerson, Lake & Palmer",
+      "ano": "1970"
+    }
+  },
+  {
+    "id": 12865,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "Salve os campeoes do mundo",
+      "titulo": "de 1958",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Salve os campeoes do mundo",
+      "titulo": "de 1958",
+      "ano": "1958"
+    }
+  },
+  {
+    "id": 7316,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "",
+      "titulo": "DIRE STRAITS 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "DIRE STRAITS",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 22149,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Som Brasileiro",
+      "titulo": "Som Brasileiro (1975)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Som Brasileiro",
+      "titulo": "Som Brasileiro",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 12876,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Wando 1975",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Wando",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 12903,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Bastinho Calixto 1974",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Bastinho Calixto",
+      "ano": "1974"
+    }
+  },
+  {
+    "id": 12900,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Kesia 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Kesia",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 12901,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fernando Mendes 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fernando Mendes",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 12905,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fernando Mendes 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fernando Mendes",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 12908,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Fernando Mendes 1983",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Fernando Mendes",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 12907,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Odair Jose 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Odair Jose",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 12904,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Odair Jose 1990",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Odair Jose",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 22159,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "Skin Trade",
+      "titulo": "Skin Trade (1991)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Skin Trade",
+      "titulo": "Skin Trade",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 22176,
+    "loja": "Loja 1",
+    "caixa": "18",
+    "anterior": {
+      "artista": "Dalva de Oliveira",
+      "titulo": "Dalva de Oliveira (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Dalva de Oliveira",
+      "titulo": "Dalva de Oliveira",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 12924,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Nilu Amaro e seus Cantores de Ebano 1961",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Nilu Amaro e seus Cantores de Ebano",
+      "ano": "1961"
+    }
+  },
+  {
+    "id": 12913,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Kakau Gois 1991",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Kakau Gois",
+      "ano": "1991"
+    }
+  },
+  {
+    "id": 12923,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Heraldo Correa 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Heraldo Correa",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 12925,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Roberto Carlos 1988",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Roberto Carlos",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 12928,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Os Intocaveis 1985",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Os Intocaveis",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 12920,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Vania Bastos 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Vania Bastos",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 12922,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Claudio Fontana 1972",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Claudio Fontana",
+      "ano": "1972"
+    }
+  },
+  {
+    "id": 12936,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Santa Morena 1979",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Santa Morena",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 8177,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "",
+      "titulo": "Ney Matogrosso 1981",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Ney Matogrosso",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 18324,
+    "loja": null,
+    "caixa": "27",
+    "anterior": {
+      "artista": "MÁRCIA 1973",
+      "titulo": "MÁRCIA 1973",
+      "ano": null
+    },
+    "novo": {
+      "artista": "MÁRCIA",
+      "titulo": "MÁRCIA",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 18359,
+    "loja": null,
+    "caixa": "27",
+    "anterior": {
+      "artista": "Alceu Valença 1987",
+      "titulo": "Alceu Valença 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Alceu Valença",
+      "titulo": "Alceu Valença",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 21616,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fabiana",
+      "titulo": "Fabiana",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 12988,
+    "loja": "Loja 1",
+    "caixa": "35",
+    "anterior": {
+      "artista": "",
+      "titulo": "Reumar Barbosa 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Reumar Barbosa",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 13017,
+    "loja": "Loja 1",
+    "caixa": "36",
+    "anterior": {
+      "artista": "",
+      "titulo": "Joel e Gervano 1977",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Joel e Gervano",
+      "ano": "1977"
+    }
+  },
+  {
+    "id": 7427,
+    "loja": "Loja 1",
+    "caixa": "5",
+    "anterior": {
+      "artista": "",
+      "titulo": "Talkig Heads 1986",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Talkig Heads",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 22209,
+    "loja": "Loja 1",
+    "caixa": "5",
+    "anterior": {
+      "artista": "Genesis",
+      "titulo": "Genesis (1983)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Genesis",
+      "titulo": "Genesis",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 21623,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Claudette Soares",
+      "titulo": "Claudette Soares (1968)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Claudette Soares",
+      "titulo": "Claudette Soares",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 13049,
+    "loja": "Loja 1",
+    "caixa": "36",
+    "anterior": {
+      "artista": "",
+      "titulo": "Cesar Costa Filho 1978",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Cesar Costa Filho",
+      "ano": "1978"
+    }
+  },
+  {
+    "id": 21627,
+    "loja": "Loja 1",
+    "caixa": "21",
+    "anterior": {
+      "artista": "Vento Norte",
+      "titulo": "Vento Norte (1981)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Vento Norte",
+      "titulo": "Vento Norte",
+      "ano": "1981"
+    }
+  },
+  {
+    "id": 10205,
+    "loja": "Loja 1",
+    "caixa": "52",
+    "anterior": {
+      "artista": "",
+      "titulo": "Caetano Veloso 1968",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Caetano Veloso",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 10711,
+    "loja": "Loja 1",
+    "caixa": "52",
+    "anterior": {
+      "artista": "",
+      "titulo": "Katia di Troia 1994",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Katia di Troia",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 11580,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "",
+      "titulo": "Alceu Valença 1987",
+      "ano": null
+    },
+    "novo": {
+      "artista": "",
+      "titulo": "Alceu Valença",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 11596,
+    "loja": "Loja 1",
+    "caixa": "27",
+    "anterior": {
+      "artista": "Marchas",
+      "titulo": "Carnaval da Cidade Maravilhosa 1961",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Marchas",
+      "titulo": "Carnaval da Cidade Maravilhosa",
+      "ano": "1961"
+    }
+  },
+  {
+    "id": 23262,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "Ara Ketu",
+      "titulo": "Ara Ketu (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Ara Ketu",
+      "titulo": "Ara Ketu",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 23265,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "Reginaldo Rossi",
+      "titulo": "Reginaldo Rossi (1971)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Reginaldo Rossi",
+      "titulo": "Reginaldo Rossi",
+      "ano": "1971"
+    }
+  },
+  {
+    "id": 23279,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Arnaud Rodrigues",
+      "titulo": "Arnaud Rodrigues (1989)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Arnaud Rodrigues",
+      "titulo": "Arnaud Rodrigues",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 23280,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Rita Lee e Roberto de Carvalho",
+      "titulo": "Rita Lee e Roberto de Carvalho (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Rita Lee e Roberto de Carvalho",
+      "titulo": "Rita Lee e Roberto de Carvalho",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 21313,
+    "loja": "Loja 1",
+    "caixa": "29",
+    "anterior": {
+      "artista": "Whitney Houston",
+      "titulo": "Whitney Houston (1985)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Whitney Houston",
+      "titulo": "Whitney Houston",
+      "ano": "1985"
+    }
+  },
+  {
+    "id": 23318,
+    "loja": "Loja 1",
+    "caixa": "20",
+    "anterior": {
+      "artista": "Mano Décio",
+      "titulo": "Mano Décio (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Mano Décio",
+      "titulo": "Mano Décio",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 23320,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Balança Belô",
+      "titulo": "Balança Belô (1987)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Balança Belô",
+      "titulo": "Balança Belô",
+      "ano": "1987"
+    }
+  },
+  {
+    "id": 23325,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "Anjos da Noite",
+      "titulo": "Anjos da Noite (1989)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Anjos da Noite",
+      "titulo": "Anjos da Noite",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 23334,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "Terço",
+      "titulo": "Terço (1973)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Terço",
+      "titulo": "Terço",
+      "ano": "1973"
+    }
+  },
+  {
+    "id": 23335,
+    "loja": "Loja 1",
+    "caixa": "9",
+    "anterior": {
+      "artista": "Terço",
+      "titulo": "Terço (1990)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Terço",
+      "titulo": "Terço",
+      "ano": "1990"
+    }
+  },
+  {
+    "id": 23338,
+    "loja": "Loja 1",
+    "caixa": "10",
+    "anterior": {
+      "artista": "Caetano Canta",
+      "titulo": "Caetano Canta (1994)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Caetano Canta",
+      "titulo": "Caetano Canta",
+      "ano": "1994"
+    }
+  },
+  {
+    "id": 23340,
+    "loja": "Loja 1",
+    "caixa": "19",
+    "anterior": {
+      "artista": "Os 3 Morais",
+      "titulo": "Os 3 Morais (1969)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Os 3 Morais",
+      "titulo": "Os 3 Morais",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 23354,
+    "loja": "Loja 1",
+    "caixa": "15",
+    "anterior": {
+      "artista": "Jerônimo Jardim",
+      "titulo": "Jerônimo Jardim (1979)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Jerônimo Jardim",
+      "titulo": "Jerônimo Jardim",
+      "ano": "1979"
+    }
+  },
+  {
+    "id": 23364,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "Fine Young Cannibals",
+      "titulo": "Fine Young Cannibals (1986)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Fine Young Cannibals",
+      "titulo": "Fine Young Cannibals",
+      "ano": "1986"
+    }
+  },
+  {
+    "id": 23379,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "The Michael Schenker Group",
+      "titulo": "The Michael Schenker Group (1983)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "The Michael Schenker Group",
+      "titulo": "The Michael Schenker Group",
+      "ano": "1983"
+    }
+  },
+  {
+    "id": 23389,
+    "loja": "Loja 1",
+    "caixa": "5",
+    "anterior": {
+      "artista": "Lloyd Cole and The Commotions",
+      "titulo": "1984 - 1989",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Lloyd Cole and The Commotions",
+      "titulo": "1984",
+      "ano": "1989"
+    }
+  },
+  {
+    "id": 23396,
+    "loja": "Loja 1",
+    "caixa": "2",
+    "anterior": {
+      "artista": "Simon and Garfunkel",
+      "titulo": "Simon and Garfunkel (1968)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Simon and Garfunkel",
+      "titulo": "Simon and Garfunkel",
+      "ano": "1968"
+    }
+  },
+  {
+    "id": 22180,
+    "loja": "Loja 1",
+    "caixa": "4",
+    "anterior": {
+      "artista": "Vixen",
+      "titulo": "Vixen (1988)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Vixen",
+      "titulo": "Vixen",
+      "ano": "1988"
+    }
+  },
+  {
+    "id": 23519,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Stan Getz & Bob Brookmeyer",
+      "titulo": "Recorded Fall 1961",
+      "ano": "1961"
+    },
+    "novo": {
+      "artista": "Stan Getz & Bob Brookmeyer",
+      "titulo": "Recorded Fall",
+      "ano": "1961"
+    }
+  },
+  {
+    "id": 22987,
+    "loja": "Loja 1",
+    "caixa": "13",
+    "anterior": {
+      "artista": "Rita Lee e Roberto de Carvalho",
+      "titulo": "Rita Lee e Roberto de Carvalho (1982)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "Rita Lee e Roberto de Carvalho",
+      "titulo": "Rita Lee e Roberto de Carvalho",
+      "ano": "1982"
+    }
+  },
+  {
+    "id": 24286,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "The Big Chiefs",
+      "titulo": "The Big Chiefs (1969)",
+      "ano": null
+    },
+    "novo": {
+      "artista": "The Big Chiefs",
+      "titulo": "The Big Chiefs",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 24356,
+    "loja": "Loja 2",
+    "caixa": "6B",
+    "anterior": {
+      "artista": "At The Montreux Jazz Festival 1975",
+      "titulo": "At The Montreux Jazz Festival 1975",
+      "ano": "1975"
+    },
+    "novo": {
+      "artista": "At The Montreux Jazz Festival",
+      "titulo": "At The Montreux Jazz Festival",
+      "ano": "1975"
+    }
+  },
+  {
+    "id": 24580,
+    "loja": "Loja 2",
+    "caixa": "7B",
+    "anterior": {
+      "artista": "Louis Armstrong",
+      "titulo": "Back In N.Y. Vol.1 (1935)",
+      "ano": "1969"
+    },
+    "novo": {
+      "artista": "Louis Armstrong",
+      "titulo": "Back In N.Y. Vol.1",
+      "ano": "1969"
+    }
+  },
+  {
+    "id": 24473,
+    "loja": "Loja 2",
+    "caixa": "7B",
+    "anterior": {
+      "artista": "Tibor Rudas Presents Carreras",
+      "titulo": "Domingo - Pavarotti With Mehta - The 3 Tenors In Concert 1994",
+      "ano": "1994"
+    },
+    "novo": {
+      "artista": "Tibor Rudas Presents Carreras",
+      "titulo": "Domingo - Pavarotti With Mehta - The 3 Tenors In Concert",
+      "ano": "1994"
+    }
+  }
+]
