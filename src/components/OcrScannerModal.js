@@ -218,43 +218,26 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     return textoLimpo.slice(0, 25);
   };
 
-  // Pré-processamento da imagem em Preto e Branco com Alto Contraste (Binarização)
+  // Pré-processamento da imagem em Preto e Branco com Contraste Equilibrado (legível e natural)
   const aplicarPretoEBrancoEContraste = (canvas, cropWidth, cropHeight) => {
     const ctx = canvas.getContext('2d');
     const imgData = ctx.getImageData(0, 0, cropWidth, cropHeight);
     const d = imgData.data;
 
-    let minVal = 255;
-    let maxVal = 0;
-    let somaLuminancia = 0;
-    const grays = new Float32Array(cropWidth * cropHeight);
+    // Fator 1.30 a 1.35 fornece aumento de nitidez sem estourar degradês nem desfigurar fontes
+    const contrastFactor = 1.32;
 
-    // Passo 1: Converter para escala de cinza e calcular limites
-    for (let i = 0, j = 0; i < d.length; i += 4, j++) {
-      // Fórmula de luminância perceptual
+    for (let i = 0; i < d.length; i += 4) {
+      // Luminância perceptual
       const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      grays[j] = gray;
-      somaLuminancia += gray;
-      if (gray < minVal) minVal = gray;
-      if (gray > maxVal) maxVal = gray;
-    }
 
-    const totalPixels = cropWidth * cropHeight;
-    const mediaLuminancia = somaLuminancia / totalPixels;
-    const threshold = minVal + (maxVal - minVal) * 0.48;
-    const fundoEscuro = mediaLuminancia < 120; // Selo escuro ou vinil preto
+      // Curva suave de contraste em torno do tom médio
+      let adjusted = ((gray - 128) * contrastFactor) + 128;
+      adjusted = Math.max(0, Math.min(255, Math.round(adjusted)));
 
-    // Passo 2: Binarização em Alto Contraste (Preto e Branco puro)
-    for (let i = 0, j = 0; i < d.length; i += 4, j++) {
-      let ehTexto = grays[j] > threshold;
-      if (fundoEscuro) {
-        // Se o fundo for escuro, o texto claro vira preto em fundo branco para o Tesseract
-        ehTexto = grays[j] < threshold;
-      }
-      const val = ehTexto ? 255 : 0;
-      d[i] = val;
-      d[i + 1] = val;
-      d[i + 2] = val;
+      d[i] = adjusted;
+      d[i + 1] = adjusted;
+      d[i + 2] = adjusted;
     }
 
     ctx.putImageData(imgData, 0, 0);
