@@ -308,11 +308,29 @@ export default function AdicionarItem() {
                     <button type="button" onClick={() => setShowDiscogsDropdown(false)} style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>Fechar (X)</button>
                   </li>
                   {discogsResults.map((result) => (
-                    <li key={result.id} onMouseDown={(e) => { e.preventDefault(); handleSelectDiscogsResult(result); }} style={{ padding: '8px', display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontWeight: 'bold' }}>{result.title}</span>
+                    <li 
+                      key={result.id} 
+                      onMouseDown={(e) => { e.preventDefault(); handleSelectDiscogsResult(result); }} 
+                      style={{ 
+                        padding: '8px', 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        background: result.isExactMatch ? 'rgba(56, 161, 105, 0.08)' : undefined,
+                        borderLeft: result.isExactMatch ? '3px solid #38a169' : undefined
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                        <span style={{ fontWeight: 'bold' }}>{result.title}</span>
+                        {result.isExactMatch && (
+                          <span style={{ background: '#38a169', color: '#fff', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                            MATCH EXATO
+                          </span>
+                        )}
+                      </div>
                       <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                         {result.year && `${result.year} • `}
                         {result.catno && `${result.catno} • `}
+                        {result.country && `${result.country} • `}
                         {result.format?.join(', ')}
                       </span>
                     </li>
