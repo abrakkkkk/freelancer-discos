@@ -4,6 +4,7 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaMagnifyingGlass, FaBarcode } from "react-icons/fa6";
+import { MdDocumentScanner } from "react-icons/md";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { useCaixas } from '@/hooks/useCaixas';
 import { useItemForm } from '@/hooks/useItemForm';
@@ -16,6 +17,7 @@ import { useStore } from '@/contexts/StoreContext';
 import { cleanDiscogsString } from '@/utils/stringUtils';
 
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
+const OcrScannerModal = dynamic(() => import('@/components/OcrScannerModal'), { ssr: false });
 
 const INITIAL_FORM = {
   artista: '',
@@ -96,6 +98,7 @@ export default function AdicionarItem() {
   };
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isOcrOpen, setIsOcrOpen] = useState(false);
 
   const handleBarcodeScan = async (barcode) => {
     if (!barcode) return;
@@ -131,6 +134,37 @@ export default function AdicionarItem() {
     } catch (err) {
       console.error(err);
       setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de barras no Discogs.' });
+    } finally {
+      setIsSearchingDiscogs(false);
+    }
+  };
+
+  const handleOcrScan = async (codigoTexto) => {
+    if (!codigoTexto) return;
+    setQueryDiscogs(codigoTexto);
+    setIsSearchingDiscogs(true);
+    setDiscogsResults([]);
+    setShowDiscogsDropdown(false);
+    setMensagem(null);
+
+    try {
+      const res = await fetch(`/api/discogs?q=${encodeURIComponent(codigoTexto)}`);
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        if (data.results.length === 1) {
+          handleSelectDiscogsResult(data.results[0]);
+          setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${data.results[0].title}` });
+        } else {
+          setDiscogsResults(data.results);
+          setShowDiscogsDropdown(true);
+          setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${data.results.length} edições encontradas. Escolha uma abaixo.` });
+        }
+      } else {
+        setMensagem({ tipo: 'error', texto: `Nenhum resultado encontrado no Discogs para o código "${codigoTexto}".` });
+      }
+    } catch (err) {
+      console.error(err);
+      setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de catálogo no Discogs.' });
     } finally {
       setIsSearchingDiscogs(false);
     }
@@ -254,9 +288,17 @@ export default function AdicionarItem() {
                     type="button" 
                     onClick={() => setIsScannerOpen(true)}
                     className="btn btn-primary discogs-btn-escanear"
-                    title="Escanear código de barras pela câmera do celular"
+                    title="Escanear código de barras (CDs e Vinis modernos)"
                   >
-                    <FaBarcode size={16} /> Escanear
+                    <FaBarcode size={14} /> Barras
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setIsOcrOpen(true)}
+                    className="btn btn-primary discogs-btn-ocr"
+                    title="Ler código de catálogo com a câmera (ex: COLP, SMOFB, 6349)"
+                  >
+                    <MdDocumentScanner size={16} /> OCR
                   </button>
                 </div>
               </div>
@@ -402,6 +444,12 @@ export default function AdicionarItem() {
         isOpen={isScannerOpen} 
         onClose={() => setIsScannerOpen(false)} 
         onScan={handleBarcodeScan} 
+      />
+
+      <OcrScannerModal 
+        isOpen={isOcrOpen} 
+        onClose={() => setIsOcrOpen(false)} 
+        onScan={handleOcrScan} 
       />
     </div>
   );

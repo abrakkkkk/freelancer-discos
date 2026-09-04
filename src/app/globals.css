@@ -1854,7 +1854,7 @@ tbody tr:last-child td {
   border-top: 1px solid var(--border);
 }
 
-/* ========== DISCOGS SEARCH ROW & SCANNER BUTTON ========== */
+/* ========== DISCOGS SEARCH ROW & SCANNER BUTTONS ========== */
 .discogs-search-row {
   display: flex;
   gap: 8px;
@@ -1873,16 +1873,28 @@ tbody tr:last-child td {
   flex-shrink: 0;
 }
 
-.discogs-btn-buscar,
-.discogs-btn-escanear {
+.discogs-btn-buscar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   white-space: nowrap;
   height: 42px;
-  padding: 0 16px;
-  font-size: 13.5px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.discogs-btn-escanear,
+.discogs-btn-ocr {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  white-space: nowrap;
+  height: 42px;
+  padding: 0 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -1899,18 +1911,95 @@ tbody tr:last-child td {
     font-size: 15px;
   }
 
+  /* Grid com 3 botões: Buscar maiorzinho (1.4fr) e os outros dois com 1fr */
   .discogs-actions-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.4fr 1fr 1fr;
     gap: 8px;
     width: 100%;
   }
 
-  .discogs-btn-buscar,
-  .discogs-btn-escanear {
+  .discogs-btn-buscar {
     width: 100%;
     min-height: 44px;
     font-size: 14px;
+    font-weight: 700;
+    padding: 0 8px;
+  }
+
+  .discogs-btn-escanear,
+  .discogs-btn-ocr {
+    width: 100%;
+    min-height: 44px;
+    font-size: 12.5px;
+    padding: 0 4px;
   }
 }
+
+/* ========== OCR TARGET FRAME ========== */
+.ocr-target-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 82%;
+  max-width: 320px;
+  height: 110px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.58);
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+  z-index: 2;
+}
+
+.ocr-frame-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-color: var(--accent);
+  border-style: solid;
+}
+
+.ocr-frame-corner.top-left {
+  top: -2px;
+  left: -2px;
+  border-width: 3px 0 0 3px;
+  border-top-left-radius: 8px;
+}
+
+.ocr-frame-corner.top-right {
+  top: -2px;
+  right: -2px;
+  border-width: 3px 3px 0 0;
+  border-top-right-radius: 8px;
+}
+
+.ocr-frame-corner.bottom-left {
+  bottom: -2px;
+  left: -2px;
+  border-width: 0 0 3px 3px;
+  border-bottom-left-radius: 8px;
+}
+
+.ocr-frame-corner.bottom-right {
+  bottom: -2px;
+  right: -2px;
+  border-width: 0 3px 3px 0;
+  border-bottom-right-radius: 8px;
+}
+
+.ocr-frame-hint {
+  font-size: 11px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
 
