@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { IoClose, IoCameraReverseOutline, IoSparkles, IoCamera } from 'react-icons/io5';
+import { IoClose, IoCameraReverseOutline, IoSparkles, IoCamera, IoRefresh } from 'react-icons/io5';
 import { MdDocumentScanner } from 'react-icons/md';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { LuZoomIn, LuZoomOut } from 'react-icons/lu';
@@ -64,7 +64,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         await worker.setParameters({
           // Suporta maiúsculas, minúsculas, dígitos e separadores de catálogo
           tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-./ ',
-          tessedit_pageseg_mode: '3', // Segmentação automática flexível para linhas isoladas e blocos
+          tessedit_pageseg_mode: '6', // Modo bloco/linha uniforme rápido e estável
         });
 
         if (!cancelado) {
@@ -263,66 +263,36 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     return texto.slice(0, 25);
   };
 
-  // Pré-processamento: Escala de cinza com Auto-Níveis e Nitidez Convolucional (Sharpening)
-  // Elimina o borrão do celular e realça o contraste das fontes em linha única sem pixelizar
+  // Pré-processamento: escala de cinza com Auto-Níveis e contraste equilibrado (sem ruído de convolução)
   const processarImagemParaOcr = (canvas, width, height) => {
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const ctx = canvas.getContext('2d');
     const imgData = ctx.getImageData(0, 0, width, height);
     const d = imgData.data;
     const len = d.length;
 
-    // 1. Converter para escala de cinza e encontrar min / max para esticar histograma
-    let minLum = 255;
-    let maxLum = 0;
-    const grays = new Float32Array(width * height);
+    let minVal = 255;
+    let maxVal = 0;
 
-    for (let i = 0, j = 0; i < len; i += 4, j++) {
-      const lum = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      grays[j] = lum;
-      if (lum < minLum) minLum = lum;
-      if (lum > maxLum) maxLum = lum;
+    for (let i = 0; i < len; i += 4) {
+      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      if (gray < minVal) minVal = gray;
+      if (gray > maxVal) maxVal = gray;
     }
 
-    // 2. Normalização de contraste (Auto-levels / Dynamic range stretch)
-    const range = Math.max(20, maxLum - minLum);
+    const range = Math.max(30, maxVal - minVal);
 
-    for (let i = 0, j = 0; i < len; i += 4, j++) {
-      const normalized = ((grays[j] - minLum) / range) * 255;
-      let val = ((normalized - 128) * 1.35) + 128;
-      val = Math.max(0, Math.min(255, Math.round(val)));
+    for (let i = 0; i < len; i += 4) {
+      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      const normalized = ((gray - minVal) / range) * 255;
+      let adjusted = ((normalized - 128) * 1.45) + 128;
+      adjusted = Math.max(0, Math.min(255, Math.round(adjusted)));
 
-      d[i] = val;
-      d[i + 1] = val;
-      d[i + 2] = val;
+      d[i] = adjusted;
+      d[i + 1] = adjusted;
+      d[i + 2] = adjusted;
     }
 
     ctx.putImageData(imgData, 0, 0);
-
-    // 3. Filtro de Nitidez Convolucional 3x3 para eliminar o borrão ("blur")
-    const sharpData = ctx.getImageData(0, 0, width, height);
-    const src = imgData.data;
-    const dst = sharpData.data;
-
-    for (let y = 1; y < height - 1; y++) {
-      const yOffset = y * width;
-      for (let x = 1; x < width - 1; x++) {
-        const idx = (yOffset + x) << 2;
-        const top = (yOffset - width + x) << 2;
-        const bottom = (yOffset + width + x) << 2;
-        const left = (yOffset + x - 1) << 2;
-        const right = (yOffset + x + 1) << 2;
-
-        let res = (src[idx] * 5 - src[top] - src[bottom] - src[left] - src[right]);
-        if (res < 0) res = 0;
-        else if (res > 255) res = 255;
-
-        dst[idx] = res;
-        dst[idx + 1] = res;
-        dst[idx + 2] = res;
-      }
-    }
-
-    ctx.putImageData(sharpData, 0, 0);
   };
 
   // Processar imagem via Tesseract.js (Instantâneo com Worker pré-carregado)
@@ -339,7 +309,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         worker = await createWorker('eng');
         await worker.setParameters({
           tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-./ ',
-          tessedit_pageseg_mode: '3',
+          tessedit_pageseg_mode: '6',
         });
         workerRef.current = worker;
       }
@@ -348,69 +318,45 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
       const textoLido = ret?.data?.text || '';
       const codigoEncontrado = extrairCodigoCatalogo(textoLido);
 
-      playBeep();
-      setTextoDetectado(codigoEncontrado || textoLido.trim());
+      const resultadoFinal = codigoEncontrado || textoLido.trim();
+      if (resultadoFinal) {
+        playBeep();
+      }
+      setTextoDetectado(resultadoFinal);
     } catch (err) {
       console.error('Erro no OCR:', err);
-      alert('Não foi possível ler o código. Tente aproximar mais da luz ou digite o código.');
     } finally {
       setProcessando(false);
     }
   };
 
-  // Capturar quadro do vídeo da câmera com enquadramento ótico exato da mira e resolução nativa
+  // Capturar quadro do vídeo da câmera com recorte centralizado e resolução nítida
   const capturarDoVideo = () => {
     if (!videoRef.current) return;
 
     const video = videoRef.current;
-    const vWidth = video.videoWidth || 1920;
-    const vHeight = video.videoHeight || 1080;
+    const vWidth = video.videoWidth || 1280;
+    const vHeight = video.videoHeight || 720;
 
-    let cropX, cropY, cropWidth, cropHeight;
+    // Recorta a faixa central onde a mira visual está posicionada
+    const cropWidth = Math.floor(vWidth * 0.78);
+    const cropHeight = Math.floor(vHeight * 0.32);
+    const cropX = Math.floor((vWidth - cropWidth) / 2);
+    const cropY = Math.floor((vHeight - cropHeight) / 2);
 
-    const videoRect = video.getBoundingClientRect();
-    const frameRect = targetFrameRef.current ? targetFrameRef.current.getBoundingClientRect() : null;
+    // Resolução nítida para OCR (~880px de largura - perfeito para Tesseract sem borramento)
+    const targetWidth = Math.min(cropWidth, 880);
+    const targetHeight = Math.floor((cropHeight / cropWidth) * targetWidth);
 
-    if (frameRect && videoRect.width > 0 && videoRect.height > 0) {
-      // Projeção exata do elemento renderizado com object-fit: cover
-      const scale = Math.max(videoRect.width / vWidth, videoRect.height / vHeight);
-      const renderedWidth = vWidth * scale;
-      const renderedHeight = vHeight * scale;
-      const offsetX = (renderedWidth - videoRect.width) / 2;
-      const offsetY = (renderedHeight - videoRect.height) / 2;
-
-      const frameX = frameRect.left - videoRect.left;
-      const frameY = frameRect.top - videoRect.top;
-
-      cropX = Math.max(0, Math.floor((frameX + offsetX) / scale));
-      cropY = Math.max(0, Math.floor((frameY + offsetY) / scale));
-      cropWidth = Math.min(vWidth - cropX, Math.floor(frameRect.width / scale));
-      cropHeight = Math.min(vHeight - cropY, Math.floor(frameRect.height / scale));
-    } else {
-      cropWidth = Math.floor(vWidth * 0.75);
-      cropHeight = Math.floor(vHeight * 0.30);
-      cropX = Math.floor((vWidth - cropWidth) / 2);
-      cropY = Math.floor((vHeight - cropHeight) / 2);
-    }
-
-    // Margem de segurança suave para não decepar bordas de caracteres
-    const marginX = Math.floor(cropWidth * 0.04);
-    const marginY = Math.floor(cropHeight * 0.08);
-    const finalX = Math.max(0, cropX - marginX);
-    const finalY = Math.max(0, cropY - marginY);
-    const finalW = Math.min(vWidth - finalX, cropWidth + marginX * 2);
-    const finalH = Math.min(vHeight - finalY, cropHeight + marginY * 2);
-
-    // Manter resolução nativa nítida (sem downscale bilinear para 460px que causava o borrão)
     const canvas = document.createElement('canvas');
-    canvas.width = finalW;
-    canvas.height = finalH;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext('2d');
 
-    ctx.drawImage(video, finalX, finalY, finalW, finalH, 0, 0, finalW, finalH);
+    ctx.drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, targetWidth, targetHeight);
 
-    // Processamento de contraste auto-levels e nitidez
-    processarImagemParaOcr(canvas, finalW, finalH);
+    // Processamento de contraste auto-levels
+    processarImagemParaOcr(canvas, targetWidth, targetHeight);
 
     const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
     setFotoPreview(dataUrl);
@@ -427,7 +373,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxDim = 1600;
+        const maxDim = 1200;
         let w = img.width;
         let h = img.height;
         if (w > maxDim || h > maxDim) {
@@ -441,7 +387,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         }
         canvas.width = w;
         canvas.height = h;
-        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
         processarImagemParaOcr(canvas, w, h);
 
@@ -568,42 +514,61 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         </div>
 
         <div className="scanner-modal-footer">
-          {textoDetectado ? (
+          {fotoPreview ? (
+            /* Estado quando a foto foi tirada / carregada */
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <IoSparkles color="var(--accent)" size={16} />
-                <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Código detectado:</span>
-              </div>
-              
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input 
-                  type="text" 
-                  value={textoDetectado} 
-                  onChange={(e) => setTextoDetectado(e.target.value)}
-                  style={{ flex: 1, fontSize: '15px', fontWeight: 'bold', letterSpacing: '0.5px', padding: '8px 12px' }}
-                />
-                <button 
-                  type="button" 
-                  onClick={handleConfirmar} 
-                  className="btn btn-primary"
-                  style={{ whiteSpace: 'nowrap', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '6px' }}
-                >
-                  <FaMagnifyingGlass size={14} /> Buscar
-                </button>
-              </div>
+              {processando ? (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '10px 0' }}>
+                  <div className="scanner-spinner" style={{ width: '22px', height: '22px' }} />
+                  <span style={{ fontSize: '13.5px', fontWeight: 600, color: 'var(--text-header)' }}>
+                    Lendo caracteres no disco...
+                  </span>
+                </div>
+              ) : (
+                <>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <IoSparkles color="var(--accent)" size={16} />
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: textoDetectado ? 'var(--text-header)' : '#f6ad55' }}>
+                        {textoDetectado ? 'Código detectado:' : 'Nenhum código reconhecido com certeza:'}
+                      </span>
+                    </div>
+                  </div>
 
-              <button 
-                type="button" 
-                onClick={handleTentarNovamente}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', cursor: 'pointer', textAlign: 'center', textDecoration: 'underline', marginTop: '2px' }}
-              >
-                Capturar novamente
-              </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input 
+                      type="text" 
+                      value={textoDetectado} 
+                      onChange={(e) => setTextoDetectado(e.target.value)}
+                      placeholder="Ex: COLP 12225 ou 6349 050"
+                      style={{ flex: 1, fontSize: '15px', fontWeight: 'bold', letterSpacing: '0.5px', padding: '8px 12px' }}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={handleConfirmar} 
+                      disabled={!textoDetectado.trim()}
+                      className="btn btn-primary"
+                      style={{ whiteSpace: 'nowrap', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <FaMagnifyingGlass size={14} /> Buscar
+                    </button>
+                  </div>
+
+                  <button 
+                    type="button" 
+                    onClick={handleTentarNovamente}
+                    className="btn btn-secondary"
+                    style={{ width: '100%', fontSize: '13px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontWeight: 600 }}
+                  >
+                    <IoRefresh size={16} /> Tirar outra foto / Tentar novamente
+                  </button>
+                </>
+              )}
             </div>
           ) : (
+            /* Estado de câmera ao vivo */
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
               <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                {/* Botão de Captura da Câmera ao Vivo */}
                 <button 
                   type="button" 
                   onClick={capturarDoVideo} 
@@ -615,7 +580,6 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                 </button>
               </div>
 
-              {/* Botão alternativo para foto em alta resolução / galeria */}
               <input 
                 type="file" 
                 ref={fileInputRef} 
