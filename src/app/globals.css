@@ -294,12 +294,12 @@ a {
 
 .btn-secondary {
   background: var(--bg-card);
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: var(--text);
 }
 .btn-secondary:hover:not(:disabled) {
   background: rgba(255,255,255,0.08);
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .btn-danger {
@@ -341,7 +341,7 @@ a {
 .form-group textarea {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: var(--radius-sm);
   font-size: 14px;
   background: var(--bg-card);
@@ -356,7 +356,7 @@ a {
 .form-group input:not([type="checkbox"]):hover,
 .form-group select:hover,
 .form-group textarea:hover {
-  border-color: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 input[type="checkbox"] {
