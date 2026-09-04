@@ -265,14 +265,14 @@ export default function AdicionarItem() {
         {(activeTab === CATEGORY_IDS.DISCOS || activeTab === CATEGORY_IDS.CDS) && (
           <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
             <div className="form-group" style={{ width: '100%', marginBottom: '20px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs (Catálogo, Matrix, Artista ou Título)</label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs (Catálogo ou Nome)</label>
               <div className="discogs-search-row">
                 <input 
                   type="text" 
                   value={queryDiscogs} 
                   onChange={(e) => setQueryDiscogs(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchDiscogs(); } }}
-                  placeholder="Ex: 720642442517, COLP 12225, Tim Maia..."
+                  placeholder="Ex: 6328 286, COLP 12225..."
                   autoComplete="off"
                 />
                 <div className="discogs-actions-row">
