@@ -151,7 +151,7 @@ export default function Movimentacoes() {
             </div>
 
             {totalPaginas > 1 && (
-              <div className="paginationRow" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px 0', gap: '8px', borderTop: '1px solid var(--border)', marginTop: '16px' }}>
+              <div className="paginationRow" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px 0', gap: '8px', borderTop: '1px solid var(--border)', marginTop: '16px', flexWrap: 'wrap' }}>
                 <button 
                   className="pageBtn" 
                   disabled={pagina === 1}
