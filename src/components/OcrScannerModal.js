@@ -19,6 +19,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
   const [maxZoom, setMaxZoom] = useState(1);
 
   const videoRef = useRef(null);
+  const targetFrameRef = useRef(null);
   const fileInputRef = useRef(null);
   const audioCtxRef = useRef(null);
   const workerRef = useRef(null);
@@ -61,9 +62,9 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         // Carrega apenas 'eng' (A-Z e 0-9), muito mais leve e rápido que português+inglês
         const worker = await createWorker('eng');
         await worker.setParameters({
-          // Restringe apenas para caracteres de códigos de catálogo
-          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-./ ',
-          tessedit_pageseg_mode: '6', // Trata como bloco único / linha uniforme de texto (10x mais rápido)
+          // Suporta maiúsculas, minúsculas, dígitos e separadores de catálogo
+          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-./ ',
+          tessedit_pageseg_mode: '3', // Segmentação automática flexível para linhas isoladas e blocos
         });
 
         if (!cancelado) {
@@ -192,55 +193,136 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     await startCamera(nextCam.deviceId);
   };
 
-  // Filtro de extração de códigos de catálogo (COLP 12225, SMOFB 3749, 6349 050, etc.)
+  // Filtro inteligente de extração de códigos de catálogo
+  // Suporta números puros (6349050, 4036001, 1030001, 064422894, 138001),
+  // números com pontuação/espaço (6349 050, 103.0001, 403.6001, 064 422894, 825 000-1),
+  // e letras com números em linha única (COLP 12225, SMOFB 3749, 31C 064 422894, XSLP 1001)
   const extrairCodigoCatalogo = (textoBruto) => {
     if (!textoBruto) return '';
 
-    // Remove caracteres estranhos
-    const textoLimpo = textoBruto.replace(/[^A-Za-z0-9\-\.\s]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
+    // Normalizar texto
+    let texto = textoBruto.replace(/[^A-Za-z0-9\-\.\s\/]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
 
-    // 1. Padrão Letras + Números (ex: COLP 12225, SMOFB 3749, XSLP 1001, BBL 1300)
-    const matchPrefixoNumero = textoLimpo.match(/\b([A-Z]{2,6}[\s\-\.]*[\d]{3,8})\b/i);
-    if (matchPrefixoNumero) {
-      return matchPrefixoNumero[1].replace(/[\s\-\.]+/g, ' ').trim();
+    // 1. Prefixo especial estilo EMI-Odeon: 31C 064 422894
+    const matchEmi = texto.match(/\b(\d{2}[A-Z][\s\-\.]+\d{2,4}[\s\-\.]+\d{4,8})\b/i);
+    if (matchEmi) return matchEmi[1].trim();
+
+    // 2. Padrão Letras clássico + Números (ex: COLP 12225, SMOFB 3749, XSLP 1001, BBL 1300, LLP 500)
+    const matchPrefixoLetras = texto.match(/\b([A-Z]{2,6}[\s\-\.]+\d{3,8}(?:[\s\-\.]\d{1,4})?)\b/i);
+    if (matchPrefixoLetras) {
+      const p = matchPrefixoLetras[1].trim();
+      const ignorar = ['STEREO', 'MONO', 'DISCOS', 'SERIE', 'BRASIL', 'EDICAO', 'SOM', 'LIVRE', 'GRAVACOES', 'PRODUCOES'];
+      if (!ignorar.includes(p.split(/[\s\-\.]+/)[0])) {
+        return p;
+      }
     }
 
-    // 2. Padrão Numérico de Gravadora (ex: 6349 050, 103.0001, 064 422894)
-    const matchNumerico = textoLimpo.match(/\b([\d]{3,6}[\s\-\.][\d]{3,6})\b/);
-    if (matchNumerico) {
-      return matchNumerico[1].trim();
+    // 3. Padrão Numérico Composto com pontuação ou espaço (ex: 6349 050, 103.0001, 064 422894, 825 000-1, 403.6001, 2-04-405-012)
+    const matchNumericoComposto = texto.match(/\b(\d{2,6}[\s\.\-]+\d{2,6}(?:[\s\.\-]\d{1,4})?)\b/);
+    if (matchNumericoComposto) {
+      return matchNumericoComposto[1].trim();
     }
 
-    // 3. Fallback: pega a sequência com letras e números
-    const palavras = textoLimpo.split(/\s+/).filter(w => w.length >= 4 && /\d/.test(w));
-    if (palavras.length > 0) return palavras[0];
+    // 4. Padrão Numérico Puro contínuo (5 a 10 dígitos) - ex: 6349050, 4036001, 1030001, 064422894, 138001
+    const matchNumericoPuro = texto.match(/\b(\d{5,10})\b/);
+    if (matchNumericoPuro) {
+      return matchNumericoPuro[1].trim();
+    }
 
-    return textoLimpo.slice(0, 25);
+    // 5. Tratamento para códigos numéricos com confusão típica de OCR (ex: '6349 O5O' ou '4O36OO1' ou 'IO3.OOOI')
+    const palavras = texto.split(/\s+/);
+    for (let i = 0; i < palavras.length; i++) {
+      const w = palavras[i];
+      const normalizada = w.replace(/O/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5');
+      if (/^\d{5,10}$/.test(normalizada)) {
+        return normalizada;
+      }
+      if (i < palavras.length - 1) {
+        const w2 = palavras[i + 1];
+        const norm2 = (w + ' ' + w2).replace(/O/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5');
+        if (/^\d{2,6}\s\d{2,6}$/.test(norm2)) {
+          return norm2;
+        }
+      }
+    }
+
+    // 6. Letras juntas com números: COLP12225, SMOFB3749
+    const matchJunto = texto.match(/\b([A-Z]{2,6}\d{3,8})\b/i);
+    if (matchJunto) return matchJunto[1];
+
+    // 7. Fallback de 4 dígitos não-ano (ex: 6349, 1300)
+    const numeros4 = texto.match(/\b(\d{4})\b/g);
+    if (numeros4) {
+      const naoAno = numeros4.find(n => {
+        const v = parseInt(n, 10);
+        return v < 1940 || v > 2030;
+      });
+      if (naoAno) return naoAno;
+    }
+
+    return texto.slice(0, 25);
   };
 
-  // Pré-processamento da imagem em Preto e Branco com Contraste Equilibrado (legível e natural)
-  const aplicarPretoEBrancoEContraste = (canvas, cropWidth, cropHeight) => {
-    const ctx = canvas.getContext('2d');
-    const imgData = ctx.getImageData(0, 0, cropWidth, cropHeight);
+  // Pré-processamento: Escala de cinza com Auto-Níveis e Nitidez Convolucional (Sharpening)
+  // Elimina o borrão do celular e realça o contraste das fontes em linha única sem pixelizar
+  const processarImagemParaOcr = (canvas, width, height) => {
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const imgData = ctx.getImageData(0, 0, width, height);
     const d = imgData.data;
+    const len = d.length;
 
-    // Fator 1.30 a 1.35 fornece aumento de nitidez sem estourar degradês nem desfigurar fontes
-    const contrastFactor = 1.32;
+    // 1. Converter para escala de cinza e encontrar min / max para esticar histograma
+    let minLum = 255;
+    let maxLum = 0;
+    const grays = new Float32Array(width * height);
 
-    for (let i = 0; i < d.length; i += 4) {
-      // Luminância perceptual
-      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+    for (let i = 0, j = 0; i < len; i += 4, j++) {
+      const lum = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      grays[j] = lum;
+      if (lum < minLum) minLum = lum;
+      if (lum > maxLum) maxLum = lum;
+    }
 
-      // Curva suave de contraste em torno do tom médio
-      let adjusted = ((gray - 128) * contrastFactor) + 128;
-      adjusted = Math.max(0, Math.min(255, Math.round(adjusted)));
+    // 2. Normalização de contraste (Auto-levels / Dynamic range stretch)
+    const range = Math.max(20, maxLum - minLum);
 
-      d[i] = adjusted;
-      d[i + 1] = adjusted;
-      d[i + 2] = adjusted;
+    for (let i = 0, j = 0; i < len; i += 4, j++) {
+      const normalized = ((grays[j] - minLum) / range) * 255;
+      let val = ((normalized - 128) * 1.35) + 128;
+      val = Math.max(0, Math.min(255, Math.round(val)));
+
+      d[i] = val;
+      d[i + 1] = val;
+      d[i + 2] = val;
     }
 
     ctx.putImageData(imgData, 0, 0);
+
+    // 3. Filtro de Nitidez Convolucional 3x3 para eliminar o borrão ("blur")
+    const sharpData = ctx.getImageData(0, 0, width, height);
+    const src = imgData.data;
+    const dst = sharpData.data;
+
+    for (let y = 1; y < height - 1; y++) {
+      const yOffset = y * width;
+      for (let x = 1; x < width - 1; x++) {
+        const idx = (yOffset + x) << 2;
+        const top = (yOffset - width + x) << 2;
+        const bottom = (yOffset + width + x) << 2;
+        const left = (yOffset + x - 1) << 2;
+        const right = (yOffset + x + 1) << 2;
+
+        let res = (src[idx] * 5 - src[top] - src[bottom] - src[left] - src[right]);
+        if (res < 0) res = 0;
+        else if (res > 255) res = 255;
+
+        dst[idx] = res;
+        dst[idx + 1] = res;
+        dst[idx + 2] = res;
+      }
+    }
+
+    ctx.putImageData(sharpData, 0, 0);
   };
 
   // Processar imagem via Tesseract.js (Instantâneo com Worker pré-carregado)
@@ -256,8 +338,8 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         const { createWorker } = await import('tesseract.js');
         worker = await createWorker('eng');
         await worker.setParameters({
-          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-./ ',
-          tessedit_pageseg_mode: '6',
+          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-./ ',
+          tessedit_pageseg_mode: '3',
         });
         workerRef.current = worker;
       }
@@ -276,36 +358,61 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     }
   };
 
-  // Capturar quadro do vídeo da câmera com recorte da mira
+  // Capturar quadro do vídeo da câmera com enquadramento ótico exato da mira e resolução nativa
   const capturarDoVideo = () => {
     if (!videoRef.current) return;
 
     const video = videoRef.current;
-    const vWidth = video.videoWidth || 1280;
-    const vHeight = video.videoHeight || 720;
+    const vWidth = video.videoWidth || 1920;
+    const vHeight = video.videoHeight || 1080;
 
-    // Recortar exatamente a área central da mira
-    const cropWidth = Math.floor(vWidth * 0.72);
-    const cropHeight = Math.floor(vHeight * 0.28);
-    const cropX = Math.floor((vWidth - cropWidth) / 2);
-    const cropY = Math.floor((vHeight - cropHeight) / 2);
+    let cropX, cropY, cropWidth, cropHeight;
 
-    // Redimensionar para tamanho ideal (~450px de largura) para OCR ultrarrápido
-    const targetWidth = 460;
-    const targetHeight = Math.floor((cropHeight / cropWidth) * targetWidth);
+    const videoRect = video.getBoundingClientRect();
+    const frameRect = targetFrameRef.current ? targetFrameRef.current.getBoundingClientRect() : null;
 
+    if (frameRect && videoRect.width > 0 && videoRect.height > 0) {
+      // Projeção exata do elemento renderizado com object-fit: cover
+      const scale = Math.max(videoRect.width / vWidth, videoRect.height / vHeight);
+      const renderedWidth = vWidth * scale;
+      const renderedHeight = vHeight * scale;
+      const offsetX = (renderedWidth - videoRect.width) / 2;
+      const offsetY = (renderedHeight - videoRect.height) / 2;
+
+      const frameX = frameRect.left - videoRect.left;
+      const frameY = frameRect.top - videoRect.top;
+
+      cropX = Math.max(0, Math.floor((frameX + offsetX) / scale));
+      cropY = Math.max(0, Math.floor((frameY + offsetY) / scale));
+      cropWidth = Math.min(vWidth - cropX, Math.floor(frameRect.width / scale));
+      cropHeight = Math.min(vHeight - cropY, Math.floor(frameRect.height / scale));
+    } else {
+      cropWidth = Math.floor(vWidth * 0.75);
+      cropHeight = Math.floor(vHeight * 0.30);
+      cropX = Math.floor((vWidth - cropWidth) / 2);
+      cropY = Math.floor((vHeight - cropHeight) / 2);
+    }
+
+    // Margem de segurança suave para não decepar bordas de caracteres
+    const marginX = Math.floor(cropWidth * 0.04);
+    const marginY = Math.floor(cropHeight * 0.08);
+    const finalX = Math.max(0, cropX - marginX);
+    const finalY = Math.max(0, cropY - marginY);
+    const finalW = Math.min(vWidth - finalX, cropWidth + marginX * 2);
+    const finalH = Math.min(vHeight - finalY, cropHeight + marginY * 2);
+
+    // Manter resolução nativa nítida (sem downscale bilinear para 460px que causava o borrão)
     const canvas = document.createElement('canvas');
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-    const ctx = canvas.getContext('2d');
+    canvas.width = finalW;
+    canvas.height = finalH;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-    // Desenha a imagem recortada e escalada
-    ctx.drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, targetWidth, targetHeight);
+    ctx.drawImage(video, finalX, finalY, finalW, finalH, 0, 0, finalW, finalH);
 
-    // Aplica o filtro Preto e Branco com Alto Contraste (Binarização)
-    aplicarPretoEBrancoEContraste(canvas, targetWidth, targetHeight);
+    // Processamento de contraste auto-levels e nitidez
+    processarImagemParaOcr(canvas, finalW, finalH);
 
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
     setFotoPreview(dataUrl);
     executarOcrEmImagem(dataUrl);
   };
@@ -320,7 +427,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxDim = 800;
+        const maxDim = 1600;
         let w = img.width;
         let h = img.height;
         if (w > maxDim || h > maxDim) {
@@ -334,11 +441,11 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         }
         canvas.width = w;
         canvas.height = h;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         ctx.drawImage(img, 0, 0, w, h);
-        aplicarPretoEBrancoEContraste(canvas, w, h);
+        processarImagemParaOcr(canvas, w, h);
 
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
         setFotoPreview(dataUrl);
         executarOcrEmImagem(dataUrl);
       };
@@ -405,12 +512,12 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
               />
 
               {/* Mira visual para enquadrar o texto */}
-              <div className="ocr-target-frame">
+              <div ref={targetFrameRef} className="ocr-target-frame">
                 <div className="ocr-frame-corner top-left" />
                 <div className="ocr-frame-corner top-right" />
                 <div className="ocr-frame-corner bottom-left" />
                 <div className="ocr-frame-corner bottom-right" />
-                <span className="ocr-frame-hint">Enquadre o código (ex: COLP 12225)</span>
+                <span className="ocr-frame-hint">Enquadre o código (ex: COLP 12225 ou 6349 050)</span>
               </div>
 
               {/* Botões flutuantes de Zoom Macro e Câmera */}
