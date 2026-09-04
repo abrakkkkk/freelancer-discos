@@ -447,10 +447,24 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     onClose();
   };
 
-  const handleTentarNovamente = () => {
+  const handleTentarNovamente = async () => {
     setFotoPreview(null);
     setTextoDetectado('');
-    if (!stream) startCamera(cameraIdAtiva);
+    setProcessando(false);
+
+    // Garante que o stream de vídeo continue tocando sem desconectar
+    if (stream && videoRef.current) {
+      if (!videoRef.current.srcObject) {
+        videoRef.current.srcObject = stream;
+      }
+      try {
+        await videoRef.current.play();
+      } catch (e) {
+        startCamera(cameraIdAtiva);
+      }
+    } else {
+      startCamera(cameraIdAtiva);
+    }
   };
 
   useEffect(() => {
@@ -486,55 +500,57 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         </div>
 
         {/* Viewfinder da Câmera em Preto e Branco com Alto Contraste */}
-        <div className="scanner-viewfinder-wrapper" style={{ minHeight: '300px' }}>
-          {!fotoPreview ? (
-            <>
-              <video 
-                ref={videoRef} 
-                autoPlay 
-                playsInline 
-                muted 
-                className="ocr-camera-video"
-              />
+        <div className="scanner-viewfinder-wrapper" style={{ minHeight: '300px', position: 'relative' }}>
+          {/* O vídeo e a mira sempre continuam montados no DOM para a câmera nunca travar */}
+          <div style={{ width: '100%', height: '100%', display: fotoPreview ? 'none' : 'block' }}>
+            <video 
+              ref={videoRef} 
+              autoPlay 
+              playsInline 
+              muted 
+              className="ocr-camera-video"
+            />
 
-              {/* Mira visual para enquadrar o texto */}
-              <div ref={targetFrameRef} className="ocr-target-frame">
-                <div className="ocr-frame-corner top-left" />
-                <div className="ocr-frame-corner top-right" />
-                <div className="ocr-frame-corner bottom-left" />
-                <div className="ocr-frame-corner bottom-right" />
-                <span className="ocr-frame-hint">Enquadre o código (ex: COLP 12225 ou 6349 050)</span>
-              </div>
+            {/* Mira visual para enquadrar o texto */}
+            <div ref={targetFrameRef} className="ocr-target-frame">
+              <div className="ocr-frame-corner top-left" />
+              <div className="ocr-frame-corner top-right" />
+              <div className="ocr-frame-corner bottom-left" />
+              <div className="ocr-frame-corner bottom-right" />
+              <span className="ocr-frame-hint">Enquadre o código (ex: COLP 12225 ou 6349 050)</span>
+            </div>
 
-              {/* Botões flutuantes de Zoom Macro e Câmera */}
-              <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: '8px', zIndex: 5 }}>
-                {maxZoom > 1 && (
-                  <button 
-                    type="button"
-                    onClick={alternarZoom}
-                    className="ocr-floating-btn"
-                    title="Alternar Macro / Zoom"
-                  >
-                    {zoomAtual >= 1.8 ? <LuZoomOut size={16} /> : <LuZoomIn size={16} />}
-                    <span>{zoomAtual >= 1.8 ? 'Macro (2x)' : '1x'}</span>
-                  </button>
-                )}
+            {/* Botões flutuantes de Zoom Macro e Câmera */}
+            <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: '8px', zIndex: 5 }}>
+              {maxZoom > 1 && (
+                <button 
+                  type="button"
+                  onClick={alternarZoom}
+                  className="ocr-floating-btn"
+                  title="Alternar Macro / Zoom"
+                >
+                  {zoomAtual >= 1.8 ? <LuZoomOut size={16} /> : <LuZoomIn size={16} />}
+                  <span>{zoomAtual >= 1.8 ? 'Macro (2x)' : '1x'}</span>
+                </button>
+              )}
 
-                {cameras.length > 1 && (
-                  <button 
-                    type="button"
-                    onClick={toggleCamera}
-                    className="ocr-floating-btn"
-                    title="Alternar lente da câmera"
-                  >
-                    <IoCameraReverseOutline size={18} />
-                  </button>
-                )}
-              </div>
-            </>
-          ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', padding: '16px' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>Imagem processada em alto contraste:</span>
+              {cameras.length > 1 && (
+                <button 
+                  type="button"
+                  onClick={toggleCamera}
+                  className="ocr-floating-btn"
+                  title="Alternar lente da câmera"
+                >
+                  <IoCameraReverseOutline size={18} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Quando fotoPreview existir, ela é exibida por cima sem desmontar a câmera */}
+          {fotoPreview && (
+            <div style={{ width: '100%', height: '100%', minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', padding: '16px' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>Imagem processada:</span>
               <img src={fotoPreview} alt="Captura B&W" style={{ maxWidth: '100%', maxHeight: '180px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '6px' }} />
             </div>
           )}
