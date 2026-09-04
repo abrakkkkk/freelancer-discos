@@ -232,7 +232,7 @@ export default function AdicionarItem() {
           <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
             <div className="form-group" style={{ width: '100%', marginBottom: '20px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs (Catálogo, Matrix, Artista ou Título)</label>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <div className="discogs-search-row">
                 <input 
                   type="text" 
                   value={queryDiscogs} 
@@ -240,26 +240,25 @@ export default function AdicionarItem() {
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchDiscogs(); } }}
                   placeholder="Ex: 720642442517, COLP 12225, Tim Maia..."
                   autoComplete="off"
-                  style={{ flex: 1, minWidth: '180px' }}
                 />
-                <button 
-                  type="button" 
-                  onClick={searchDiscogs}
-                  className="btn btn-secondary"
-                  style={{ whiteSpace: 'nowrap', opacity: isSearchingDiscogs ? 0.7 : 1, cursor: 'pointer' }}
-                  disabled={isSearchingDiscogs}
-                >
-                  {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => setIsScannerOpen(true)}
-                  className="btn btn-primary"
-                  style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}
-                  title="Escanear código de barras pela câmera do celular"
-                >
-                  <FaBarcode size={15} /> Escanear
-                </button>
+                <div className="discogs-actions-row">
+                  <button 
+                    type="button" 
+                    onClick={searchDiscogs}
+                    className="btn btn-secondary discogs-btn-buscar"
+                    disabled={isSearchingDiscogs}
+                  >
+                    <FaMagnifyingGlass size={13} /> {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setIsScannerOpen(true)}
+                    className="btn btn-primary discogs-btn-escanear"
+                    title="Escanear código de barras pela câmera do celular"
+                  >
+                    <FaBarcode size={16} /> Escanear
+                  </button>
+                </div>
               </div>
               {showDiscogsDropdown && discogsResults.length > 0 && (
                 <ul className="sugestoes-dropdown" style={{ top: '100%', left: 0, right: 0, maxHeight: '300px', overflowY: 'auto' }}>

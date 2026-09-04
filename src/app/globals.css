@@ -1854,3 +1854,63 @@ tbody tr:last-child td {
   border-top: 1px solid var(--border);
 }
 
+/* ========== DISCOGS SEARCH ROW & SCANNER BUTTON ========== */
+.discogs-search-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  align-items: center;
+}
+
+.discogs-search-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.discogs-actions-row {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.discogs-btn-buscar,
+.discogs-btn-escanear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+  height: 42px;
+  padding: 0 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .discogs-search-row {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .discogs-search-row input {
+    width: 100%;
+    min-height: 44px;
+    font-size: 15px;
+  }
+
+  .discogs-actions-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .discogs-btn-buscar,
+  .discogs-btn-escanear {
+    width: 100%;
+    min-height: 44px;
+    font-size: 14px;
+  }
+}
+
