@@ -471,7 +471,7 @@ function EditarExcluirContent() {
         <div className="edit-form-card" style={{ marginTop: '24px' }}>
           <h2>Observações do {tipoNome}</h2>
           <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-            <input style={{ flex: 1, padding: '10px 14px', border: '1px solid rgba(255, 255, 255, 0.35)', borderRadius: '4px', background: 'var(--bg-card)', color: 'var(--text)' }} placeholder="Digite uma nova observação..." value={novaObservacao} onChange={(e) => setNovaObservacao(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && adicionarObservacao()} />
+            <input style={{ flex: 1, padding: '10px 14px', border: '1px solid rgba(255, 255, 255, 0.24)', borderRadius: '4px', background: 'var(--bg-card)', color: 'var(--text)' }} placeholder="Digite uma nova observação..." value={novaObservacao} onChange={(e) => setNovaObservacao(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && adicionarObservacao()} />
             <button className="btn btn-primary" onClick={adicionarObservacao} disabled={!novaObservacao.trim()}>Adicionar</button>
           </div>
           {loadingObs ? <p style={{ color: 'var(--text-muted)' }}>Carregando observações...</p> : observacoes.length === 0 ? <p style={{ color: 'var(--text-muted)' }}>Nenhuma observação registrada.</p> : (
