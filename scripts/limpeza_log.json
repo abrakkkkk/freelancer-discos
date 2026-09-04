@@ -1,0 +1,392 @@
+[
+  {
+    "id": 23457,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Astor Piazzolla*",
+      "titulo": "Astor Piazzola"
+    },
+    "novo": {
+      "artista": "Astor Piazzolla",
+      "titulo": "Astor Piazzola"
+    }
+  },
+  {
+    "id": 23463,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Stan Getz, Gerry Mulligan, Wardell Gray, Dave Lambert (3), Benny Green*, Allen Eager",
+      "titulo": "Yesterday"
+    },
+    "novo": {
+      "artista": "Stan Getz, Gerry Mulligan, Wardell Gray, Dave Lambert (3), Benny Green, Allen Eager",
+      "titulo": "Yesterday"
+    }
+  },
+  {
+    "id": 23468,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Giorgio* And Chris*",
+      "titulo": "Love's In You, Love's In Me"
+    },
+    "novo": {
+      "artista": "Giorgio And Chris",
+      "titulo": "Love's In You, Love's In Me"
+    }
+  },
+  {
+    "id": 23474,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Sammy Davis, Jr.*",
+      "titulo": "Sammy Davis, Jr. At Town Hall"
+    },
+    "novo": {
+      "artista": "Sammy Davis, Jr.",
+      "titulo": "Sammy Davis, Jr. At Town Hall"
+    }
+  },
+  {
+    "id": 23490,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Jon And Vangelis*",
+      "titulo": "Short Stories"
+    },
+    "novo": {
+      "artista": "Jon And Vangelis",
+      "titulo": "Short Stories"
+    }
+  },
+  {
+    "id": 23498,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "The Fabulous Trammps*",
+      "titulo": "The Legendary Zing Album"
+    },
+    "novo": {
+      "artista": "The Fabulous Trammps",
+      "titulo": "The Legendary Zing Album"
+    }
+  },
+  {
+    "id": 23507,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Tommy Dorsey & His Clambake Seven*",
+      "titulo": "This Is Tommy Dorsey & His Clambake Seven"
+    },
+    "novo": {
+      "artista": "Tommy Dorsey & His Clambake Seven",
+      "titulo": "This Is Tommy Dorsey & His Clambake Seven"
+    }
+  },
+  {
+    "id": 23509,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Count Basie And His Orchestra*",
+      "titulo": "Li'l Ol' Groovemaker... Basie!"
+    },
+    "novo": {
+      "artista": "Count Basie And His Orchestra",
+      "titulo": "Li'l Ol' Groovemaker... Basie!"
+    }
+  },
+  {
+    "id": 23512,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Stan Getz, Gerry Mulligan, Wardell Gray, Dave Lambert (3), Benny Green*, Allen Eager",
+      "titulo": "Yesterday"
+    },
+    "novo": {
+      "artista": "Stan Getz, Gerry Mulligan, Wardell Gray, Dave Lambert (3), Benny Green, Allen Eager",
+      "titulo": "Yesterday"
+    }
+  },
+  {
+    "id": 23521,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Charlie Mingus, Osie Johnson And His Orch.*, The Jones Boys, The Birdlanders",
+      "titulo": "Foundations Of Modern Jazz"
+    },
+    "novo": {
+      "artista": "Charlie Mingus, Osie Johnson And His Orch., The Jones Boys, The Birdlanders",
+      "titulo": "Foundations Of Modern Jazz"
+    }
+  },
+  {
+    "id": 23540,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Jay Jay Johnson*",
+      "titulo": "The Eminent Jay Jay Johnson Volume 4"
+    },
+    "novo": {
+      "artista": "Jay Jay Johnson",
+      "titulo": "The Eminent Jay Jay Johnson Volume 4"
+    }
+  },
+  {
+    "id": 23547,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Banda Sinfónica De Marina, Coronel Estanislao Garcia Espinosa*",
+      "titulo": "Himnos De Los 16 Paises Participantes En El Torneo De La Copa Jules Rimet - Inaugudación del IX Campeonato Mundial De Fut-Bol Copy \"Jules Rimet\" Mexico 70"
+    },
+    "novo": {
+      "artista": "Banda Sinfónica De Marina, Coronel Estanislao Garcia Espinosa",
+      "titulo": "Himnos De Los 16 Paises Participantes En El Torneo De La Copa Jules Rimet - Inaugudación del IX Campeonato Mundial De Fut-Bol Copy \"Jules Rimet\" Mexico 70"
+    }
+  },
+  {
+    "id": 23572,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Luisito Martí Con El Combo De Johnny Ventura*",
+      "titulo": "Luisito Marti Con Johnny Ventura Y Su Combo"
+    },
+    "novo": {
+      "artista": "Luisito Martí Con El Combo De Johnny Ventura",
+      "titulo": "Luisito Marti Con Johnny Ventura Y Su Combo"
+    }
+  },
+  {
+    "id": 23580,
+    "loja": "Loja 2",
+    "caixa": "1B",
+    "anterior": {
+      "artista": "Chuck Brown And The Soul Searchers*",
+      "titulo": "Bustin' Loose"
+    },
+    "novo": {
+      "artista": "Chuck Brown And The Soul Searchers",
+      "titulo": "Bustin' Loose"
+    }
+  },
+  {
+    "id": 24263,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "The Gerry Mulligan Quartet* / The Paul Desmond Quintet",
+      "titulo": "Gerry Mulligan Featuring Chet Baker, Chico Hamilton Also Paul Desmond, Barney Kessel, David Van Kriedt"
+    },
+    "novo": {
+      "artista": "The Gerry Mulligan Quartet / The Paul Desmond Quintet",
+      "titulo": "Gerry Mulligan Featuring Chet Baker, Chico Hamilton Also Paul Desmond, Barney Kessel, David Van Kriedt"
+    }
+  },
+  {
+    "id": 24273,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Vincent Bell*",
+      "titulo": "Airport Love Theme"
+    },
+    "novo": {
+      "artista": "Vincent Bell",
+      "titulo": "Airport Love Theme"
+    }
+  },
+  {
+    "id": 24279,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Hudson ◇ Ford*",
+      "titulo": "Nickelodeon"
+    },
+    "novo": {
+      "artista": "Hudson ◇ Ford",
+      "titulo": "Nickelodeon"
+    }
+  },
+  {
+    "id": 24288,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Maury Laws & Orchestra*",
+      "titulo": "Percussion On Stage"
+    },
+    "novo": {
+      "artista": "Maury Laws & Orchestra",
+      "titulo": "Percussion On Stage"
+    }
+  },
+  {
+    "id": 24385,
+    "loja": "Loja 2",
+    "caixa": "6B",
+    "anterior": {
+      "artista": "Bing Crosby With Bob Scobey's Frisco Jazz Band*",
+      "titulo": "Bing With A Beat"
+    },
+    "novo": {
+      "artista": "Bing Crosby With Bob Scobey's Frisco Jazz Band",
+      "titulo": "Bing With A Beat"
+    }
+  },
+  {
+    "id": 24415,
+    "loja": "Loja 2",
+    "caixa": "6B",
+    "anterior": {
+      "artista": "Sandro Com Jorge López Ruiz E Sua Orquestra*",
+      "titulo": "Sandro"
+    },
+    "novo": {
+      "artista": "Sandro Com Jorge López Ruiz E Sua Orquestra",
+      "titulo": "Sandro"
+    }
+  },
+  {
+    "id": 24448,
+    "loja": "Loja 2",
+    "caixa": "6B",
+    "anterior": {
+      "artista": "D'Ângelo And The Hully Gully Boy's*",
+      "titulo": "The Best Of Hully Gully"
+    },
+    "novo": {
+      "artista": "D'Ângelo And The Hully Gully Boy's",
+      "titulo": "The Best Of Hully Gully"
+    }
+  },
+  {
+    "id": 24473,
+    "loja": "Loja 2",
+    "caixa": "7B",
+    "anterior": {
+      "artista": "Tibor Rudas Presents Carreras",
+      "titulo": "Domingo* - Pavarotti* With Mehta - The 3 Tenors In Concert 1994"
+    },
+    "novo": {
+      "artista": "Tibor Rudas Presents Carreras",
+      "titulo": "Domingo - Pavarotti With Mehta - The 3 Tenors In Concert 1994"
+    }
+  },
+  {
+    "id": 24485,
+    "loja": "Loja 2",
+    "caixa": "7B",
+    "anterior": {
+      "artista": "M. A. Reichert*, Odette Ernest Dias, Elza Kazuko Gushikem",
+      "titulo": "Afinidades Brasileiras"
+    },
+    "novo": {
+      "artista": "M. A. Reichert, Odette Ernest Dias, Elza Kazuko Gushikem",
+      "titulo": "Afinidades Brasileiras"
+    }
+  },
+  {
+    "id": 24487,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Mantovani E Sua Orquestra*",
+      "titulo": "Album De Tangos Favoritos"
+    },
+    "novo": {
+      "artista": "Mantovani E Sua Orquestra",
+      "titulo": "Album De Tangos Favoritos"
+    }
+  },
+  {
+    "id": 24533,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Gershwin* & Grofé",
+      "titulo": "Rapsódia Azul / Suíte Grand Canyon"
+    },
+    "novo": {
+      "artista": "Gershwin & Grofé",
+      "titulo": "Rapsódia Azul / Suíte Grand Canyon"
+    }
+  },
+  {
+    "id": 24568,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Típica Enzo Phirpo*",
+      "titulo": "Tangos Arrabaleros Vol.-2"
+    },
+    "novo": {
+      "artista": "Típica Enzo Phirpo",
+      "titulo": "Tangos Arrabaleros Vol.-2"
+    }
+  },
+  {
+    "id": 24591,
+    "loja": "Loja 2",
+    "caixa": "7B",
+    "anterior": {
+      "artista": "Tommy Dorsey E Sua Orquestra* Com Vocais De Frank Sinatra",
+      "titulo": "I'm Gettin' Sentimental Over You"
+    },
+    "novo": {
+      "artista": "Tommy Dorsey E Sua Orquestra Com Vocais De Frank Sinatra",
+      "titulo": "I'm Gettin' Sentimental Over You"
+    }
+  },
+  {
+    "id": 24603,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Banda E Côro Do Exército Soviético*",
+      "titulo": "Banda E Côro Do Exército Soviético"
+    },
+    "novo": {
+      "artista": "Banda E Côro Do Exército Soviético",
+      "titulo": "Banda E Côro Do Exército Soviético"
+    }
+  },
+  {
+    "id": 24616,
+    "loja": "Loja 2",
+    "caixa": "7B",
+    "anterior": {
+      "artista": "Louis Armstrong And The All-Stars* With The Sy Oliver Choir",
+      "titulo": "Louis And The Good Book"
+    },
+    "novo": {
+      "artista": "Louis Armstrong And The All-Stars With The Sy Oliver Choir",
+      "titulo": "Louis And The Good Book"
+    }
+  },
+  {
+    "id": 24647,
+    "loja": "Loja 2",
+    "caixa": "9B",
+    "anterior": {
+      "artista": "Elcio Alvarez E Sua Orquestra E Coral*",
+      "titulo": "Brasilian Blues"
+    },
+    "novo": {
+      "artista": "Elcio Alvarez E Sua Orquestra E Coral",
+      "titulo": "Brasilian Blues"
+    }
+  }
+]
