@@ -86,7 +86,16 @@ export default function CatalogTable({
                   {d.artista || <span className="text-empty">—</span>}
                 </td>
               )}
-              <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
+              <td data-label="Título">
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                  <span>{d.titulo || <span className="text-empty">—</span>}</span>
+                  {d.ano && (
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '1px 6px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 500 }}>
+                      {d.ano}
+                    </span>
+                  )}
+                </div>
+              </td>
               {showLoja && (
                 <td data-label="Loja">
                   {d.loja ? (

@@ -16,6 +16,7 @@ import { useStore } from '@/contexts/StoreContext';
 const INITIAL_FORM = {
   artista: '',
   titulo: '',
+  ano: '',
   caixa: '',
   loja: '',
   preco: '',
@@ -100,17 +101,13 @@ export default function AdicionarItem() {
       titulo = parts.slice(1).join(' - ').trim();
     }
 
-    const year = result.year ? `Ano: ${result.year}` : '';
-    
-    const newObs = form.observacao 
-      ? (year ? `${form.observacao}\n${year}` : form.observacao)
-      : year;
+    const year = result.year ? String(result.year) : '';
 
     setForm(prev => ({
       ...prev,
       artista,
       titulo,
-      observacao: newObs
+      ano: year || prev.ano,
     }));
     
     setShowDiscogsDropdown(false);
@@ -137,6 +134,7 @@ export default function AdicionarItem() {
         loja: form.loja || null,
         observacao: form.observacao || null,
         caixa: form.caixa?.trim() || null,
+        ano: form.ano?.trim() || null,
       };
 
       if (!isVideo) insertData.artista = form.artista.trim();
@@ -313,6 +311,16 @@ export default function AdicionarItem() {
               <option value="">Selecione uma loja</option>
               {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
+          </div>
+          <div className="form-group">
+            <label>Ano</label>
+            <input 
+              name="ano" 
+              type="text" 
+              value={form.ano || ''} 
+              onChange={handleChange} 
+              placeholder="Ex: 1982" 
+            />
           </div>
         </div>
 

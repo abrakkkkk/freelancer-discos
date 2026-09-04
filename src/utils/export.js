@@ -28,10 +28,10 @@ export async function exportarEstoqueCompleto(filtroLoja = '') {
   }
 
   const [ discos, dvds, cds, vhs ] = await Promise.all([
-    fetchAll('discos', 'caixa, artista, titulo, loja, preco, ativo', 'artista'),
-    fetchAll('dvds', 'caixa, titulo, loja, preco, ativo', 'titulo'),
-    fetchAll('cds', 'caixa, artista, titulo, loja, preco, ativo', 'artista'),
-    fetchAll('vhs', 'caixa, titulo, loja, preco, ativo', 'titulo')
+    fetchAll('discos', 'caixa, artista, titulo, loja, preco, ativo, ano', 'artista'),
+    fetchAll('dvds', 'caixa, titulo, loja, preco, ativo, ano', 'titulo'),
+    fetchAll('cds', 'caixa, artista, titulo, loja, preco, ativo, ano', 'artista'),
+    fetchAll('vhs', 'caixa, titulo, loja, preco, ativo, ano', 'titulo')
   ]);
 
   const formataStatus = (ativo) => ativo !== false ? 'Ativo (Em Estoque)' : 'Inativo (Saída/Vendido)';
@@ -41,6 +41,7 @@ export async function exportarEstoqueCompleto(filtroLoja = '') {
     'Localização': d.caixa || '-',
     'Artista': d.artista || '-',
     'Título': d.titulo || '-',
+    'Ano': d.ano || '-',
     'Loja': d.loja || '-',
     'Preço': formataPreco(d.preco),
     'Status': formataStatus(d.ativo)
@@ -49,6 +50,7 @@ export async function exportarEstoqueCompleto(filtroLoja = '') {
   const dvdsData = dvds?.map(d => ({
     'Localização': d.caixa || '-',
     'Título': d.titulo || '-',
+    'Ano': d.ano || '-',
     'Loja': d.loja || '-',
     'Preço': formataPreco(d.preco),
     'Status': formataStatus(d.ativo)
@@ -58,6 +60,7 @@ export async function exportarEstoqueCompleto(filtroLoja = '') {
     'Localização': d.caixa || '-',
     'Artista': d.artista || '-',
     'Título': d.titulo || '-',
+    'Ano': d.ano || '-',
     'Loja': d.loja || '-',
     'Preço': formataPreco(d.preco),
     'Status': formataStatus(d.ativo)
@@ -66,6 +69,7 @@ export async function exportarEstoqueCompleto(filtroLoja = '') {
   const vhsData = vhs?.map(d => ({
     'Localização': d.caixa || '-',
     'Título': d.titulo || '-',
+    'Ano': d.ano || '-',
     'Loja': d.loja || '-',
     'Preço': formataPreco(d.preco),
     'Status': formataStatus(d.ativo)

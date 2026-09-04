@@ -48,6 +48,7 @@ function EditarExcluirContent() {
   } = useItemForm({
     artista: '',
     titulo: '',
+    ano: '',
     caixa: '',
     preco: '',
     loja: ''
@@ -113,6 +114,7 @@ function EditarExcluirContent() {
     setForm({
       artista: item.artista || '',
       titulo: item.titulo || '',
+      ano: item.ano || '',
       caixa: item.caixa || '',
       preco: formatarMoeda(item.preco),
       loja: item.loja || '',
@@ -167,18 +169,13 @@ function EditarExcluirContent() {
       titulo = parts.slice(1).join(' - ').trim();
     }
 
-    const year = result.year ? `Ano: ${result.year}` : '';
-    
-    const newObs = novaObservacao 
-      ? (year ? `${novaObservacao}\n${year}` : novaObservacao)
-      : year;
-    
-    if (newObs) setNovaObservacao(newObs);
+    const year = result.year ? String(result.year) : '';
 
     setForm(prev => ({
       ...prev,
       artista,
       titulo,
+      ano: year || prev.ano,
     }));
     
     setShowDiscogsDropdown(false);
@@ -195,6 +192,7 @@ function EditarExcluirContent() {
       preco: unmaskedPreco,
       loja: form.loja || null,
       caixa: form.caixa?.trim() || null,
+      ano: form.ano?.trim() || null,
     };
     if (temArtista) updateData.artista = form.artista;
 
@@ -429,6 +427,16 @@ function EditarExcluirContent() {
                 <option value="">Nenhuma / Sem Loja</option>
                 {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
               </select>
+            </div>
+            <div className="form-group">
+              <label>Ano</label>
+              <input 
+                name="ano" 
+                type="text" 
+                value={form.ano || ''} 
+                onChange={handleChange} 
+                placeholder="Ex: 1982" 
+              />
             </div>
           </div>
 
