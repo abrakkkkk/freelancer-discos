@@ -445,7 +445,7 @@ export default function AdicionarItem() {
             value={form.observacao} 
             onChange={handleChange} 
             rows="2" 
-            style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid var(--border)', background: 'var(--bg-card)', color: 'var(--text)', resize: 'vertical' }}
+            style={{ width: '100%', resize: 'vertical' }}
             placeholder="Qualquer detalhe adicional sobre o item..."
           ></textarea>
         </div>
