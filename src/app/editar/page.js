@@ -335,14 +335,14 @@ function EditarExcluirContent() {
                           padding: '8px', 
                           display: 'flex', 
                           flexDirection: 'column',
-                          background: result.isExactMatch ? 'rgba(56, 161, 105, 0.08)' : undefined,
-                          borderLeft: result.isExactMatch ? '3px solid #38a169' : undefined
+                          background: result.isExactMatch ? 'rgba(56, 161, 105, 0.05)' : undefined,
+                          borderLeft: result.isExactMatch ? '3px solid rgba(56, 161, 105, 0.6)' : undefined
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
                           <span style={{ fontWeight: 'bold' }}>{result.title}</span>
                           {result.isExactMatch && (
-                            <span style={{ background: '#38a169', color: '#fff', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 700, whiteSpace: 'nowrap' }}>
+                            <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
                               MATCH EXATO
                             </span>
                           )}
