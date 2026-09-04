@@ -4,21 +4,24 @@ import { useState, useEffect, useRef } from 'react';
 import { IoClose, IoCameraReverseOutline, IoSparkles, IoCamera } from 'react-icons/io5';
 import { MdDocumentScanner } from 'react-icons/md';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
+import { LuZoomIn, LuZoomOut } from 'react-icons/lu';
 
 export default function OcrScannerModal({ isOpen, onClose, onScan }) {
   const [stream, setStream] = useState(null);
   const [erroCamera, setErroCamera] = useState(null);
   const [processando, setProcessando] = useState(false);
-  const [progressoOcr, setProgressoOcr] = useState(0);
+  const [workerPronto, setWorkerPronto] = useState(false);
   const [textoDetectado, setTextoDetectado] = useState('');
   const [fotoPreview, setFotoPreview] = useState(null);
   const [cameras, setCameras] = useState([]);
   const [cameraIdAtiva, setCameraIdAtiva] = useState(null);
+  const [zoomAtual, setZoomAtual] = useState(1);
+  const [maxZoom, setMaxZoom] = useState(1);
 
   const videoRef = useRef(null);
-  const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
   const audioCtxRef = useRef(null);
+  const workerRef = useRef(null);
 
   // Som suave de confirmação
   const playBeep = () => {
@@ -33,11 +36,11 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(1174.66, ctx.currentTime); // D6
       gain.gain.setValueAtTime(0.15, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start();
-      osc.stop(ctx.currentTime + 0.15);
+      osc.stop(ctx.currentTime + 0.12);
     } catch (e) {}
 
     if (typeof navigator !== 'undefined' && navigator.vibrate) {
@@ -45,7 +48,47 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     }
   };
 
-  // Iniciar câmera nativa
+  // Pré-aquecimento do Tesseract em background ao abrir o modal (Velocidade instantânea)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let cancelado = false;
+    setWorkerPronto(false);
+
+    const prepararWorker = async () => {
+      try {
+        const { createWorker } = await import('tesseract.js');
+        // Carrega apenas 'eng' (A-Z e 0-9), muito mais leve e rápido que português+inglês
+        const worker = await createWorker('eng');
+        await worker.setParameters({
+          // Restringe apenas para caracteres de códigos de catálogo
+          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-./ ',
+          tessedit_pageseg_mode: '6', // Trata como bloco único / linha uniforme de texto (10x mais rápido)
+        });
+
+        if (!cancelado) {
+          workerRef.current = worker;
+          setWorkerPronto(true);
+        } else {
+          worker.terminate();
+        }
+      } catch (err) {
+        console.error('Erro ao pré-carregar OCR:', err);
+      }
+    };
+
+    prepararWorker();
+
+    return () => {
+      cancelado = true;
+      if (workerRef.current) {
+        workerRef.current.terminate();
+        workerRef.current = null;
+      }
+    };
+  }, [isOpen]);
+
+  // Iniciar câmera com Macro e Zoom automáticos
   const startCamera = async (deviceId = null) => {
     setErroCamera(null);
     stopCamera();
@@ -62,6 +105,38 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+      }
+
+      const track = mediaStream.getVideoTracks()[0];
+      if (track) {
+        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+        const advanced = [];
+
+        // 1. Tentar ativar modo Macro ou Foco Contínuo nativo
+        if (capabilities.focusMode && capabilities.focusMode.includes('macro')) {
+          advanced.push({ focusMode: 'macro' });
+        } else if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
+          advanced.push({ focusMode: 'continuous' });
+        }
+
+        // 2. Aplicar zoom inicial de 1.8x a 2.0x para foco nítido de perto (Macro ótico/digital)
+        if (capabilities.zoom) {
+          const maxZ = capabilities.zoom.max || 1;
+          const minZ = capabilities.zoom.min || 1;
+          setMaxZoom(maxZ);
+
+          const zoomIdeal = Math.min(maxZ, Math.max(minZ, 1.8));
+          setZoomAtual(zoomIdeal);
+          advanced.push({ zoom: zoomIdeal });
+        }
+
+        if (advanced.length > 0 && track.applyConstraints) {
+          try {
+            await track.applyConstraints({ advanced });
+          } catch (e) {
+            console.warn('Não foi possível aplicar restrições avançadas de macro:', e);
+          }
+        }
       }
 
       // Buscar câmeras disponíveis
@@ -87,6 +162,20 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     }
   };
 
+  const alternarZoom = async () => {
+    if (!stream) return;
+    const track = stream.getVideoTracks()[0];
+    if (!track || !track.applyConstraints) return;
+
+    const novoZoom = zoomAtual >= 1.8 ? 1 : Math.min(maxZoom, 2.0);
+    try {
+      await track.applyConstraints({ advanced: [{ zoom: novoZoom }] });
+      setZoomAtual(novoZoom);
+    } catch (e) {
+      console.warn('Erro ao alterar zoom:', e);
+    }
+  };
+
   const stopCamera = () => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
@@ -103,17 +192,17 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     await startCamera(nextCam.deviceId);
   };
 
-  // Extrair padrões de catálogo conhecidos (COLP 12225, SMOFB 3749, 6349 050, etc.)
+  // Filtro de extração de códigos de catálogo (COLP 12225, SMOFB 3749, 6349 050, etc.)
   const extrairCodigoCatalogo = (textoBruto) => {
     if (!textoBruto) return '';
 
-    // Remove quebras de linha e excesso de espaços
-    const textoLimpo = textoBruto.replace(/\r?\n|\r/g, ' ').trim();
+    // Remove caracteres estranhos
+    const textoLimpo = textoBruto.replace(/[^A-Za-z0-9\-\.\s]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
 
     // 1. Padrão Letras + Números (ex: COLP 12225, SMOFB 3749, XSLP 1001, BBL 1300)
     const matchPrefixoNumero = textoLimpo.match(/\b([A-Z]{2,6}[\s\-\.]*[\d]{3,8})\b/i);
     if (matchPrefixoNumero) {
-      return matchPrefixoNumero[1].replace(/[\s\-\.]+/g, ' ').trim().toUpperCase();
+      return matchPrefixoNumero[1].replace(/[\s\-\.]+/g, ' ').trim();
     }
 
     // 2. Padrão Numérico de Gravadora (ex: 6349 050, 103.0001, 064 422894)
@@ -122,87 +211,155 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
       return matchNumerico[1].trim();
     }
 
-    // 3. Fallback: pega a linha ou palavra mais relevante
+    // 3. Fallback: pega a sequência com letras e números
     const palavras = textoLimpo.split(/\s+/).filter(w => w.length >= 4 && /\d/.test(w));
-    if (palavras.length > 0) return palavras[0].toUpperCase();
+    if (palavras.length > 0) return palavras[0];
 
-    return textoLimpo.slice(0, 30);
+    return textoLimpo.slice(0, 25);
   };
 
-  // Processar imagem via Tesseract.js
+  // Pré-processamento da imagem em Preto e Branco com Alto Contraste (Binarização)
+  const aplicarPretoEBrancoEContraste = (canvas, cropWidth, cropHeight) => {
+    const ctx = canvas.getContext('2d');
+    const imgData = ctx.getImageData(0, 0, cropWidth, cropHeight);
+    const d = imgData.data;
+
+    let minVal = 255;
+    let maxVal = 0;
+    let somaLuminancia = 0;
+    const grays = new Float32Array(cropWidth * cropHeight);
+
+    // Passo 1: Converter para escala de cinza e calcular limites
+    for (let i = 0, j = 0; i < d.length; i += 4, j++) {
+      // Fórmula de luminância perceptual
+      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
+      grays[j] = gray;
+      somaLuminancia += gray;
+      if (gray < minVal) minVal = gray;
+      if (gray > maxVal) maxVal = gray;
+    }
+
+    const totalPixels = cropWidth * cropHeight;
+    const mediaLuminancia = somaLuminancia / totalPixels;
+    const threshold = minVal + (maxVal - minVal) * 0.48;
+    const fundoEscuro = mediaLuminancia < 120; // Selo escuro ou vinil preto
+
+    // Passo 2: Binarização em Alto Contraste (Preto e Branco puro)
+    for (let i = 0, j = 0; i < d.length; i += 4, j++) {
+      let ehTexto = grays[j] > threshold;
+      if (fundoEscuro) {
+        // Se o fundo for escuro, o texto claro vira preto em fundo branco para o Tesseract
+        ehTexto = grays[j] < threshold;
+      }
+      const val = ehTexto ? 255 : 0;
+      d[i] = val;
+      d[i + 1] = val;
+      d[i + 2] = val;
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+  };
+
+  // Processar imagem via Tesseract.js (Instantâneo com Worker pré-carregado)
   const executarOcrEmImagem = async (imageSource) => {
     setProcessando(true);
-    setProgressoOcr(10);
     setTextoDetectado('');
 
     try {
-      const { createWorker } = await import('tesseract.js');
-      const worker = await createWorker('por+eng', 1, {
-        logger: (m) => {
-          if (m.status === 'recognizing text' && m.progress) {
-            setProgressoOcr(Math.round(m.progress * 100));
-          }
-        },
-      });
+      let worker = workerRef.current;
 
-      setProgressoOcr(40);
+      // Se o worker ainda não terminou de carregar, cria rapidamente
+      if (!worker) {
+        const { createWorker } = await import('tesseract.js');
+        worker = await createWorker('eng');
+        await worker.setParameters({
+          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-./ ',
+          tessedit_pageseg_mode: '6',
+        });
+        workerRef.current = worker;
+      }
+
       const ret = await worker.recognize(imageSource);
-      await worker.terminate();
-
       const textoLido = ret?.data?.text || '';
       const codigoEncontrado = extrairCodigoCatalogo(textoLido);
 
       playBeep();
       setTextoDetectado(codigoEncontrado || textoLido.trim());
-      setProgressoOcr(100);
     } catch (err) {
       console.error('Erro no OCR:', err);
-      alert('Não foi possível reconhecer o texto da foto. Tente novamente com mais foco e luz.');
+      alert('Não foi possível ler o código. Tente aproximar mais da luz ou digite o código.');
     } finally {
       setProcessando(false);
     }
   };
 
-  // Capturar quadro do vídeo da câmera
+  // Capturar quadro do vídeo da câmera com recorte da mira
   const capturarDoVideo = () => {
     if (!videoRef.current) return;
 
     const video = videoRef.current;
+    const vWidth = video.videoWidth || 1280;
+    const vHeight = video.videoHeight || 720;
+
+    // Recortar exatamente a área central da mira
+    const cropWidth = Math.floor(vWidth * 0.72);
+    const cropHeight = Math.floor(vHeight * 0.28);
+    const cropX = Math.floor((vWidth - cropWidth) / 2);
+    const cropY = Math.floor((vHeight - cropHeight) / 2);
+
+    // Redimensionar para tamanho ideal (~450px de largura) para OCR ultrarrápido
+    const targetWidth = 460;
+    const targetHeight = Math.floor((cropHeight / cropWidth) * targetWidth);
+
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth || 1280;
-    canvas.height = video.videoHeight || 720;
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
     const ctx = canvas.getContext('2d');
 
-    // Desenhar quadro
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // Desenha a imagem recortada e escalada
+    ctx.drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, targetWidth, targetHeight);
 
-    // Recortar a faixa central (onde fica a mira de foco)
-    const cropWidth = Math.floor(canvas.width * 0.75);
-    const cropHeight = Math.floor(canvas.height * 0.35);
-    const cropX = Math.floor((canvas.width - cropWidth) / 2);
-    const cropY = Math.floor((canvas.height - cropHeight) / 2);
+    // Aplica o filtro Preto e Branco com Alto Contraste (Binarização)
+    aplicarPretoEBrancoEContraste(canvas, targetWidth, targetHeight);
 
-    const croppedCanvas = document.createElement('canvas');
-    croppedCanvas.width = cropWidth;
-    croppedCanvas.height = cropHeight;
-    const cropCtx = croppedCanvas.getContext('2d');
-    cropCtx.drawImage(canvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight);
-
-    const dataUrl = croppedCanvas.toDataURL('image/jpeg', 0.9);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
     setFotoPreview(dataUrl);
     executarOcrEmImagem(dataUrl);
   };
 
-  // Capturar via input file (foto macro de alta resolução do celular)
+  // Capturar via foto macro nativa do celular
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const dataUrl = event.target.result;
-      setFotoPreview(dataUrl);
-      executarOcrEmImagem(dataUrl);
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 800;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.floor((h / w) * maxDim);
+            w = maxDim;
+          } else {
+            w = Math.floor((w / h) * maxDim);
+            h = maxDim;
+          }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        aplicarPretoEBrancoEContraste(canvas, w, h);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+        setFotoPreview(dataUrl);
+        executarOcrEmImagem(dataUrl);
+      };
+      img.src = event.target.result;
     };
     reader.readAsDataURL(file);
   };
@@ -252,7 +409,8 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
           </button>
         </div>
 
-        <div className="scanner-viewfinder-wrapper" style={{ minHeight: '290px' }}>
+        {/* Viewfinder da Câmera em Preto e Branco com Alto Contraste */}
+        <div className="scanner-viewfinder-wrapper" style={{ minHeight: '300px' }}>
           {!fotoPreview ? (
             <>
               <video 
@@ -260,7 +418,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                 autoPlay 
                 playsInline 
                 muted 
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                className="ocr-camera-video"
               />
 
               {/* Mira visual para enquadrar o texto */}
@@ -271,17 +429,44 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                 <div className="ocr-frame-corner bottom-right" />
                 <span className="ocr-frame-hint">Enquadre o código (ex: COLP 12225)</span>
               </div>
+
+              {/* Botões flutuantes de Zoom Macro e Câmera */}
+              <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', gap: '8px', zIndex: 5 }}>
+                {maxZoom > 1 && (
+                  <button 
+                    type="button"
+                    onClick={alternarZoom}
+                    className="ocr-floating-btn"
+                    title="Alternar Macro / Zoom"
+                  >
+                    {zoomAtual >= 1.8 ? <LuZoomOut size={16} /> : <LuZoomIn size={16} />}
+                    <span>{zoomAtual >= 1.8 ? 'Macro (2x)' : '1x'}</span>
+                  </button>
+                )}
+
+                {cameras.length > 1 && (
+                  <button 
+                    type="button"
+                    onClick={toggleCamera}
+                    className="ocr-floating-btn"
+                    title="Alternar lente da câmera"
+                  >
+                    <IoCameraReverseOutline size={18} />
+                  </button>
+                )}
+              </div>
             </>
           ) : (
-            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#000' }}>
-              <img src={fotoPreview} alt="Captura" style={{ maxWidth: '100%', maxHeight: '280px', objectFit: 'contain' }} />
+            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', padding: '16px' }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>Imagem processada em alto contraste:</span>
+              <img src={fotoPreview} alt="Captura B&W" style={{ maxWidth: '100%', maxHeight: '180px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '6px' }} />
             </div>
           )}
 
           {processando && (
             <div className="scanner-status-overlay">
               <div className="scanner-spinner" />
-              <span style={{ fontWeight: 600 }}>Lendo texto da imagem... {progressoOcr}%</span>
+              <span style={{ fontWeight: 600 }}>Lendo caracteres em alto contraste...</span>
             </div>
           )}
 
@@ -293,12 +478,11 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         </div>
 
         <div className="scanner-modal-footer">
-          {/* Se um texto já foi detectado */}
           {textoDetectado ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                 <IoSparkles color="var(--accent)" size={16} />
-                <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Código identificado:</span>
+                <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Código detectado:</span>
               </div>
               
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -339,19 +523,6 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                 >
                   <IoCamera size={18} /> Capturar e Ler
                 </button>
-
-                {/* Alternar Câmera */}
-                {cameras.length > 1 && !erroCamera && (
-                  <button 
-                    type="button" 
-                    onClick={toggleCamera} 
-                    className="btn btn-secondary" 
-                    style={{ padding: '0 12px', minHeight: '44px' }}
-                    title="Alternar câmera"
-                  >
-                    <IoCameraReverseOutline size={20} />
-                  </button>
-                )}
               </div>
 
               {/* Botão alternativo para foto em alta resolução / galeria */}
@@ -370,7 +541,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                 className="btn btn-secondary"
                 style={{ width: '100%', fontSize: '12.5px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                Tirar foto macro com foco ou escolher da galeria
+                Tirar foto macro com foco da câmera nativa
               </button>
             </div>
           )}
