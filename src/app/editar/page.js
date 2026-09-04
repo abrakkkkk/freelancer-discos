@@ -14,7 +14,7 @@ import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
-import { formatCaixa } from '@/utils/stringUtils';
+import { formatCaixa, cleanDiscogsString } from '@/utils/stringUtils';
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
@@ -162,11 +162,11 @@ function EditarExcluirContent() {
   const handleSelectDiscogsResult = (result) => {
     const parts = result.title.split(' - ');
     let artista = '';
-    let titulo = result.title;
+    let titulo = cleanDiscogsString(result.title);
     
     if (parts.length > 1) {
-      artista = parts[0].trim();
-      titulo = parts.slice(1).join(' - ').trim();
+      artista = cleanDiscogsString(parts[0]);
+      titulo = cleanDiscogsString(parts.slice(1).join(' - '));
     }
 
     const year = result.year ? String(result.year) : '';

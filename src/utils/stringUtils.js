@@ -15,3 +15,12 @@ export function formatCaixa(caixa, loja) {
   }
   return caixa;
 }
+
+export function cleanDiscogsString(texto) {
+  if (!texto) return '';
+  return texto
+    .toString()
+    .replace(/\*+$/g, '')
+    .replace(/\s*\(\d+\)$/g, '')
+    .trim();
+}

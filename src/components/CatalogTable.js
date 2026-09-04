@@ -61,6 +61,11 @@ export default function CatalogTable({
                 TÍTULO {renderSortIcon('titulo')}
               </div>
             </th>
+            <th onClick={() => onSort('ano')} style={{cursor: 'pointer'}}>
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                ANO {renderSortIcon('ano')}
+              </div>
+            </th>
             {showLoja && (
               <th onClick={() => onSort('loja')} style={{cursor: 'pointer'}}>
                 <div style={{display: 'flex', alignItems: 'center'}}>
@@ -86,15 +91,15 @@ export default function CatalogTable({
                   {d.artista || <span className="text-empty">—</span>}
                 </td>
               )}
-              <td data-label="Título">
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                  <span>{d.titulo || <span className="text-empty">—</span>}</span>
-                  {d.ano && (
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '1px 6px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 500 }}>
-                      {d.ano}
-                    </span>
-                  )}
-                </div>
+              <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
+              <td data-label="Ano">
+                {d.ano ? (
+                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '2px 7px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 600 }}>
+                    {d.ano}
+                  </span>
+                ) : (
+                  <span className="text-empty">—</span>
+                )}
               </td>
               {showLoja && (
                 <td data-label="Loja">

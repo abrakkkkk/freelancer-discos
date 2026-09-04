@@ -87,39 +87,46 @@ export default function CatalogoClone() {
   const renderPagination = () => {
     if (totalPaginas <= 1) return null;
     
-    let pages = [];
-    // Show a few pages for the mockup look
-    for (let i = 1; i <= Math.min(3, totalPaginas); i++) {
-      pages.push(i);
-    }
-    
     return (
-      <div className="paginationRow" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px 0', gap: '8px', borderTop: '1px solid var(--border)', marginTop: '16px' }}>
+      <div className="paginationRow" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px 0', gap: '8px', borderTop: '1px solid var(--border)', marginTop: '16px', flexWrap: 'wrap' }}>
         <button 
           className="pageBtn" 
           disabled={catalog.pagina === 1}
-          onClick={() => catalog.setPagina(catalog.pagina - 1)}
+          onClick={() => catalog.setPagina(Math.max(1, catalog.pagina - 1))}
           style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+          title="Página anterior"
         >
           &lt;
         </button>
         
-        {pages.map(p => (
-          <button 
-            key={p} 
-            className={`${"pageBtn"} ${catalog.pagina === p ? "active" : ''}`}
-            onClick={() => catalog.setPagina(p)}
-            style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
-          >
-            {p}
-          </button>
-        ))}
+        {Array.from({ length: Math.min(5, totalPaginas) }, (_, i) => {
+          let pageNum;
+          if (totalPaginas <= 5) {
+            pageNum = i + 1;
+          } else if (catalog.pagina <= 3) {
+            pageNum = i + 1;
+          } else if (catalog.pagina >= totalPaginas - 2) {
+            pageNum = totalPaginas - 4 + i;
+          } else {
+            pageNum = catalog.pagina - 2 + i;
+          }
+          return (
+            <button 
+              key={pageNum} 
+              className={`pageBtn ${catalog.pagina === pageNum ? 'active' : ''}`}
+              onClick={() => catalog.setPagina(pageNum)}
+              style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
         
-        {totalPaginas > 3 && (
+        {totalPaginas > 5 && catalog.pagina < totalPaginas - 2 && (
           <>
             <span style={{ padding: '0 4px', color: 'var(--text-muted)' }}>...</span>
             <button 
-              className={`${"pageBtn"} ${catalog.pagina === totalPaginas ? "active" : ''}`}
+              className={`pageBtn ${catalog.pagina === totalPaginas ? 'active' : ''}`}
               onClick={() => catalog.setPagina(totalPaginas)}
               style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
             >
@@ -131,8 +138,9 @@ export default function CatalogoClone() {
         <button 
           className="pageBtn" 
           disabled={catalog.pagina === totalPaginas}
-          onClick={() => catalog.setPagina(catalog.pagina + 1)}
+          onClick={() => catalog.setPagina(Math.min(totalPaginas, catalog.pagina + 1))}
           style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+          title="Próxima página"
         >
           &gt;
         </button>

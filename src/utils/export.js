@@ -81,10 +81,10 @@ export async function exportarEstoqueCompleto(filtroLoja = '') {
   const wsCds = XLSX.utils.json_to_sheet(cdsData);
   const wsVhs = XLSX.utils.json_to_sheet(vhsData);
 
-  wsDiscos['!cols'] = [{wch: 15}, {wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
-  wsDvds['!cols'] = [{wch: 15}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
-  wsCds['!cols'] = [{wch: 15}, {wch: 35}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
-  wsVhs['!cols'] = [{wch: 15}, {wch: 45}, {wch: 15}, {wch: 12}, {wch: 25}];
+  wsDiscos['!cols'] = [{wch: 15}, {wch: 35}, {wch: 45}, {wch: 10}, {wch: 15}, {wch: 12}, {wch: 25}];
+  wsDvds['!cols'] = [{wch: 15}, {wch: 45}, {wch: 10}, {wch: 15}, {wch: 12}, {wch: 25}];
+  wsCds['!cols'] = [{wch: 15}, {wch: 35}, {wch: 45}, {wch: 10}, {wch: 15}, {wch: 12}, {wch: 25}];
+  wsVhs['!cols'] = [{wch: 15}, {wch: 45}, {wch: 10}, {wch: 15}, {wch: 12}, {wch: 25}];
 
   XLSX.utils.book_append_sheet(wb, wsDiscos, "Discos de Vinil");
   XLSX.utils.book_append_sheet(wb, wsDvds, "DVDs");

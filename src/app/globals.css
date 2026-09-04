@@ -1194,15 +1194,16 @@ tbody tr:last-child td {
     display: none !important;
   }
 
-  /* Outros itens especÃ­ficos para garantir a ordem */
+  /* Outros itens específicos para garantir a ordem */
   td[data-label="Data"] { order: 3; }
   td[data-label="Tipo"] { order: 4; }
   td[data-label="Local"] { order: 5; }
   td[data-label="Loja"] { order: 6; }
-  td[data-label="Preço"] { order: 7; }
-  td[data-label="Qtd"] { order: 8; }
-  td[data-label="Status"] { order: 9; }
-  td[data-label="Observação"] { order: 10; }
+  td[data-label="Ano"] { order: 7; }
+  td[data-label="Preço"] { order: 8; }
+  td[data-label="Qtd"] { order: 9; }
+  td[data-label="Status"] { order: 10; }
+  td[data-label="Observação"] { order: 11; }
 
   /* Ação / Editar no canto superior direito do Card */
   td[data-label="Ação"], td[data-label="Excluir"], td[data-label="Selecionar"] {

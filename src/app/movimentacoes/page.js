@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { MdHistory } from "react-icons/md";
+import { FiSearch } from "react-icons/fi";
 import { movimentacaoService } from '@/services/movimentacaoService';
 import { STORE_OPTIONS } from '@/constants/config';
-import { formatCaixa } from '@/utils/stringUtils';
+import { formatCaixa, removeAcentos } from '@/utils/stringUtils';
 import { useStore } from '@/contexts/StoreContext';
 
 const ITENS_POR_PAGINA = 50;
@@ -14,6 +15,7 @@ export default function Movimentacoes() {
   const [filtroTipoMov, setFiltroTipoMov] = useState('');
   const [filtroPeriodo, setFiltroPeriodo] = useState('semana');
   const [filtroLoja, setFiltroLoja] = useState('');
+  const [busca, setBusca] = useState('');
   const [loadingHist, setLoadingHist] = useState(true);
   const [pagina, setPagina] = useState(1);
   const { activeStore } = useStore();
@@ -26,7 +28,7 @@ export default function Movimentacoes() {
   // Reset page when filters change
   useEffect(() => {
     setPagina(1);
-  }, [filtroTipoMov, filtroPeriodo, filtroLoja]);
+  }, [filtroTipoMov, filtroPeriodo, filtroLoja, busca]);
 
   useEffect(() => {
     const fetchMovimentacoes = async () => {
@@ -54,9 +56,24 @@ export default function Movimentacoes() {
     };
   };
 
-  const totalItens = movimentacoes.length;
+  const totalEntradas = movimentacoes.filter(m => m.tipo === 'entrada').length;
+  const totalSaidas = movimentacoes.filter(m => m.tipo === 'saida').length;
+  const totalExclusoes = movimentacoes.filter(m => m.tipo === 'exclusao').length;
+
+  const movimentacoesFiltradas = movimentacoes.filter((m) => {
+    if (!busca.trim()) return true;
+    const term = removeAcentos(busca.trim());
+    const item = getItemData(m);
+    const artista = removeAcentos(item.artista || '');
+    const titulo = removeAcentos(item.titulo || '');
+    const obs = removeAcentos(m.observacao || '');
+    const local = removeAcentos(item.caixa || '');
+    return artista.includes(term) || titulo.includes(term) || obs.includes(term) || local.includes(term);
+  });
+
+  const totalItens = movimentacoesFiltradas.length;
   const totalPaginas = Math.max(1, Math.ceil(totalItens / ITENS_POR_PAGINA));
-  const itensPaginados = movimentacoes.slice((pagina - 1) * ITENS_POR_PAGINA, pagina * ITENS_POR_PAGINA);
+  const itensPaginados = movimentacoesFiltradas.slice((pagina - 1) * ITENS_POR_PAGINA, pagina * ITENS_POR_PAGINA);
 
   return (
     <div className="pageContainer">
@@ -68,17 +85,57 @@ export default function Movimentacoes() {
       </div>
 
       <div className="mainCard">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-          <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>Últimas Atividades</h2>
-          {!loadingHist && totalItens > 0 && (
-            <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-              Mostrando {(pagina - 1) * ITENS_POR_PAGINA + 1}–{Math.min(pagina * ITENS_POR_PAGINA, totalItens)} de {totalItens} movimentações
-            </span>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
+          <div>
+            <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>Últimas Atividades</h2>
+            {!loadingHist && totalItens > 0 && (
+              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                Mostrando {(pagina - 1) * ITENS_POR_PAGINA + 1}–{Math.min(pagina * ITENS_POR_PAGINA, totalItens)} de {totalItens} {busca ? 'encontradas' : 'movimentações'}
+              </span>
+            )}
+          </div>
+
+          {!loadingHist && movimentacoes.length > 0 && (
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+              <span style={{ fontSize: '12px', background: 'rgba(56, 161, 105, 0.15)', color: '#38a169', border: '1px solid rgba(56, 161, 105, 0.3)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                ↓ {totalEntradas} {totalEntradas === 1 ? 'Entrada' : 'Entradas'}
+              </span>
+              <span style={{ fontSize: '12px', background: 'rgba(229, 62, 62, 0.15)', color: '#e53e3e', border: '1px solid rgba(229, 62, 62, 0.3)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                ↑ {totalSaidas} {totalSaidas === 1 ? 'Saída' : 'Saídas'}
+              </span>
+              {totalExclusoes > 0 && (
+                <span style={{ fontSize: '12px', background: 'rgba(160, 174, 192, 0.15)', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                  ✖ {totalExclusoes} {totalExclusoes === 1 ? 'Exclusão' : 'Exclusões'}
+                </span>
+              )}
+            </div>
           )}
         </div>
 
         <div className="filterCard">
           <div className="filters">
+            <div className="form-group" style={{ flex: 1.5, minWidth: '200px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '0 10px', minHeight: '38px' }}>
+                <FiSearch color="var(--text-muted)" size={15} style={{ flexShrink: 0, marginRight: '8px' }} />
+                <input 
+                  type="text" 
+                  placeholder="Buscar artista, título, obs..." 
+                  value={busca} 
+                  onChange={(e) => setBusca(e.target.value)}
+                  style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', color: 'var(--text)', fontSize: '13px', padding: 0 }}
+                />
+                {busca && (
+                  <button 
+                    type="button" 
+                    onClick={() => setBusca('')}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '14px', padding: '0 4px', lineHeight: 1 }}
+                    title="Limpar busca"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="form-group">
               <select value={filtroPeriodo} onChange={(e) => setFiltroPeriodo(e.target.value)}>
                 <option value="semana">Esta Semana (Últimos 7 dias)</option>
