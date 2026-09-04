@@ -3,9 +3,10 @@ import { NextResponse } from 'next/server';
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
+  const barcode = searchParams.get('barcode');
 
-  if (!query) {
-    return NextResponse.json({ error: 'Query parameter "q" is required' }, { status: 400 });
+  if (!query && !barcode) {
+    return NextResponse.json({ error: 'Query parameter "q" or "barcode" is required' }, { status: 400 });
   }
 
   const key = process.env.DISCOGS_KEY;
@@ -16,7 +17,15 @@ export async function GET(request) {
   }
 
   try {
-    const response = await fetch(`https://api.discogs.com/database/search?q=${encodeURIComponent(query)}&type=release&per_page=10`, {
+    let url = `https://api.discogs.com/database/search?type=release&per_page=10`;
+    if (barcode) {
+      const cleanBarcode = barcode.replace(/[^0-9A-Za-z]/g, '');
+      url += `&barcode=${encodeURIComponent(cleanBarcode)}`;
+    } else {
+      url += `&q=${encodeURIComponent(query)}`;
+    }
+
+    const response = await fetch(url, {
       headers: {
         'Authorization': `Discogs key=${key}, secret=${secret}`,
         'User-Agent': 'FreelancerDiscosTest/1.0'

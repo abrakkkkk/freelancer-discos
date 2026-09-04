@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import { FaMagnifyingGlass, FaBarcode } from "react-icons/fa6";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { useCaixas } from '@/hooks/useCaixas';
 import { useItemForm } from '@/hooks/useItemForm';
@@ -13,6 +14,8 @@ import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
 import { cleanDiscogsString } from '@/utils/stringUtils';
+
+const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
 
 const INITIAL_FORM = {
   artista: '',
@@ -87,6 +90,47 @@ export default function AdicionarItem() {
     } catch (err) {
       console.error(err);
       setMensagem({ tipo: 'error', texto: 'Erro ao buscar no Discogs.' });
+    } finally {
+      setIsSearchingDiscogs(false);
+    }
+  };
+
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  const handleBarcodeScan = async (barcode) => {
+    if (!barcode) return;
+    setIsSearchingDiscogs(true);
+    setQueryDiscogs(barcode);
+    setDiscogsResults([]);
+    setShowDiscogsDropdown(false);
+    setMensagem(null);
+
+    try {
+      const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`);
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        if (data.results.length === 1) {
+          handleSelectDiscogsResult(data.results[0]);
+          setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${data.results[0].title}` });
+        } else {
+          setDiscogsResults(data.results);
+          setShowDiscogsDropdown(true);
+          setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${data.results.length} edições encontradas. Escolha uma abaixo.` });
+        }
+      } else {
+        const fallbackRes = await fetch(`/api/discogs?q=${encodeURIComponent(barcode)}`);
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData.results && fallbackData.results.length > 0) {
+          setDiscogsResults(fallbackData.results);
+          setShowDiscogsDropdown(true);
+          setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${fallbackData.results.length} edições encontradas.` });
+        } else {
+          setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado no Discogs para o código de barras "${barcode}".` });
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de barras no Discogs.' });
     } finally {
       setIsSearchingDiscogs(false);
     }
@@ -188,14 +232,15 @@ export default function AdicionarItem() {
           <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
             <div className="form-group" style={{ width: '100%', marginBottom: '20px' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs (Catálogo, Matrix, Artista ou Título)</label>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <input 
                   type="text" 
                   value={queryDiscogs} 
                   onChange={(e) => setQueryDiscogs(e.target.value)}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchDiscogs(); } }}
-                  placeholder="Ex: COLP 12225, Tim Maia Racional..."
+                  placeholder="Ex: 720642442517, COLP 12225, Tim Maia..."
                   autoComplete="off"
+                  style={{ flex: 1, minWidth: '180px' }}
                 />
                 <button 
                   type="button" 
@@ -205,6 +250,15 @@ export default function AdicionarItem() {
                   disabled={isSearchingDiscogs}
                 >
                   {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => setIsScannerOpen(true)}
+                  className="btn btn-primary"
+                  style={{ whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  title="Escanear código de barras pela câmera do celular"
+                >
+                  <FaBarcode size={15} /> Escanear
                 </button>
               </div>
               {showDiscogsDropdown && discogsResults.length > 0 && (
@@ -344,6 +398,12 @@ export default function AdicionarItem() {
         </div>
       </form>
       </div>
+
+      <BarcodeScannerModal 
+        isOpen={isScannerOpen} 
+        onClose={() => setIsScannerOpen(false)} 
+        onScan={handleBarcodeScan} 
+      />
     </div>
   );
 }
