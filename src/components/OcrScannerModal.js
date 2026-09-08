@@ -10,7 +10,6 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
   const [stream, setStream] = useState(null);
   const [erroCamera, setErroCamera] = useState(null);
   const [processando, setProcessando] = useState(false);
-  const [workerPronto, setWorkerPronto] = useState(false);
   const [textoDetectado, setTextoDetectado] = useState('');
   const [fotoPreview, setFotoPreview] = useState(null);
   const [cameras, setCameras] = useState([]);
@@ -54,7 +53,6 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     if (!isOpen) return;
 
     let cancelado = false;
-    setWorkerPronto(false);
 
     const prepararWorker = async () => {
       try {
@@ -69,7 +67,6 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
 
         if (!cancelado) {
           workerRef.current = worker;
-          setWorkerPronto(true);
         } else {
           worker.terminate();
         }
@@ -542,16 +539,26 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     }
   };
 
-  useEffect(() => {
+  const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+  if (isOpen !== prevIsOpen) {
+    setPrevIsOpen(isOpen);
     if (isOpen) {
       setTextoDetectado('');
       setFotoPreview(null);
       setProcessando(false);
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) {
       startCamera();
     } else {
       stopCamera();
     }
-    return () => stopCamera();
+    return () => {
+      stopCamera();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -626,6 +633,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
           {fotoPreview && (
             <div style={{ width: '100%', height: '100%', minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', padding: '16px' }}>
               <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>Imagem processada:</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={fotoPreview} alt="Captura B&W" style={{ maxWidth: '100%', maxHeight: '180px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '6px' }} />
             </div>
           )}

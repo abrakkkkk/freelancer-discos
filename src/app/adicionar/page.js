@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaMagnifyingGlass, FaBarcode } from "react-icons/fa6";
 import { MdDocumentScanner, MdWarningAmber } from "react-icons/md";
+import { PiVinylRecord } from "react-icons/pi";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { useCaixas } from '@/hooks/useCaixas';
 import { useItemForm } from '@/hooks/useItemForm';
@@ -343,27 +344,43 @@ export default function AdicionarItem() {
                       key={result.id} 
                       onMouseDown={(e) => { e.preventDefault(); handleSelectDiscogsResult(result); }} 
                       style={{ 
-                        padding: '8px', 
+                        padding: '8px 10px', 
                         display: 'flex', 
-                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '12px',
                         background: result.isExactMatch ? 'rgba(56, 161, 105, 0.05)' : undefined,
-                        borderLeft: result.isExactMatch ? '3px solid rgba(56, 161, 105, 0.6)' : undefined
+                        borderLeft: result.isExactMatch ? '3px solid rgba(56, 161, 105, 0.6)' : undefined,
+                        cursor: 'pointer'
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                        <span style={{ fontWeight: 'bold' }}>{result.title}</span>
-                        {result.isExactMatch && (
-                          <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                            MATCH EXATO
-                          </span>
-                        )}
+                      {result.thumb ? (
+                        <img 
+                          src={result.thumb} 
+                          alt="" 
+                          style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0, background: '#18181b', border: '1px solid var(--border)' }} 
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div style={{ width: '42px', height: '42px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <PiVinylRecord size={22} color="var(--text-muted)" />
+                        </div>
+                      )}
+                      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                          <span style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.title}</span>
+                          {result.isExactMatch && (
+                            <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                              MATCH EXATO
+                            </span>
+                          )}
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {result.year && `${result.year} • `}
+                          {result.catno && `${result.catno} • `}
+                          {result.country && `${result.country} • `}
+                          {result.format?.join(', ')}
+                        </span>
                       </div>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {result.year && `${result.year} • `}
-                        {result.catno && `${result.catno} • `}
-                        {result.country && `${result.country} • `}
-                        {result.format?.join(', ')}
-                      </span>
                     </li>
                   ))}
                 </ul>

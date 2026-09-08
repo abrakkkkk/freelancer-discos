@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { TbTools } from "react-icons/tb";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import { FaMagnifyingGlass, FaBarcode } from "react-icons/fa6";
+import { MdDocumentScanner } from "react-icons/md";
+import { PiVinylRecord } from "react-icons/pi";
 import { supabase } from '@/lib/supabase';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
@@ -15,6 +18,9 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { formatCaixa, cleanDiscogsString } from '@/utils/stringUtils';
+
+const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
+const OcrScannerModal = dynamic(() => import('@/components/OcrScannerModal'), { ssr: false });
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
@@ -34,6 +40,10 @@ function EditarExcluirContent() {
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
   const [discogsResults, setDiscogsResults] = useState([]);
   const [showDiscogsDropdown, setShowDiscogsDropdown] = useState(false);
+
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isOcrOpen, setIsOcrOpen] = useState(false);
+  const [scannerTarget, setScannerTarget] = useState('busca'); // 'busca' ou 'discogs'
 
   const [loadedWithId] = useState(!!searchParams.get('id'));
 
@@ -61,6 +71,18 @@ function EditarExcluirContent() {
   const tipoNome = tipo === CATEGORY_IDS.DISCOS ? 'Disco' : tipo === CATEGORY_IDS.DVDS ? 'DVD' : tipo === CATEGORY_IDS.VHS ? 'VHS' : 'CD';
   const temArtista = tipo !== CATEGORY_IDS.DVDS && tipo !== CATEGORY_IDS.VHS;
 
+  async function carregarItemPorId(id) {
+    try {
+      const data = await itemService.getItemById(tipo, id);
+      if (data) {
+        setResultados([data]);
+        abrirEdicao(data);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar item:", err);
+    }
+  }
+
   useEffect(() => {
     const urlTipo = searchParams.get('tipo');
     if (urlTipo && urlTipo !== tipo) setTipo(urlTipo);
@@ -73,23 +95,12 @@ function EditarExcluirContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  const carregarItemPorId = async (id) => {
-    try {
-      const data = await itemService.getItemById(tipo, id);
-      if (data) {
-        setResultados([data]);
-        abrirEdicao(data);
-      }
-    } catch (err) {
-      console.error("Erro ao carregar item:", err);
-    }
-  };
-
-  const buscar = async () => {
-    if (!termo) return;
+  const buscar = async (termoParaBuscar = termo) => {
+    const q = (typeof termoParaBuscar === 'string' ? termoParaBuscar : termo)?.trim();
+    if (!q) return;
     try {
       const { data } = await itemService.fetchItems(tipo, { 
-        busca: termo, 
+        busca: q, 
         mostrarAtivos: true, 
         mostrarInativos 
       });
@@ -101,6 +112,106 @@ function EditarExcluirContent() {
     }
   };
 
+  const handleBarcodeScan = async (barcode) => {
+    if (!barcode) return;
+    if (scannerTarget === 'discogs') {
+      setQueryDiscogs(barcode);
+      setIsSearchingDiscogs(true);
+      setDiscogsResults([]);
+      setShowDiscogsDropdown(false);
+      try {
+        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`);
+        const data = await res.json();
+        if (data.results && data.results.length > 0) {
+          if (data.results.length === 1) {
+            handleSelectDiscogsResult(data.results[0]);
+            setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${data.results[0].title}` });
+          } else {
+            setDiscogsResults(data.results);
+            setShowDiscogsDropdown(true);
+            setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${data.results.length} edições encontradas. Escolha uma abaixo.` });
+          }
+        } else {
+          setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado no Discogs para o código "${barcode}".` });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearchingDiscogs(false);
+      }
+    } else {
+      // Busca no acervo: consulta Discogs para obter nome do álbum ou pesquisa pelo código
+      setIsSearchingDiscogs(true);
+      try {
+        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`);
+        const data = await res.json();
+        const first = data.results?.[0];
+        let termoFinal = barcode;
+        if (first && first.title) {
+          const parts = first.title.split(' - ');
+          termoFinal = cleanDiscogsString(parts[1] || parts[0] || first.title);
+        }
+        setTermo(termoFinal);
+        buscar(termoFinal);
+      } catch (e) {
+        setTermo(barcode);
+        buscar(barcode);
+      } finally {
+        setIsSearchingDiscogs(false);
+      }
+    }
+  };
+
+  const handleOcrScan = async (codigoTexto) => {
+    if (!codigoTexto) return;
+    if (scannerTarget === 'discogs') {
+      setQueryDiscogs(codigoTexto);
+      setIsSearchingDiscogs(true);
+      setDiscogsResults([]);
+      setShowDiscogsDropdown(false);
+      try {
+        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`);
+        const data = await res.json();
+        if (data.results && data.results.length > 0) {
+          if (data.results.length === 1) {
+            handleSelectDiscogsResult(data.results[0]);
+            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${data.results[0].title}` });
+          } else {
+            setDiscogsResults(data.results);
+            setShowDiscogsDropdown(true);
+            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${data.results.length} edições encontradas.` });
+          }
+        } else {
+          setMensagem({ tipo: 'error', texto: `Nenhum resultado no Discogs para o código "${codigoTexto}".` });
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsSearchingDiscogs(false);
+      }
+    } else {
+      // Busca no acervo: consulta Discogs para obter nome do álbum ou pesquisa pelo código
+      setIsSearchingDiscogs(true);
+      try {
+        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`);
+        const data = await res.json();
+        const first = data.results?.[0];
+        let termoFinal = codigoTexto;
+        if (first && first.title) {
+          const parts = first.title.split(' - ');
+          termoFinal = cleanDiscogsString(parts[1] || parts[0] || first.title);
+        }
+        setTermo(termoFinal);
+        buscar(termoFinal);
+      } catch (e) {
+        setTermo(codigoTexto);
+        buscar(codigoTexto);
+      } finally {
+        setIsSearchingDiscogs(false);
+      }
+    }
+  };
+
   const formatarMoeda = (valor) => {
     if (valor == null) return '';
     let str = typeof valor === 'number' ? Math.floor(valor).toString() : String(valor);
@@ -109,7 +220,7 @@ function EditarExcluirContent() {
     return parseInt(str, 10).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
   };
 
-  const abrirEdicao = (item) => {
+  function abrirEdicao(item) {
     setItemEditando(item);
     setForm({
       artista: item.artista || '',
@@ -122,7 +233,7 @@ function EditarExcluirContent() {
     setMensagem(null);
     setTela('edicao');
     carregarObservacoes(item.id);
-  };
+  }
 
   const voltarParaBusca = () => {
     if (loadedWithId) {
@@ -303,7 +414,7 @@ function EditarExcluirContent() {
             <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
               <div className="form-group" style={{ width: '100%', marginBottom: '20px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs</label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                   <input 
                     type="text" 
                     value={queryDiscogs} 
@@ -311,6 +422,7 @@ function EditarExcluirContent() {
                     onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchDiscogs(); } }}
                     placeholder="Ex: 6328 286, COLP 12225..."
                     autoComplete="off"
+                    style={{ flex: 1, minWidth: '200px' }}
                   />
                   <button 
                     type="button" 
@@ -320,6 +432,22 @@ function EditarExcluirContent() {
                     disabled={isSearchingDiscogs}
                   >
                     {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => { setScannerTarget('discogs'); setIsScannerOpen(true); }}
+                    className="btn btn-primary discogs-btn-escanear"
+                    title="Escanear código de barras (CDs e Vinis modernos)"
+                  >
+                    <FaBarcode size={14} /> Barras
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => { setScannerTarget('discogs'); setIsOcrOpen(true); }}
+                    className="btn btn-primary discogs-btn-ocr"
+                    title="Ler código de catálogo com a câmera (ex: COLP, SMOFB, 6349)"
+                  >
+                    <MdDocumentScanner size={16} /> OCR
                   </button>
                 </div>
                 {showDiscogsDropdown && discogsResults.length > 0 && (
@@ -332,27 +460,43 @@ function EditarExcluirContent() {
                         key={result.id} 
                         onMouseDown={(e) => { e.preventDefault(); handleSelectDiscogsResult(result); }} 
                         style={{ 
-                          padding: '8px', 
+                          padding: '8px 10px', 
                           display: 'flex', 
-                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '12px',
                           background: result.isExactMatch ? 'rgba(56, 161, 105, 0.05)' : undefined,
-                          borderLeft: result.isExactMatch ? '3px solid rgba(56, 161, 105, 0.6)' : undefined
+                          borderLeft: result.isExactMatch ? '3px solid rgba(56, 161, 105, 0.6)' : undefined,
+                          cursor: 'pointer'
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                          <span style={{ fontWeight: 'bold' }}>{result.title}</span>
-                          {result.isExactMatch && (
-                            <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                              MATCH EXATO
-                            </span>
-                          )}
+                        {result.thumb ? (
+                          <img 
+                            src={result.thumb} 
+                            alt="" 
+                            style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0, background: '#18181b', border: '1px solid var(--border)' }} 
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div style={{ width: '42px', height: '42px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <PiVinylRecord size={22} color="var(--text-muted)" />
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                            <span style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.title}</span>
+                            {result.isExactMatch && (
+                              <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                                MATCH EXATO
+                              </span>
+                            )}
+                          </div>
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {result.year && `${result.year} • `}
+                            {result.catno && `${result.catno} • `}
+                            {result.country && `${result.country} • `}
+                            {result.format?.join(', ')}
+                          </span>
                         </div>
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                          {result.year && `${result.year} • `}
-                          {result.catno && `${result.catno} • `}
-                          {result.country && `${result.country} • `}
-                          {result.format?.join(', ')}
-                        </span>
                       </li>
                     ))}
                   </ul>
@@ -523,13 +667,29 @@ function EditarExcluirContent() {
         <AlertMessage message={mensagem} />
 
         <div className="filterCard" style={{ marginTop: '24px' }}>
-          <div className="filters">
-        <div className="form-group" style={{ flex: 1 }}>
-          <label>Buscar por {(tipo === CATEGORY_IDS.DVDS || tipo === CATEGORY_IDS.VHS) ? 'título' : 'artista ou título'}</label>
-          <input value={termo} onChange={(e) => setTermo(e.target.value)} placeholder="Ex: Beatles..." onKeyDown={(e) => e.key === 'Enter' && buscar()} />
-        </div>
-          <button type="button" className="btn btn-primary" onClick={buscar}>Buscar</button>
-        </div>
+          <div className="filters" style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            <div className="form-group" style={{ flex: 1, minWidth: '220px', margin: 0 }}>
+              <label>Buscar por {(tipo === CATEGORY_IDS.DVDS || tipo === CATEGORY_IDS.VHS) ? 'título' : 'artista ou título'}</label>
+              <input value={termo} onChange={(e) => setTermo(e.target.value)} placeholder="Ex: Beatles..." onKeyDown={(e) => e.key === 'Enter' && buscar()} />
+            </div>
+            <button type="button" className="btn btn-primary" onClick={() => buscar()}>Buscar</button>
+            <button 
+              type="button" 
+              onClick={() => { setScannerTarget('busca'); setIsScannerOpen(true); }}
+              className="btn btn-primary discogs-btn-escanear"
+              title="Escanear código de barras para localizar no estoque"
+            >
+              <FaBarcode size={14} /> Barras
+            </button>
+            <button 
+              type="button" 
+              onClick={() => { setScannerTarget('busca'); setIsOcrOpen(true); }}
+              className="btn btn-primary discogs-btn-ocr"
+              title="Ler código de catálogo com a câmera (OCR)"
+            >
+              <MdDocumentScanner size={16} /> OCR
+            </button>
+          </div>
 
         <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <input type="checkbox" id="mostrarInativos" checked={mostrarInativos} onChange={(e) => setMostrarInativos(e.target.checked)} style={{ width: 'auto' }} />
@@ -568,6 +728,18 @@ function EditarExcluirContent() {
         </div>
         )}
       </div>
+
+      <BarcodeScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleBarcodeScan}
+      />
+
+      <OcrScannerModal
+        isOpen={isOcrOpen}
+        onClose={() => setIsOcrOpen(false)}
+        onScan={handleOcrScan}
+      />
 
     </div>
   );

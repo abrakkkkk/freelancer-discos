@@ -39,6 +39,29 @@ function generateCatnoVariations(cleanQ) {
   return Array.from(variations);
 }
 
+// Cache em memória simples no runtime do servidor com TTL de 30 minutos
+const CACHE_TTL_MS = 30 * 60 * 1000;
+const MAX_CACHE_SIZE = 300;
+const memoryCache = new Map();
+
+function getFromCache(key) {
+  const item = memoryCache.get(key);
+  if (!item) return null;
+  if (Date.now() - item.timestamp > CACHE_TTL_MS) {
+    memoryCache.delete(key);
+    return null;
+  }
+  return item.data;
+}
+
+function setToCache(key, data) {
+  if (memoryCache.size >= MAX_CACHE_SIZE) {
+    const oldestKey = memoryCache.keys().next().value;
+    memoryCache.delete(oldestKey);
+  }
+  memoryCache.set(key, { timestamp: Date.now(), data });
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
@@ -47,6 +70,14 @@ export async function GET(request) {
 
   if (!query && !barcode && !catnoParam) {
     return NextResponse.json({ error: 'Query parameter "q", "catno" or "barcode" is required' }, { status: 400 });
+  }
+
+  const cacheKey = `b:${barcode || ''}|c:${catnoParam || ''}|q:${query || ''}`;
+  const cached = getFromCache(cacheKey);
+  if (cached) {
+    return NextResponse.json(cached, {
+      headers: { 'X-Cache': 'HIT' }
+    });
   }
 
   const key = process.env.DISCOGS_KEY;
@@ -71,6 +102,7 @@ export async function GET(request) {
         return NextResponse.json({ error: 'Failed to fetch from Discogs' }, { status: response.status });
       }
       const data = await response.json();
+      setToCache(cacheKey, data);
       return NextResponse.json(data);
     }
 
@@ -167,7 +199,9 @@ export async function GET(request) {
     });
 
     const sortedResults = Array.from(map.values()).sort((a, b) => b._score - a._score);
-    return NextResponse.json({ results: sortedResults });
+    const payload = { results: sortedResults };
+    setToCache(cacheKey, payload);
+    return NextResponse.json(payload);
   } catch (error) {
     console.error('Discogs Fetch Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

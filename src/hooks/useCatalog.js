@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { itemService } from '@/services/itemService';
 import { PAGINATION } from '@/constants/config';
 
@@ -43,7 +43,7 @@ export function useCatalog(initialCategory = 'discos') {
     }
   }, [activeTab, pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao]);
 
-  const fetchCatalogItems = async () => {
+  const fetchCatalogItems = useCallback(async () => {
     setLoading(true);
     try {
       const { data, count } = await itemService.fetchItems(activeTab, {
@@ -66,7 +66,7 @@ export function useCatalog(initialCategory = 'discos') {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activeTab, pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao]);
 
   useEffect(() => {
     // Debounce for text search
@@ -75,7 +75,7 @@ export function useCatalog(initialCategory = 'discos') {
     }, 300);
 
     return () => clearTimeout(delay);
-  }, [pagina, filtroCaixa, filtroLoja, busca, mostrarAtivos, mostrarInativos, ordenarColuna, ordenarDirecao, activeTab]);
+  }, [fetchCatalogItems]);
 
   const toggleOrdenacao = (coluna) => {
     if (ordenarColuna === coluna) {

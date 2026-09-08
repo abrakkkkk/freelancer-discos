@@ -4,22 +4,24 @@ import { useEffect, useState } from 'react';
 import { MdCheckCircle } from 'react-icons/md';
 
 export default function SuccessModal({ isOpen, message, onClose }) {
-  const [show, setShow] = useState(false);
+  const [rendered, setRendered] = useState(isOpen);
+
+  if (isOpen && !rendered) {
+    setRendered(true);
+  }
 
   useEffect(() => {
-    if (isOpen) {
-      setShow(true);
-      const timer = setTimeout(() => {
-        onClose();
-      }, 3500); // Auto close after 3.5 seconds
-      return () => clearTimeout(timer);
-    } else {
-      const timer = setTimeout(() => setShow(false), 300); // allow exit animation
+    if (!isOpen && rendered) {
+      const timer = setTimeout(() => setRendered(false), 300);
       return () => clearTimeout(timer);
     }
-  }, [isOpen, onClose]);
+    if (isOpen) {
+      const timer = setTimeout(() => onClose(), 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, onClose, rendered]);
 
-  if (!isOpen && !show) return null;
+  if (!isOpen && !rendered) return null;
 
   return (
     <div 

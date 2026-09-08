@@ -6,21 +6,23 @@ import { useEffect, useState } from 'react';
 
 export default function UndoToast() {
   const { hasUndo, isUndoing, performUndo, clearUndo } = useUndo();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(hasUndo);
+
+  if (hasUndo && !visible) {
+    setVisible(true);
+  }
 
   useEffect(() => {
     if (hasUndo) {
-      setVisible(true);
-      // Auto-hide after 15 seconds
       const timer = setTimeout(() => {
         setVisible(false);
         setTimeout(clearUndo, 300); // clear after fade out
       }, 30000);
       return () => clearTimeout(timer);
-    } else {
+    } else if (visible) {
       setVisible(false);
     }
-  }, [hasUndo, clearUndo]);
+  }, [hasUndo, clearUndo, visible]);
 
   if (!hasUndo && !visible) {
     return null;

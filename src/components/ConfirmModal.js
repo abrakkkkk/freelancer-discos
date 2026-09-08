@@ -14,16 +14,18 @@ export default function ConfirmModal({
   onConfirm,
   onClose,
 }) {
-  const [show, setShow] = useState(false);
+  const [rendered, setRendered] = useState(isOpen);
+
+  if (isOpen && !rendered) {
+    setRendered(true);
+  }
 
   useEffect(() => {
-    if (isOpen) {
-      setShow(true);
-    } else {
-      const timer = setTimeout(() => setShow(false), 250);
+    if (!isOpen && rendered) {
+      const timer = setTimeout(() => setRendered(false), 250);
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, rendered]);
 
   // Suporte a teclas de atalho: ESC para cancelar, Enter para confirmar
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function ConfirmModal({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isSubmitting, onConfirm, onClose]);
 
-  if (!isOpen && !show) return null;
+  if (!isOpen && !rendered) return null;
 
   const isDanger = variant === 'danger';
   const iconColor = isDanger ? '#e53e3e' : '#dd6b20';

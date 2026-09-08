@@ -292,7 +292,7 @@ export default function CatalogoClone() {
         message={
           <div>
             Tem certeza que deseja registrar a saída de{' '}
-            <strong style={{ color: 'var(--text, #fff)' }}>"{itemParaExcluir?.titulo}"</strong>?
+            <strong style={{ color: 'var(--text, #fff)' }}>&quot;{itemParaExcluir?.titulo}&quot;</strong>?
             <span style={{ display: 'block', marginTop: '8px', fontSize: '13px', opacity: 0.85 }}>
               O item não aparecerá mais no catálogo, mas o histórico de saída será preservado.
             </span>
