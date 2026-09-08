@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { IoClose, IoCameraReverseOutline, IoSparkles, IoCamera, IoRefresh } from 'react-icons/io5';
 import { MdDocumentScanner } from 'react-icons/md';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
-import { LuZoomIn, LuZoomOut } from 'react-icons/lu';
+import { LuZoomIn, LuZoomOut, LuRotateCw } from 'react-icons/lu';
 
 export default function OcrScannerModal({ isOpen, onClose, onScan }) {
   const [stream, setStream] = useState(null);
@@ -199,18 +199,49 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     return str.length === 4 && n >= 1940 && n <= 2030;
   };
 
-  // Avalia individualmente uma linha de texto com pontuação de relevância
+  // Helper para rotacionar DataURL em 90 graus no sentido horário (lombadas verticais)
+  const rotacionarDataUrl90 = (dataUrl) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.height;
+        canvas.height = img.width;
+        const ctx = canvas.getContext('2d');
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((90 * Math.PI) / 180);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        resolve(canvas.toDataURL('image/jpeg', 0.95));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  };
+
+  // Avalia individualmente uma linha de texto com pontuação de relevância e filtros de ruído
   const extrairCodigoCatalogoLinha = (linha) => {
     if (!linha) return null;
-    const limpo = linha.replace(/[^A-Za-z0-9\-\.\s\/]/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase();
-    if (limpo.length < 3 || limpo.length > 30) return null;
 
-    // Ignora termos jurídicos/empresariais (CGC, CNPJ)
-    if (/CGC|CNPJ|\/000\d/.test(limpo)) return null;
+    // 1. Limpeza de ruídos institucionais e técnicos típicos de capas brasileiras
+    let limpo = linha.toUpperCase()
+      .replace(/\bTAMB[EÉ]M\s+EM\s+(FITAS|CASSET[ET]E?)\b/gi, ' ')
+      .replace(/\b(CASSET[ET]E|FITAS|STEREO|MONO|SOM\s+ESTEREOF[OÔ]NICO)\b/gi, ' ')
+      .replace(/\b(DISCO\s+[EÉ]\s+CULTURA|S[EÉ]RIE\s+(LUXO|ESPECIAL)?|SOM\s+IND\s+E\s+COM)\b/gi, ' ')
+      .replace(/\b(LADO\s+[12AB]|FAIXA\s+\d+|33\s+RPM|45\s+RPM)\b/gi, ' ')
+      // Limpa referências e etiquetas de preço de loja
+      .replace(/\bREF\.?\s*[:\-]?[A-Z0-9\-]+/gi, ' ')
+      .replace(/\bNC[\-]?\d*[A-Z0-9]*\b/gi, ' ')
+      .replace(/\b\d+[,.]\d{2}\b/g, ' ')
+      .replace(/CGC|CNPJ|\/000\d/g, ' ')
+      .replace(/[^A-Za-z0-9\-\.\s\/]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
-    // Ignora expressões de capa comuns que não são códigos
+    if (limpo.length < 2 || limpo.length > 30) return null;
+
+    // Ignora termos de capa comuns que não são códigos
     const ignorarExatos = [
-      'DISCO E CULTURA', 'DISCO E CULTURA', 'STEREO', 'MONO', '33 RPM', '45 RPM',
+      'DISCO E CULTURA', 'STEREO', 'MONO', '33 RPM', '45 RPM',
       'LADO 1', 'LADO 2', 'LADO A', 'LADO B', 'SERIE LUXO', 'SOM IND E COM'
     ];
     if (ignorarExatos.includes(limpo)) return null;
@@ -219,42 +250,55 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     const matchEmi = limpo.match(/\b(\d{2}[A-Z][\s\-\.]+\d{2,4}[\s\-\.]+\d{4,8})\b/i);
     if (matchEmi) return { codigo: matchEmi[1].trim(), score: 100 };
 
-    // 2. Letras clássicas + Números (ex: COLP 82383, COLP 12225, SMOFB 3749, XSLP 1001, BBL 1300)
-    const matchLetras = limpo.match(/\b([A-Z]{2,6}[\s\-\.]+(\d{3,8})(?:[\s\-\.]\d{1,4})?)\b/i);
+    // 2. Letras clássicas + Números (ex: BPL 15, OW 606, SPS 575, COLP 82383, SMOFB 3749, XSLP 1001)
+    // Aceita de 2 a 6 letras seguidas de 2 a 8 dígitos (abrangendo BPL 15 e OW 606)
+    const matchLetras = limpo.match(/\b([A-Z]{2,6}[\s\-\.]+(\d{2,8})(?:[\s\-\.]\d{1,4})?)\b/i);
     if (matchLetras) {
       const p = matchLetras[1].trim();
       const digitos = matchLetras[2];
       const prefixo = p.split(/[\s\-\.]+/)[0];
-      const ignorarPrefixos = ['STEREO', 'MONO', 'DISCOS', 'SERIE', 'BRASIL', 'EDICAO', 'SOM', 'LIVRE', 'GRAVACOES', 'PRODUCOES', 'LADO', 'FAIXA'];
+      const ignorarPrefixos = ['DISCOS', 'BRASIL', 'EDICAO', 'GRAVACOES', 'PRODUCOES', 'ESTUDIO'];
       if (!ignorarPrefixos.includes(prefixo) && !ehAno(digitos)) {
         return { codigo: p, score: 95 };
       }
     }
 
-    // 3. Numérico Composto com pontuação ou espaço (ex: 6349 050, 103.0001, 403.6001, 825 000-1)
+    // 3. Padrão 7 dígitos Som Livre / RCA / WEA / Polygram (ex: 150 0006, 150.0006, 150 0016, 103 0680, 670 4085, 710 0680)
+    const match7Dig = limpo.match(/\b(\d{3}[\s\.\-]\d{4})\b/);
+    if (match7Dig) {
+      return { codigo: match7Dig[1].trim(), score: 92 };
+    }
+
+    // 4. Padrão 6 dígitos CBS / Epic com separador (ex: 138.250, 138 250, 230.040, 144.190)
+    const match6Dig = limpo.match(/\b(\d{3}[\s\.\-]\d{3})\b/);
+    if (match6Dig) {
+      return { codigo: match6Dig[1].trim(), score: 91 };
+    }
+
+    // 5. Numérico Composto genérico com pontuação ou espaço (ex: 6349 050, 103.0001, 403.6001, 825 000-1)
     const matchComposto = limpo.match(/\b(\d{2,6}[\s\.\-]+\d{2,6}(?:[\s\.\-]\d{1,4})?)\b/);
     if (matchComposto) {
       return { codigo: matchComposto[1].trim(), score: 90 };
     }
 
-    // 4. Numérico Puro contínuo (5 a 10 dígitos) - ex: 6349050, 4036001, 1030001, 064422894, 138001
+    // 6. Numérico Puro contínuo (5 a 10 dígitos) - ex: 138250, 138238, 230040, 144190, 00203, 1030680, 6349050
     const matchPuro = limpo.match(/\b(\d{5,10})\b/);
-    if (matchPuro) {
+    if (matchPuro && !ehAno(matchPuro[1])) {
       return { codigo: matchPuro[1].trim(), score: 85 };
     }
 
-    // 5. Letras juntas com números (ex: COLP82383, SMOFB3749)
-    const matchJunto = limpo.match(/\b([A-Z]{2,6}(\d{3,8}))\b/i);
+    // 7. Letras juntas com números (ex: BPL15, OW606, SPS575, COLP82383)
+    const matchJunto = limpo.match(/\b([A-Z]{2,6}(\d{2,8}))\b/i);
     if (matchJunto && !ehAno(matchJunto[2])) {
       return { codigo: matchJunto[1], score: 80 };
     }
 
-    // 6. Tratamento para códigos numéricos com confusão típica de OCR (ex: '6349 O5O' ou '4O36OO1')
+    // 8. Tratamento para códigos numéricos com confusão típica de OCR (ex: '15O OOO6' ou '67O 4O85' ou '4O36OO1')
     const palavras = limpo.split(/\s+/);
     for (let i = 0; i < palavras.length; i++) {
       const w = palavras[i];
       const norm = w.replace(/O/g, '0').replace(/[IL]/g, '1').replace(/S/g, '5');
-      if (/^\d{5,10}$/.test(norm)) {
+      if (/^\d{5,10}$/.test(norm) && !ehAno(norm)) {
         return { codigo: norm, score: 75 };
       }
       if (i < palavras.length - 1) {
@@ -329,8 +373,8 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     ctx.putImageData(imgData, 0, 0);
   };
 
-  // Processar imagem via Tesseract.js (Instantâneo com Worker pré-carregado)
-  const executarOcrEmImagem = async (imageSource) => {
+  // Processar imagem via Tesseract.js (Instantâneo com Worker pré-carregado e auto-rotação para lombadas)
+  const executarOcrEmImagem = async (imageSource, autoRotate = true) => {
     setProcessando(true);
     setTextoDetectado('');
 
@@ -348,14 +392,31 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         workerRef.current = worker;
       }
 
+      // 1. Passada OCR primária (orientação padrão)
       const ret = await worker.recognize(imageSource);
       const textoLido = ret?.data?.text || '';
-      const codigoEncontrado = extrairCodigoCatalogo(textoLido);
+      let codigoEncontrado = extrairCodigoCatalogo(textoLido);
+
+      // 2. Se não detectou código na horizontal e autoRotate estiver ativo, tenta rotação 90° (típica de lombada vertical)
+      if (!codigoEncontrado && autoRotate && typeof imageSource === 'string') {
+        try {
+          const rotacionada = await rotacionarDataUrl90(imageSource);
+          const retRot = await worker.recognize(rotacionada);
+          const textoRot = retRot?.data?.text || '';
+          const codigoRot = extrairCodigoCatalogo(textoRot);
+          if (codigoRot) {
+            codigoEncontrado = codigoRot;
+            setFotoPreview(rotacionada);
+          }
+        } catch (e) {
+          console.warn('Tentativa de OCR rotacionado em 90°:', e);
+        }
+      }
 
       let resultadoFinal = codigoEncontrado;
       if (!resultadoFinal) {
-        // Pega a linha mais curta que contenha caracteres alfanuméricos válidos
-        const linhas = textoLido.split(/\r?\n/).map(l => l.trim()).filter(l => l.length >= 4 && l.length <= 20);
+        // Fallback: pega a linha mais curta que contenha caracteres alfanuméricos válidos
+        const linhas = textoLido.split(/\r?\n/).map(l => l.trim()).filter(l => l.length >= 3 && l.length <= 20);
         resultadoFinal = linhas[0] || '';
       }
 
@@ -370,6 +431,20 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     }
   };
 
+  // Girar imagem capturada manualmente em 90° e reprocessar OCR
+  const handleGirarFoto = async () => {
+    if (!fotoPreview || processando) return;
+    setProcessando(true);
+    try {
+      const rotated = await rotacionarDataUrl90(fotoPreview);
+      setFotoPreview(rotated);
+      await executarOcrEmImagem(rotated, false);
+    } catch (err) {
+      console.error('Erro ao girar foto:', err);
+      setProcessando(false);
+    }
+  };
+
   // Capturar quadro do vídeo da câmera com recorte centralizado e resolução nítida
   const capturarDoVideo = () => {
     if (!videoRef.current) return;
@@ -378,9 +453,9 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     const vWidth = video.videoWidth || 1280;
     const vHeight = video.videoHeight || 720;
 
-    // Recorta a faixa central onde a mira visual está posicionada (faixa mais restrita de 22% de altura para evitar pegar textos acima ou abaixo)
-    const cropWidth = Math.floor(vWidth * 0.78);
-    const cropHeight = Math.floor(vHeight * 0.22);
+    // Recorta a faixa central onde a mira visual está posicionada (faixa de 24% de altura)
+    const cropWidth = Math.floor(vWidth * 0.80);
+    const cropHeight = Math.floor(vHeight * 0.24);
     const cropX = Math.floor((vWidth - cropWidth) / 2);
     const cropY = Math.floor((vHeight - cropHeight) / 2);
 
@@ -596,28 +671,41 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                       type="text" 
                       value={textoDetectado} 
                       onChange={(e) => setTextoDetectado(e.target.value)}
-                      placeholder="Ex: COLP 12225 ou 6349 050"
-                      style={{ flex: 1, fontSize: '15px', fontWeight: 'bold', letterSpacing: '0.5px', padding: '8px 12px' }}
+                      placeholder="Ex: 138250, 150 0006, OW 606"
+                      style={{ flex: 1, minHeight: '44px', fontSize: '15px', fontWeight: 'bold', letterSpacing: '0.5px', padding: '8px 12px' }}
                     />
                     <button 
                       type="button" 
                       onClick={handleConfirmar} 
                       disabled={!textoDetectado.trim()}
                       className="btn btn-primary"
-                      style={{ whiteSpace: 'nowrap', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                      style={{ minHeight: '44px', whiteSpace: 'nowrap', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '6px' }}
                     >
                       <FaMagnifyingGlass size={14} /> Buscar
                     </button>
                   </div>
 
-                  <button 
-                    type="button" 
-                    onClick={handleTentarNovamente}
-                    className="btn btn-secondary"
-                    style={{ width: '100%', fontSize: '13px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontWeight: 600 }}
-                  >
-                    <IoRefresh size={16} /> Tirar outra foto / Tentar novamente
-                  </button>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <button 
+                      type="button" 
+                      onClick={handleGirarFoto}
+                      disabled={processando}
+                      className="btn btn-secondary"
+                      style={{ minHeight: '44px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontWeight: 600 }}
+                      title="Girar foto em 90° para ler texto vertical de lombada"
+                    >
+                      <LuRotateCw size={17} /> Girar 90°
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={handleTentarNovamente}
+                      disabled={processando}
+                      className="btn btn-secondary"
+                      style={{ minHeight: '44px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontWeight: 600 }}
+                    >
+                      <IoRefresh size={17} /> Tirar outra foto
+                    </button>
+                  </div>
                 </>
               )}
             </div>
@@ -649,7 +737,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={processando}
                 className="btn btn-secondary"
-                style={{ width: '100%', fontSize: '12.5px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                style={{ width: '100%', minHeight: '44px', fontSize: '13px', padding: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
                 Tirar foto macro com foco da câmera nativa
               </button>

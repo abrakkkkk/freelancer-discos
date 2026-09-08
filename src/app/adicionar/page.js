@@ -178,7 +178,7 @@ export default function AdicionarItem() {
     setMensagem(null);
 
     try {
-      const res = await fetch(`/api/discogs?q=${encodeURIComponent(codigoTexto)}`);
+      const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`);
       const data = await res.json();
       if (data.results && data.results.length > 0) {
         if (data.results.length === 1) {

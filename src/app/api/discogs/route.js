@@ -5,6 +5,40 @@ function normalizeCatno(str) {
   return str.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
 }
 
+function generateCatnoVariations(cleanQ) {
+  const variations = new Set();
+  const raw = cleanQ.trim();
+  variations.add(raw);
+  const norm = normalizeCatno(raw);
+  
+  if (/^\d{6}$/.test(norm)) {
+    variations.add(norm);
+    variations.add(`${norm.slice(0, 3)}.${norm.slice(3)}`);
+    variations.add(`${norm.slice(0, 3)} ${norm.slice(3)}`);
+  } else if (/^\d{7}$/.test(norm)) {
+    variations.add(norm);
+    variations.add(`${norm.slice(0, 3)}.${norm.slice(3)}`);
+    variations.add(`${norm.slice(0, 3)} ${norm.slice(3)}`);
+  } else {
+    const matchPrefix = raw.match(/^([A-Za-z]{2,6})[\s\-\.]*(\d+)$/i);
+    if (matchPrefix) {
+      const p = matchPrefix[1].toUpperCase();
+      const n = matchPrefix[2];
+      variations.add(`${p} ${n}`);
+      variations.add(`${p}-${n}`);
+      variations.add(`${p}${n}`);
+    }
+  }
+
+  // Se tiver espaços ou pontos, adiciona versão contínua
+  const semEspaco = raw.replace(/[\s\-\.]+/g, '');
+  if (semEspaco.length >= 3) {
+    variations.add(semEspaco);
+  }
+
+  return Array.from(variations);
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
@@ -44,27 +78,34 @@ export async function GET(request) {
     const rawSearch = catnoParam || query;
     const cleanQ = rawSearch.trim();
     const normQuery = normalizeCatno(cleanQ);
-    const temDigitos = /\d/.test(cleanQ);
+    const isCatnoSearch = !!catnoParam || /\d/.test(cleanQ);
 
-    const requests = [
+    const variations = isCatnoSearch ? generateCatnoVariations(cleanQ) : [cleanQ];
+
+    const requests = [];
+
+    // Busca geral por termo (q)
+    requests.push(
       fetch(`https://api.discogs.com/database/search?type=release&per_page=15&q=${encodeURIComponent(cleanQ)}`, { headers })
         .then(r => r.ok ? r.json() : { results: [] })
         .catch(() => ({ results: [] }))
-    ];
+    );
 
-    if (temDigitos || catnoParam) {
-      // Busca específica por campo de catálogo no Discogs
-      requests.push(
-        fetch(`https://api.discogs.com/database/search?type=release&per_page=15&catno=${encodeURIComponent(cleanQ)}`, { headers })
-          .then(r => r.ok ? r.json() : { results: [] })
-          .catch(() => ({ results: [] }))
-      );
+    if (isCatnoSearch) {
+      // Prioridade: Busca no catálogo brasileiro para as variações principais (até 2 variações)
+      const topVariations = variations.slice(0, 2);
 
-      // Se tiver espaços ou pontuação (ex: 6328 286 ou 403.6001), busca também a versão junta (6328286)
-      const catnoJunto = cleanQ.replace(/[\s\-\.]+/g, '');
-      if (catnoJunto !== cleanQ && catnoJunto.length >= 4) {
+      for (const v of topVariations) {
+        // Busca direta com country=Brazil
         requests.push(
-          fetch(`https://api.discogs.com/database/search?type=release&per_page=10&catno=${encodeURIComponent(catnoJunto)}`, { headers })
+          fetch(`https://api.discogs.com/database/search?type=release&per_page=10&country=Brazil&catno=${encodeURIComponent(v)}`, { headers })
+            .then(r => r.ok ? r.json() : { results: [] })
+            .catch(() => ({ results: [] }))
+        );
+
+        // Busca global pelo código de catálogo
+        requests.push(
+          fetch(`https://api.discogs.com/database/search?type=release&per_page=10&catno=${encodeURIComponent(v)}`, { headers })
             .then(r => r.ok ? r.json() : { results: [] })
             .catch(() => ({ results: [] }))
         );
@@ -73,8 +114,7 @@ export async function GET(request) {
 
     const responses = await Promise.all(requests);
     const generalResults = responses[0]?.results || [];
-    const catnoResults = responses[1]?.results || [];
-    const catnoJuntoResults = responses[2]?.results || [];
+    const catnoResponses = responses.slice(1);
 
     const map = new Map();
 
@@ -82,7 +122,7 @@ export async function GET(request) {
       let score = 0;
       const itemCatno = normalizeCatno(item.catno);
 
-      // Match exato do código de catálogo (ex: "6328 286" == "6328286")
+      // Match exato do código de catálogo normalizado
       const isExact = !!(itemCatno && normQuery && itemCatno === normQuery);
       if (isExact) {
         score += 2000;
@@ -94,31 +134,31 @@ export async function GET(request) {
         score += 150;
       }
 
-      // Prioridade para edições brasileiras
+      // Prioridade máxima para edições brasileiras
       if (item.country === 'Brazil') {
-        score += 60;
+        score += 300;
       }
 
-      // Prioridade para vinil
+      // Prioridade para vinil / LP
       if (Array.isArray(item.format) && item.format.some(f => f.toLowerCase().includes('vinyl') || f.toLowerCase().includes('lp'))) {
-        score += 30;
+        score += 50;
       }
 
       return { score, isExact };
     }
 
-    catnoResults.forEach(item => {
-      const { score, isExact } = calcularScore(item, true);
-      map.set(item.id, { ...item, _score: score, isExactMatch: isExact });
+    // Processa resultados específicos de catálogo primeiro
+    catnoResponses.forEach(res => {
+      const results = res?.results || [];
+      results.forEach(item => {
+        if (!map.has(item.id)) {
+          const { score, isExact } = calcularScore(item, true);
+          map.set(item.id, { ...item, _score: score, isExactMatch: isExact });
+        }
+      });
     });
 
-    catnoJuntoResults.forEach(item => {
-      if (!map.has(item.id)) {
-        const { score, isExact } = calcularScore(item, true);
-        map.set(item.id, { ...item, _score: score, isExactMatch: isExact });
-      }
-    });
-
+    // Processa resultados gerais
     generalResults.forEach(item => {
       if (!map.has(item.id)) {
         const { score, isExact } = calcularScore(item, false);
