@@ -84,8 +84,11 @@ export default function ConfirmModal({
           opacity: isOpen ? 1 : 0,
           transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
           maxWidth: '420px',
+          maxHeight: 'calc(100vh - 40px)',
+          overflowY: 'auto',
           width: '100%',
           textAlign: 'center',
+          WebkitOverflowScrolling: 'touch',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -100,6 +103,7 @@ export default function ConfirmModal({
             justifyContent: 'center',
             color: iconColor,
             marginBottom: '4px',
+            flexShrink: 0,
           }}
         >
           {isDanger ? <MdDeleteOutline size={30} /> : <MdWarningAmber size={30} />}
@@ -144,12 +148,14 @@ export default function ConfirmModal({
             className="btn btn-secondary"
             style={{
               flex: 1,
-              padding: '10px 16px',
-              borderRadius: '8px',
-              fontSize: '14px',
+              padding: '12px 16px',
+              minHeight: '44px',
+              borderRadius: '10px',
+              fontSize: '15px',
               fontWeight: 600,
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
               opacity: isSubmitting ? 0.6 : 1,
+              touchAction: 'manipulation',
             }}
           >
             {cancelText}
@@ -160,9 +166,10 @@ export default function ConfirmModal({
             disabled={isSubmitting}
             style={{
               flex: 1,
-              padding: '10px 16px',
-              borderRadius: '8px',
-              fontSize: '14px',
+              padding: '12px 16px',
+              minHeight: '44px',
+              borderRadius: '10px',
+              fontSize: '15px',
               fontWeight: 600,
               background: isDanger ? 'var(--accent, #c53030)' : 'var(--accent-hover, #9b2c2c)',
               color: '#ffffff',
@@ -170,6 +177,7 @@ export default function ConfirmModal({
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
               opacity: isSubmitting ? 0.7 : 1,
               transition: 'background 0.2s, opacity 0.2s',
+              touchAction: 'manipulation',
             }}
           >
             {isSubmitting ? 'Processando...' : confirmText}

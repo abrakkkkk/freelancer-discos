@@ -544,9 +544,22 @@ export default function AdicionarItem() {
                       href={`/editar?tipo=${activeTab}&id=${d.id}`} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      style={{ color: 'var(--accent)', textDecoration: 'underline', fontSize: '11px', fontWeight: 600 }}
+                      style={{ 
+                        color: '#ffffff', 
+                        background: 'var(--accent)', 
+                        padding: '6px 12px', 
+                        borderRadius: '6px', 
+                        fontSize: '11px', 
+                        fontWeight: 600,
+                        textDecoration: 'none',
+                        minHeight: '32px',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        touchAction: 'manipulation'
+                      }}
                     >
-                      Ver ↗
+                      Ver item ↗
                     </a>
                   </div>
                 </div>
@@ -555,8 +568,22 @@ export default function AdicionarItem() {
           </div>
         )}
 
-        <div style={{ marginTop: '8px' }}>
-          <button type="submit" className="btn btn-primary" style={{ minWidth: '180px', width: '100%', maxWidth: '320px', opacity: isSubmitting ? 0.7 : 1 }} disabled={isSubmitting}>
+        <div style={{ marginTop: '12px' }}>
+          <button 
+            type="submit" 
+            className="btn btn-primary" 
+            style={{ 
+              width: '100%', 
+              maxWidth: '380px', 
+              minHeight: '48px',
+              fontSize: '15px',
+              fontWeight: 600,
+              borderRadius: '10px',
+              touchAction: 'manipulation',
+              opacity: isSubmitting ? 0.7 : 1 
+            }} 
+            disabled={isSubmitting}
+          >
             {isSubmitting ? 'Adicionando...' : `Adicionar ${activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}`}
           </button>
         </div>
