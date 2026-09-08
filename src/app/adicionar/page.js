@@ -4,12 +4,13 @@ import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaMagnifyingGlass, FaBarcode } from "react-icons/fa6";
-import { MdDocumentScanner } from "react-icons/md";
+import { MdDocumentScanner, MdWarningAmber } from "react-icons/md";
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { useCaixas } from '@/hooks/useCaixas';
 import { useItemForm } from '@/hooks/useItemForm';
 import { itemService } from '@/services/itemService';
 import { movimentacaoService } from '@/services/movimentacaoService';
+import { useEffect } from 'react';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
@@ -42,6 +43,9 @@ export default function AdicionarItem() {
   const [discogsResults, setDiscogsResults] = useState([]);
   const [showDiscogsDropdown, setShowDiscogsDropdown] = useState(false);
 
+  const [duplicatas, setDuplicatas] = useState([]);
+  const [checandoDuplicatas, setChecandoDuplicatas] = useState(false);
+
   const initialFormWithStore = { ...INITIAL_FORM, loja: activeStore || '' };
 
   const {
@@ -50,6 +54,31 @@ export default function AdicionarItem() {
     sugestoesTitulo, mostrarSugestoesTitulo, setMostrarSugestoesTitulo,
     selectSuggestion, getUnmaskedPreco
   } = useItemForm(initialFormWithStore, activeTab);
+
+  // Monitora e avisa sobre duplicatas no acervo de forma debounced
+  useEffect(() => {
+    if (!form.titulo || form.titulo.trim().length < 3) {
+      setDuplicatas([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setChecandoDuplicatas(true);
+      try {
+        const found = await itemService.checkDuplicates(activeTab, {
+          titulo: form.titulo,
+          artista: form.artista,
+        });
+        setDuplicatas(found);
+      } catch (err) {
+        console.warn("Erro ao checar duplicatas:", err);
+      } finally {
+        setChecandoDuplicatas(false);
+      }
+    }, 450);
+
+    return () => clearTimeout(timer);
+  }, [form.titulo, form.artista, activeTab]);
 
   const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
 
@@ -62,6 +91,7 @@ export default function AdicionarItem() {
     setShowDiscogsDropdown(false);
     setDiscogsResults([]);
     setQueryDiscogs('');
+    setDuplicatas([]);
   };
 
   const validateForm = () => {
@@ -239,6 +269,7 @@ export default function AdicionarItem() {
       
       setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${localText} (${form.loja}).` });
       setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja });
+      setDuplicatas([]);
     } catch (err) {
       console.error(err);
       setMensagem({ tipo: 'error', texto: `Erro: ${err.message}` });
@@ -449,6 +480,80 @@ export default function AdicionarItem() {
             placeholder="Qualquer detalhe adicional sobre o item..."
           ></textarea>
         </div>
+
+        {duplicatas.length > 0 && (
+          <div 
+            style={{
+              marginTop: '16px',
+              marginBottom: '16px',
+              padding: '14px 16px',
+              borderRadius: '10px',
+              background: 'rgba(221, 107, 32, 0.08)',
+              border: '1px solid rgba(221, 107, 32, 0.35)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#dd6b20', fontWeight: 600, fontSize: '13px' }}>
+              <MdWarningAmber size={18} />
+              <span>Atenção: Já existe {duplicatas.length === 1 ? '1 unidade similar cadastrada' : `${duplicatas.length} unidades similares cadastradas`} no acervo:</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+              {duplicatas.map(d => (
+                <div 
+                  key={d.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'var(--bg-card, #1c1c21)',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border, rgba(255, 255, 255, 0.08))',
+                    fontSize: '12px',
+                    flexWrap: 'wrap',
+                    gap: '8px'
+                  }}
+                >
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text, #fff)' }}>
+                      {d.artista ? `${d.artista} — ` : ''}{d.titulo}
+                    </span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+                      Local: <strong>{d.caixa || 'Sem caixa'}</strong> • Loja: <strong>{d.loja || 'Sem loja'}</strong>{d.ano ? ` • Ano: ${d.ano}` : ''}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {d.preco != null && (
+                      <span style={{ fontWeight: 700, color: '#38a169', background: 'rgba(56, 161, 105, 0.12)', padding: '2px 8px', borderRadius: '4px' }}>
+                        R$ {Number(d.preco).toFixed(2).replace('.', ',')}
+                      </span>
+                    )}
+                    <span style={{ 
+                      fontSize: '11px', 
+                      padding: '2px 6px', 
+                      borderRadius: '4px', 
+                      background: d.ativo !== false ? 'rgba(56, 161, 105, 0.15)' : 'rgba(229, 62, 62, 0.15)',
+                      color: d.ativo !== false ? '#38a169' : '#e53e3e',
+                      fontWeight: 600
+                    }}>
+                      {d.ativo !== false ? 'Ativo' : 'Inativo'}
+                    </span>
+                    <a 
+                      href={`/editar?tipo=${activeTab}&id=${d.id}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ color: 'var(--accent)', textDecoration: 'underline', fontSize: '11px', fontWeight: 600 }}
+                    >
+                      Ver ↗
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div style={{ marginTop: '8px' }}>
           <button type="submit" className="btn btn-primary" style={{ minWidth: '180px', width: '100%', maxWidth: '320px', opacity: isSubmitting ? 0.7 : 1 }} disabled={isSubmitting}>

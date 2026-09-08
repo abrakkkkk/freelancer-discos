@@ -15,10 +15,16 @@ import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 
 
+import ConfirmModal from '@/components/ConfirmModal';
+import AlertMessage from '@/components/AlertMessage';
+
 export default function CatalogoClone() {
   const { caixas } = useCaixas();
   const catalog = useCatalog(CATEGORY_IDS.DISCOS);
   const [exportando, setExportando] = useState(false);
+  const [itemParaExcluir, setItemParaExcluir] = useState(null);
+  const [isExcluindo, setIsExcluindo] = useState(false);
+  const [feedbackMsg, setFeedbackMsg] = useState(null);
 
   const { registerUndo } = useUndo();
   const { activeStore } = useStore();
@@ -39,22 +45,30 @@ export default function CatalogoClone() {
 
   const exportarEstoque = async () => {
     setExportando(true);
+    setFeedbackMsg(null);
     try {
       const { exportarEstoqueCompleto } = await import('@/utils/export');
       await exportarEstoqueCompleto(activeStore);
     } catch (err) {
       console.error(err);
-      alert('Erro ao exportar planilha');
+      setFeedbackMsg({ tipo: 'error', texto: 'Erro ao exportar planilha: ' + (err.message || 'Tente novamente.') });
     } finally {
       setExportando(false);
     }
   };
 
-  const excluirItem = async (id, titulo) => {
-    if (!confirm(`Tem certeza que deseja registrar a saída de "${titulo}"? O item não aparecerá mais no catálogo, mas o histórico de saída será preservado.`)) {
-      return;
-    }
+  const solicitarExclusao = (id, titulo) => {
+    setFeedbackMsg(null);
+    setItemParaExcluir({ id, titulo });
+  };
+
+  const confirmarExclusao = async () => {
+    if (!itemParaExcluir || isExcluindo) return;
+    setIsExcluindo(true);
+    setFeedbackMsg(null);
     
+    const { id, titulo } = itemParaExcluir;
+
     try {
       const itemToDelete = catalog.itens.find(i => i.id === id);
       await itemService.deleteItem(catalog.activeTab, id);
@@ -70,9 +84,12 @@ export default function CatalogoClone() {
           catalog.refresh();
         });
       }
+      setItemParaExcluir(null);
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      alert("Erro ao excluir item.");
+      setFeedbackMsg({ tipo: 'error', texto: `Erro ao registrar saída de "${titulo}": ${error.message || 'Falha na operação.'}` });
+    } finally {
+      setIsExcluindo(false);
     }
   };
   
@@ -243,6 +260,8 @@ export default function CatalogoClone() {
           </div>
         </div>
 
+        <AlertMessage message={feedbackMsg} />
+
         {catalog.loading ? (
           <p style={{ color: 'var(--text-muted)' }}>Carregando...</p>
         ) : (
@@ -257,7 +276,7 @@ export default function CatalogoClone() {
               ordenarColuna={catalog.ordenarColuna}
               ordenarDirecao={catalog.ordenarDirecao}
               onSort={catalog.toggleOrdenacao}
-              onDelete={excluirItem}
+              onDelete={solicitarExclusao}
               showLoja={!activeStore}
               localLabel={localLabel}
             />
@@ -266,6 +285,26 @@ export default function CatalogoClone() {
           </>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={!!itemParaExcluir}
+        title="Registrar Saída"
+        message={
+          <div>
+            Tem certeza que deseja registrar a saída de{' '}
+            <strong style={{ color: 'var(--text, #fff)' }}>"{itemParaExcluir?.titulo}"</strong>?
+            <span style={{ display: 'block', marginTop: '8px', fontSize: '13px', opacity: 0.85 }}>
+              O item não aparecerá mais no catálogo, mas o histórico de saída será preservado.
+            </span>
+          </div>
+        }
+        confirmText="Registrar Saída"
+        cancelText="Cancelar"
+        variant="danger"
+        isSubmitting={isExcluindo}
+        onClose={() => setItemParaExcluir(null)}
+        onConfirm={confirmarExclusao}
+      />
     </div>
   );
 }

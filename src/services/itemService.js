@@ -111,7 +111,10 @@ export const itemService = {
   async addItem(category, insertData) {
     const { data, error } = await supabase.from(category).insert(insertData).select('id').single();
     if (error) throw error;
-    caixaService.invalidateCache();
+    // Invalida o cache de caixas apenas se uma caixa foi cadastrada
+    if (insertData.caixa) {
+      caixaService.invalidateCache();
+    }
     return data;
   },
 
@@ -121,21 +124,25 @@ export const itemService = {
   async updateItem(category, id, updateData) {
     const { error } = await supabase.from(category).update(updateData).eq('id', id);
     if (error) throw error;
-    caixaService.invalidateCache();
+    // Invalida o cache apenas se a caixa ou loja foi alterada
+    if (updateData.caixa !== undefined || updateData.loja !== undefined) {
+      caixaService.invalidateCache();
+    }
   },
 
   async bulkUpdate(category, ids, updateData) {
     if (!ids || ids.length === 0) return;
     
     // Divide os IDs em pedaços (chunks) menores para evitar erro de URL muito longa no PostgREST
-    // Limite da URL é geralmente 2048 chars. Se o ID for UUID (36 chars), 30 IDs = ~1110 chars.
     const chunkSize = 30;
     for (let i = 0; i < ids.length; i += chunkSize) {
       const chunk = ids.slice(i, i + chunkSize);
       const { error } = await supabase.from(category).update(updateData).in('id', chunk);
       if (error) throw error;
     }
-    caixaService.invalidateCache();
+    if (updateData.caixa !== undefined || updateData.loja !== undefined) {
+      caixaService.invalidateCache();
+    }
   },
 
   /**
@@ -144,7 +151,66 @@ export const itemService = {
   async deleteItem(category, id) {
     const { error } = await supabase.from(category).update({ deletado: true }).eq('id', id);
     if (error) throw error;
-    caixaService.invalidateCache();
+  },
+
+  /**
+   * Verifica se já existem itens similares cadastrados (duplicatas no estoque)
+   */
+  async checkDuplicates(category, { titulo, artista }) {
+    if (!titulo || titulo.trim().length < 2) return [];
+
+    const isVideo = category === 'dvds' || category === 'vhs';
+    const tituloClean = titulo.trim();
+    const tituloSemAcento = removeAcentos(tituloClean);
+
+    let columns = 'id, titulo, preco, loja, caixa, ativo, ano';
+    if (!isVideo) columns += ', artista';
+
+    let query = supabase
+      .from(category)
+      .select(columns)
+      .eq('deletado', false);
+
+    const words = tituloSemAcento.split(/\s+/).slice(0, 3);
+    words.forEach(word => {
+      if (word.length >= 2) {
+        const wildcardWord = word.replace(/[aeiou]/g, '_');
+        query = query.ilike('titulo', `%${wildcardWord}%`);
+      }
+    });
+
+    if (!isVideo && artista && artista.trim().length >= 2) {
+      const artistaWords = removeAcentos(artista.trim()).split(/\s+/).slice(0, 2);
+      artistaWords.forEach(w => {
+        if (w.length >= 2) {
+          const wildcard = w.replace(/[aeiou]/g, '_');
+          query = query.ilike('artista', `%${wildcard}%`);
+        }
+      });
+    }
+
+    query = query.limit(15);
+
+    const { data, error } = await query;
+    if (error || !data) return [];
+
+    const filtered = data.filter(item => {
+      const itemTitulo = removeAcentos(item.titulo || '');
+      const itemArtista = removeAcentos(item.artista || '');
+
+      const matchTitulo = itemTitulo.includes(tituloSemAcento) || tituloSemAcento.includes(itemTitulo);
+      if (isVideo) return matchTitulo;
+
+      if (artista && artista.trim().length >= 2) {
+        const artistaSemAcento = removeAcentos(artista.trim());
+        const matchArtista = itemArtista.includes(artistaSemAcento) || artistaSemAcento.includes(itemArtista);
+        return matchTitulo && matchArtista;
+      }
+
+      return matchTitulo;
+    });
+
+    return filtered.slice(0, 5);
   },
 
   /**
