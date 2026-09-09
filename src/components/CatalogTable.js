@@ -88,13 +88,14 @@ export default function CatalogTable({
         </thead>
         <tbody>
           {itens.map((d) => {
-            const isLoja2Disco = d.loja === 'Loja 2' && isDiscosTab;
+            const isDiscoCard = isDiscosTab;
 
-            if (isLoja2Disco) {
+            if (isDiscoCard) {
+              const isLoja1 = d.loja === 'Loja 1';
               return (
                 <tr 
                   key={d.id} 
-                  className="catalog-row card-disco-loja2"
+                  className={`catalog-row card-disco card-disco-loja2 ${isLoja1 ? 'card-disco-loja1' : ''}`}
                   style={d.ativo === false ? { opacity: 0.5 } : {}}
                 >
                   <td data-label="Capa" className="cell-capa">
@@ -112,6 +113,24 @@ export default function CatalogTable({
                       <span className="disco-valor-caixa">{getDisplayCaixa(d)}</span>
                       {d.ano && (
                         <span className="disco-valor-ano">{d.ano}</span>
+                      )}
+                      {showLoja && d.loja && (
+                        <span 
+                          className="disco-valor-loja"
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: getStoreColor(d.loja),
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: `1px solid ${getStoreColor(d.loja)}40`,
+                            padding: '2px 7px',
+                            borderRadius: '6px',
+                            whiteSpace: 'nowrap',
+                            lineHeight: 1.2
+                          }}
+                        >
+                          {d.loja}
+                        </span>
                       )}
                       <span className={`disco-valor-status ${d.ativo ? 'status-ativo' : 'status-inativo'}`}>
                         {d.ativo ? 'Ativo' : 'Inativo'}

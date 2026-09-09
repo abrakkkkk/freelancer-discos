@@ -1275,8 +1275,10 @@ tbody tr:last-child td {
   }
 
   /* ==========================================================================
-     Card Especial de Disco Loja 2 com Capa (Refinado Mobile-First)
+     Card Especial de Disco (Loja 1 e Loja 2) com Capa (Refinado Mobile-First)
      ========================================================================== */
+  tr.card-disco,
+  tr.card-disco-loja1,
   tr.card-disco-loja2 {
     display: flex !important;
     flex-direction: row !important;
@@ -1293,12 +1295,20 @@ tbody tr:last-child td {
   }
 
   /* Ocultar estritamente no mobile qualquer célula antiga do desktop */
+  tr.card-disco > td.cell-desktop-col,
+  tr.card-disco-loja1 > td.cell-desktop-col,
   tr.card-disco-loja2 > td.cell-desktop-col,
+  tr.card-disco > td.desktop-only,
+  tr.card-disco-loja1 > td.desktop-only,
   tr.card-disco-loja2 > td.desktop-only,
+  tr.card-disco > td:not(.cell-capa):not(.cell-disco-info):not([data-label="Ação"]),
+  tr.card-disco-loja1 > td:not(.cell-capa):not(.cell-disco-info):not([data-label="Ação"]),
   tr.card-disco-loja2 > td:not(.cell-capa):not(.cell-disco-info):not([data-label="Ação"]) {
     display: none !important;
   }
 
+  tr.card-disco .cell-capa,
+  tr.card-disco-loja1 .cell-capa,
   tr.card-disco-loja2 .cell-capa {
     display: flex !important;
     align-items: center !important;
@@ -1314,10 +1324,14 @@ tbody tr:last-child td {
     border-radius: 8px !important;
     overflow: hidden !important;
   }
+  tr.card-disco .cell-capa::before,
+  tr.card-disco-loja1 .cell-capa::before,
   tr.card-disco-loja2 .cell-capa::before {
     display: none !important;
   }
 
+  tr.card-disco .cell-disco-info,
+  tr.card-disco-loja1 .cell-disco-info,
   tr.card-disco-loja2 .cell-disco-info {
     display: flex !important;
     flex-direction: column !important;
@@ -1333,6 +1347,8 @@ tbody tr:last-child td {
     gap: 3px !important;
     overflow: hidden !important;
   }
+  tr.card-disco .cell-disco-info::before,
+  tr.card-disco-loja1 .cell-disco-info::before,
   tr.card-disco-loja2 .cell-disco-info::before {
     display: none !important;
   }
@@ -1443,6 +1459,8 @@ tbody tr:last-child td {
     border: 1px solid rgba(239, 68, 68, 0.28) !important;
   }
 
+  tr.card-disco td[data-label="Ação"],
+  tr.card-disco-loja1 td[data-label="Ação"],
   tr.card-disco-loja2 td[data-label="Ação"] {
     position: absolute !important;
     top: 8px !important;
@@ -1455,16 +1473,22 @@ tbody tr:last-child td {
     width: auto !important;
     z-index: 2 !important;
   }
+  tr.card-disco td[data-label="Ação"]::before,
+  tr.card-disco-loja1 td[data-label="Ação"]::before,
   tr.card-disco-loja2 td[data-label="Ação"]::before {
     display: none !important;
   }
 
+  tr.card-disco .actionBtnRow,
+  tr.card-disco-loja1 .actionBtnRow,
   tr.card-disco-loja2 .actionBtnRow {
     display: flex !important;
     gap: 6px !important;
     align-items: center !important;
   }
 
+  tr.card-disco .iconBtn,
+  tr.card-disco-loja1 .iconBtn,
   tr.card-disco-loja2 .iconBtn {
     min-width: 34px !important;
     min-height: 34px !important;
@@ -1480,6 +1504,8 @@ tbody tr:last-child td {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
   }
 
+  tr.card-disco .iconBtn.delete,
+  tr.card-disco-loja1 .iconBtn.delete,
   tr.card-disco-loja2 .iconBtn.delete {
     background: rgba(239, 68, 68, 0.08) !important;
     border: 1px solid rgba(239, 68, 68, 0.2) !important;
