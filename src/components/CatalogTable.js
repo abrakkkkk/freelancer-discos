@@ -98,7 +98,7 @@ export default function CatalogTable({
                   style={d.ativo === false ? { opacity: 0.5 } : {}}
                 >
                   <td data-label="Capa" className="cell-capa">
-                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={72} />
+                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={70} />
                   </td>
 
                   {/* Informações limpas para exibição mobile: sem os rótulos 'Local', 'Preço', etc. */}
@@ -113,7 +113,7 @@ export default function CatalogTable({
                       {d.ano && (
                         <span className="disco-valor-ano">{d.ano}</span>
                       )}
-                      <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '12px', padding: '2px 8px', fontSize: '11px', lineHeight: 1.2 }}>
+                      <span className={`disco-valor-status ${d.ativo ? 'status-ativo' : 'status-inativo'}`}>
                         {d.ativo ? 'Ativo' : 'Inativo'}
                       </span>
                     </div>
