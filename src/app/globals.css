@@ -909,6 +909,17 @@ tbody tr:last-child td {
   display: none !important;
 }
 
+.cell-disco-info {
+  display: none;
+}
+
+.cell-capa {
+  width: 64px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 6px 8px;
+}
+
 @media (max-width: 768px) {
   .hide-on-desktop {
     display: flex !important; /* specific to our use cases */
@@ -1246,6 +1257,138 @@ tbody tr:last-child td {
 
   td[data-label="Selecionar"]::before {
     display: none;
+  }
+
+  /* ==========================================================================
+     Card Especial de Disco Loja 2 com Capa (Teste Loja 2)
+     ========================================================================== */
+  tr.card-disco-loja2 {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    padding: 10px 12px !important;
+    gap: 12px !important;
+    position: relative !important;
+    border-radius: 10px !important;
+    background: var(--bg-card) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+    margin-bottom: 12px !important;
+  }
+
+  tr.card-disco-loja2 .desktop-only {
+    display: none !important;
+  }
+
+  tr.card-disco-loja2 .cell-capa {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 76px !important;
+    height: 76px !important;
+    flex: 0 0 76px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+  }
+  tr.card-disco-loja2 .cell-capa::before {
+    display: none !important;
+  }
+
+  tr.card-disco-loja2 .cell-disco-info {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    text-align: left !important;
+    gap: 3px !important;
+    padding-right: 68px !important;
+  }
+  tr.card-disco-loja2 .cell-disco-info::before {
+    display: none !important;
+  }
+
+  .disco-header-row {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .disco-titulo {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.25;
+    word-break: break-word;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .disco-artista {
+    font-size: 12px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .disco-valores-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    margin-top: 4px;
+  }
+
+  .disco-valor-preco {
+    font-size: 14px;
+    font-weight: 700;
+    color: #48bb78;
+  }
+
+  .disco-valor-caixa {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 2px 7px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .disco-valor-ano {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  tr.card-disco-loja2 td[data-label="Ação"] {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    gap: 6px !important;
+    width: auto !important;
+  }
+  tr.card-disco-loja2 td[data-label="Ação"]::before {
+    display: none !important;
   }
 
   /* Painel flutuante de lote no celular */

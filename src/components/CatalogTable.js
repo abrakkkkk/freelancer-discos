@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { FaEdit, FaSortUp, FaSortDown, FaSort } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { getStoreColor } from '@/constants/config';
-
+import AlbumCover from '@/components/AlbumCover';
 
 export default function CatalogTable({ 
   itens, 
@@ -16,6 +16,7 @@ export default function CatalogTable({
 }) {
   const isVideo = activeTab === 'dvds' || activeTab === 'vhs';
   const itemName = activeTab === 'discos' ? 'discos' : activeTab === 'dvds' ? 'DVDs' : activeTab === 'vhs' ? 'VHS' : 'CDs';
+  const isDiscosTab = activeTab === 'discos';
 
   const renderSortIcon = (coluna) => {
     if (ordenarColuna !== coluna) {
@@ -44,6 +45,9 @@ export default function CatalogTable({
       <table className="styledTable">
         <thead>
           <tr>
+            {isDiscosTab && (
+              <th style={{ width: '64px', textAlign: 'center' }}>CAPA</th>
+            )}
             <th>
               <div style={{display: 'flex', alignItems: 'center', cursor: 'pointer'}} onClick={() => onSort('caixa')}>
                 {localLabel.toUpperCase()} {renderSortIcon('caixa')}
@@ -83,57 +87,140 @@ export default function CatalogTable({
           </tr>
         </thead>
         <tbody>
-          {itens.map((d) => (
-            <tr key={d.id} style={d.ativo === false ? { opacity: 0.5 } : {}}>
-              <td data-label="Local">{getDisplayCaixa(d)}</td>
-              {!isVideo && (
-                <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>
-                  {d.artista || <span className="text-empty">—</span>}
-                </td>
-              )}
-              <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
-              <td data-label="Ano">
-                {d.ano ? (
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '2px 7px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 600 }}>
-                    {d.ano}
-                  </span>
-                ) : (
-                  <span className="text-empty">—</span>
+          {itens.map((d) => {
+            const isLoja2Disco = d.loja === 'Loja 2' && isDiscosTab;
+
+            if (isLoja2Disco) {
+              return (
+                <tr 
+                  key={d.id} 
+                  className="catalog-row card-disco-loja2"
+                  style={d.ativo === false ? { opacity: 0.5 } : {}}
+                >
+                  <td data-label="Capa" className="cell-capa">
+                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={76} />
+                  </td>
+
+                  {/* Informações limpas para exibição mobile: sem os rótulos 'Local', 'Preço', etc. */}
+                  <td data-label="Info" className="cell-disco-info">
+                    <div className="disco-header-row">
+                      <span className="disco-titulo">{d.titulo || <span className="text-empty">—</span>}</span>
+                    </div>
+                    {d.artista && <span className="disco-artista">{d.artista}</span>}
+                    <div className="disco-valores-row">
+                      <span className="disco-valor-preco">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</span>
+                      <span className="disco-valor-caixa">{getDisplayCaixa(d)}</span>
+                      {d.ano && (
+                        <span className="disco-valor-ano">{d.ano}</span>
+                      )}
+                      <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '12px', padding: '2px 8px', fontSize: '11px' }}>
+                        {d.ativo ? 'Ativo' : 'Inativo'}
+                      </span>
+                    </div>
+                  </td>
+
+                  {/* Células mantidas no DOM para compatibilidade desktop */}
+                  <td data-label="Local" className="desktop-only">{getDisplayCaixa(d)}</td>
+                  <td data-label="Artista" className={`desktop-only ${!d.artista ? "empty-artist" : ""}`}>
+                    {d.artista || <span className="text-empty">—</span>}
+                  </td>
+                  <td data-label="Título" className="desktop-only">{d.titulo || <span className="text-empty">—</span>}</td>
+                  <td data-label="Ano" className="desktop-only">
+                    {d.ano ? (
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '2px 7px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 600 }}>
+                        {d.ano}
+                      </span>
+                    ) : (
+                      <span className="text-empty">—</span>
+                    )}
+                  </td>
+                  {showLoja && (
+                    <td data-label="Loja" className="desktop-only">
+                      <span style={{ color: getStoreColor(d.loja) }}>{d.loja}</span>
+                    </td>
+                  )}
+                  <td data-label="Preço" className="desktop-only">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
+                  <td data-label="Status" className="desktop-only">
+                    <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
+                      {d.ativo ? 'Ativo' : 'Inativo'}
+                    </span>
+                  </td>
+                  <td data-label="Ação">
+                    <div className="actionBtnRow">
+                      <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} className="iconBtn">
+                        <FaEdit size={14} />
+                      </Link>
+                      <button 
+                        onClick={() => onDelete(d.id, d.titulo || d.artista || 'Item')} 
+                        title={`Excluir ${itemName.slice(0, -1)}`}
+                        className={`${"iconBtn"} ${"delete"}`}
+                      >
+                        <MdDelete size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            }
+
+            // Renderização padrão para outras lojas e categorias
+            return (
+              <tr key={d.id} className="catalog-row" style={d.ativo === false ? { opacity: 0.5 } : {}}>
+                {isDiscosTab && (
+                  <td data-label="Capa" className="cell-capa">
+                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={44} />
+                  </td>
                 )}
-              </td>
-              {showLoja && (
-                <td data-label="Loja">
-                  {d.loja ? (
-                    <span className={d.loja === 'Loja 1' ? "lojaText" : ''} style={d.loja !== 'Loja 1' ? { color: getStoreColor(d.loja) } : {}}>
-                      {d.loja}
+                <td data-label="Local">{getDisplayCaixa(d)}</td>
+                {!isVideo && (
+                  <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>
+                    {d.artista || <span className="text-empty">—</span>}
+                  </td>
+                )}
+                <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
+                <td data-label="Ano">
+                  {d.ano ? (
+                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '2px 7px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 600 }}>
+                      {d.ano}
                     </span>
                   ) : (
                     <span className="text-empty">—</span>
                   )}
                 </td>
-              )}
-              <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
-              <td data-label="Status">
-                <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
-                  {d.ativo ? 'Ativo' : 'Inativo'}
-                </span>
-              </td>
-              <td data-label="Ação">
-                <div className="actionBtnRow">
-                  <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} className="iconBtn">
-                    <FaEdit size={14} />
-                  </Link>
-                  <button 
-                    onClick={() => onDelete(d.id, d.titulo || d.artista || 'Item')} 
-                    title={`Excluir ${itemName.slice(0, -1)}`}
-                    className={`${"iconBtn"} ${"delete"}`}
-                  >
-                    <MdDelete size={16} />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
+                {showLoja && (
+                  <td data-label="Loja">
+                    {d.loja ? (
+                      <span className={d.loja === 'Loja 1' ? "lojaText" : ''} style={d.loja !== 'Loja 1' ? { color: getStoreColor(d.loja) } : {}}>
+                        {d.loja}
+                      </span>
+                    ) : (
+                      <span className="text-empty">—</span>
+                    )}
+                  </td>
+                )}
+                <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
+                <td data-label="Status">
+                  <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
+                    {d.ativo ? 'Ativo' : 'Inativo'}
+                  </span>
+                </td>
+                <td data-label="Ação">
+                  <div className="actionBtnRow">
+                    <Link href={`/editar?id=${d.id}&tipo=${activeTab}`} title={`Editar ${itemName.slice(0, -1)}`} className="iconBtn">
+                      <FaEdit size={14} />
+                    </Link>
+                    <button 
+                      onClick={() => onDelete(d.id, d.titulo || d.artista || 'Item')} 
+                      title={`Excluir ${itemName.slice(0, -1)}`}
+                      className={`${"iconBtn"} ${"delete"}`}
+                    >
+                      <MdDelete size={16} />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
