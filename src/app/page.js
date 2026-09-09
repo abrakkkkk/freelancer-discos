@@ -97,8 +97,8 @@ export default function CatalogoClone() {
   const itemName = catalog.activeTab === 'discos' ? 'discos' : catalog.activeTab === 'dvds' ? 'DVDs' : catalog.activeTab === 'vhs' ? 'VHS' : 'CDs';
   const isVideo = catalog.activeTab === 'dvds' || catalog.activeTab === 'vhs';
   
-  const isLoja1Discos = activeStore === 'Loja 1' && catalog.activeTab === CATEGORY_IDS.DISCOS;
-  const localLabel = isLoja1Discos ? 'Caixa' : 'Localização';
+  const isDiscos = (activeStore === 'Loja 1' || activeStore === 'Loja 2') && catalog.activeTab === CATEGORY_IDS.DISCOS;
+  const localLabel = isDiscos ? 'Caixa' : 'Localização';
 
   // Custom Pagination logic matching the mockup
   const renderPagination = () => {

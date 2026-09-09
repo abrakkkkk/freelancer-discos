@@ -563,7 +563,7 @@ function EditarExcluirContent() {
 
           <div className="form-row">
             <div className="form-group">
-              <label>{itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</label>
+              <label>{(itemEditando.loja === 'Loja 1' || itemEditando.loja === 'Loja 2') && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</label>
               <input 
                 name="caixa" 
                 type="text" 

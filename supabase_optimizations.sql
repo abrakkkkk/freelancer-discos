@@ -35,6 +35,13 @@ AS $$
     
     SELECT caixa, loja FROM public.vhs 
     WHERE deletado = false AND caixa IS NOT NULL AND (p_loja IS NULL OR p_loja = '' OR loja = p_loja)
+
+    UNION
+
+    -- Garante a listagem das Caixas 1B a 20B para a Loja 2 (incluindo caixas vazias)
+    SELECT ('Caixa ' || i || 'B') AS caixa, 'Loja 2' AS loja
+    FROM generate_series(1, 20) AS i
+    WHERE (p_loja IS NULL OR p_loja = '' OR p_loja = 'Loja 2')
   ) sub
   ORDER BY sub.caixa ASC;
 $$;

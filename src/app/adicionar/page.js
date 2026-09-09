@@ -447,7 +447,7 @@ export default function AdicionarItem() {
 
         <div className="form-row">
           <div className="form-group">
-            <label>{form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? 'Caixa' : 'Localização'} {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}</label>
+            <label>{(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS ? 'Caixa' : 'Localização'} {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}</label>
             <input 
               name="caixa" 
               type="text" 

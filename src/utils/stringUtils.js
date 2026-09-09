@@ -9,11 +9,15 @@ export function removeAcentos(texto) {
 
 export function formatCaixa(caixa, loja) {
   if (!caixa) return '—';
-  const isNumeric = !isNaN(Number(caixa)) && String(caixa).trim() !== '';
-  if (loja === 'Loja 1' && isNumeric) {
-    return `Caixa ${caixa}`;
+  const str = String(caixa).trim();
+  if (str.toLowerCase().startsWith('caixa ')) {
+    return str;
   }
-  return caixa;
+  const isNumeric = !isNaN(Number(str)) && str !== '';
+  if (loja === 'Loja 1' && isNumeric) {
+    return `Caixa ${str}`;
+  }
+  return str;
 }
 
 export function cleanDiscogsString(texto) {

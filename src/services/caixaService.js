@@ -3,8 +3,22 @@ import { supabase } from '@/lib/supabase';
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutos
 const STORAGE_PREFIX = 'freelancer_caixas_';
 
-function formatAndSortCaixas(rawData) {
+function formatAndSortCaixas(rawData, currentLoja = '') {
   const allCaixas = new Map();
+
+  // Caixas padrão para Loja 2 (Caixa 1B até Caixa 20B)
+  // Garante que todas as caixas (inclusive vazias/faltantes) estejam sempre disponíveis
+  if (!currentLoja || currentLoja === 'Loja 2') {
+    for (let i = 1; i <= 20; i++) {
+      const nomeCaixa = `Caixa ${i}B`;
+      const key = `${nomeCaixa}|Loja 2`;
+      allCaixas.set(key, {
+        caixa: nomeCaixa,
+        loja: 'Loja 2',
+        label: nomeCaixa,
+      });
+    }
+  }
 
   rawData.forEach((d) => {
     if (d && d.caixa) {
@@ -29,7 +43,7 @@ function formatAndSortCaixas(rawData) {
       if (numA === numB) return a.loja.localeCompare(b.loja);
       return numA - numB;
     }
-    const compCaixa = String(a.caixa).localeCompare(String(b.caixa));
+    const compCaixa = String(a.caixa).localeCompare(String(b.caixa), undefined, { numeric: true });
     if (compCaixa === 0) return a.loja.localeCompare(b.loja);
     return compCaixa;
   });
@@ -89,7 +103,7 @@ export const caixaService = {
       });
 
       if (!rpcError && rpcData && Array.isArray(rpcData)) {
-        const sortedCaixas = formatAndSortCaixas(rpcData);
+        const sortedCaixas = formatAndSortCaixas(rpcData, loja);
         this._cacheMap.set(cacheKey, { timestamp: Date.now(), data: sortedCaixas });
         saveToSession(cacheKey, sortedCaixas);
         return sortedCaixas;
@@ -136,7 +150,7 @@ export const caixaService = {
     });
 
     const results = await Promise.all(tablePromises);
-    const sortedCaixas = formatAndSortCaixas(results.flat());
+    const sortedCaixas = formatAndSortCaixas(results.flat(), loja);
 
     // Salvar nos 2 níveis de cache
     this._cacheMap.set(cacheKey, { timestamp: Date.now(), data: sortedCaixas });
