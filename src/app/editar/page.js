@@ -18,6 +18,7 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { formatCaixa, cleanDiscogsString } from '@/utils/stringUtils';
+import AlbumCover from '@/components/AlbumCover';
 
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
 const OcrScannerModal = dynamic(() => import('@/components/OcrScannerModal'), { ssr: false });
@@ -50,6 +51,7 @@ function EditarExcluirContent() {
   const { registerUndo } = useUndo();
 
   const [itemEditando, setItemEditando] = useState(null);
+  const [selectedCover, setSelectedCover] = useState(null);
   const {
     form, setForm, handleChange,
     sugestoesArtista, mostrarSugestoesArtista, setMostrarSugestoesArtista,
@@ -222,6 +224,7 @@ function EditarExcluirContent() {
 
   function abrirEdicao(item) {
     setItemEditando(item);
+    setSelectedCover(null);
     setForm({
       artista: item.artista || '',
       titulo: item.titulo || '',
@@ -282,6 +285,13 @@ function EditarExcluirContent() {
 
     const year = result.year ? String(result.year) : '';
 
+    if (result.thumb || result.cover_image) {
+      setSelectedCover({
+        thumb: result.thumb || null,
+        cover: result.cover_image || result.thumb || null
+      });
+    }
+
     setForm(prev => ({
       ...prev,
       artista,
@@ -312,6 +322,40 @@ function EditarExcluirContent() {
       await itemService.updateItem(tipo, itemEditando.id, updateData);
       const updatedItem = { ...itemEditando, ...updateData };
       setItemEditando(updatedItem);
+
+      // Sincronização e invalidação automática de capa se os dados do disco mudaram
+      if (tipo === CATEGORY_IDS.DISCOS) {
+        const artistaAlterado = temArtista && (updateData.artista || '').trim().toLowerCase() !== (snapshotAntes.artista || '').trim().toLowerCase();
+        const tituloAlterado = (updateData.titulo || '').trim().toLowerCase() !== (snapshotAntes.titulo || '').trim().toLowerCase();
+
+        if (artistaAlterado || tituloAlterado || selectedCover) {
+          // 1. Limpa o cache local no sessionStorage do navegador
+          if (typeof window !== 'undefined') {
+            try {
+              const idPrefix = `cover_${itemEditando.id}`;
+              Object.keys(sessionStorage).forEach(k => {
+                if (k.startsWith(idPrefix) || k.includes(String(itemEditando.id))) {
+                  sessionStorage.removeItem(k);
+                }
+              });
+            } catch (e) {}
+          }
+
+          // 2. Atualiza imediatamente o cache de capas no servidor
+          fetch('/api/cover', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: itemEditando.id,
+              artista: updateData.artista || '',
+              titulo: updateData.titulo || '',
+              cover: selectedCover?.cover || null,
+              thumb: selectedCover?.thumb || null,
+            })
+          }).catch(e => console.warn('Erro ao atualizar capa:', e));
+        }
+      }
+
       setMensagem({ tipo: 'success', texto: `${tipoNome} atualizado com sucesso!` });
       setResultados(prev => prev.map(d => d.id === itemEditando.id ? updatedItem : d));
       registerUndo(tipo, [snapshotAntes], () => {
@@ -401,9 +445,14 @@ function EditarExcluirContent() {
       <div className="pageContainer">
         <div className="topHeader" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
           <button className="btn btn-secondary btn-back" style={{ flexShrink: 0 }} onClick={voltarParaBusca}>← Voltar</button>
-          <div className="titleGroup" style={{ flex: 1, minWidth: '200px' }}>
-            <TbTools size={24} color="var(--accent)" />
-            <h1 className="page-title" style={{ textAlign: 'left', margin: 0, fontSize: '20px' }}>Editando {tipoNome}</h1>
+          <div className="titleGroup" style={{ flex: 1, minWidth: '200px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {tipo === CATEGORY_IDS.DISCOS && (
+              <AlbumCover artista={form.artista} titulo={form.titulo} id={itemEditando?.id} size={48} />
+            )}
+            <div>
+              <h1 className="page-title" style={{ textAlign: 'left', margin: 0, fontSize: '20px' }}>Editando {tipoNome}</h1>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>ID #{itemEditando.id} • {itemEditando.loja || 'Sem loja'}</span>
+            </div>
           </div>
         </div>
 

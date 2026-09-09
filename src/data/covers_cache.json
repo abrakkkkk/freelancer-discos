@@ -127,6 +127,11 @@
     "cover": "https://i.discogs.com/p4EVskT9CLsrFZVdzeiGtEebFTg_WIQlUkzaSsBNgJE/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEwMjgz/NDQtMTU4NjU1OTc5/Mi0xMzExLmpwZWc.jpeg",
     "thumb": "https://i.discogs.com/BfTHs8i2CbF_vEy2S7Ulc2EaS2asV9iVpAeBLrlSZ4o/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTEwMjgz/NDQtMTU4NjU1OTc5/Mi0xMzExLmpwZWc.jpeg"
   },
+  "21230": {
+    "cover": "https://i.discogs.com/EKhj6ozKNO-XpG87qZbqQjOinvhub4IU9-8TIUpinuw/rs:fit/g:sm/q:90/h:583/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM5NTQ5/My0xMjkyNTA5ODQ5/LmpwZWc.jpeg",
+    "thumb": "https://i.discogs.com/V8YVTKSDuftvNQm4n9xVioGbWB7Chlx8ZfDCgnAnqe0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM5NTQ5/My0xMjkyNTA5ODQ5/LmpwZWc.jpeg",
+    "q": "a-ha on tour in brazil"
+  },
   "21801": {
     "cover": "https://i.discogs.com/3S0n0W8uSsPTvQQblAKw46e-ciseK87yJZmn1zLqH6c/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIwNjky/ODktMTM2NjU2MDg3/My05MzAyLmpwZWc.jpeg",
     "thumb": "https://i.discogs.com/zgSk0E-YlykHrVwPZOUbhUif3hjyNldQa4429EyNaZU/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTIwNjky/ODktMTM2NjU2MDg3/My05MzAyLmpwZWc.jpeg"
@@ -417,7 +422,8 @@
   },
   "a-ha on tour in brazil": {
     "cover": "https://i.discogs.com/EKhj6ozKNO-XpG87qZbqQjOinvhub4IU9-8TIUpinuw/rs:fit/g:sm/q:90/h:583/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM5NTQ5/My0xMjkyNTA5ODQ5/LmpwZWc.jpeg",
-    "thumb": "https://i.discogs.com/V8YVTKSDuftvNQm4n9xVioGbWB7Chlx8ZfDCgnAnqe0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM5NTQ5/My0xMjkyNTA5ODQ5/LmpwZWc.jpeg"
+    "thumb": "https://i.discogs.com/V8YVTKSDuftvNQm4n9xVioGbWB7Chlx8ZfDCgnAnqe0/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTM5NTQ5/My0xMjkyNTA5ODQ5/LmpwZWc.jpeg",
+    "q": "a-ha on tour in brazil"
   },
   "a-ha east of the sun, west of the moon": {
     "cover": "https://i.discogs.com/lafIPVxsFOXBfskKYMcyTQFmF73ouN-j4MZdq8qwDaQ/rs:fit/g:sm/q:90/h:600/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTUxMDUw/OC0xNzEzOTQ5NDcw/LTUxNTkuanBlZw.jpeg",
@@ -694,5 +700,10 @@
   "krokus pay it in metal": {
     "cover": "https://i.discogs.com/ZQB8I2skzQALqLtWyug3ffsRw1aS5-P1NAR9qFhiY8M/rs:fit/g:sm/q:90/h:595/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0MDQ5/OTktMTQ3NTE0OTQ1/MC02OTI4LmpwZWc.jpeg",
     "thumb": "https://i.discogs.com/16rZmOal2itpQN-0svwW-jc2pTgLZMh_39Hzf_iuUP4/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0MDQ5/OTktMTQ3NTE0OTQ1/MC02OTI4LmpwZWc.jpeg"
+  },
+  "the beatles abbey road": {
+    "cover": "https://i.discogs.com/Tq4RLJXx26PDGwUs7f_x2MrkQD2wn3e7XAaUkWnAvA4/rs:fit/g:sm/q:90/h:607/w:600/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0MTg2/NDQxLTE1Njk0ODcx/NjEtNzMxNC5qcGVn.jpeg",
+    "thumb": "https://i.discogs.com/ScR7Pf_WOKOMhYFMK-0kk0H4bwaizxzvfqgln6whvxk/rs:fit/g:sm/q:40/h:150/w:150/czM6Ly9kaXNjb2dz/LWRhdGFiYXNlLWlt/YWdlcy9SLTE0MTg2/NDQxLTE1Njk0ODcx/NjEtNzMxNC5qcGVn.jpeg",
+    "q": "the beatles abbey road"
   }
 }

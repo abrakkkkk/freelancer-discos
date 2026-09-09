@@ -11,9 +11,13 @@ export default function AlbumCover({ artista, titulo, id, size = 80 }) {
 
   useEffect(() => {
     let isMounted = true;
-    const cacheKey = id ? String(id) : `${artista || ''}-${titulo || ''}`.trim().toLowerCase();
+    const q = `${artista || ''} ${titulo || ''}`.trim();
+    const qKey = q.toLowerCase();
+    // Inclui a chave da busca (artista + titulo) para invalidar automaticamente se o disco for editado
+    const cacheKey = id ? `${id}_${qKey}` : qKey;
 
-    if (!cacheKey) {
+    if (!cacheKey || !qKey) {
+      setCoverUrl(null);
       setLoading(false);
       return;
     }
@@ -36,18 +40,16 @@ export default function AlbumCover({ artista, titulo, id, size = 80 }) {
       }
     } catch (e) {}
 
-    // 3. Buscar na API
-    const q = `${artista || ''} ${titulo || ''}`.trim();
-    if (!q) {
-      setLoading(false);
-      return;
-    }
+    // Reseta capa e ativa loading para nova busca
+    setCoverUrl(null);
+    setLoading(true);
 
+    // 3. Buscar na API com versão da query (evita cache HTTP antigo do navegador)
     const controller = new AbortController();
 
     async function fetchCover() {
       try {
-        const res = await fetch(`/api/cover?id=${encodeURIComponent(id || '')}&q=${encodeURIComponent(q)}`, {
+        const res = await fetch(`/api/cover?id=${encodeURIComponent(id || '')}&q=${encodeURIComponent(q)}&v=${encodeURIComponent(qKey)}`, {
           signal: controller.signal
         });
         if (!res.ok) throw new Error('Cover fetch failed');
