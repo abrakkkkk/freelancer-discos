@@ -91,13 +91,43 @@ export function useCatalog(initialCategory = 'discos') {
     setPagina(1);
   };
 
-  const changeTab = (tab) => {
-    setActiveTab(tab);
-    setPagina(1);
-    setOrdenarColuna(null);
-    setOrdenarDirecao(null);
-    setFiltroCaixa('');
-    setBusca('');
+  const changeTab = (newTab) => {
+    if (newTab === activeTab) return;
+
+    // Salva o estado da aba atual para restaurar se o usuário voltar
+    try {
+      const tabMemory = JSON.parse(sessionStorage.getItem('catalog_tab_memory') || '{}');
+      tabMemory[activeTab] = {
+        pagina,
+        filtroCaixa,
+        busca,
+        ordenarColuna,
+        ordenarDirecao
+      };
+      sessionStorage.setItem('catalog_tab_memory', JSON.stringify(tabMemory));
+
+      // Restaura o estado anterior da nova aba se já tiver sido visitada
+      const savedNewTab = tabMemory[newTab];
+      if (savedNewTab) {
+        setPagina(savedNewTab.pagina || 1);
+        setFiltroCaixa(savedNewTab.filtroCaixa || '');
+        setBusca(savedNewTab.busca || '');
+        setOrdenarColuna(savedNewTab.ordenarColuna || null);
+        setOrdenarDirecao(savedNewTab.ordenarDirecao || null);
+      } else {
+        setPagina(1);
+        setFiltroCaixa('');
+        setBusca('');
+        setOrdenarColuna(null);
+        setOrdenarDirecao(null);
+      }
+    } catch (e) {
+      setPagina(1);
+      setFiltroCaixa('');
+      setBusca('');
+    }
+
+    setActiveTab(newTab);
   };
 
   return {

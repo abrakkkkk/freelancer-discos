@@ -1053,28 +1053,30 @@ tbody tr:last-child td {
     padding-top: 4px;
   }
 
-  /* Barra de navegaÃ§Ã£o mÃ³vel inferior */
+  /* Barra de navegação móvel inferior com Glassmorphism e Safe Area */
   .bottom-nav {
     display: flex;
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: #141416;
-    border-top: 1px solid #27272a;
+    background: rgba(18, 18, 22, 0.88) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.09) !important;
     z-index: 9999;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.4);
+    padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px) !important;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45) !important;
   }
-
-
 
   .bottom-nav-container {
     display: flex;
     justify-content: space-around;
     align-items: center;
     width: 100%;
-    height: var(--bottom-nav-height);
+    height: 58px;
+    max-width: 600px;
+    margin: 0 auto;
   }
 
   .bottom-nav-item {
@@ -1085,10 +1087,10 @@ tbody tr:last-child td {
     gap: 2px;
     flex: 1;
     height: 100%;
-    color: var(--text-muted);
+    color: #71717a;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
-    transition: color 0.15s ease;
+    transition: color 0.15s ease, transform 0.1s ease;
     padding: 4px 0;
   }
 
@@ -1096,29 +1098,38 @@ tbody tr:last-child td {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 24px;
-    transition: transform 0.15s ease;
+    width: 38px;
+    height: 28px;
+    border-radius: 14px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .bottom-nav-label {
     font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: -0.2px;
+    font-weight: 500;
+    letter-spacing: -0.1px;
     white-space: nowrap;
+    transition: color 0.15s ease;
   }
 
   .bottom-nav-item.active {
-    color: var(--accent);
-    font-weight: 700;
+    color: #ffffff !important;
   }
 
   .bottom-nav-item.active .bottom-nav-icon-wrapper {
-    transform: translateY(-2px);
+    background: rgba(239, 68, 68, 0.18);
+    color: #ef4444;
+    transform: translateY(-1px);
+  }
+
+  .bottom-nav-item.active .bottom-nav-label {
+    color: #ef4444 !important;
+    font-weight: 700 !important;
   }
 
   .bottom-nav-item:active {
-    opacity: 0.7;
+    transform: scale(0.94);
+    opacity: 0.85;
   }
 
   /* Tabelas - Card Layout para Mobile */

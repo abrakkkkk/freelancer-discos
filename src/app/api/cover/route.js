@@ -1,32 +1,28 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import staticCovers from '@/data/covers_cache.json';
 
 const CACHE_FILE = path.resolve(process.cwd(), 'src/data/covers_cache.json');
-let fileCache = null;
+const runtimeMemoryCache = new Map(Object.entries(staticCovers || {}));
 
-function loadCache() {
-  if (fileCache) return fileCache;
-  try {
-    if (fs.existsSync(CACHE_FILE)) {
-      const content = fs.readFileSync(CACHE_FILE, 'utf-8');
-      fileCache = JSON.parse(content);
-      return fileCache;
-    }
-  } catch (e) {
-    console.error('Error loading covers cache:', e);
-  }
-  fileCache = {};
-  return fileCache;
+function getFromCache(key) {
+  return runtimeMemoryCache.get(key) || null;
 }
 
-function saveCache(cache) {
-  try {
-    const dir = path.dirname(CACHE_FILE);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(cache, null, 2), 'utf-8');
-  } catch (e) {
-    console.error('Error saving covers cache:', e);
+function setToCache(key, payload) {
+  runtimeMemoryCache.set(key, payload);
+
+  // Apenas tenta gravar em disco no ambiente local (fora da Vercel / serverless)
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    try {
+      const dir = path.dirname(CACHE_FILE);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      const currentCacheObj = Object.fromEntries(runtimeMemoryCache);
+      fs.writeFileSync(CACHE_FILE, JSON.stringify(currentCacheObj, null, 2), 'utf-8');
+    } catch (_) {
+      // Ignora silenciosamente se o disco for read-only
+    }
   }
 }
 
@@ -35,11 +31,11 @@ export async function GET(request) {
   const q = searchParams.get('q') || '';
   const id = searchParams.get('id') || '';
 
-  const cache = loadCache();
   const cacheKey = id ? String(id) : q.trim().toLowerCase();
+  const cached = getFromCache(cacheKey);
 
-  if (cache[cacheKey]) {
-    return NextResponse.json(cache[cacheKey], {
+  if (cached) {
+    return NextResponse.json(cached, {
       headers: {
         'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400',
         'X-Cache': 'HIT',
@@ -77,11 +73,10 @@ export async function GET(request) {
     const cover = result?.cover_image || thumb || null;
 
     const payload = { cover, thumb };
-    cache[cacheKey] = payload;
+    setToCache(cacheKey, payload);
     if (id && q) {
-      cache[q.trim().toLowerCase()] = payload;
+      setToCache(q.trim().toLowerCase(), payload);
     }
-    saveCache(cache);
 
     return NextResponse.json(payload, {
       headers: {

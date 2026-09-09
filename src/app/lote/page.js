@@ -15,17 +15,25 @@ import { useUndo } from '@/contexts/UndoContext';
 import SuccessModal from '@/components/SuccessModal';
 import { useStore } from '@/contexts/StoreContext';
 
+const getLoteStorage = (key, defaultValue) => {
+  if (typeof window === 'undefined') return defaultValue;
+  try {
+    const saved = sessionStorage.getItem(`lote_${key}`);
+    return saved !== null ? JSON.parse(saved) : defaultValue;
+  } catch (e) {
+    return defaultValue;
+  }
+};
+
 export default function AcoesEmLote() {
-  useMobileLeaveConfirm();
-  
-  const [activeTab, setActiveTab] = useState(CATEGORY_IDS.DISCOS);
+  const [activeTab, setActiveTab] = useState(() => getLoteStorage('activeTab', CATEGORY_IDS.DISCOS));
   const { caixas, loading: loadingCaixas } = useCaixas();
   const { activeStore } = useStore();
   
-  const [caixaSelecionada, setCaixaSelecionada] = useState('');
+  const [caixaSelecionada, setCaixaSelecionada] = useState(() => getLoteStorage('caixaSelecionada', ''));
   const [filtroLoja, setFiltroLoja] = useState(activeStore || '');
-  const [busca, setBusca] = useState('');
-  const [buscaDebounced, setBuscaDebounced] = useState('');
+  const [busca, setBusca] = useState(() => getLoteStorage('busca', ''));
+  const [buscaDebounced, setBuscaDebounced] = useState(() => getLoteStorage('busca', ''));
 
   // Sync with global store
   useEffect(() => {
@@ -40,18 +48,31 @@ export default function AcoesEmLote() {
   }, [busca]);
   
   const [itens, setItens] = useState([]);
-  const [selecionados, setSelecionados] = useState([]);
-  const [selecionadosData, setSelecionadosData] = useState([]);
+  const [selecionados, setSelecionados] = useState(() => getLoteStorage('selecionados', []));
+  const [selecionadosData, setSelecionadosData] = useState(() => getLoteStorage('selecionadosData', []));
   const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   
-  const [novaLocalizacao, setNovaLocalizacao] = useState('');
-  const [lojaDestino, setLojaDestino] = useState('');
+  const [novaLocalizacao, setNovaLocalizacao] = useState(() => getLoteStorage('novaLocalizacao', ''));
+  const [lojaDestino, setLojaDestino] = useState(() => getLoteStorage('lojaDestino', ''));
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [confirmarExclusaoNaoSelecionados, setConfirmarExclusaoNaoSelecionados] = useState(false);
   const [successModalMessage, setSuccessModalMessage] = useState('');
 
   const { registerUndo } = useUndo();
+
+  // Salva automaticamente o rascunho de alteração em lote no sessionStorage
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('lote_activeTab', JSON.stringify(activeTab));
+      sessionStorage.setItem('lote_caixaSelecionada', JSON.stringify(caixaSelecionada));
+      sessionStorage.setItem('lote_busca', JSON.stringify(busca));
+      sessionStorage.setItem('lote_selecionados', JSON.stringify(selecionados));
+      sessionStorage.setItem('lote_selecionadosData', JSON.stringify(selecionadosData));
+      sessionStorage.setItem('lote_novaLocalizacao', JSON.stringify(novaLocalizacao));
+      sessionStorage.setItem('lote_lojaDestino', JSON.stringify(lojaDestino));
+    }
+  }, [activeTab, caixaSelecionada, busca, selecionados, selecionadosData, novaLocalizacao, lojaDestino]);
 
   const carregarItens = useCallback(async () => {
     setLoading(true);
@@ -146,6 +167,10 @@ export default function AcoesEmLote() {
   const limparSelecao = () => {
     setSelecionados([]);
     setSelecionadosData([]);
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('lote_selecionados');
+      sessionStorage.removeItem('lote_selecionadosData');
+    }
   };
 
   const handleBulkAction = async (actionFn, successMsgBuilder, itensAfetados) => {
@@ -166,6 +191,12 @@ export default function AcoesEmLote() {
       }
       
       limparSelecao();
+      setNovaLocalizacao('');
+      setLojaDestino('');
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('lote_novaLocalizacao');
+        sessionStorage.removeItem('lote_lojaDestino');
+      }
       await carregarItens();
     } catch (err) {
       setMensagem({ tipo: 'error', texto: err.message });

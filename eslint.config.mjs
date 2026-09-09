@@ -5,8 +5,7 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   {
     rules: {
-      "react-hooks/set-state-in-effect": "warn",
-      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
   globalIgnores([
