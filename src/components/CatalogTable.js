@@ -98,7 +98,7 @@ export default function CatalogTable({
                   style={d.ativo === false ? { opacity: 0.5 } : {}}
                 >
                   <td data-label="Capa" className="cell-capa">
-                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={76} />
+                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={72} />
                   </td>
 
                   {/* Informações limpas para exibição mobile: sem os rótulos 'Local', 'Preço', etc. */}
@@ -113,19 +113,19 @@ export default function CatalogTable({
                       {d.ano && (
                         <span className="disco-valor-ano">{d.ano}</span>
                       )}
-                      <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '12px', padding: '2px 8px', fontSize: '11px' }}>
+                      <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '12px', padding: '2px 8px', fontSize: '11px', lineHeight: 1.2 }}>
                         {d.ativo ? 'Ativo' : 'Inativo'}
                       </span>
                     </div>
                   </td>
 
                   {/* Células mantidas no DOM para compatibilidade desktop */}
-                  <td data-label="Local" className="desktop-only">{getDisplayCaixa(d)}</td>
-                  <td data-label="Artista" className={`desktop-only ${!d.artista ? "empty-artist" : ""}`}>
+                  <td data-label="Local" className="desktop-only cell-desktop-col">{getDisplayCaixa(d)}</td>
+                  <td data-label="Artista" className={`desktop-only cell-desktop-col ${!d.artista ? "empty-artist" : ""}`}>
                     {d.artista || <span className="text-empty">—</span>}
                   </td>
-                  <td data-label="Título" className="desktop-only">{d.titulo || <span className="text-empty">—</span>}</td>
-                  <td data-label="Ano" className="desktop-only">
+                  <td data-label="Título" className="desktop-only cell-desktop-col">{d.titulo || <span className="text-empty">—</span>}</td>
+                  <td data-label="Ano" className="desktop-only cell-desktop-col">
                     {d.ano ? (
                       <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '2px 7px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 600 }}>
                         {d.ano}
@@ -135,12 +135,12 @@ export default function CatalogTable({
                     )}
                   </td>
                   {showLoja && (
-                    <td data-label="Loja" className="desktop-only">
+                    <td data-label="Loja" className="desktop-only cell-desktop-col">
                       <span style={{ color: getStoreColor(d.loja) }}>{d.loja}</span>
                     </td>
                   )}
-                  <td data-label="Preço" className="desktop-only">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
-                  <td data-label="Status" className="desktop-only">
+                  <td data-label="Preço" className="desktop-only cell-desktop-col">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
+                  <td data-label="Status" className="desktop-only cell-desktop-col">
                     <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
                       {d.ativo ? 'Ativo' : 'Inativo'}
                     </span>
