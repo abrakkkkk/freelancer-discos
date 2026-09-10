@@ -104,115 +104,80 @@ export default function Movimentacoes() {
   const itensPaginados = movimentacoesFiltradas.slice((pagina - 1) * ITENS_POR_PAGINA, pagina * ITENS_POR_PAGINA);
 
   return (
-    <div className="pageContainer mov-page-container">
-      {/* Header Limpo com Métricas Discretas */}
-      <div className="mov-header">
-        <div className="mov-header-title-group">
-          <MdHistory size={24} color="var(--accent)" />
-          <h1 className="page-title" style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>
-            Histórico de Movimentações
-          </h1>
-        </div>
-
-        {!loadingHist && movimentacoes.length > 0 && (
-          <div className="mov-header-metrics">
-            <span className="mov-metric-item">
-              <span className="mov-metric-dot mov-metric-dot-green" />
-              <span><b style={{ color: '#34d399' }}>{totalEntradas}</b> entradas</span>
-            </span>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
-            <span className="mov-metric-item">
-              <span className="mov-metric-dot mov-metric-dot-red" />
-              <span><b style={{ color: '#f87171' }}>{totalSaidas}</b> saídas</span>
-            </span>
-            {totalExclusoes > 0 && (
-              <>
-                <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
-                <span className="mov-metric-item">
-                  <span className="mov-metric-dot mov-metric-dot-zinc" />
-                  <span><b>{totalExclusoes}</b> exclusões</span>
-                </span>
-              </>
-            )}
-          </div>
-        )}
+    <div className="pageContainer mov-page">
+      {/* Header Direto e Minimalista */}
+      <div className="mov-header-clean">
+        <h1>
+          <MdHistory size={22} color="var(--accent)" />
+          Histórico de Movimentações
+        </h1>
       </div>
 
-      <div className="mov-main-panel">
-        {/* Barra de Filtros Refinada e Alinhada */}
-        <div className="mov-filter-toolbar">
-          {/* Busca Rápida */}
-          <div className="mov-search-box">
-            <FiSearch color="var(--text-muted)" size={16} style={{ flexShrink: 0, marginRight: '10px' }} />
+      <div className="mov-panel-clean">
+        {/* Barra de Filtros Compacta */}
+        <div className="mov-filter-bar">
+          {/* Busca */}
+          <div className="mov-search-clean">
+            <FiSearch color="var(--text-muted)" size={15} style={{ flexShrink: 0 }} />
             <input 
               type="text" 
-              placeholder="Buscar por artista, título, observação ou caixa..." 
+              placeholder="Buscar por artista, título ou caixa..." 
               value={busca} 
               onChange={(e) => setBusca(e.target.value)}
-              className="mov-search-input"
             />
             {busca && (
               <button 
                 type="button" 
                 onClick={() => setBusca('')}
-                className="mov-search-clear"
-                title="Limpar busca"
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '16px' }}
               >
                 ×
               </button>
             )}
           </div>
 
-          {/* Segmented Controls para Tipo e Período */}
-          <div className="mov-segmented-row">
-            {/* Filtro por Tipo */}
-            <div className="mov-segmented-control">
+          {/* Controles: Abas de Tipo + Período e Loja */}
+          <div className="mov-controls-row">
+            <div className="mov-tabs-clean">
               {[
                 { value: '', label: 'Todas' },
-                { value: 'entrada', label: '↓ Entradas' },
-                { value: 'saida', label: '↑ Saídas' },
+                { value: 'entrada', label: 'Entradas' },
+                { value: 'saida', label: 'Saídas' },
               ].map(opt => (
                 <button
                   key={opt.value}
                   type="button"
                   onClick={() => setFiltroTipoMov(opt.value)}
-                  className={`mov-segmented-btn ${filtroTipoMov === opt.value ? 'active' : ''}`}
+                  className={`mov-tab-btn ${filtroTipoMov === opt.value ? 'active' : ''}`}
                 >
                   {opt.label}
                 </button>
               ))}
             </div>
 
-            {/* Filtro por Período */}
-            <div className="mov-segmented-control">
-              {[
-                { value: 'semana', label: '7 dias' },
-                { value: 'hoje', label: 'Hoje' },
-                { value: 'mes', label: '30 dias' },
-                { value: 'todos', label: 'Todos' },
-              ].map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setFiltroPeriodo(opt.value)}
-                  className={`mov-segmented-btn ${filtroPeriodo === opt.value ? 'active' : ''}`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Seletor de Loja (caso não haja loja ativa global) */}
-            {!activeStore && (
+            <div className="mov-selects-group">
               <select 
-                value={filtroLoja} 
-                onChange={(e) => setFiltroLoja(e.target.value)}
-                className="mov-store-select"
+                value={filtroPeriodo} 
+                onChange={(e) => setFiltroPeriodo(e.target.value)}
+                className="mov-select-clean"
               >
-                <option value="">Todas as Lojas</option>
-                {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                <option value="hoje">Hoje</option>
+                <option value="semana">Últimos 7 dias</option>
+                <option value="mes">Últimos 30 dias</option>
+                <option value="todos">Todo o histórico</option>
               </select>
-            )}
+
+              {!activeStore && (
+                <select 
+                  value={filtroLoja} 
+                  onChange={(e) => setFiltroLoja(e.target.value)}
+                  className="mov-select-clean"
+                >
+                  <option value="">Todas as Lojas</option>
+                  {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                </select>
+              )}
+            </div>
           </div>
         </div>
 
@@ -225,107 +190,72 @@ export default function Movimentacoes() {
           /* Estado Vazio */
           <div
             style={{
-              padding: '44px 16px',
+              padding: '40px 16px',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px',
+              gap: '6px',
             }}
           >
-            <MdHistory size={36} color="var(--text-muted)" style={{ opacity: 0.4 }} />
-            <div style={{ fontSize: '14px', fontWeight: 600, color: '#e4e4e7' }}>
+            <MdHistory size={32} color="var(--text-muted)" style={{ opacity: 0.3 }} />
+            <div style={{ fontSize: '13.5px', fontWeight: 600, color: '#e4e4e7' }}>
               Nenhuma movimentação encontrada
             </div>
             <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
               {busca || filtroTipoMov || filtroPeriodo !== 'semana'
-                ? 'Tente ajustar os filtros acima ou limpar a busca.'
+                ? 'Tente ajustar os filtros ou a busca.'
                 : 'Não há registros para o período selecionado.'}
             </div>
           </div>
         ) : (
           <>
-            {/* 1. VISUALIZAÇÃO EM CARDS PARA MOBILE (<= 768px) */}
-            <div className="movimentacoes-cards-mobile">
+            {/* 1. FEED MINIMALISTA PARA MOBILE (<= 768px) */}
+            <div className="mov-feed-list">
               {itensPaginados.map((m) => {
                 const item = getItemData(m);
                 const isEntrada = m.tipo === 'entrada';
                 const isSaida = m.tipo === 'saida';
-                const cardModifier = isEntrada ? 'mov-card-entrada' : isSaida ? 'mov-card-saida' : 'mov-card-exclusao';
-                const badgeClass = isEntrada ? 'mov-badge-entrada' : isSaida ? 'mov-badge-saida' : 'mov-badge-exclusao';
-                const isAutoDeleteObs = m.observacao === 'Saída (Excluído via Catálogo)';
-                const hasCustomObs = m.observacao && m.observacao !== '—' && !isAutoDeleteObs;
+                const statusColorClass = isEntrada ? 'mov-status-entrada' : isSaida ? 'mov-status-saida' : 'mov-status-exclusao';
+                const statusLabel = isEntrada ? '+ Entrada' : isSaida ? '− Saída' : '✖ Exclusão';
+
+                // Detalhes em texto simples: Artista • Caixa • Data
+                const details = [
+                  item.artista && item.artista !== '—' ? item.artista : null,
+                  item.caixa && item.caixa !== '—' ? formatCaixa(item.caixa, item.loja) : null,
+                  !activeStore && item.loja && item.loja !== '—' ? item.loja : null,
+                  formatarDataHora(m.criado_em),
+                ].filter(Boolean).join(' • ');
 
                 return (
-                  <div key={m.id} className={`mov-card ${cardModifier}`}>
-                    {/* Linha 1: Título e Data */}
-                    <div className="mov-card-line1">
-                      <span className="mov-card-titulo" title={item.titulo}>
+                  <div key={m.id} className="mov-row-item">
+                    <div className="mov-item-content">
+                      <span className="mov-item-title" title={item.titulo}>
                         {item.titulo}
                       </span>
-                      <span className="mov-card-data">
-                        {formatarDataHora(m.criado_em)}
+                      <span className="mov-item-subtitle" title={details}>
+                        {details}
                       </span>
                     </div>
 
-                    {/* Linha 2: Artista + Tags + Badge */}
-                    <div className="mov-card-line2">
-                      <div className="mov-card-meta">
-                        {item.artista && item.artista !== '—' && (
-                          <span className="mov-card-artista" title={item.artista}>
-                            {item.artista}
-                          </span>
-                        )}
-
-                        {item.caixa && item.caixa !== '—' && (
-                          <span className="mov-card-tag">
-                            {formatCaixa(item.caixa, item.loja)}
-                          </span>
-                        )}
-
-                        {!activeStore && item.loja && item.loja !== '—' && (
-                          <span 
-                            className="mov-card-tag"
-                            style={{
-                              color: 'var(--accent)',
-                              background: 'rgba(197, 48, 48, 0.12)',
-                              borderColor: 'rgba(197, 48, 48, 0.25)'
-                            }}
-                          >
-                            {item.loja}
-                          </span>
-                        )}
-                      </div>
-
-                      <span className={`mov-card-badge ${badgeClass}`}>
-                        {isEntrada ? '↓ Entrada' : isSaida ? '↑ Saída' : '✖ Exclusão'}
-                      </span>
-                    </div>
-
-                    {/* Observação apenas se não for a automática de exclusão */}
-                    {hasCustomObs && (
-                      <div className="mov-card-obs" title={m.observacao}>
-                        📝 {m.observacao}
-                      </div>
-                    )}
+                    <span className={`mov-item-status ${statusColorClass}`}>
+                      {statusLabel}
+                    </span>
                   </div>
                 );
               })}
             </div>
 
-            {/* 2. TABELA LIMPA PARA DESKTOP (> 768px) */}
-            <div className="movimentacoes-table-desktop table-responsive">
+            {/* 2. TABELA DIRETA PARA DESKTOP (> 768px) */}
+            <div className="mov-table-desktop">
               <table>
                 <thead>
                   <tr>
-                    <th>Data</th>
-                    <th>Tipo</th>
-                    <th>Localização</th>
-                    {!activeStore && <th>Loja</th>}
-                    <th>Artista</th>
-                    <th>Título</th>
-                    <th>Observação</th>
+                    <th>Item</th>
+                    <th style={{ width: '130px' }}>Tipo</th>
+                    <th style={{ width: '160px' }}>Local</th>
+                    <th style={{ width: '160px' }}>Data</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -333,44 +263,30 @@ export default function Movimentacoes() {
                     const item = getItemData(m);
                     const isEntrada = m.tipo === 'entrada';
                     const isSaida = m.tipo === 'saida';
-                    const isAutoDeleteObs = m.observacao === 'Saída (Excluído via Catálogo)';
-                    const displayObs = isAutoDeleteObs ? 'Excluído via catálogo' : (m.observacao || '—');
+                    const statusColorClass = isEntrada ? 'mov-status-entrada' : isSaida ? 'mov-status-saida' : 'mov-status-exclusao';
+                    const statusLabel = isEntrada ? '↓ Entrada' : isSaida ? '↑ Saída' : '✖ Exclusão';
 
                     return (
                       <tr key={m.id}>
-                        <td data-label="Data" style={{ fontSize: '12.5px', whiteSpace: 'nowrap', color: 'var(--text-muted)' }}>
-                          {formatarDataHora(m.criado_em)}
+                        <td>
+                          <div style={{ fontWeight: 600, color: '#ffffff', lineHeight: 1.3 }}>{item.titulo}</div>
+                          {item.artista && item.artista !== '—' && (
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{item.artista}</div>
+                          )}
                         </td>
-                        <td data-label="Tipo">
-                          <span
-                            style={{
-                              fontSize: '11.5px',
-                              fontWeight: 700,
-                              padding: '2px 8px',
-                              borderRadius: '6px',
-                              background: isEntrada
-                                ? 'rgba(16, 185, 129, 0.14)'
-                                : isSaida
-                                ? 'rgba(239, 68, 68, 0.14)'
-                                : 'rgba(113, 113, 122, 0.14)',
-                              color: isEntrada ? '#34d399' : isSaida ? '#f87171' : '#a1a1aa',
-                              border: `1px solid ${isEntrada ? 'rgba(16, 185, 129, 0.3)' : isSaida ? 'rgba(239, 68, 68, 0.3)' : 'rgba(113, 113, 122, 0.3)'}`,
-                              whiteSpace: 'nowrap',
-                            }}
-                          >
-                            {isEntrada ? '↓ Entrada' : isSaida ? '↑ Saída' : '✖ Exclusão'}
+                        <td>
+                          <span className={statusColorClass} style={{ fontWeight: 600, fontSize: '12.5px' }}>
+                            {statusLabel}
                           </span>
                         </td>
-                        <td data-label="Local">{formatCaixa(item.caixa, item.loja)}</td>
-                        {!activeStore && (
-                          <td data-label="Loja">
-                            <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{item.loja || '—'}</span>
-                          </td>
-                        )}
-                        <td data-label="Artista">{item.artista || '—'}</td>
-                        <td data-label="Título" style={{ fontWeight: 600, color: '#fff' }}>{item.titulo}</td>
-                        <td data-label="Observação" style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>
-                          {displayObs}
+                        <td style={{ color: 'var(--text-muted)', fontSize: '12.5px' }}>
+                          {formatCaixa(item.caixa, item.loja)}
+                          {!activeStore && item.loja && (
+                            <span style={{ marginLeft: '6px', color: 'var(--accent)', fontWeight: 600 }}>({item.loja})</span>
+                          )}
+                        </td>
+                        <td style={{ color: 'var(--text-muted)', fontSize: '12px', whiteSpace: 'nowrap' }}>
+                          {formatarDataHora(m.criado_em)}
                         </td>
                       </tr>
                     );
