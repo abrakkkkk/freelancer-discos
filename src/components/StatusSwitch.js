@@ -1,13 +1,13 @@
 'use client';
 
 /**
- * StatusSwitch - Alternador moderno e compacto entre Balcão (Ativo) e Estoque Superior (Inativo)
+ * StatusSwitch - Alternador moderno e compacto entre Ativo e Inativo
  * 
- * @param {boolean} ativo - Estado atual (true = Ativo/Balcão, false = Estoque Superior)
+ * @param {boolean} ativo - Estado atual (true = Ativo, false = Inativo)
  * @param {function} onChange - Callback (novoAtivo: boolean) => void
  * @param {string} label - Rótulo opcional para o campo
  */
-export default function StatusSwitch({ ativo = true, onChange, label = "Destino do Item" }) {
+export default function StatusSwitch({ ativo = true, onChange, label = "Status" }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
       {label && (
@@ -34,7 +34,7 @@ export default function StatusSwitch({ ativo = true, onChange, label = "Destino 
           type="button"
           onClick={() => onChange?.(true)}
           style={{
-            padding: '6px 14px',
+            padding: '6px 16px',
             fontSize: '12.5px',
             fontWeight: ativo ? 600 : 500,
             borderRadius: '6px',
@@ -59,14 +59,14 @@ export default function StatusSwitch({ ativo = true, onChange, label = "Destino 
               transition: 'background 0.18s ease',
             }}
           />
-          Balcão (Ativo)
+          Ativo
         </button>
 
         <button
           type="button"
           onClick={() => onChange?.(false)}
           style={{
-            padding: '6px 14px',
+            padding: '6px 16px',
             fontSize: '12.5px',
             fontWeight: !ativo ? 600 : 500,
             borderRadius: '6px',
@@ -91,7 +91,7 @@ export default function StatusSwitch({ ativo = true, onChange, label = "Destino 
               transition: 'background 0.18s ease',
             }}
           />
-          Estoque Superior
+          Inativo
         </button>
       </div>
     </div>

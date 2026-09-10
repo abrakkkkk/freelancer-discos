@@ -277,7 +277,7 @@ export default function AdicionarItem() {
       // Sucesso
       const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
       const localText = form.caixa ? ` em "${form.caixa}"` : '';
-      const statusText = form.ativo === false ? ' [Estoque Superior]' : '';
+      const statusText = form.ativo === false ? ' [Inativo]' : '';
       
       const lojaText = form.loja ? ` (${form.loja})` : '';
       

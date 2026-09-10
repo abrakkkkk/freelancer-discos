@@ -385,13 +385,18 @@ function EditarExcluirContent() {
     try {
       const itemParaExcluir = resultados.find(d => d.id === id) || itemEditando;
       const snapshotAntes = JSON.parse(JSON.stringify(itemParaExcluir));
+      const isAtivo = itemParaExcluir?.ativo !== false;
       
       await itemService.deleteItem(tipo, id);
       
-      const movData = movimentacaoService.createMovementPayload(tipo, id, 'saida', itemParaExcluir?.quantidade || 1, 'Saída (Excluído via Edição)');
-      await movimentacaoService.registerMovement(movData);
+      if (isAtivo) {
+        const movData = movimentacaoService.createMovementPayload(tipo, id, 'saida', itemParaExcluir?.quantidade || 1, 'Saída (Excluído via Edição)');
+        await movimentacaoService.registerMovement(movData);
+        setMensagem({ tipo: 'success', texto: `Saída do ${tipoNome} registrada.` });
+      } else {
+        setMensagem({ tipo: 'success', texto: `${tipoNome} (Inativo) excluído com sucesso.` });
+      }
 
-      setMensagem({ tipo: 'success', texto: `Saída do ${tipoNome} registrada.` });
       setConfirmarExclusao(null);
       setResultados(prev => prev.filter(d => d.id !== id));
       registerUndo(tipo, [snapshotAntes], () => {

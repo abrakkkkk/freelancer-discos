@@ -101,7 +101,7 @@ export default function ReposicaoModal({
               Reposição Disponível!
             </h2>
             <p style={{ fontSize: '12px', color: '#a1a1aa', margin: '2px 0 0 0' }}>
-              Há cópia reserva no Estoque Superior
+              Há cópia reserva inativa cadastrada
             </p>
           </div>
         </div>
@@ -169,8 +169,8 @@ export default function ReposicaoModal({
         </div>
 
         <p style={{ fontSize: '13px', color: '#d4d4d8', margin: '0 0 20px 0', lineHeight: 1.4 }}>
-          Deseja ativar esta cópia do <strong>Estoque Superior</strong> e colocá-la na{' '}
-          <strong>{itemSaida?.caixa ? `Caixa ${itemSaida.caixa}` : 'mesma caixa'}</strong> no balcão?
+          Deseja ativar esta cópia <strong>inativa</strong> e colocá-la na{' '}
+          <strong>{itemSaida?.caixa ? `Caixa ${itemSaida.caixa}` : 'mesma caixa'}</strong>?
         </p>
 
         {/* Botões de Ação */}

@@ -104,13 +104,13 @@ export function ReposicaoProvider({ children }) {
     );
 
     // 2. Registrar movimentação de entrada
-    const destinoLocal = itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'Balcão';
+    const destinoLocal = itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'estoque ativo';
     const movData = movimentacaoService.createMovementPayload(
       categoria,
       reserva.id,
       'entrada',
       1,
-      `Reposição do Estoque Superior para ${destinoLocal}`
+      `Ativação de cópia reserva para ${destinoLocal}`
     );
     await movimentacaoService.registerMovement(movData);
 

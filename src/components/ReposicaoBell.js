@@ -229,7 +229,7 @@ export default function ReposicaoBell() {
                   Nenhuma reposição pendente
                 </div>
                 <div style={{ fontSize: '11.5px', lineHeight: 1.4 }}>
-                  Ao excluir itens que possuam cópia no <strong>Estoque Superior</strong>, as tarefas de reposição aparecerão aqui.
+                  Ao excluir itens que possuam cópia <strong>inativa</strong>, as tarefas de reposição aparecerão aqui.
                 </div>
               </div>
             ) : (
@@ -297,14 +297,14 @@ export default function ReposicaoBell() {
                       <div>
                         Saída de:{' '}
                         <strong style={{ color: '#e4e4e7' }}>
-                          {t.itemSaida?.caixa ? `Caixa ${t.itemSaida.caixa}` : 'Balcão'}
+                          {t.itemSaida?.caixa ? `Caixa ${t.itemSaida.caixa}` : 'Ativo'}
                         </strong>
                         {t.itemSaida?.loja ? ` (${t.itemSaida.loja})` : ''}
                       </div>
                       <div>
                         Reserva em:{' '}
                         <strong style={{ color: '#fbbf24' }}>
-                          {t.reserva?.caixa ? `Caixa ${t.reserva.caixa}` : 'Estoque Superior'}
+                          {t.reserva?.caixa ? `Caixa ${t.reserva.caixa}` : 'Inativo'}
                         </strong>
                         {t.reserva?.loja ? ` (${t.reserva.loja})` : ''}
                       </div>

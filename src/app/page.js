@@ -76,10 +76,15 @@ export default function CatalogoClone() {
 
     try {
       const itemToDelete = catalog.itens.find(i => i.id === id);
+      const isAtivo = itemToDelete?.ativo !== false;
+
       await itemService.deleteItem(catalog.activeTab, id);
       
-      const movData = movimentacaoService.createMovementPayload(catalog.activeTab, id, 'saida', itemToDelete?.quantidade || 1, 'Saída (Excluído via Catálogo)');
-      await movimentacaoService.registerMovement(movData);
+      // Se for ativo, registra movimentação de saída. Se for inativo, só exclui sem movimentação de saída!
+      if (isAtivo) {
+        const movData = movimentacaoService.createMovementPayload(catalog.activeTab, id, 'saida', itemToDelete?.quantidade || 1, 'Saída (Excluído via Catálogo)');
+        await movimentacaoService.registerMovement(movData);
+      }
 
       catalog.setItens(catalog.itens.filter(i => i.id !== id));
       catalog.setTotal(catalog.total - 1);
@@ -91,35 +96,42 @@ export default function CatalogoClone() {
       }
       setItemParaExcluir(null);
 
-      // Checa se existe cópia no Estoque Superior para reposição imediata
-      try {
-        const replacements = await itemService.findReplacements(catalog.activeTab, {
-          titulo: itemToDelete?.titulo,
-          artista: itemToDelete?.artista,
-          excludeId: id,
-        });
-        if (replacements && replacements.length > 0) {
-          const reserva = replacements[0];
-          // Adiciona tarefa ao sininho de notificações
-          adicionarTarefa({
-            itemSaida: itemToDelete,
-            reserva,
-            totalReservas: replacements.length,
-            categoria: catalog.activeTab,
+      // Checa se existe cópia inativa para reposição APENAS se o item excluído era ativo
+      if (isAtivo) {
+        try {
+          const replacements = await itemService.findReplacements(catalog.activeTab, {
+            titulo: itemToDelete?.titulo,
+            artista: itemToDelete?.artista,
+            excludeId: id,
           });
+          if (replacements && replacements.length > 0) {
+            const reserva = replacements[0];
+            // Adiciona tarefa ao sininho de notificações
+            adicionarTarefa({
+              itemSaida: itemToDelete,
+              reserva,
+              totalReservas: replacements.length,
+              categoria: catalog.activeTab,
+            });
 
-          setReposicaoData({
-            itemSaida: itemToDelete,
-            reserva,
-            totalReservas: replacements.length,
-          });
+            setReposicaoData({
+              itemSaida: itemToDelete,
+              reserva,
+              totalReservas: replacements.length,
+            });
+          }
+        } catch (e) {
+          console.warn('Erro ao verificar reposição:', e);
         }
-      } catch (e) {
-        console.warn('Erro ao verificar reposição:', e);
       }
+
+      setFeedbackMsg({
+        tipo: 'success',
+        texto: isAtivo ? `Saída de "${titulo}" registrada.` : `"${titulo}" (Inativo) excluído com sucesso.`
+      });
     } catch (error) {
       console.error("Erro ao excluir:", error);
-      setFeedbackMsg({ tipo: 'error', texto: `Erro ao registrar saída de "${titulo}": ${error.message || 'Falha na operação.'}` });
+      setFeedbackMsg({ tipo: 'error', texto: `Erro ao excluir "${titulo}": ${error.message || 'Falha na operação.'}` });
     } finally {
       setIsExcluindo(false);
     }
@@ -137,12 +149,13 @@ export default function CatalogoClone() {
         itemSaida.loja
       );
       
+      const destinoLocal = itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'estoque ativo';
       const movData = movimentacaoService.createMovementPayload(
         catalog.activeTab,
         reserva.id,
         'entrada',
         1,
-        `Reposição do Estoque Superior para ${itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'Balcão'}`
+        `Ativação de cópia reserva para ${destinoLocal}`
       );
       await movimentacaoService.registerMovement(movData);
 
