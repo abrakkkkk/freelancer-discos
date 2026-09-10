@@ -640,11 +640,12 @@ export default function AdicionarItem() {
             cursor: 'pointer',
             userSelect: 'none',
             padding: '10px 14px',
+            minHeight: '44px',
             borderRadius: '8px',
             background: modoSequencia ? 'rgba(59, 130, 246, 0.08)' : 'rgba(255, 255, 255, 0.02)',
             border: `1px solid ${modoSequencia ? 'var(--accent)' : 'var(--border)'}`,
             transition: 'all 0.2s ease',
-            maxWidth: '420px'
+            maxWidth: '380px'
           }}>
             <input 
               type="checkbox" 
@@ -657,14 +658,9 @@ export default function AdicionarItem() {
                 cursor: 'pointer' 
               }}
             />
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>
-                Modo em sequência (manter Caixa e Loja)
-              </span>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                Mantém Caixa e Loja preenchidas para cadastrar vários itens seguidos.
-              </span>
-            </div>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
+              Manter Caixa e Loja
+            </span>
           </label>
 
           <button 
@@ -685,7 +681,7 @@ export default function AdicionarItem() {
             {isSubmitting 
               ? 'Adicionando...' 
               : modoSequencia 
-                ? `Salvar e Adicionar Outro (${form.caixa ? form.caixa : 'Mesma Caixa'})` 
+                ? 'Salvar e Adicionar Outro' 
                 : `Adicionar ${activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}`
             }
           </button>
