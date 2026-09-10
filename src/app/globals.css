@@ -533,6 +533,11 @@ tbody tr:last-child td {
   background: #4b5563;
   color: #f3f4f6;
 }
+.badge-estoque-superior {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
 
 /* ========== ALERTS ========== */
 .alert {
@@ -1454,9 +1459,9 @@ tbody tr:last-child td {
   }
 
   .disco-valor-status.status-inativo {
-    color: #f87171 !important;
-    background: rgba(239, 68, 68, 0.14) !important;
-    border: 1px solid rgba(239, 68, 68, 0.28) !important;
+    color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.14) !important;
+    border: 1px solid rgba(245, 158, 11, 0.28) !important;
   }
 
   tr.card-disco td[data-label="Ação"],

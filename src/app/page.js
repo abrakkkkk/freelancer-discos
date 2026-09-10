@@ -16,6 +16,7 @@ import { useStore } from '@/contexts/StoreContext';
 
 
 import ConfirmModal from '@/components/ConfirmModal';
+import ReposicaoModal from '@/components/ReposicaoModal';
 import AlertMessage from '@/components/AlertMessage';
 
 export default function CatalogoClone() {
@@ -25,6 +26,8 @@ export default function CatalogoClone() {
   const [itemParaExcluir, setItemParaExcluir] = useState(null);
   const [isExcluindo, setIsExcluindo] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState(null);
+  const [reposicaoData, setReposicaoData] = useState(null);
+  const [isRepondo, setIsRepondo] = useState(false);
 
   const { registerUndo } = useUndo();
   const { activeStore } = useStore();
@@ -85,11 +88,64 @@ export default function CatalogoClone() {
         });
       }
       setItemParaExcluir(null);
+
+      // Checa se existe cópia no Estoque Superior para reposição imediata
+      try {
+        const replacements = await itemService.findReplacements(catalog.activeTab, {
+          titulo: itemToDelete?.titulo,
+          artista: itemToDelete?.artista,
+          excludeId: id,
+        });
+        if (replacements && replacements.length > 0) {
+          setReposicaoData({
+            itemSaida: itemToDelete,
+            reserva: replacements[0],
+            totalReservas: replacements.length,
+          });
+        }
+      } catch (e) {
+        console.warn('Erro ao verificar reposição:', e);
+      }
     } catch (error) {
       console.error("Erro ao excluir:", error);
       setFeedbackMsg({ tipo: 'error', texto: `Erro ao registrar saída de "${titulo}": ${error.message || 'Falha na operação.'}` });
     } finally {
       setIsExcluindo(false);
+    }
+  };
+
+  const handleConfirmarRepor = async () => {
+    if (!reposicaoData || isRepondo) return;
+    setIsRepondo(true);
+    try {
+      const { itemSaida, reserva } = reposicaoData;
+      await itemService.promoteReplacement(
+        catalog.activeTab,
+        reserva.id,
+        itemSaida.caixa,
+        itemSaida.loja
+      );
+      
+      const movData = movimentacaoService.createMovementPayload(
+        catalog.activeTab,
+        reserva.id,
+        'entrada',
+        1,
+        `Reposição do Estoque Superior para ${itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'Balcão'}`
+      );
+      await movimentacaoService.registerMovement(movData);
+
+      setFeedbackMsg({
+        tipo: 'success',
+        texto: `"${reserva.titulo}" reposto com sucesso na ${itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'sua localização'}!`
+      });
+      setReposicaoData(null);
+      catalog.refresh();
+    } catch (err) {
+      console.error(err);
+      setFeedbackMsg({ tipo: 'error', texto: `Erro ao repor item: ${err.message}` });
+    } finally {
+      setIsRepondo(false);
     }
   };
   
@@ -304,6 +360,16 @@ export default function CatalogoClone() {
         isSubmitting={isExcluindo}
         onClose={() => setItemParaExcluir(null)}
         onConfirm={confirmarExclusao}
+      />
+
+      <ReposicaoModal
+        isOpen={!!reposicaoData}
+        itemSaida={reposicaoData?.itemSaida}
+        reserva={reposicaoData?.reserva}
+        totalReservas={reposicaoData?.totalReservas}
+        isRepondo={isRepondo}
+        onConfirmRepor={handleConfirmarRepor}
+        onClose={() => setReposicaoData(null)}
       />
     </div>
   );

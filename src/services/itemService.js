@@ -261,5 +261,72 @@ export const itemService = {
       return unicas;
     }
     return [];
+  },
+
+  /**
+   * Busca cópias inativas (Estoque Superior) para reposição
+   */
+  async findReplacements(category, { titulo, artista, excludeId = null }) {
+    if (!titulo || titulo.trim().length < 2) return [];
+
+    const isVideo = category === 'dvds' || category === 'vhs';
+    const tituloClean = titulo.trim();
+    const tituloSemAcento = removeAcentos(tituloClean);
+
+    let columns = 'id, titulo, preco, loja, caixa, ativo, ano';
+    if (!isVideo) columns += ', artista';
+
+    let query = supabase
+      .from(category)
+      .select(columns)
+      .eq('deletado', false)
+      .eq('ativo', false);
+
+    if (excludeId) {
+      query = query.neq('id', excludeId);
+    }
+
+    const words = tituloSemAcento.split(/\s+/).slice(0, 3);
+    words.forEach(word => {
+      if (word.length >= 2) {
+        const wildcardWord = word.replace(/[aeiou]/g, '_');
+        query = query.ilike('titulo', `%${wildcardWord}%`);
+      }
+    });
+
+    if (!isVideo && artista && artista.trim().length >= 2) {
+      const artistaWords = removeAcentos(artista.trim()).split(/\s+/).slice(0, 2);
+      artistaWords.forEach(w => {
+        if (w.length >= 2) {
+          const wildcard = w.replace(/[aeiou]/g, '_');
+          query = query.ilike('artista', `%${wildcard}%`);
+        }
+      });
+    }
+
+    const { data, error } = await query.limit(10);
+    if (error || !data) return [];
+
+    return data.filter(item => {
+      const itemTitulo = removeAcentos(item.titulo || '').toLowerCase();
+      const targetTitulo = tituloSemAcento.toLowerCase();
+      if (!isVideo && artista) {
+        const itemArtista = removeAcentos(item.artista || '').toLowerCase();
+        const targetArtista = removeAcentos(artista).toLowerCase();
+        return (itemTitulo.includes(targetTitulo) || targetTitulo.includes(itemTitulo)) &&
+               (itemArtista.includes(targetArtista) || targetArtista.includes(itemArtista));
+      }
+      return itemTitulo.includes(targetTitulo) || targetTitulo.includes(itemTitulo);
+    });
+  },
+
+  /**
+   * Efetiva a reposição: ativa o disco reserva do Estoque Superior e move para a caixa de destino
+   */
+  async promoteReplacement(category, replacementId, targetCaixa, targetLoja) {
+    const updateData = { ativo: true };
+    if (targetCaixa) updateData.caixa = targetCaixa;
+    if (targetLoja) updateData.loja = targetLoja;
+    await this.updateItem(category, replacementId, updateData);
   }
 };

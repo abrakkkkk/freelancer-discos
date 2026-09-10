@@ -133,7 +133,7 @@ export default function CatalogTable({
                         </span>
                       )}
                       <span className={`disco-valor-status ${d.ativo ? 'status-ativo' : 'status-inativo'}`}>
-                        {d.ativo ? 'Ativo' : 'Inativo'}
+                        {d.ativo ? 'Ativo' : 'Estoque Superior'}
                       </span>
                     </div>
                   </td>
@@ -160,8 +160,8 @@ export default function CatalogTable({
                   )}
                   <td data-label="Preço" className="desktop-only cell-desktop-col">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                   <td data-label="Status" className="desktop-only cell-desktop-col">
-                    <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
-                      {d.ativo ? 'Ativo' : 'Inativo'}
+                    <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-estoque-superior'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
+                      {d.ativo ? 'Ativo' : 'Estoque Superior'}
                     </span>
                   </td>
                   <td data-label="Ação">
@@ -219,8 +219,8 @@ export default function CatalogTable({
                 )}
                 <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                 <td data-label="Status">
-                  <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-saida'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
-                    {d.ativo ? 'Ativo' : 'Inativo'}
+                  <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-estoque-superior'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
+                    {d.ativo ? 'Ativo' : 'Estoque Superior'}
                   </span>
                 </td>
                 <td data-label="Ação">

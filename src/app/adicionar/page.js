@@ -28,6 +28,7 @@ const INITIAL_FORM = {
   loja: '',
   preco: '',
   observacao: '',
+  ativo: true,
 };
 
 export default function AdicionarItem() {
@@ -109,7 +110,7 @@ export default function AdicionarItem() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setMensagem(null);
-    setForm({ ...INITIAL_FORM, loja: activeStore || '' });
+    setForm({ ...INITIAL_FORM, loja: activeStore || '', ativo: true });
     setSelectedCover(null);
     setMostrarSugestoesArtista(false);
     setMostrarSugestoesTitulo(false);
@@ -276,6 +277,7 @@ export default function AdicionarItem() {
         observacao: form.observacao || null,
         caixa: form.caixa?.trim() || null,
         ano: form.ano?.trim() || null,
+        ativo: form.ativo !== false,
       };
 
       if (!isVideo) insertData.artista = form.artista.trim();
@@ -323,19 +325,20 @@ export default function AdicionarItem() {
       // Sucesso
       const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
       const localText = form.caixa ? ` em "${form.caixa}"` : '';
+      const statusText = form.ativo === false ? ' [Estoque Superior]' : '';
       
       if (modoSequencia) {
         setMensagem({ 
           tipo: 'success', 
-          texto: `"${form.titulo}" adicionado como ${tipoNome}${localText} (${form.loja})! Pronto para o próximo na mesma caixa.` 
+          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText} (${form.loja})! Pronto para o próximo.` 
         });
-        setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja });
+        setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja, ativo: form.ativo !== false });
       } else {
         setMensagem({ 
           tipo: 'success', 
-          texto: `"${form.titulo}" adicionado como ${tipoNome}${localText} (${form.loja}).` 
+          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText} (${form.loja}).` 
         });
-        setForm({ ...INITIAL_FORM, loja: activeStore || '' });
+        setForm({ ...INITIAL_FORM, loja: activeStore || '', ativo: true });
       }
 
       setQueryDiscogs('');
@@ -577,6 +580,56 @@ export default function AdicionarItem() {
             style={{ width: '100%', resize: 'vertical' }}
             placeholder="Qualquer detalhe adicional sobre o item..."
           ></textarea>
+        </div>
+
+        <div className="form-group" style={{ marginBottom: '16px' }}>
+          <label>Destino do Item</label>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => setForm(prev => ({ ...prev, ativo: true }))}
+              style={{
+                flex: '1 1 180px',
+                minHeight: '44px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                border: form.ativo !== false ? '1px solid var(--accent)' : '1px solid var(--border)',
+                background: form.ativo !== false ? 'rgba(59, 130, 246, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                color: form.ativo !== false ? 'var(--accent)' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>●</span> Balcão / Loja (Ativo)
+            </button>
+            <button
+              type="button"
+              onClick={() => setForm(prev => ({ ...prev, ativo: false }))}
+              style={{
+                flex: '1 1 180px',
+                minHeight: '44px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                border: form.ativo === false ? '1px solid #f59e0b' : '1px solid var(--border)',
+                background: form.ativo === false ? 'rgba(245, 158, 11, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                color: form.ativo === false ? '#f59e0b' : 'var(--text-muted)',
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>📦</span> Estoque Superior (Inativo)
+            </button>
+          </div>
         </div>
 
         {duplicatas.length > 0 && (
