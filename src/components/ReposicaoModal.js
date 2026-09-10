@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { PiVinylRecord } from 'react-icons/pi';
-import { MdCheckCircle, MdClose } from 'react-icons/md';
+import { MdCheckCircle, MdClose, MdLayers } from 'react-icons/md';
 
 export default function ReposicaoModal({
   isOpen,
@@ -94,7 +94,7 @@ export default function ReposicaoModal({
               flexShrink: 0,
             }}
           >
-            📦
+            <MdLayers size={22} color="#f59e0b" />
           </div>
           <div style={{ flex: 1 }}>
             <h2 style={{ fontSize: '17px', fontWeight: 700, margin: 0, color: '#f4f4f5' }}>

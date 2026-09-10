@@ -582,52 +582,42 @@ export default function AdicionarItem() {
           ></textarea>
         </div>
 
-        <div className="form-group" style={{ marginBottom: '16px' }}>
-          <label>Destino do Item</label>
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <div className="form-group" style={{ marginBottom: '14px' }}>
+          <label style={{ fontSize: '13px', marginBottom: '6px', display: 'block' }}>Destino do Item</label>
+          <div style={{ display: 'inline-flex', gap: '8px', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => setForm(prev => ({ ...prev, ativo: true }))}
               style={{
-                flex: '1 1 180px',
-                minHeight: '44px',
-                padding: '10px 14px',
-                borderRadius: '8px',
+                padding: '6px 12px',
+                borderRadius: '6px',
                 border: form.ativo !== false ? '1px solid var(--accent)' : '1px solid var(--border)',
-                background: form.ativo !== false ? 'rgba(59, 130, 246, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                background: form.ativo !== false ? 'rgba(59, 130, 246, 0.14)' : 'transparent',
                 color: form.ativo !== false ? 'var(--accent)' : 'var(--text-muted)',
-                fontWeight: 600,
-                fontSize: '13px',
+                fontWeight: form.ativo !== false ? 600 : 500,
+                fontSize: '12.5px',
                 cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
+                transition: 'all 0.15s ease'
               }}
             >
-              <span>●</span> Balcão / Loja (Ativo)
+              Balcão (Ativo)
             </button>
             <button
               type="button"
               onClick={() => setForm(prev => ({ ...prev, ativo: false }))}
               style={{
-                flex: '1 1 180px',
-                minHeight: '44px',
-                padding: '10px 14px',
-                borderRadius: '8px',
+                padding: '6px 12px',
+                borderRadius: '6px',
                 border: form.ativo === false ? '1px solid #f59e0b' : '1px solid var(--border)',
-                background: form.ativo === false ? 'rgba(245, 158, 11, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                background: form.ativo === false ? 'rgba(245, 158, 11, 0.14)' : 'transparent',
                 color: form.ativo === false ? '#f59e0b' : 'var(--text-muted)',
-                fontWeight: 600,
-                fontSize: '13px',
+                fontWeight: form.ativo === false ? 600 : 500,
+                fontSize: '12.5px',
                 cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
+                transition: 'all 0.15s ease'
               }}
             >
-              <span>📦</span> Estoque Superior (Inativo)
+              Estoque Superior (Inativo)
             </button>
           </div>
         </div>
