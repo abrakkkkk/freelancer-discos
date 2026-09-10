@@ -16,16 +16,18 @@ const links = [
 
 import { useState } from 'react';
 import { MdDownload } from "react-icons/md";
+import { useStore } from '@/contexts/StoreContext';
 
 export default function BottomNav() {
   const pathname = usePathname();
+  const { activeStore } = useStore();
   const [exportando, setExportando] = useState(false);
 
   async function handleExport() {
     setExportando(true);
     try {
       const { exportarEstoqueCompleto } = await import('@/utils/export');
-      await exportarEstoqueCompleto();
+      await exportarEstoqueCompleto(activeStore);
     } catch (err) {
       console.error(err);
       alert('Erro ao exportar planilha');

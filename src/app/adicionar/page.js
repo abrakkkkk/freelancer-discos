@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaMagnifyingGlass, FaBarcode } from "react-icons/fa6";
@@ -11,7 +11,6 @@ import { useCaixas } from '@/hooks/useCaixas';
 import { useItemForm } from '@/hooks/useItemForm';
 import { itemService } from '@/services/itemService';
 import { movimentacaoService } from '@/services/movimentacaoService';
-import { useEffect } from 'react';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
@@ -38,6 +37,29 @@ export default function AdicionarItem() {
   const { caixas } = useCaixas();
   const [mensagem, setMensagem] = useState(null);
   const { activeStore } = useStore();
+
+  const artistaInputRef = useRef(null);
+  const tituloInputRef = useRef(null);
+
+  const [modoSequencia, setModoSequencia] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return localStorage.getItem('freelancer_adicionar_sequencia') !== 'false';
+      } catch (_) {
+        return true;
+      }
+    }
+    return true;
+  });
+
+  const handleToggleSequencia = (checked) => {
+    setModoSequencia(checked);
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('freelancer_adicionar_sequencia', String(checked));
+      } catch (_) {}
+    }
+  };
 
   const [queryDiscogs, setQueryDiscogs] = useState('');
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
@@ -268,9 +290,32 @@ export default function AdicionarItem() {
       const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';
       const localText = form.caixa ? ` em "${form.caixa}"` : '';
       
-      setMensagem({ tipo: 'success', texto: `"${form.titulo}" adicionado como ${tipoNome}${localText} (${form.loja}).` });
-      setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja });
+      if (modoSequencia) {
+        setMensagem({ 
+          tipo: 'success', 
+          texto: `"${form.titulo}" adicionado como ${tipoNome}${localText} (${form.loja})! Pronto para o próximo na mesma caixa.` 
+        });
+        setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja });
+      } else {
+        setMensagem({ 
+          tipo: 'success', 
+          texto: `"${form.titulo}" adicionado como ${tipoNome}${localText} (${form.loja}).` 
+        });
+        setForm({ ...INITIAL_FORM, loja: activeStore || '' });
+      }
+
+      setQueryDiscogs('');
+      setDiscogsResults([]);
+      setShowDiscogsDropdown(false);
       setDuplicatas([]);
+
+      setTimeout(() => {
+        if (isVideo) {
+          tituloInputRef.current?.focus();
+        } else {
+          artistaInputRef.current?.focus();
+        }
+      }, 50);
     } catch (err) {
       console.error(err);
       setMensagem({ tipo: 'error', texto: `Erro: ${err.message}` });
@@ -394,6 +439,7 @@ export default function AdicionarItem() {
             <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
               <label>Artista</label>
               <input 
+                ref={artistaInputRef}
                 name="artista" 
                 value={form.artista} 
                 onChange={handleChange} 
@@ -426,6 +472,7 @@ export default function AdicionarItem() {
               )}
             </div>
             <input 
+              ref={tituloInputRef}
               name="titulo" 
               value={form.titulo} 
               onChange={handleChange} 
@@ -585,7 +632,41 @@ export default function AdicionarItem() {
           </div>
         )}
 
-        <div style={{ marginTop: '12px' }}>
+        <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <label style={{ 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '10px', 
+            cursor: 'pointer',
+            userSelect: 'none',
+            padding: '10px 14px',
+            borderRadius: '8px',
+            background: modoSequencia ? 'rgba(59, 130, 246, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+            border: `1px solid ${modoSequencia ? 'var(--accent)' : 'var(--border)'}`,
+            transition: 'all 0.2s ease',
+            maxWidth: '420px'
+          }}>
+            <input 
+              type="checkbox" 
+              checked={modoSequencia} 
+              onChange={(e) => handleToggleSequencia(e.target.checked)}
+              style={{ 
+                width: '18px', 
+                height: '18px', 
+                accentColor: 'var(--accent)', 
+                cursor: 'pointer' 
+              }}
+            />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text)' }}>
+                Modo em sequência (manter Caixa e Loja)
+              </span>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                Mantém Caixa e Loja preenchidas para cadastrar vários itens seguidos.
+              </span>
+            </div>
+          </label>
+
           <button 
             type="submit" 
             className="btn btn-primary" 
@@ -601,7 +682,12 @@ export default function AdicionarItem() {
             }} 
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Adicionando...' : `Adicionar ${activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}`}
+            {isSubmitting 
+              ? 'Adicionando...' 
+              : modoSequencia 
+                ? `Salvar e Adicionar Outro (${form.caixa ? form.caixa : 'Mesma Caixa'})` 
+                : `Adicionar ${activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}`
+            }
           </button>
         </div>
       </form>
