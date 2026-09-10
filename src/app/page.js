@@ -18,6 +18,7 @@ import { useStore } from '@/contexts/StoreContext';
 import ConfirmModal from '@/components/ConfirmModal';
 import ReposicaoModal from '@/components/ReposicaoModal';
 import AlertMessage from '@/components/AlertMessage';
+import { useReposicao } from '@/contexts/ReposicaoContext';
 
 export default function CatalogoClone() {
   const { caixas } = useCaixas();
@@ -31,6 +32,7 @@ export default function CatalogoClone() {
 
   const { registerUndo } = useUndo();
   const { activeStore } = useStore();
+  const { adicionarTarefa, removerTarefa } = useReposicao();
 
   // Sync global store filter with catalog
   useEffect(() => {
@@ -97,9 +99,18 @@ export default function CatalogoClone() {
           excludeId: id,
         });
         if (replacements && replacements.length > 0) {
+          const reserva = replacements[0];
+          // Adiciona tarefa ao sininho de notificações
+          adicionarTarefa({
+            itemSaida: itemToDelete,
+            reserva,
+            totalReservas: replacements.length,
+            categoria: catalog.activeTab,
+          });
+
           setReposicaoData({
             itemSaida: itemToDelete,
-            reserva: replacements[0],
+            reserva,
             totalReservas: replacements.length,
           });
         }
@@ -139,6 +150,7 @@ export default function CatalogoClone() {
         tipo: 'success',
         texto: `"${reserva.titulo}" reposto com sucesso na ${itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'sua localização'}!`
       });
+      removerTarefa(`${catalog.activeTab}_${reserva.id}`);
       setReposicaoData(null);
       catalog.refresh();
     } catch (err) {

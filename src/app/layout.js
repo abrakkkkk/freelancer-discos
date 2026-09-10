@@ -4,6 +4,7 @@ import BottomNav from '@/components/BottomNav';
 import MobileHeader from '@/components/MobileHeader';
 import { UndoProvider } from '@/contexts/UndoContext';
 import { StoreProvider } from '@/contexts/StoreContext';
+import { ReposicaoProvider } from '@/contexts/ReposicaoContext';
 import UndoToast from '@/components/UndoToast';
 import './globals.css';
 
@@ -30,17 +31,19 @@ export default function RootLayout({ children }) {
       <body>
         <UndoProvider>
           <StoreProvider>
-            <div className="app-layout">
-              <Sidebar />
-              <div className="main-wrapper">
-                <MobileHeader />
-                <main className="main-content">
-                  {children}
-                </main>
+            <ReposicaoProvider>
+              <div className="app-layout">
+                <Sidebar />
+                <div className="main-wrapper">
+                  <MobileHeader />
+                  <main className="main-content">
+                    {children}
+                  </main>
+                </div>
+                <BottomNav />
+                <UndoToast />
               </div>
-              <BottomNav />
-              <UndoToast />
-            </div>
+            </ReposicaoProvider>
           </StoreProvider>
         </UndoProvider>
       </body>

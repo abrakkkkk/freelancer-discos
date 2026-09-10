@@ -14,6 +14,7 @@ import { movimentacaoService } from '@/services/movimentacaoService';
 import { useItemForm } from '@/hooks/useItemForm';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
+import StatusSwitch from '@/components/StatusSwitch';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
@@ -63,7 +64,8 @@ function EditarExcluirContent() {
     ano: '',
     caixa: '',
     preco: '',
-    loja: ''
+    loja: '',
+    ativo: true
   }, tipo);
 
   const [observacoes, setObservacoes] = useState([]);
@@ -232,6 +234,7 @@ function EditarExcluirContent() {
       caixa: item.caixa || '',
       preco: formatarMoeda(item.preco),
       loja: item.loja || '',
+      ativo: item.ativo !== false,
     });
     setMensagem(null);
     setTela('edicao');
@@ -314,6 +317,7 @@ function EditarExcluirContent() {
       loja: form.loja || null,
       caixa: form.caixa?.trim() || null,
       ano: form.ano?.trim() || null,
+      ativo: form.ativo !== false,
     };
     if (temArtista) updateData.artista = form.artista;
 
@@ -661,9 +665,15 @@ function EditarExcluirContent() {
             </div>
           </div>
 
+          <div className="form-group" style={{ marginTop: '6px', marginBottom: '16px' }}>
+            <StatusSwitch
+              ativo={form.ativo !== false}
+              onChange={(novoAtivo) => setForm(prev => ({ ...prev, ativo: novoAtivo }))}
+            />
+          </div>
+
           <div className="edit-actions" style={{ marginTop: '24px', display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'space-between', alignItems: 'stretch' }}>
-            <div className="edit-actions-right" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', flex: 1, minWidth: '200px' }}>
-              <button className={`btn ${itemEditando.ativo !== false ? 'btn-warning' : 'btn-primary'}`} style={{ flex: 1 }} onClick={() => toggleAtivo(itemEditando)}>{itemEditando.ativo !== false ? 'Inativar' : 'Reativar'}</button>
+            <div className="edit-actions-right" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', flex: 1, minWidth: '160px' }}>
               <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => setConfirmarExclusao(itemEditando.id)}>Excluir</button>
             </div>
             <button className="btn btn-primary" style={{ flex: 1, minWidth: '160px' }} onClick={salvar}>Salvar</button>

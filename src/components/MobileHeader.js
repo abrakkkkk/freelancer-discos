@@ -5,6 +5,7 @@ import Image from 'next/image';
 
 import { useStore } from '@/contexts/StoreContext';
 import { STORE_OPTIONS } from '@/constants/config';
+import ReposicaoBell from '@/components/ReposicaoBell';
 
 import { usePathname } from 'next/navigation';
 
@@ -43,7 +44,7 @@ export default function MobileHeader() {
           <span className="mobile-header-subtitle">{activeLabel}</span>
         </div>
       </Link>
-      <div className="mobile-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div className="mobile-header-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <select
           value={activeStore}
           onChange={(e) => setActiveStore(e.target.value)}
@@ -62,7 +63,7 @@ export default function MobileHeader() {
           <option value="">Todas</option>
           {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
         </select>
-        
+        <ReposicaoBell />
       </div>
     </header>
   );
