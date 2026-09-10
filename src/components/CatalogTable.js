@@ -146,7 +146,7 @@ export default function CatalogTable({
                   <td data-label="Título" className="desktop-only cell-desktop-col">{d.titulo || <span className="text-empty">—</span>}</td>
                   <td data-label="Ano" className="desktop-only cell-desktop-col">
                     {d.ano ? (
-                      <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '2px 7px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 600 }}>
+                      <span className="cell-desktop-ano">
                         {d.ano}
                       </span>
                     ) : (
@@ -155,10 +155,12 @@ export default function CatalogTable({
                   </td>
                   {showLoja && (
                     <td data-label="Loja" className="desktop-only cell-desktop-col">
-                      <span style={{ color: getStoreColor(d.loja) }}>{d.loja}</span>
+                      <span className="cell-desktop-loja" style={{ color: getStoreColor(d.loja), borderColor: `${getStoreColor(d.loja)}40` }}>
+                        {d.loja}
+                      </span>
                     </td>
                   )}
-                  <td data-label="Preço" className="desktop-only cell-desktop-col">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
+                  <td data-label="Preço" className="desktop-only cell-desktop-col cell-desktop-preco">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                   <td data-label="Status" className="desktop-only cell-desktop-col">
                     <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-estoque-superior'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
                       {d.ativo ? 'Ativo' : 'Inativo'}
@@ -172,7 +174,7 @@ export default function CatalogTable({
                       <button 
                         onClick={() => onDelete(d.id, d.titulo || d.artista || 'Item')} 
                         title={`Excluir ${itemName.slice(0, -1)}`}
-                        className={`${"iconBtn"} ${"delete"}`}
+                        className="iconBtn delete"
                       >
                         <MdDelete size={16} />
                       </button>
@@ -182,7 +184,7 @@ export default function CatalogTable({
               );
             }
 
-            // Renderização padrão para outras lojas e categorias
+            // Renderização padrão para outras categorias
             return (
               <tr key={d.id} className="catalog-row" style={d.ativo === false ? { opacity: 0.5 } : {}}>
                 {isDiscosTab && (
@@ -199,7 +201,7 @@ export default function CatalogTable({
                 <td data-label="Título">{d.titulo || <span className="text-empty">—</span>}</td>
                 <td data-label="Ano">
                   {d.ano ? (
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', background: 'var(--bg)', padding: '2px 7px', borderRadius: '4px', border: '1px solid var(--border)', fontWeight: 600 }}>
+                    <span className="cell-desktop-ano">
                       {d.ano}
                     </span>
                   ) : (
@@ -209,7 +211,7 @@ export default function CatalogTable({
                 {showLoja && (
                   <td data-label="Loja">
                     {d.loja ? (
-                      <span className={d.loja === 'Loja 1' ? "lojaText" : ''} style={d.loja !== 'Loja 1' ? { color: getStoreColor(d.loja) } : {}}>
+                      <span className="cell-desktop-loja" style={{ color: getStoreColor(d.loja), borderColor: `${getStoreColor(d.loja)}40` }}>
                         {d.loja}
                       </span>
                     ) : (
@@ -217,7 +219,7 @@ export default function CatalogTable({
                     )}
                   </td>
                 )}
-                <td data-label="Preço">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
+                <td data-label="Preço" className="cell-desktop-preco">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</td>
                 <td data-label="Status">
                   <span className={`badge ${d.ativo ? 'badge-entrada' : 'badge-estoque-superior'}`} style={{ borderRadius: '16px', padding: '4px 10px', fontSize: '12px' }}>
                     {d.ativo ? 'Ativo' : 'Inativo'}

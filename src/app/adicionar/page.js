@@ -319,7 +319,7 @@ export default function AdicionarItem() {
         <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
         <AlertMessage message={mensagem} />
 
-        <form onSubmit={handleSubmit} style={{ maxWidth: '600px', marginTop: '24px' }}>
+        <form onSubmit={handleSubmit} className="form-container-desktop" style={{ marginTop: '24px' }}>
         
         {/* Bloco 1: Identificação da Obra */}
         <div className="form-section-card">

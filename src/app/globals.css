@@ -479,6 +479,49 @@ tbody tr:last-child td {
   white-space: nowrap;
 }
 
+.actionBtnRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #d4d4d8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.iconBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.iconBtn.delete {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.iconBtn.delete:hover {
+  background: rgba(239, 68, 68, 0.18);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: #fca5a5;
+  transform: translateY(-1px);
+}
+
 .action-btn {
   background: none;
   border: none;
@@ -523,12 +566,14 @@ tbody tr:last-child td {
   text-transform: uppercase;
 }
 .badge-entrada {
-  background: var(--success);
-  color: #0d381e;
+  background: rgba(16, 185, 129, 0.14);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.28);
 }
 .badge-saida {
-  background: var(--danger);
-  color: #4a0418;
+  background: rgba(239, 68, 68, 0.14);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.28);
 }
 .badge-exclusao {
   background: #4b5563;
@@ -928,6 +973,114 @@ tbody tr:last-child td {
   text-align: center;
   vertical-align: middle;
   padding: 6px 8px;
+}
+
+/* ========== REFINAMENTOS VISUAIS DESKTOP (TABELAS, CARDS, AÇÕES) ========== */
+@media (min-width: 769px) {
+  /* Tabela de Catálogo Desktop */
+  .tableContainer {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #141417;
+  }
+
+  .styledTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .styledTable thead th {
+    background: #0f0f12;
+    color: #a1a1aa;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: nowrap;
+  }
+
+  .styledTable tbody tr {
+    background: #18181b;
+    transition: background 0.15s ease;
+  }
+
+  .styledTable tbody tr:nth-child(even) {
+    background: #141416;
+  }
+
+  .styledTable tbody tr:hover {
+    background: rgba(255, 255, 255, 0.035);
+  }
+
+  .styledTable tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 13.5px;
+    vertical-align: middle;
+  }
+
+  .styledTable tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Ajuste de capa de álbum no desktop */
+  .cell-capa {
+    width: 66px;
+    padding: 6px 10px;
+    vertical-align: middle;
+  }
+
+  .cell-capa .album-cover-container {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Células refinadas para o Desktop */
+  .cell-desktop-preco {
+    font-weight: 700;
+    color: #10b981;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .cell-desktop-ano {
+    font-size: 11.5px;
+    color: #a1a1aa;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 2px 7px;
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    font-weight: 600;
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  .cell-desktop-loja {
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    white-space: nowrap;
+    display: inline-block;
+  }
+
+  /* Página de Movimentações no Desktop */
+  .mov-page {
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  /* Ergonomia de formulários no Desktop */
+  .form-container-desktop {
+    max-width: 680px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -2263,6 +2416,7 @@ tbody tr:last-child td {
     width: 100%;
     min-height: 44px;
     font-size: 12.5px;
+  }
 }
 
 /* ========== SEÇÕES DO FORMULÁRIO DE CADASTRO ========== */
