@@ -2308,5 +2308,26 @@ tbody tr:last-child td {
   border-color: var(--accent);
 }
 
+/* ========== MOVIMENTAÇÕES RESPONSIVAS ========== */
+.movimentacoes-table-desktop {
+  display: block;
+}
+
+.movimentacoes-cards-mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .movimentacoes-table-desktop {
+    display: none !important;
+  }
+  .movimentacoes-cards-mobile {
+    display: flex !important;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+
 
 

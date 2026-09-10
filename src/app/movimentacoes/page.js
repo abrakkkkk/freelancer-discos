@@ -10,6 +10,34 @@ import { useStore } from '@/contexts/StoreContext';
 
 const ITENS_POR_PAGINA = 50;
 
+function formatarDataHora(criadoEm) {
+  if (!criadoEm) return '—';
+  try {
+    const dataObj = new Date(criadoEm.endsWith('Z') ? criadoEm : criadoEm + 'Z');
+    const agora = new Date();
+
+    const ehHoje = dataObj.toLocaleDateString('pt-BR') === agora.toLocaleDateString('pt-BR');
+
+    const hora = dataObj.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo',
+    });
+
+    if (ehHoje) return `Hoje às ${hora}`;
+
+    const ontem = new Date();
+    ontem.setDate(ontem.getDate() - 1);
+    if (dataObj.toLocaleDateString('pt-BR') === ontem.toLocaleDateString('pt-BR')) {
+      return `Ontem às ${hora}`;
+    }
+
+    return `${dataObj.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' })} • ${hora}`;
+  } catch (_) {
+    return criadoEm;
+  }
+}
+
 export default function Movimentacoes() {
   const [movimentacoes, setMovimentacoes] = useState([]);
   const [filtroTipoMov, setFiltroTipoMov] = useState('');
@@ -49,10 +77,10 @@ export default function Movimentacoes() {
   const getItemData = (m) => {
     const item = m.discos || m.dvds || m.cds || m.vhs;
     return {
-      caixa: item?.caixa || '—',
-      artista: m.discos?.artista || m.cds?.artista || '—',
-      titulo: m.discos?.titulo || m.dvds?.titulo || m.cds?.titulo || m.vhs?.titulo || '—',
-      loja: item?.loja || '—',
+      caixa: item?.caixa || '',
+      artista: m.discos?.artista || m.cds?.artista || '',
+      titulo: m.discos?.titulo || m.dvds?.titulo || m.cds?.titulo || m.vhs?.titulo || 'Item sem título',
+      loja: item?.loja || '',
     };
   };
 
@@ -77,99 +105,288 @@ export default function Movimentacoes() {
 
   return (
     <div className="pageContainer">
-      <div className="topHeader">
+      {/* Topo Limpo e Métricas */}
+      <div className="topHeader" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
         <div className="titleGroup">
-          <MdHistory size={28} color="var(--accent)" />
-          <h1 className="page-title">Histórico de Movimentações</h1>
+          <MdHistory size={26} color="var(--accent)" />
+          <h1 className="page-title" style={{ fontSize: '20px', fontWeight: 700, margin: 0 }}>Histórico de Movimentações</h1>
         </div>
+
+        {!loadingHist && movimentacoes.length > 0 && (
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.28)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+              ↓ {totalEntradas} entradas
+            </span>
+            <span style={{ fontSize: '12px', background: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.28)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+              ↑ {totalSaidas} saídas
+            </span>
+            {totalExclusoes > 0 && (
+              <span style={{ fontSize: '12px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
+                ✖ {totalExclusoes} exclusões
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
-      <div className="mainCard">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
-          <div>
-            <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>Últimas Atividades</h2>
-            {!loadingHist && totalItens > 0 && (
-              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                Mostrando {(pagina - 1) * ITENS_POR_PAGINA + 1}–{Math.min(pagina * ITENS_POR_PAGINA, totalItens)} de {totalItens} {busca ? 'encontradas' : 'movimentações'}
-              </span>
+      <div className="mainCard" style={{ padding: '16px' }}>
+        {/* Barra de Filtros Rápidos (Sem Poluição) */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+          {/* Campo de Busca com ícone e limpar rápido */}
+          <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '8px', padding: '0 12px', minHeight: '40px' }}>
+            <FiSearch color="var(--text-muted)" size={16} style={{ flexShrink: 0, marginRight: '10px' }} />
+            <input 
+              type="text" 
+              placeholder="Buscar por artista, título, observação ou caixa..." 
+              value={busca} 
+              onChange={(e) => setBusca(e.target.value)}
+              style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', color: 'var(--text)', fontSize: '13.5px', padding: 0 }}
+            />
+            {busca && (
+              <button 
+                type="button" 
+                onClick={() => setBusca('')}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '16px', padding: '0 4px', lineHeight: 1 }}
+                title="Limpar busca"
+              >
+                ×
+              </button>
             )}
           </div>
 
-          {!loadingHist && movimentacoes.length > 0 && (
+          {/* Segmented Pills de Tipo, Período e Loja */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', background: 'rgba(56, 161, 105, 0.15)', color: '#38a169', border: '1px solid rgba(56, 161, 105, 0.3)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
-                ↓ {totalEntradas} {totalEntradas === 1 ? 'Entrada' : 'Entradas'}
-              </span>
-              <span style={{ fontSize: '12px', background: 'rgba(229, 62, 62, 0.15)', color: '#e53e3e', border: '1px solid rgba(229, 62, 62, 0.3)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
-                ↑ {totalSaidas} {totalSaidas === 1 ? 'Saída' : 'Saídas'}
-              </span>
-              {totalExclusoes > 0 && (
-                <span style={{ fontSize: '12px', background: 'rgba(160, 174, 192, 0.15)', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: '3px 10px', borderRadius: '12px', fontWeight: 600 }}>
-                  ✖ {totalExclusoes} {totalExclusoes === 1 ? 'Exclusão' : 'Exclusões'}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="filterCard">
-          <div className="filters">
-            <div className="form-group" style={{ flex: 1.5, minWidth: '200px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', padding: '0 10px', minHeight: '38px' }}>
-                <FiSearch color="var(--text-muted)" size={15} style={{ flexShrink: 0, marginRight: '8px' }} />
-                <input 
-                  type="text" 
-                  placeholder="Buscar artista, título, obs..." 
-                  value={busca} 
-                  onChange={(e) => setBusca(e.target.value)}
-                  style={{ border: 'none', background: 'transparent', width: '100%', outline: 'none', color: 'var(--text)', fontSize: '13px', padding: 0 }}
-                />
-                {busca && (
-                  <button 
-                    type="button" 
-                    onClick={() => setBusca('')}
-                    style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '14px', padding: '0 4px', lineHeight: 1 }}
-                    title="Limpar busca"
+              {/* Filtro por Tipo */}
+              <div style={{ display: 'inline-flex', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', padding: '3px', gap: '2px' }}>
+                {[
+                  { value: '', label: 'Todas' },
+                  { value: 'entrada', label: '↓ Entradas' },
+                  { value: 'saida', label: '↑ Saídas' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setFiltroTipoMov(opt.value)}
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: '12px',
+                      fontWeight: filtroTipoMov === opt.value ? 700 : 500,
+                      borderRadius: '6px',
+                      border: filtroTipoMov === opt.value ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid transparent',
+                      background: filtroTipoMov === opt.value ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                      color: filtroTipoMov === opt.value ? '#ffffff' : 'var(--text-muted)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      touchAction: 'manipulation'
+                    }}
                   >
-                    ×
+                    {opt.label}
                   </button>
-                )}
+                ))}
+              </div>
+
+              {/* Filtro por Período */}
+              <div style={{ display: 'inline-flex', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', padding: '3px', gap: '2px' }}>
+                {[
+                  { value: 'semana', label: '7 dias' },
+                  { value: 'hoje', label: 'Hoje' },
+                  { value: 'mes', label: '30 dias' },
+                  { value: 'todos', label: 'Todos' },
+                ].map(opt => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setFiltroPeriodo(opt.value)}
+                    style={{
+                      padding: '4px 10px',
+                      fontSize: '12px',
+                      fontWeight: filtroPeriodo === opt.value ? 700 : 500,
+                      borderRadius: '6px',
+                      border: filtroPeriodo === opt.value ? '1px solid rgba(255, 255, 255, 0.15)' : '1px solid transparent',
+                      background: filtroPeriodo === opt.value ? 'rgba(255, 255, 255, 0.1)' : 'transparent',
+                      color: filtroPeriodo === opt.value ? '#ffffff' : 'var(--text-muted)',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      touchAction: 'manipulation'
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
             </div>
-            <div className="form-group">
-              <select value={filtroPeriodo} onChange={(e) => setFiltroPeriodo(e.target.value)}>
-                <option value="semana">Esta Semana (Últimos 7 dias)</option>
-                <option value="hoje">Hoje</option>
-                <option value="mes">Últimos 30 dias</option>
-                <option value="todos">Todas as Movimentações</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <select value={filtroTipoMov} onChange={(e) => setFiltroTipoMov(e.target.value)}>
-                <option value="">Todos Tipos</option>
-                <option value="entrada">Entradas</option>
-                <option value="saida">Saídas</option>
-                <option value="exclusao">Exclusões</option>
-              </select>
-            </div>
+
+            {/* Seletor de Loja (caso não tenha loja ativa global) */}
             {!activeStore && (
-              <div className="form-group">
-                <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
-                  <option value="">Todas Lojas</option>
-                  {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-              </div>
+              <select 
+                value={filtroLoja} 
+                onChange={(e) => setFiltroLoja(e.target.value)}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  color: 'var(--text)',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  outline: 'none'
+                }}
+              >
+                <option value="">Todas as Lojas</option>
+                {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              </select>
             )}
           </div>
         </div>
 
+        {/* Estado de Carregamento */}
         {loadingHist ? (
-          <p style={{ fontSize: '13px', color: 'var(--text-muted)', padding: '20px 0' }}>Carregando histórico...</p>
-        ) : movimentacoes.length === 0 ? (
-          <div className="empty-state" style={{ padding: '40px 20px' }}>Nenhuma movimentação encontrada para o período selecionado.</div>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', padding: '24px 0', textAlign: 'center' }}>
+            Carregando movimentações...
+          </p>
+        ) : totalItens === 0 ? (
+          /* Estado Vazio */
+          <div
+            style={{
+              padding: '44px 16px',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+          >
+            <MdHistory size={36} color="var(--text-muted)" style={{ opacity: 0.4 }} />
+            <div style={{ fontSize: '14px', fontWeight: 600, color: '#e4e4e7' }}>
+              Nenhuma movimentação encontrada
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+              {busca || filtroTipoMov || filtroPeriodo !== 'semana'
+                ? 'Tente ajustar os filtros acima ou limpar a busca.'
+                : 'Não há registros para o período selecionado.'}
+            </div>
+          </div>
         ) : (
           <>
-            <div className="table-responsive">
+            {/* 1. VISUALIZAÇÃO EM CARDS PARA MOBILE (<= 768px) */}
+            <div className="movimentacoes-cards-mobile">
+              {itensPaginados.map((m) => {
+                const item = getItemData(m);
+                const isEntrada = m.tipo === 'entrada';
+                const isSaida = m.tipo === 'saida';
+                return (
+                  <div
+                    key={m.id}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid rgba(255, 255, 255, 0.07)',
+                      borderRadius: '10px',
+                      padding: '12px 14px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '6px',
+                    }}
+                  >
+                    {/* Topo do card: Tipo de Movimentação + Data */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          padding: '2px 8px',
+                          borderRadius: '6px',
+                          background: isEntrada
+                            ? 'rgba(16, 185, 129, 0.14)'
+                            : isSaida
+                            ? 'rgba(239, 68, 68, 0.14)'
+                            : 'rgba(113, 113, 122, 0.14)',
+                          color: isEntrada ? '#34d399' : isSaida ? '#f87171' : '#a1a1aa',
+                          border: `1px solid ${isEntrada ? 'rgba(16, 185, 129, 0.3)' : isSaida ? 'rgba(239, 68, 68, 0.3)' : 'rgba(113, 113, 122, 0.3)'}`,
+                        }}
+                      >
+                        {isEntrada ? '↓ Entrada' : isSaida ? '↑ Saída' : '✖ Exclusão'}
+                      </span>
+
+                      <span style={{ fontSize: '11px', color: '#a1a1aa', fontWeight: 500 }}>
+                        {formatarDataHora(m.criado_em)}
+                      </span>
+                    </div>
+
+                    {/* Informações da obra: Título e Artista */}
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', lineHeight: 1.3 }}>
+                        {item.titulo}
+                      </div>
+                      {item.artista && item.artista !== '—' && (
+                        <div style={{ fontSize: '12px', color: '#a1a1aa', marginTop: '1px' }}>
+                          {item.artista}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Meta: Caixa e Loja */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
+                      {item.caixa && item.caixa !== '—' && (
+                        <span
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: '#d4d4d8',
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            padding: '2px 7px',
+                            borderRadius: '5px',
+                          }}
+                        >
+                          {formatCaixa(item.caixa, item.loja)}
+                        </span>
+                      )}
+
+                      {!activeStore && item.loja && item.loja !== '—' && (
+                        <span
+                          style={{
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: 'var(--accent)',
+                            background: 'rgba(197, 48, 48, 0.1)',
+                            border: '1px solid rgba(197, 48, 48, 0.25)',
+                            padding: '2px 7px',
+                            borderRadius: '5px',
+                          }}
+                        >
+                          {item.loja}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Observação (apenas se existir de fato) */}
+                    {m.observacao && m.observacao !== '—' && (
+                      <div
+                        style={{
+                          fontSize: '11.5px',
+                          color: '#a1a1aa',
+                          background: 'rgba(0, 0, 0, 0.25)',
+                          border: '1px solid rgba(255, 255, 255, 0.05)',
+                          padding: '4px 8px',
+                          borderRadius: '6px',
+                          marginTop: '2px',
+                          lineHeight: 1.35,
+                        }}
+                      >
+                        <span style={{ color: '#71717a', marginRight: '4px', fontWeight: 600 }}>Obs:</span>
+                        {m.observacao}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* 2. TABELA LIMPA PARA DESKTOP (> 768px) */}
+            <div className="movimentacoes-table-desktop table-responsive">
               <table>
                 <thead>
                   <tr>
@@ -185,21 +402,44 @@ export default function Movimentacoes() {
                 <tbody>
                   {itensPaginados.map((m) => {
                     const item = getItemData(m);
+                    const isEntrada = m.tipo === 'entrada';
+                    const isSaida = m.tipo === 'saida';
                     return (
                       <tr key={m.id}>
-                        <td data-label="Data" style={{ fontSize: '13px', whiteSpace: 'nowrap' }}>
-                          {new Date(m.criado_em.endsWith('Z') ? m.criado_em : m.criado_em + 'Z').toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}
+                        <td data-label="Data" style={{ fontSize: '12.5px', whiteSpace: 'nowrap', color: 'var(--text-muted)' }}>
+                          {formatarDataHora(m.criado_em)}
                         </td>
                         <td data-label="Tipo">
-                          <span className={`badge badge-${m.tipo}`}>
-                            {m.tipo === 'entrada' ? '↓ Entrada' : m.tipo === 'exclusao' ? '✖ Exclusão' : '↑ Saída'}
+                          <span
+                            style={{
+                              fontSize: '11.5px',
+                              fontWeight: 700,
+                              padding: '2px 8px',
+                              borderRadius: '6px',
+                              background: isEntrada
+                                ? 'rgba(16, 185, 129, 0.14)'
+                                : isSaida
+                                ? 'rgba(239, 68, 68, 0.14)'
+                                : 'rgba(113, 113, 122, 0.14)',
+                              color: isEntrada ? '#34d399' : isSaida ? '#f87171' : '#a1a1aa',
+                              border: `1px solid ${isEntrada ? 'rgba(16, 185, 129, 0.3)' : isSaida ? 'rgba(239, 68, 68, 0.3)' : 'rgba(113, 113, 122, 0.3)'}`,
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {isEntrada ? '↓ Entrada' : isSaida ? '↑ Saída' : '✖ Exclusão'}
                           </span>
                         </td>
                         <td data-label="Local">{formatCaixa(item.caixa, item.loja)}</td>
-                        {!activeStore && <td data-label="Loja"><span style={{ fontWeight: 600, color: 'var(--accent)' }}>{item.loja}</span></td>}
-                        <td data-label="Artista">{item.artista}</td>
-                        <td data-label="Título">{item.titulo}</td>
-                        <td data-label="Observação" style={{ fontSize: '13px' }}>{m.observacao || '—'}</td>
+                        {!activeStore && (
+                          <td data-label="Loja">
+                            <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{item.loja || '—'}</span>
+                          </td>
+                        )}
+                        <td data-label="Artista">{item.artista || '—'}</td>
+                        <td data-label="Título" style={{ fontWeight: 600, color: '#fff' }}>{item.titulo}</td>
+                        <td data-label="Observação" style={{ fontSize: '12.5px', color: 'var(--text-muted)' }}>
+                          {m.observacao || '—'}
+                        </td>
                       </tr>
                     );
                   })}
@@ -207,8 +447,9 @@ export default function Movimentacoes() {
               </table>
             </div>
 
+            {/* Paginação */}
             {totalPaginas > 1 && (
-              <div className="paginationRow" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '24px 0', gap: '8px', borderTop: '1px solid var(--border)', marginTop: '16px', flexWrap: 'wrap' }}>
+              <div className="paginationRow" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px 0 8px 0', gap: '8px', borderTop: '1px solid var(--border)', marginTop: '16px', flexWrap: 'wrap' }}>
                 <button 
                   className="pageBtn" 
                   disabled={pagina === 1}
