@@ -111,6 +111,13 @@ export default function Movimentacoes() {
           <MdHistory size={22} color="var(--accent)" />
           Histórico de Movimentações
         </h1>
+        {!loadingHist && movimentacoes.length > 0 && (
+          <div className="mov-header-counter">
+            <span><strong style={{ color: '#34d399', fontWeight: 600 }}>{totalEntradas}</strong> entradas</span>
+            <span style={{ opacity: 0.35 }}>•</span>
+            <span><strong style={{ color: '#f87171', fontWeight: 600 }}>{totalSaidas}</strong> saídas</span>
+          </div>
+        )}
       </div>
 
       <div className="mov-panel-clean">

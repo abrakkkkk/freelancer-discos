@@ -2315,9 +2315,12 @@ tbody tr:last-child td {
 
 .mov-header-clean {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  text-align: center;
   margin-bottom: 16px;
+  gap: 4px;
 }
 
 .mov-header-clean h1 {
@@ -2325,9 +2328,20 @@ tbody tr:last-child td {
   font-weight: 700;
   color: #ffffff;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.mov-header-counter {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 6px;
 }
 
 .mov-panel-clean {
