@@ -1060,7 +1060,7 @@ tbody tr:last-child td {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(18, 18, 22, 0.88) !important;
+    background: rgba(18, 18, 22, 0.97) !important;
     backdrop-filter: blur(16px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
     border-top: 1px solid rgba(255, 255, 255, 0.09) !important;
