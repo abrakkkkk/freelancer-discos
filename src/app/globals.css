@@ -247,7 +247,7 @@ a {
 }
 
 .page-title {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.25;
@@ -972,7 +972,7 @@ tbody tr:last-child td {
   }
 
   .page-title {
-    font-size: 19px;
+    font-size: 23px;
     text-transform: none;
     font-weight: 700;
     letter-spacing: -0.025em;
@@ -1052,19 +1052,19 @@ tbody tr:last-child td {
   .titleGroup {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
   }
 
   .titleGroup svg {
-    width: 22px !important;
-    height: 22px !important;
+    width: 26px !important;
+    height: 26px !important;
     flex-shrink: 0;
   }
 
   .titleGroup h1,
   .topHeader h1,
   .page-title {
-    font-size: 19px !important;
+    font-size: 23px !important;
     font-weight: 700 !important;
     letter-spacing: -0.025em !important;
     line-height: 1.25 !important;
@@ -1653,7 +1653,7 @@ tbody tr:last-child td {
   .titleGroup h1,
   .topHeader h1,
   .page-title {
-    font-size: 18px !important;
+    font-size: 21px !important;
   }
 
   .edit-info {
@@ -1741,19 +1741,19 @@ tbody tr:last-child td {
 .titleGroup {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .titleGroup svg {
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   flex-shrink: 0;
 }
 
 .titleGroup h1,
 .topHeader h1,
 .page-title {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   letter-spacing: -0.025em;
   line-height: 1.25;
@@ -2378,7 +2378,7 @@ tbody tr:last-child td {
 }
 
 .mov-header-clean h1 {
-  font-size: 19px;
+  font-size: 23px;
   font-weight: 700;
   color: #fafafa;
   letter-spacing: -0.025em;
@@ -2387,13 +2387,23 @@ tbody tr:last-child td {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .mov-header-clean h1 svg {
-  width: 22px;
-  height: 22px;
+  width: 25px;
+  height: 25px;
   flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .mov-header-clean h1 {
+    font-size: 21px !important;
+  }
+  .mov-header-clean h1 svg {
+    width: 23px !important;
+    height: 23px !important;
+  }
 }
 
 .mov-header-counter {
