@@ -43,26 +43,6 @@ export default function AdicionarItem() {
   const artistaInputRef = useRef(null);
   const tituloInputRef = useRef(null);
 
-  const [modoSequencia, setModoSequencia] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        return localStorage.getItem('freelancer_adicionar_sequencia') !== 'false';
-      } catch (_) {
-        return true;
-      }
-    }
-    return true;
-  });
-
-  const handleToggleSequencia = (checked) => {
-    setModoSequencia(checked);
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('freelancer_adicionar_sequencia', String(checked));
-      } catch (_) {}
-    }
-  };
-
   const [selectedCover, setSelectedCover] = useState(null);
   const [queryDiscogs, setQueryDiscogs] = useState('');
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
@@ -301,19 +281,11 @@ export default function AdicionarItem() {
       
       const lojaText = form.loja ? ` (${form.loja})` : '';
       
-      if (modoSequencia) {
-        setMensagem({ 
-          tipo: 'success', 
-          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText}${lojaText}! Pronto para o próximo.` 
-        });
-        setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja, ativo: form.ativo !== false });
-      } else {
-        setMensagem({ 
-          tipo: 'success', 
-          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText}${lojaText}.` 
-        });
-        setForm({ ...INITIAL_FORM, loja: activeStore || '', ativo: true });
-      }
+      setMensagem({ 
+        tipo: 'success', 
+        texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText}${lojaText}.` 
+      });
+      setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja, ativo: form.ativo !== false });
 
       setQueryDiscogs('');
       setDiscogsResults([]);
@@ -562,37 +534,7 @@ export default function AdicionarItem() {
           />
         </div>
 
-        <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <label style={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            gap: '10px', 
-            cursor: 'pointer',
-            userSelect: 'none',
-            padding: '10px 14px',
-            minHeight: '44px',
-            borderRadius: '8px',
-            background: modoSequencia ? 'rgba(59, 130, 246, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-            border: `1px solid ${modoSequencia ? 'var(--accent)' : 'var(--border)'}`,
-            transition: 'all 0.2s ease',
-            maxWidth: '380px'
-          }}>
-            <input 
-              type="checkbox" 
-              checked={modoSequencia} 
-              onChange={(e) => handleToggleSequencia(e.target.checked)}
-              style={{ 
-                width: '18px', 
-                height: '18px', 
-                accentColor: 'var(--accent)', 
-                cursor: 'pointer' 
-              }}
-            />
-            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text)' }}>
-              Manter Caixa e Loja
-            </span>
-          </label>
-
+        <div style={{ marginTop: '16px' }}>
           <button 
             type="submit" 
             className="btn btn-primary" 
@@ -610,9 +552,7 @@ export default function AdicionarItem() {
           >
             {isSubmitting 
               ? 'Adicionando...' 
-              : modoSequencia 
-                ? 'Salvar e Adicionar Outro' 
-                : `Adicionar ${activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}`
+              : `Adicionar ${activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD'}`
             }
           </button>
         </div>
