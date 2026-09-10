@@ -1283,7 +1283,7 @@ tbody tr:last-child td {
     display: flex !important;
     flex-direction: row !important;
     align-items: flex-start !important;
-    padding: 8px 10px !important;
+    padding: 12px 10px !important;
     gap: 10px !important;
     position: relative !important;
     border-radius: 10px !important;
@@ -1463,7 +1463,7 @@ tbody tr:last-child td {
   tr.card-disco-loja1 td[data-label="Ação"],
   tr.card-disco-loja2 td[data-label="Ação"] {
     position: absolute !important;
-    top: 8px !important;
+    top: 12px !important;
     right: 8px !important;
     border: none !important;
     padding: 0 !important;
