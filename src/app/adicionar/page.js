@@ -61,6 +61,7 @@ export default function AdicionarItem() {
     }
   };
 
+  const [selectedCover, setSelectedCover] = useState(null);
   const [queryDiscogs, setQueryDiscogs] = useState('');
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
   const [discogsResults, setDiscogsResults] = useState([]);
@@ -109,6 +110,7 @@ export default function AdicionarItem() {
     setActiveTab(tab);
     setMensagem(null);
     setForm({ ...INITIAL_FORM, loja: activeStore || '' });
+    setSelectedCover(null);
     setMostrarSugestoesArtista(false);
     setMostrarSugestoesTitulo(false);
     setShowDiscogsDropdown(false);
@@ -235,6 +237,13 @@ export default function AdicionarItem() {
 
     const year = result.year ? String(result.year) : '';
 
+    if (result.thumb || result.cover_image) {
+      setSelectedCover({
+        thumb: result.thumb || null,
+        cover: result.cover_image || result.thumb || null
+      });
+    }
+
     setForm(prev => ({
       ...prev,
       artista,
@@ -285,6 +294,31 @@ export default function AdicionarItem() {
           observacao: form.observacao.trim()
         });
       }
+
+      if (activeTab === CATEGORY_IDS.DISCOS) {
+        const coverToSend = selectedCover?.cover || selectedCover?.thumb;
+        const qKey = `${(insertData.artista || '').trim()} ${(insertData.titulo || '').trim()}`.toLowerCase();
+        if (coverToSend && typeof window !== 'undefined') {
+          try {
+            sessionStorage.setItem(`cover_${itemInfo.id}_${qKey}`, coverToSend);
+            sessionStorage.setItem(`cover_${qKey}`, coverToSend);
+          } catch (_) {}
+        }
+        try {
+          await fetch('/api/cover', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: itemInfo.id,
+              artista: insertData.artista || '',
+              titulo: insertData.titulo || '',
+              cover: selectedCover?.cover || null,
+              thumb: selectedCover?.thumb || null,
+            })
+          });
+        } catch (_) {}
+      }
+      setSelectedCover(null);
 
       // Sucesso
       const tipoNome = activeTab === 'discos' ? 'Disco' : activeTab === 'dvds' ? 'DVD' : activeTab === 'vhs' ? 'VHS' : 'CD';

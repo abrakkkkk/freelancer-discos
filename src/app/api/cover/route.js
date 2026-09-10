@@ -46,10 +46,10 @@ export async function GET(request) {
   const idKey = id ? String(id) : '';
 
   if (!refresh) {
-    // 1. Se tem idKey, verifica se há cache no idKey
+    // 1. Se tem idKey, verifica se há cache com imagem válida no idKey
     if (idKey) {
       const cachedById = getFromCache(idKey);
-      if (cachedById) {
+      if (cachedById && (cachedById.cover || cachedById.thumb)) {
         // Se o item em cache gravou para qual query 'q' ele foi gerado,
         // e a query atual é diferente, os dados do disco mudaram! Cache desatualizado.
         const isSameQuery = !cachedById.q || !qKey || cachedById.q.toLowerCase() === qKey;
@@ -64,10 +64,10 @@ export async function GET(request) {
       }
     }
 
-    // 2. Verifica se há cache pela query do texto (artista + título)
+    // 2. Verifica se há cache com imagem válida pela query do texto (artista + título)
     if (qKey) {
       const cachedByQ = getFromCache(qKey);
-      if (cachedByQ) {
+      if (cachedByQ && (cachedByQ.cover || cachedByQ.thumb)) {
         if (idKey) {
           setToCache(idKey, { ...cachedByQ, q: qKey });
         }
@@ -111,16 +111,16 @@ export async function GET(request) {
     const cover = result?.cover_image || thumb || null;
 
     const payload = { cover, thumb, q: qKey };
-    if (idKey) {
-      setToCache(idKey, payload);
-    }
-    if (qKey) {
-      setToCache(qKey, payload);
+    if (cover || thumb) {
+      if (idKey) setToCache(idKey, payload);
+      if (qKey) setToCache(qKey, payload);
     }
 
     return NextResponse.json(payload, {
       headers: {
-        'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400',
+        'Cache-Control': cover || thumb 
+          ? 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400'
+          : 'no-cache, no-store',
         'X-Cache': 'MISS',
       },
     });

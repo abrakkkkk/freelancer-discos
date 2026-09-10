@@ -338,21 +338,31 @@ function EditarExcluirContent() {
                   sessionStorage.removeItem(k);
                 }
               });
+              const chosenImg = selectedCover?.thumb || selectedCover?.cover;
+              if (chosenImg) {
+                const qKey = `${(updateData.artista || '').trim()} ${(updateData.titulo || '').trim()}`.toLowerCase();
+                sessionStorage.setItem(`cover_${itemEditando.id}_${qKey}`, chosenImg);
+                sessionStorage.setItem(`cover_${qKey}`, chosenImg);
+              }
             } catch (e) {}
           }
 
           // 2. Atualiza imediatamente o cache de capas no servidor
-          fetch('/api/cover', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: itemEditando.id,
-              artista: updateData.artista || '',
-              titulo: updateData.titulo || '',
-              cover: selectedCover?.cover || null,
-              thumb: selectedCover?.thumb || null,
-            })
-          }).catch(e => console.warn('Erro ao atualizar capa:', e));
+          try {
+            await fetch('/api/cover', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: itemEditando.id,
+                artista: updateData.artista || '',
+                titulo: updateData.titulo || '',
+                cover: selectedCover?.cover || null,
+                thumb: selectedCover?.thumb || null,
+              })
+            });
+          } catch (e) {
+            console.warn('Erro ao atualizar capa:', e);
+          }
         }
       }
 
