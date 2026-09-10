@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { FaMagnifyingGlass, FaBarcode } from "react-icons/fa6";
-import { MdDocumentScanner } from "react-icons/md";
-import { PiVinylRecord } from "react-icons/pi";
+import { MdDocumentScanner, MdInventory2 } from "react-icons/md";
+import { PiVinylRecord, PiMusicNotesSimple } from "react-icons/pi";
 import StatusSwitch from '@/components/StatusSwitch';
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 import { useCaixas } from '@/hooks/useCaixas';
@@ -321,220 +321,238 @@ export default function AdicionarItem() {
 
         <form onSubmit={handleSubmit} style={{ maxWidth: '600px', marginTop: '24px' }}>
         
-        {(activeTab === CATEGORY_IDS.DISCOS || activeTab === CATEGORY_IDS.CDS) && (
-          <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
-            <div className="form-group" style={{ width: '100%', marginBottom: '20px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs</label>
-              <div className="discogs-search-row">
+        {/* Bloco 1: Identificação da Obra */}
+        <div className="form-section-card">
+          <div className="form-section-header">
+            <PiMusicNotesSimple size={18} color="var(--accent)" />
+            <h3 className="form-section-title">Identificação da Obra</h3>
+          </div>
+
+          {(activeTab === CATEGORY_IDS.DISCOS || activeTab === CATEGORY_IDS.CDS) && (
+            <div className="form-row" style={{ position: 'relative', zIndex: showDiscogsDropdown ? 70 : 1 }}>
+              <div className="form-group" style={{ width: '100%', marginBottom: '16px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><FaMagnifyingGlass /> Buscar no Discogs</label>
+                <div className="discogs-search-row">
+                  <input 
+                    type="text" 
+                    value={queryDiscogs} 
+                    onChange={(e) => setQueryDiscogs(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchDiscogs(); } }}
+                    placeholder="Ex: 6328 286, COLP 12225..."
+                    autoComplete="off"
+                  />
+                  <div className="discogs-actions-row">
+                    <button 
+                      type="button" 
+                      onClick={searchDiscogs}
+                      className="btn btn-secondary discogs-btn-buscar"
+                      disabled={isSearchingDiscogs}
+                    >
+                      <FaMagnifyingGlass size={13} /> {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setIsScannerOpen(true)}
+                      className="btn btn-primary discogs-btn-escanear"
+                      title="Escanear código de barras (CDs e Vinis modernos)"
+                    >
+                      <FaBarcode size={14} /> Barras
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setIsOcrOpen(true)}
+                      className="btn btn-primary discogs-btn-ocr"
+                      title="Ler código de catálogo com a câmera (ex: COLP, SMOFB, 6349)"
+                    >
+                      <MdDocumentScanner size={16} /> OCR
+                    </button>
+                  </div>
+                </div>
+                {showDiscogsDropdown && discogsResults.length > 0 && (
+                  <ul className="sugestoes-dropdown" style={{ top: '100%', left: 0, right: 0, maxHeight: '300px', overflowY: 'auto' }}>
+                    <li style={{ background: 'var(--bg-card)', padding: '8px', fontSize: '12px', borderBottom: '1px solid var(--border)', textAlign: 'right' }}>
+                      <button type="button" onClick={() => setShowDiscogsDropdown(false)} style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>Fechar (X)</button>
+                    </li>
+                    {discogsResults.map((result) => (
+                      <li 
+                        key={result.id} 
+                        onMouseDown={(e) => { e.preventDefault(); handleSelectDiscogsResult(result); }} 
+                        style={{ 
+                          padding: '8px 10px', 
+                          display: 'flex', 
+                          alignItems: 'center',
+                          gap: '12px',
+                          background: result.isExactMatch ? 'rgba(56, 161, 105, 0.05)' : undefined,
+                          borderLeft: result.isExactMatch ? '3px solid rgba(56, 161, 105, 0.6)' : undefined,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {result.thumb ? (
+                          <img 
+                            src={result.thumb} 
+                            alt="" 
+                            style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0, background: '#18181b', border: '1px solid var(--border)' }} 
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div style={{ width: '42px', height: '42px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <PiVinylRecord size={22} color="var(--text-muted)" />
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                            <span style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.title}</span>
+                            {result.isExactMatch && (
+                              <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                                MATCH EXATO
+                              </span>
+                            )}
+                          </div>
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {result.year && `${result.year} • `}
+                            {result.catno && `${result.catno} • `}
+                            {result.country && `${result.country} • `}
+                            {result.format?.join(', ')}
+                          </span>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
+            {!isVideo && (
+              <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
+                <label>Artista</label>
                 <input 
-                  type="text" 
-                  value={queryDiscogs} 
-                  onChange={(e) => setQueryDiscogs(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); searchDiscogs(); } }}
-                  placeholder="Ex: 6328 286, COLP 12225..."
+                  ref={artistaInputRef}
+                  name="artista" 
+                  value={form.artista} 
+                  onChange={handleChange} 
+                  onFocus={() => { if (sugestoesArtista.length > 0) setMostrarSugestoesArtista(true); }}
+                  onBlur={() => setTimeout(() => setMostrarSugestoesArtista(false), 200)}
                   autoComplete="off"
                 />
-                <div className="discogs-actions-row">
-                  <button 
-                    type="button" 
-                    onClick={searchDiscogs}
-                    className="btn btn-secondary discogs-btn-buscar"
-                    disabled={isSearchingDiscogs}
-                  >
-                    <FaMagnifyingGlass size={13} /> {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setIsScannerOpen(true)}
-                    className="btn btn-primary discogs-btn-escanear"
-                    title="Escanear código de barras (CDs e Vinis modernos)"
-                  >
-                    <FaBarcode size={14} /> Barras
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => setIsOcrOpen(true)}
-                    className="btn btn-primary discogs-btn-ocr"
-                    title="Ler código de catálogo com a câmera (ex: COLP, SMOFB, 6349)"
-                  >
-                    <MdDocumentScanner size={16} /> OCR
-                  </button>
-                </div>
+                {mostrarSugestoesArtista && (
+                  <ul className="sugestoes-dropdown">
+                    {sugestoesArtista.map((sug, idx) => (
+                      <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'artista'); }}>{sug}</li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              {showDiscogsDropdown && discogsResults.length > 0 && (
-                <ul className="sugestoes-dropdown" style={{ top: '100%', left: 0, right: 0, maxHeight: '300px', overflowY: 'auto' }}>
-                  <li style={{ background: 'var(--bg-card)', padding: '8px', fontSize: '12px', borderBottom: '1px solid var(--border)', textAlign: 'right' }}>
-                    <button type="button" onClick={() => setShowDiscogsDropdown(false)} style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>Fechar (X)</button>
-                  </li>
-                  {discogsResults.map((result) => (
-                    <li 
-                      key={result.id} 
-                      onMouseDown={(e) => { e.preventDefault(); handleSelectDiscogsResult(result); }} 
-                      style={{ 
-                        padding: '8px 10px', 
-                        display: 'flex', 
-                        alignItems: 'center',
-                        gap: '12px',
-                        background: result.isExactMatch ? 'rgba(56, 161, 105, 0.05)' : undefined,
-                        borderLeft: result.isExactMatch ? '3px solid rgba(56, 161, 105, 0.6)' : undefined,
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {result.thumb ? (
-                        <img 
-                          src={result.thumb} 
-                          alt="" 
-                          style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0, background: '#18181b', border: '1px solid var(--border)' }} 
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div style={{ width: '42px', height: '42px', borderRadius: '4px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <PiVinylRecord size={22} color="var(--text-muted)" />
-                        </div>
-                      )}
-                      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                          <span style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.title}</span>
-                          {result.isExactMatch && (
-                            <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
-                              MATCH EXATO
-                            </span>
-                          )}
-                        </div>
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {result.year && `${result.year} • `}
-                          {result.catno && `${result.catno} • `}
-                          {result.country && `${result.country} • `}
-                          {result.format?.join(', ')}
-                        </span>
-                      </div>
+            )}
+            
+            <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesTitulo ? 60 : 1 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label style={{ marginBottom: 0 }}>Título *</label>
+                {!isVideo && (
+                  <button 
+                    type="button" 
+                    onClick={() => setForm(prev => ({ ...prev, titulo: prev.artista }))}
+                    style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}
+                    title="Copiar artista para o campo título"
+                  >
+                    Usar Artista
+                  </button>
+                )}
+              </div>
+              <input 
+                ref={tituloInputRef}
+                name="titulo" 
+                value={form.titulo} 
+                onChange={handleChange} 
+                onFocus={() => { if (sugestoesTitulo.length > 0) setMostrarSugestoesTitulo(true); }}
+                onBlur={() => setTimeout(() => setMostrarSugestoesTitulo(false), 200)}
+                autoComplete="off"
+              />
+              {mostrarSugestoesTitulo && (
+                <ul className="sugestoes-dropdown">
+                  {sugestoesTitulo.map((sug, idx) => (
+                    <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'titulo'); }}>
+                      {(!isVideo && sug.artista) ? `${sug.artista} — ${sug.titulo}` : sug.titulo}
                     </li>
                   ))}
                 </ul>
               )}
             </div>
           </div>
-        )}
 
-        <div className="form-row" style={{ position: 'relative', zIndex: (mostrarSugestoesArtista || mostrarSugestoesTitulo) ? 50 : 1 }}>
-          {!isVideo && (
-            <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}>
-              <label>Artista</label>
+          <div className="form-row">
+            <div className="form-group" style={{ maxWidth: '200px' }}>
+              <label>Ano</label>
               <input 
-                ref={artistaInputRef}
-                name="artista" 
-                value={form.artista} 
+                name="ano" 
+                type="text" 
+                value={form.ano || ''} 
                 onChange={handleChange} 
-                onFocus={() => { if (sugestoesArtista.length > 0) setMostrarSugestoesArtista(true); }}
-                onBlur={() => setTimeout(() => setMostrarSugestoesArtista(false), 200)}
-                autoComplete="off"
+                placeholder="Ex: 1982" 
               />
-              {mostrarSugestoesArtista && (
-                <ul className="sugestoes-dropdown">
-                  {sugestoesArtista.map((sug, idx) => (
-                    <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'artista'); }}>{sug}</li>
-                  ))}
-                </ul>
-              )}
             </div>
-          )}
-          
-          <div className="form-group" style={{ position: 'relative', zIndex: mostrarSugestoesTitulo ? 60 : 1 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <label style={{ marginBottom: 0 }}>Título *</label>
-              {!isVideo && (
-                <button 
-                  type="button" 
-                  onClick={() => setForm(prev => ({ ...prev, titulo: prev.artista }))}
-                  style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}
-                  title="Copiar artista para o campo título"
-                >
-                  Usar Artista
-                </button>
-              )}
+          </div>
+        </div>
+
+        {/* Bloco 2: Estoque & Localização */}
+        <div className="form-section-card">
+          <div className="form-section-header">
+            <MdInventory2 size={18} color="var(--accent)" />
+            <h3 className="form-section-title">Estoque & Localização</h3>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Loja {form.ativo !== false ? '*' : '(Opcional)'}</label>
+              <select name="loja" value={form.loja} onChange={handleChange}>
+                <option value="">Selecione uma loja</option>
+                {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+              </select>
             </div>
-            <input 
-              ref={tituloInputRef}
-              name="titulo" 
-              value={form.titulo} 
+            <div className="form-group">
+              <label>{(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS ? 'Caixa' : 'Localização'} {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}</label>
+              <input 
+                name="caixa" 
+                type="text" 
+                list="caixas-list"
+                value={form.caixa || ''} 
+                onChange={handleChange}
+                placeholder={form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? "Ex: 15" : "Ex: 15, Estante A, Prateleira 3..."}
+              />
+              <datalist id="caixas-list">
+                {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+              </datalist>
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label>Preço (R$)</label>
+              <input name="preco" type="text" value={form.preco} onChange={handleChange} />
+            </div>
+            <div className="form-group" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', marginBottom: '8px' }}>
+              <StatusSwitch
+                ativo={form.ativo !== false}
+                onChange={(novoAtivo) => setForm(prev => ({ ...prev, ativo: novoAtivo }))}
+              />
+            </div>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label>Observação (Opcional)</label>
+            <textarea 
+              name="observacao" 
+              value={form.observacao} 
               onChange={handleChange} 
-              onFocus={() => { if (sugestoesTitulo.length > 0) setMostrarSugestoesTitulo(true); }}
-              onBlur={() => setTimeout(() => setMostrarSugestoesTitulo(false), 200)}
-              autoComplete="off"
-            />
-            {mostrarSugestoesTitulo && (
-              <ul className="sugestoes-dropdown">
-                {sugestoesTitulo.map((sug, idx) => (
-                  <li key={idx} onMouseDown={(e) => { e.preventDefault(); selectSuggestion(sug, 'titulo'); }}>
-                    {(!isVideo && sug.artista) ? `${sug.artista} — ${sug.titulo}` : sug.titulo}
-                  </li>
-                ))}
-              </ul>
-            )}
+              rows="2" 
+              style={{ width: '100%', resize: 'vertical' }}
+              placeholder="Qualquer detalhe adicional sobre o item..."
+            ></textarea>
           </div>
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>{(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS ? 'Caixa' : 'Localização'} {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}</label>
-            <input 
-              name="caixa" 
-              type="text" 
-              list="caixas-list"
-              value={form.caixa || ''} 
-              onChange={handleChange}
-              placeholder={form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? "Ex: 15" : "Ex: 15, Estante A, Prateleira 3..."}
-            />
-            <datalist id="caixas-list">
-              {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
-            </datalist>
-          </div>
-          <div className="form-group">
-            <label>Preço (R$)</label>
-            <input name="preco" type="text" value={form.preco} onChange={handleChange} />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Loja {form.ativo !== false ? '*' : '(Opcional)'}</label>
-            <select name="loja" value={form.loja} onChange={handleChange}>
-              <option value="">Selecione uma loja</option>
-              {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label>Ano</label>
-            <input 
-              name="ano" 
-              type="text" 
-              value={form.ano || ''} 
-              onChange={handleChange} 
-              placeholder="Ex: 1982" 
-            />
-          </div>
-        </div>
-
-        <div className="form-group">
-          <label>Observação (Opcional)</label>
-          <textarea 
-            name="observacao" 
-            value={form.observacao} 
-            onChange={handleChange} 
-            rows="2" 
-            style={{ width: '100%', resize: 'vertical' }}
-            placeholder="Qualquer detalhe adicional sobre o item..."
-          ></textarea>
-        </div>
-
-        <div className="form-group" style={{ marginBottom: '16px' }}>
-          <StatusSwitch
-            ativo={form.ativo !== false}
-            onChange={(novoAtivo) => setForm(prev => ({ ...prev, ativo: novoAtivo }))}
-          />
-        </div>
-
-        <div style={{ marginTop: '16px' }}>
+        <div style={{ marginTop: '20px' }}>
           <button 
             type="submit" 
             className="btn btn-primary" 
