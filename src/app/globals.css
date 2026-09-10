@@ -1138,11 +1138,21 @@ tbody tr:last-child td {
   }
 
   /* Tabelas - Card Layout para Mobile */
-  .table-responsive,
-  .tableContainer {
+  .table-responsive {
     border: none;
     border-radius: 0;
     overflow: visible;
+  }
+
+  .tableContainer {
+    border: none;
+    border-radius: 0;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    margin-left: -5px !important;
+    margin-right: -5px !important;
+    width: calc(100% + 10px) !important;
+    box-sizing: border-box !important;
   }
 
   table, thead, tbody, th, td, tr {
@@ -1294,13 +1304,14 @@ tbody tr:last-child td {
     position: relative !important;
     border-radius: 10px !important;
     background: #18181b !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
     margin-bottom: 8px !important;
     overflow: hidden !important;
-    width: calc(100% + 14px) !important;
-    margin-left: -7px !important;
-    margin-right: -7px !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
   }
 
   /* Ocultar estritamente no mobile qualquer célula antiga do desktop */
@@ -1842,9 +1853,11 @@ tbody tr:last-child td {
 }
 
 /* Custom Table Styles */
-.tableContainer {
-  width: 100%;
-  overflow-x: auto;
+@media (min-width: 769px) {
+  .tableContainer {
+    width: 100%;
+    overflow-x: auto;
+  }
 }
 
 @media (min-width: 769px) {
