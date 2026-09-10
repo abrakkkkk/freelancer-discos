@@ -1689,68 +1689,70 @@ tbody tr:last-child td {
   background: var(--accent);
   color: #fff;
 }
-/* clone.module.css */
-.pageContainer {
-  padding: 0;
-  max-width: 1400px;
-  margin: 0 auto;
-}
+/* clone.module.css (Apenas Desktop) */
+@media (min-width: 769px) {
+  .pageContainer {
+    padding: 0;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
 
-.topHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-}
+  .topHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
 
-.titleGroup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+  .titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-.titleGroup h1 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-  color: var(--text-header);
-}
+  .titleGroup h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text-header);
+  }
 
-.headerActions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+  .headerActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-.mainCard {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: var(--shadow-sm);
-}
+  .mainCard {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
 
-.tabsRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 24px;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 16px;
-}
+  .tabsRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
 
-.filterCard {
-  background-color: rgba(255, 255, 255, 0.015);
-  border-radius: 12px;
-  padding: 16px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  margin-bottom: 24px;
-}
+  .filterCard {
+    background-color: rgba(255, 255, 255, 0.015);
+    border-radius: 12px;
+    padding: 16px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-bottom: 24px;
+  }
 
-.filtersRow {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
+  .filtersRow {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
 }
 
 .themeToggle {
