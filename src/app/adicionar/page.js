@@ -123,7 +123,7 @@ export default function AdicionarItem() {
   const validateForm = () => {
     if (!isVideo && !form.artista) return 'Preencha o artista.';
     if (!form.titulo.trim()) return 'O Título é obrigatório.';
-    if (!form.loja) return 'Selecione uma loja.';
+    if (form.ativo !== false && !form.loja) return 'Selecione uma loja.';
     if (getUnmaskedPreco() < 0) return 'O preço não pode ser negativo.';
     return null;
   };
@@ -327,16 +327,18 @@ export default function AdicionarItem() {
       const localText = form.caixa ? ` em "${form.caixa}"` : '';
       const statusText = form.ativo === false ? ' [Estoque Superior]' : '';
       
+      const lojaText = form.loja ? ` (${form.loja})` : '';
+      
       if (modoSequencia) {
         setMensagem({ 
           tipo: 'success', 
-          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText} (${form.loja})! Pronto para o próximo.` 
+          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText}${lojaText}! Pronto para o próximo.` 
         });
         setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja, ativo: form.ativo !== false });
       } else {
         setMensagem({ 
           tipo: 'success', 
-          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText} (${form.loja}).` 
+          texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText}${lojaText}.` 
         });
         setForm({ ...INITIAL_FORM, loja: activeStore || '', ativo: true });
       }
@@ -552,7 +554,7 @@ export default function AdicionarItem() {
 
         <div className="form-row">
           <div className="form-group">
-            <label>Loja *</label>
+            <label>Loja {form.ativo !== false ? '*' : '(Opcional)'}</label>
             <select name="loja" value={form.loja} onChange={handleChange}>
               <option value="">Selecione uma loja</option>
               {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
