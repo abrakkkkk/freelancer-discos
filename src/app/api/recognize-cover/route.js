@@ -2,10 +2,10 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-flash-latest',
-  'gemini-2.5-flash-lite',
   'gemini-3.5-flash',
-  'gemini-3.6-flash'
+  'gemini-3.5-flash-lite',
+  'gemini-3.6-flash',
+  'gemini-flash-latest'
 ];
 
 export async function POST(request) {
@@ -78,7 +78,8 @@ Regras:
       ],
       generationConfig: {
         responseMimeType: 'application/json',
-        temperature: 0.1
+        temperature: 0.1,
+        thinkingConfig: { thinkingBudget: 0 }
       }
     };
 
@@ -86,14 +87,15 @@ Regras:
     let geminiData = null;
     let lastError = null;
 
-    // Tenta os modelos disponíveis em ordem de prioridade com fallback
+    // Tenta os modelos disponíveis em ordem de prioridade com fallback rápido (timeout 6s)
     for (const model of GEMINI_MODELS) {
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(6000)
         });
 
         const data = await res.json();
@@ -103,8 +105,8 @@ Regras:
           break;
         } else {
           lastError = data.error?.message || `Erro ${res.status}`;
-          // Se for 404 (modelo descontinuado) ou 503 (alta demanda), tenta o próximo modelo da lista
-          if (res.status === 404 || res.status === 503) {
+          // Se for 404 (modelo descontinuado) ou 503 (alta demanda), tenta o próximo modelo
+          if (res.status === 404 || res.status === 503 || res.status === 429) {
             continue;
           } else {
             break;
@@ -123,7 +125,8 @@ Regras:
       );
     }
 
-    const candidateText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text;
+    const parts = geminiData.candidates?.[0]?.content?.parts || [];
+    const candidateText = parts.map(p => p.text).filter(Boolean).join('\n').trim();
     if (!candidateText) {
       return Response.json(
         { success: false, error: 'A inteligência visual não retornou dados para esta imagem.' },
@@ -133,7 +136,8 @@ Regras:
 
     let parsed = null;
     try {
-      parsed = JSON.parse(candidateText);
+      const jsonMatch = candidateText.match(/\{[\s\S]*\}/);
+      parsed = JSON.parse(jsonMatch ? jsonMatch[0] : candidateText);
     } catch (_) {
       // Limpeza de blocos de código se o modelo devolver markdown
       const cleaned = candidateText.replace(/```json/g, '').replace(/```/g, '').trim();

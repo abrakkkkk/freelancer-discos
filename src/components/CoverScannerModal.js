@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { IoClose, IoCameraReverseOutline, IoSparkles, IoCamera, IoRefresh, IoImageOutline } from 'react-icons/io5';
+import { IoClose, IoCameraReverseOutline, IoCamera, IoRefresh, IoImageOutline } from 'react-icons/io5';
 
 export default function CoverScannerModal({ isOpen, onClose, onRecognized, title = 'Reconhecer Capa' }) {
   const [stream, setStream] = useState(null);
@@ -93,10 +93,10 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
     await startCamera(nextCam.deviceId);
   };
 
-  // Redimensiona para crop central 1:1 de 800x800 em JPEG leve
+  // Redimensiona para crop central 1:1 de 560x560 em JPEG super leve (~35KB) para resposta instantânea
   const recortarEComprimir = (origem) => {
     const canvas = document.createElement('canvas');
-    const size = 800;
+    const size = 560;
     canvas.width = size;
     canvas.height = size;
     const ctx = canvas.getContext('2d');
@@ -117,7 +117,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
     const sy = (srcH - sSize) / 2;
 
     ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, size, size);
-    return canvas.toDataURL('image/jpeg', 0.82);
+    return canvas.toDataURL('image/jpeg', 0.75);
   };
 
   const enviarParaReconhecimento = async (base64Image) => {
@@ -246,7 +246,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <IoSparkles size={20} color="var(--accent, #e53e3e)" />
+            <IoCamera size={20} color="var(--accent, #e53e3e)" />
             <h2 style={{ fontSize: '17px', fontWeight: 600, color: '#fff', margin: 0 }}>
               {title}
             </h2>
@@ -406,7 +406,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
                 }}
               />
               <span style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>
-                Identificando capa com IA...
+                Identificando...
               </span>
             </div>
           )}

@@ -18,7 +18,7 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
 import { cleanDiscogsString } from '@/utils/stringUtils';
 
-import { IoSparkles } from "react-icons/io5";
+import { IoCamera } from "react-icons/io5";
 
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
 const OcrScannerModal = dynamic(() => import('@/components/OcrScannerModal'), { ssr: false });
@@ -398,9 +398,9 @@ export default function AdicionarItem() {
                       type="button" 
                       onClick={() => setIsCoverScannerOpen(true)}
                       className="btn btn-primary discogs-btn-capa"
-                      title="Reconhecer capa com inteligência visual (foto da capa frontal)"
+                      title="Reconhecer capa frontal do disco"
                     >
-                      <IoSparkles size={14} /> Capa
+                      <IoCamera size={15} /> Capa
                     </button>
                     <button 
                       type="button" 
