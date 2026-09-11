@@ -200,6 +200,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
       stopCamera();
     }
     return () => stopCamera();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   if (!isOpen) return null;
