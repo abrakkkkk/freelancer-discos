@@ -1,9 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { PiVinylRecord, PiDisc, PiFilmStrip, PiCassetteTape } from "react-icons/pi";
 import { MdDownload } from "react-icons/md";
 import { FiSearch } from "react-icons/fi";
+import { IoCamera, IoClose } from "react-icons/io5";
+
+const CoverScannerModal = dynamic(() => import('@/components/CoverScannerModal'), { ssr: false });
 import { useCatalog } from '@/hooks/useCatalog';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
@@ -29,10 +33,21 @@ export default function CatalogoClone() {
   const [feedbackMsg, setFeedbackMsg] = useState(null);
   const [reposicaoData, setReposicaoData] = useState(null);
   const [isRepondo, setIsRepondo] = useState(false);
+  const [isCoverScannerOpen, setIsCoverScannerOpen] = useState(false);
 
   const { registerUndo } = useUndo();
   const { activeStore } = useStore();
   const { adicionarTarefa, removerTarefa } = useReposicao();
+
+  const handleCoverRecognized = ({ artista, titulo }) => {
+    if (!artista && !titulo) return;
+    const query = `${artista || ''} ${titulo || ''}`.trim();
+    catalog.setBusca(query);
+    setFeedbackMsg({
+      tipo: 'success',
+      texto: `Capa identificada: "${query}". Exibindo resultados do estoque.`
+    });
+  };
 
   // Sync global store filter with catalog
   useEffect(() => {
@@ -289,7 +304,29 @@ export default function CatalogoClone() {
                   value={catalog.busca}
                   onChange={(e) => catalog.setBusca(e.target.value)}
                 />
-                <FiSearch size={18} className="searchIcon" />
+                <div className="search-actions-group">
+                  {catalog.busca && (
+                    <button
+                      type="button"
+                      onClick={() => catalog.setBusca('')}
+                      className="search-clear-btn"
+                      title="Limpar busca"
+                      aria-label="Limpar busca"
+                    >
+                      <IoClose size={16} />
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setIsCoverScannerOpen(true)}
+                    className="search-camera-btn"
+                    title="Buscar disco por foto da capa"
+                    aria-label="Buscar disco por foto da capa"
+                  >
+                    <IoCamera size={17} />
+                  </button>
+                  <FiSearch size={18} className="searchIcon" />
+                </div>
               </div>
             </div>
 
@@ -395,6 +432,13 @@ export default function CatalogoClone() {
         isRepondo={isRepondo}
         onConfirmRepor={handleConfirmarRepor}
         onClose={() => setReposicaoData(null)}
+      />
+
+      <CoverScannerModal
+        isOpen={isCoverScannerOpen}
+        onClose={() => setIsCoverScannerOpen(false)}
+        onRecognized={handleCoverRecognized}
+        title="Buscar Disco por Capa"
       />
     </div>
   );

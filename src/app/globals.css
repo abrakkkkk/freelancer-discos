@@ -2024,13 +2024,60 @@ tbody tr:last-child td {
 }
 
 .searchInputWrapper input {
-  padding-right: 36px !important;
+  padding-right: 86px !important;
+}
+
+.search-actions-group {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.search-clear-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.search-camera-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--text-muted);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.search-camera-btn:hover {
+  background: var(--accent, #c53030);
+  border-color: var(--accent, #c53030);
+  color: #fff;
 }
 
 .searchIcon {
-  position: absolute;
-  right: 12px;
   color: var(--text-muted);
+  margin: 0 4px;
+  pointer-events: none;
 }
 
 .tableHeader {
