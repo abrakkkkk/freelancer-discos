@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { IoClose, IoCameraReverseOutline, IoCamera, IoRefresh, IoImageOutline } from 'react-icons/io5';
+import { computeDHash, findInVisualCache, saveToVisualCache } from '@/utils/visualHash';
 
 export default function CoverScannerModal({ isOpen, onClose, onRecognized, title = 'Reconhecer Capa' }) {
   const [stream, setStream] = useState(null);
@@ -93,7 +94,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
     await startCamera(nextCam.deviceId);
   };
 
-  // Redimensiona para crop central 1:1 de 560x560 em JPEG super leve (~35KB) para resposta instantânea
+  // Redimensiona para crop central 1:1 de 560x560 em JPEG super leve (~35KB) e extrai dHash
   const recortarEComprimir = (origem) => {
     const canvas = document.createElement('canvas');
     const size = 560;
@@ -117,10 +118,34 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
     const sy = (srcH - sSize) / 2;
 
     ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, size, size);
-    return canvas.toDataURL('image/jpeg', 0.75);
+
+    // Gera o hash perceptual visual da capa
+    const hash = computeDHash(canvas);
+    const base64 = canvas.toDataURL('image/jpeg', 0.75);
+
+    return { base64, hash };
   };
 
-  const enviarParaReconhecimento = async (base64Image) => {
+  const enviarParaReconhecimento = async (base64Image, hashCalculado = null) => {
+    // 1. Verificação instantânea no Cache Visual Perceptual (< 5ms, sem rede)
+    if (hashCalculado) {
+      const matchCache = findInVisualCache(hashCalculado);
+      if (matchCache) {
+        playBeep();
+        stopCamera();
+        if (onRecognized) {
+          onRecognized({
+            artista: matchCache.artista,
+            titulo: matchCache.titulo,
+            ano: matchCache.ano,
+            confianca: 'alta'
+          });
+        }
+        onClose();
+        return;
+      }
+    }
+
     setProcessando(true);
     setErro(null);
 
@@ -135,6 +160,15 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
 
       if (!res.ok || !data.success) {
         throw new Error(data.error || 'Capa não reconhecida.');
+      }
+
+      // Salva no cache visual local para que futuras leituras sejam instantâneas
+      if (hashCalculado) {
+        saveToVisualCache(hashCalculado, {
+          artista: data.artista,
+          titulo: data.titulo,
+          ano: data.ano
+        });
       }
 
       playBeep();
@@ -158,9 +192,9 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
   const capturarDoVideo = () => {
     if (!videoRef.current || processando) return;
     try {
-      const base64 = recortarEComprimir(videoRef.current);
+      const { base64, hash } = recortarEComprimir(videoRef.current);
       setFotoPreview(base64);
-      enviarParaReconhecimento(base64);
+      enviarParaReconhecimento(base64, hash);
     } catch (err) {
       setErro('Erro ao capturar frame do vídeo.');
     }
@@ -174,9 +208,9 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
-        const base64 = recortarEComprimir(img);
+        const { base64, hash } = recortarEComprimir(img);
         setFotoPreview(base64);
-        enviarParaReconhecimento(base64);
+        enviarParaReconhecimento(base64, hash);
       };
       img.src = event.target.result;
     };
