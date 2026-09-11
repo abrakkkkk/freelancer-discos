@@ -298,8 +298,10 @@ export default function CatalogoClone() {
             <div className="filterGroup" style={{ flex: '1 1 100%' }}>
               <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
               <div className="searchInputWrapper">
+                <FiSearch size={18} className="searchIconLeft" />
                 <input
                   type="text"
+                  className="searchInputWithLeftIcon"
                   placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
                   value={catalog.busca}
                   onChange={(e) => catalog.setBusca(e.target.value)}
@@ -323,9 +325,8 @@ export default function CatalogoClone() {
                     title="Buscar disco por foto da capa"
                     aria-label="Buscar disco por foto da capa"
                   >
-                    <IoCamera size={17} />
+                    <IoCamera size={18} />
                   </button>
-                  <FiSearch size={18} className="searchIcon" />
                 </div>
               </div>
             </div>

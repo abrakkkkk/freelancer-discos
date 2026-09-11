@@ -2021,26 +2021,38 @@ tbody tr:last-child td {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
-.searchInputWrapper input {
-  padding-right: 86px !important;
+.searchIconLeft {
+  position: absolute;
+  left: 14px;
+  color: var(--text-muted);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.searchInputWithLeftIcon {
+  width: 100%;
+  padding-left: 42px !important;
+  padding-right: 90px !important;
 }
 
 .search-actions-group {
   position: absolute;
-  right: 8px;
+  right: 6px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  z-index: 2;
 }
 
 .search-clear-btn {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2055,11 +2067,11 @@ tbody tr:last-child td {
 }
 
 .search-camera-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: var(--text-muted);
-  width: 34px;
-  height: 34px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text, #fff);
+  width: 38px;
+  height: 38px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -2068,16 +2080,11 @@ tbody tr:last-child td {
   transition: all 0.15s ease;
 }
 
-.search-camera-btn:hover {
+.search-camera-btn:hover,
+.search-camera-btn:active {
   background: var(--accent, #c53030);
   border-color: var(--accent, #c53030);
   color: #fff;
-}
-
-.searchIcon {
-  color: var(--text-muted);
-  margin: 0 4px;
-  pointer-events: none;
 }
 
 .tableHeader {
@@ -2385,7 +2392,7 @@ tbody tr:last-child td {
   border-top: 1px solid var(--border);
 }
 
-/* ========== DISCOGS SEARCH ROW & SCANNER BUTTONS ========== */
+/* ========== DISCOGS SEARCH ROW & SCANNERS ========== */
 .discogs-search-row {
   display: flex;
   gap: 8px;
@@ -2396,12 +2403,7 @@ tbody tr:last-child td {
 .discogs-search-row input {
   flex: 1;
   min-width: 0;
-}
-
-.discogs-actions-row {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
+  height: 42px;
 }
 
 .discogs-btn-buscar {
@@ -2411,64 +2413,116 @@ tbody tr:last-child td {
   gap: 6px;
   white-space: nowrap;
   height: 42px;
-  padding: 0 20px;
-  font-size: 14px;
-  font-weight: 700;
+  padding: 0 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--text, #fff);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
-.discogs-btn-capa,
+.discogs-btn-buscar:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.discogs-scanners-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.discogs-scanner-chip {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text, #fff);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.discogs-scanner-chip:hover,
+.discogs-scanner-chip:active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+/* Fallback para discogs-actions-row se usado em telas legadas */
+.discogs-actions-row {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .discogs-btn-escanear,
-.discogs-btn-ocr {
+.discogs-btn-ocr,
+.discogs-btn-capa {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 5px;
   white-space: nowrap;
-  height: 42px;
+  height: 38px;
   padding: 0 12px;
   font-size: 13px;
   font-weight: 600;
-}
-
-.discogs-btn-capa {
-  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
-  border-color: rgba(239, 68, 68, 0.4);
-}
-
-.discogs-btn-capa:hover {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  border-radius: 8px;
 }
 
 @media (max-width: 768px) {
   .discogs-search-row {
-    flex-direction: column;
+    flex-direction: row;
     gap: 8px;
-    align-items: stretch;
+    align-items: center;
+    width: 100%;
   }
 
   .discogs-search-row input {
-    width: 100%;
-    min-height: 44px;
-    font-size: 15px;
+    flex: 1;
+    min-height: 42px;
+    font-size: 14.5px;
   }
 
-  /* Grid 2x2 confortável para toque no balcão mobile */
-  .discogs-actions-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .discogs-btn-buscar,
-  .discogs-btn-capa,
-  .discogs-btn-escanear,
-  .discogs-btn-ocr {
-    width: 100%;
-    min-height: 44px;
+  .discogs-btn-buscar {
+    height: 42px;
+    min-height: 42px;
     font-size: 13px;
-    font-weight: 600;
-    padding: 0 8px;
+    padding: 0 14px;
+  }
+
+  .discogs-scanners-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .discogs-scanner-chip {
+    flex: 1;
+    min-width: 0;
+    height: 38px;
+    min-height: 38px;
+    font-size: 12.5px;
+    padding: 0 4px;
+    gap: 5px;
   }
 }
 

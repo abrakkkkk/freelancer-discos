@@ -385,40 +385,40 @@ export default function AdicionarItem() {
                     placeholder="Ex: 6328 286, COLP 12225..."
                     autoComplete="off"
                   />
-                  <div className="discogs-actions-row">
-                    <button 
-                      type="button" 
-                      onClick={searchDiscogs}
-                      className="btn btn-secondary discogs-btn-buscar"
-                      disabled={isSearchingDiscogs}
-                    >
-                      <FaMagnifyingGlass size={13} /> {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => setIsCoverScannerOpen(true)}
-                      className="btn btn-primary discogs-btn-capa"
-                      title="Reconhecer capa frontal do disco"
-                    >
-                      <IoCamera size={15} /> Capa
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => setIsScannerOpen(true)}
-                      className="btn btn-primary discogs-btn-escanear"
-                      title="Escanear código de barras (CDs e Vinis modernos)"
-                    >
-                      <FaBarcode size={14} /> Barras
-                    </button>
-                    <button 
-                      type="button" 
-                      onClick={() => setIsOcrOpen(true)}
-                      className="btn btn-primary discogs-btn-ocr"
-                      title="Ler código de catálogo com a câmera (ex: COLP, SMOFB, 6349)"
-                    >
-                      <MdDocumentScanner size={16} /> OCR
-                    </button>
-                  </div>
+                  <button 
+                    type="button" 
+                    onClick={searchDiscogs}
+                    className="discogs-btn-buscar"
+                    disabled={isSearchingDiscogs}
+                  >
+                    <FaMagnifyingGlass size={13} /> {isSearchingDiscogs ? 'Buscando...' : 'Buscar'}
+                  </button>
+                </div>
+                <div className="discogs-scanners-row">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsCoverScannerOpen(true)}
+                    className="discogs-scanner-chip"
+                    title="Reconhecer capa frontal do disco"
+                  >
+                    <IoCamera size={15} /> Capa
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setIsScannerOpen(true)}
+                    className="discogs-scanner-chip"
+                    title="Escanear código de barras (CDs e Vinis modernos)"
+                  >
+                    <FaBarcode size={14} /> Barras
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={() => setIsOcrOpen(true)}
+                    className="discogs-scanner-chip"
+                    title="Ler código de catálogo com a câmera (ex: COLP, SMOFB, 6349)"
+                  >
+                    <MdDocumentScanner size={16} /> OCR
+                  </button>
                 </div>
                 {showDiscogsDropdown && discogsResults.length > 0 && (
                   <ul className="sugestoes-dropdown" style={{ top: '100%', left: 0, right: 0, maxHeight: '300px', overflowY: 'auto' }}>
