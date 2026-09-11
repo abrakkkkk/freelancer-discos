@@ -2456,9 +2456,9 @@ tbody tr:last-child td {
   padding: 0 8px;
   font-size: 13px;
   font-weight: 600;
-  color: var(--text, #fff);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  background: #7f1d1d;
+  border: 1px solid rgba(239, 68, 68, 0.4);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -2467,9 +2467,9 @@ tbody tr:last-child td {
 
 .discogs-scanner-chip:hover,
 .discogs-scanner-chip:active {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.28);
-  color: #fff;
+  background: #991b1b;
+  border-color: rgba(239, 68, 68, 0.65);
+  color: #ffffff;
 }
 
 /* Fallback para discogs-actions-row se usado em telas legadas */
@@ -2492,6 +2492,9 @@ tbody tr:last-child td {
   font-size: 13px;
   font-weight: 600;
   border-radius: 8px;
+  color: #ffffff;
+  background: #7f1d1d;
+  border: 1px solid rgba(239, 68, 68, 0.4);
 }
 
 @media (max-width: 768px) {
