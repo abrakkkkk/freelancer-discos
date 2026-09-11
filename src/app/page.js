@@ -297,16 +297,16 @@ export default function CatalogoClone() {
           <div className="filtersRow">
             <div className="filterGroup" style={{ flex: '1 1 100%' }}>
               <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
-              <div className="searchInputWrapper">
-                <FiSearch size={18} className="searchIconLeft" />
-                <input
-                  type="text"
-                  className="searchInputWithLeftIcon"
-                  placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
-                  value={catalog.busca}
-                  onChange={(e) => catalog.setBusca(e.target.value)}
-                />
-                <div className="search-actions-group">
+              <div className="search-bar-row">
+                <div className="searchInputWrapper">
+                  <FiSearch size={18} className="searchIconLeft" />
+                  <input
+                    type="text"
+                    className="searchInputWithLeftIcon"
+                    placeholder={isVideo ? "Ex: O Poderoso Chefão, Matrix..." : "Ex: Beatles, Abbey Road, Roberto Carlos..."}
+                    value={catalog.busca}
+                    onChange={(e) => catalog.setBusca(e.target.value)}
+                  />
                   {catalog.busca && (
                     <button
                       type="button"
@@ -318,16 +318,16 @@ export default function CatalogoClone() {
                       <IoClose size={16} />
                     </button>
                   )}
-                  <button
-                    type="button"
-                    onClick={() => setIsCoverScannerOpen(true)}
-                    className="search-camera-btn"
-                    title="Buscar disco por foto da capa"
-                    aria-label="Buscar disco por foto da capa"
-                  >
-                    <IoCamera size={18} />
-                  </button>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setIsCoverScannerOpen(true)}
+                  className="catalog-camera-btn"
+                  title="Buscar disco por foto da capa"
+                  aria-label="Buscar disco por foto da capa"
+                >
+                  <IoCamera size={20} />
+                </button>
               </div>
             </div>
 
