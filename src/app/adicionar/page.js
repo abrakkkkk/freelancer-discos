@@ -18,8 +18,11 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
 import { cleanDiscogsString } from '@/utils/stringUtils';
 
+import { IoSparkles } from "react-icons/io5";
+
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
 const OcrScannerModal = dynamic(() => import('@/components/OcrScannerModal'), { ssr: false });
+const CoverScannerModal = dynamic(() => import('@/components/CoverScannerModal'), { ssr: false });
 
 const INITIAL_FORM = {
   artista: '',
@@ -107,6 +110,47 @@ export default function AdicionarItem() {
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isOcrOpen, setIsOcrOpen] = useState(false);
+  const [isCoverScannerOpen, setIsCoverScannerOpen] = useState(false);
+
+  const handleCoverRecognized = async ({ artista, titulo, ano }) => {
+    if (!artista && !titulo) return;
+
+    setForm(prev => ({
+      ...prev,
+      artista: artista || prev.artista,
+      titulo: titulo || prev.titulo,
+      ano: ano || prev.ano,
+    }));
+
+    const query = `${artista || ''} ${titulo || ''}`.trim();
+    setQueryDiscogs(query);
+    setMensagem({
+      tipo: 'success',
+      texto: `Capa identificada: ${[artista, titulo].filter(Boolean).join(' - ')}${ano ? ` (${ano})` : ''}. Buscando prensagens no Discogs...`
+    });
+
+    if (query) {
+      setIsSearchingDiscogs(true);
+      setDiscogsResults([]);
+      setShowDiscogsDropdown(false);
+
+      try {
+        const res = await fetch(`/api/discogs?q=${encodeURIComponent(query)}`);
+        const data = await res.json();
+        if (data.results && data.results.length > 0) {
+          setDiscogsResults(data.results);
+          setShowDiscogsDropdown(true);
+          if (data.results.length === 1) {
+            handleSelectDiscogsResult(data.results[0]);
+          }
+        }
+      } catch (err) {
+        console.error('Erro na busca Discogs pós-reconhecimento:', err);
+      } finally {
+        setIsSearchingDiscogs(false);
+      }
+    }
+  };
 
   const handleBarcodeScan = async (barcode) => {
     if (!barcode) return;
@@ -352,6 +396,14 @@ export default function AdicionarItem() {
                     </button>
                     <button 
                       type="button" 
+                      onClick={() => setIsCoverScannerOpen(true)}
+                      className="btn btn-primary discogs-btn-capa"
+                      title="Reconhecer capa com inteligência visual (foto da capa frontal)"
+                    >
+                      <IoSparkles size={14} /> Capa
+                    </button>
+                    <button 
+                      type="button" 
                       onClick={() => setIsScannerOpen(true)}
                       className="btn btn-primary discogs-btn-escanear"
                       title="Escanear código de barras (CDs e Vinis modernos)"
@@ -576,6 +628,12 @@ export default function AdicionarItem() {
         </div>
       </form>
       </div>
+
+      <CoverScannerModal 
+        isOpen={isCoverScannerOpen} 
+        onClose={() => setIsCoverScannerOpen(false)} 
+        onRecognized={handleCoverRecognized} 
+      />
 
       <BarcodeScannerModal 
         isOpen={isScannerOpen} 

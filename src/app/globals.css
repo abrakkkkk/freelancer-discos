@@ -2369,6 +2369,7 @@ tbody tr:last-child td {
   font-weight: 700;
 }
 
+.discogs-btn-capa,
 .discogs-btn-escanear,
 .discogs-btn-ocr {
   display: inline-flex;
@@ -2380,6 +2381,15 @@ tbody tr:last-child td {
   padding: 0 12px;
   font-size: 13px;
   font-weight: 600;
+}
+
+.discogs-btn-capa {
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.discogs-btn-capa:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
 }
 
 @media (max-width: 768px) {
@@ -2395,27 +2405,23 @@ tbody tr:last-child td {
     font-size: 15px;
   }
 
-  /* Grid com 3 botões: Buscar maiorzinho (1.4fr) e os outros dois com 1fr */
+  /* Grid 2x2 confortável para toque no balcão mobile */
   .discogs-actions-row {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
     width: 100%;
   }
 
-  .discogs-btn-buscar {
-    width: 100%;
-    min-height: 44px;
-    font-size: 14px;
-    font-weight: 700;
-    padding: 0 8px;
-  }
-
+  .discogs-btn-buscar,
+  .discogs-btn-capa,
   .discogs-btn-escanear,
   .discogs-btn-ocr {
     width: 100%;
     min-height: 44px;
-    font-size: 12.5px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0 8px;
   }
 }
 
