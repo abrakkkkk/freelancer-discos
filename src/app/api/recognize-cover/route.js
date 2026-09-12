@@ -2,8 +2,8 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash',
   'gemini-3.5-flash-lite',
+  'gemini-3.5-flash',
   'gemini-3.6-flash',
   'gemini-flash-latest'
 ];
@@ -78,8 +78,8 @@ Regras:
       ],
       generationConfig: {
         responseMimeType: 'application/json',
-        temperature: 0.1,
-        thinkingConfig: { thinkingBudget: 0 }
+        temperature: 0,
+        maxOutputTokens: 60
       }
     };
 
@@ -87,7 +87,7 @@ Regras:
     let geminiData = null;
     let lastError = null;
 
-    // Tenta os modelos disponíveis em ordem de prioridade com fallback rápido (timeout 6s)
+    // Tenta os modelos disponíveis em ordem de prioridade com fallback rápido (timeout 4.5s)
     for (const model of GEMINI_MODELS) {
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
@@ -95,7 +95,7 @@ Regras:
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(6000)
+          signal: AbortSignal.timeout(4500)
         });
 
         const data = await res.json();
