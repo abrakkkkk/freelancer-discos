@@ -57,12 +57,11 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     const prepararWorker = async () => {
       try {
         const { createWorker } = await import('tesseract.js');
-        // Carrega apenas 'eng' (A-Z e 0-9), muito mais leve e rápido que português+inglês
         const worker = await createWorker('eng');
+        // PSM 7 = single text line — ideal para capturar uma única linha (ex: COLP 12225)
+        // Sem char_whitelist: no Tesseract v4/v5 (LSTM) o whitelist degrada a acurácia
         await worker.setParameters({
-          // Suporta maiúsculas, minúsculas, dígitos e separadores de catálogo
-          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-./ ',
-          tessedit_pageseg_mode: '6', // Modo bloco/linha uniforme rápido e estável
+          tessedit_pageseg_mode: '7',
         });
 
         if (!cancelado) {
@@ -383,18 +382,31 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         const { createWorker } = await import('tesseract.js');
         worker = await createWorker('eng');
         await worker.setParameters({
-          tessedit_char_whitelist: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-./ ',
-          tessedit_pageseg_mode: '6',
+          tessedit_pageseg_mode: '7', // single text line
         });
         workerRef.current = worker;
       }
 
-      // 1. Passada OCR primária (orientação padrão)
+      // 1. Passada primária com PSM 7 (linha única — ideal para código de catálogo)
       const ret = await worker.recognize(imageSource);
       const textoLido = ret?.data?.text || '';
       let codigoEncontrado = extrairCodigoCatalogo(textoLido);
 
-      // 2. Se não detectou código na horizontal e autoRotate estiver ativo, tenta rotação 90° (típica de lombada vertical)
+      // 2. Fallback: segunda passada com PSM 6 (bloco) se PSM 7 não detectou
+      if (!codigoEncontrado) {
+        try {
+          await worker.setParameters({ tessedit_pageseg_mode: '6' });
+          const ret6 = await worker.recognize(imageSource);
+          const texto6 = ret6?.data?.text || '';
+          codigoEncontrado = extrairCodigoCatalogo(texto6);
+          // Restaura PSM 7 para a próxima captura
+          await worker.setParameters({ tessedit_pageseg_mode: '7' });
+        } catch (e) {
+          console.warn('Fallback PSM 6 falhou:', e);
+        }
+      }
+
+      // 3. Se não detectou código na horizontal e autoRotate estiver ativo, tenta rotação 90°
       if (!codigoEncontrado && autoRotate && typeof imageSource === 'string') {
         try {
           const rotacionada = await rotacionarDataUrl90(imageSource);
