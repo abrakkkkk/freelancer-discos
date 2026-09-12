@@ -337,102 +337,83 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     return '';
   };
 
-  // Pré-processamento: escala de cinza com Auto-Níveis e contraste equilibrado (sem ruído de convolução)
-  const processarImagemParaOcr = (canvas, width, height) => {
-    const ctx = canvas.getContext('2d');
-    const imgData = ctx.getImageData(0, 0, width, height);
-    const d = imgData.data;
-    const len = d.length;
 
-    let minVal = 255;
-    let maxVal = 0;
-
-    for (let i = 0; i < len; i += 4) {
-      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      if (gray < minVal) minVal = gray;
-      if (gray > maxVal) maxVal = gray;
-    }
-
-    const range = Math.max(30, maxVal - minVal);
-
-    for (let i = 0; i < len; i += 4) {
-      const gray = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2];
-      const normalized = ((gray - minVal) / range) * 255;
-      let adjusted = ((normalized - 128) * 1.45) + 128;
-      adjusted = Math.max(0, Math.min(255, Math.round(adjusted)));
-
-      d[i] = adjusted;
-      d[i + 1] = adjusted;
-      d[i + 2] = adjusted;
-    }
-
-    ctx.putImageData(imgData, 0, 0);
-  };
-
-  // Processar imagem via Tesseract.js (Instantâneo com Worker pré-carregado e auto-rotação para lombadas)
+  // Processar imagem via Tesseract.js com fallback automático inteligente via Gemini Flash
   const executarOcrEmImagem = async (imageSource, autoRotate = true) => {
     setProcessando(true);
     setTextoDetectado('');
 
+    let codigoEncontrado = '';
+
     try {
-      let worker = workerRef.current;
+      // 1. Tentar primeiro o OCR local com Tesseract (caso já esteja em cache no navegador)
+      try {
+        let worker = workerRef.current;
+        if (!worker) {
+          const { createWorker } = await import('tesseract.js');
+          worker = await createWorker('eng');
+          await worker.setParameters({ tessedit_pageseg_mode: '7' });
+          workerRef.current = worker;
+        }
 
-      // Se o worker ainda não terminou de carregar, cria rapidamente
-      if (!worker) {
-        const { createWorker } = await import('tesseract.js');
-        worker = await createWorker('eng');
-        await worker.setParameters({
-          tessedit_pageseg_mode: '7', // single text line
-        });
-        workerRef.current = worker;
-      }
+        const ret = await worker.recognize(imageSource);
+        const textoLido = ret?.data?.text || '';
+        codigoEncontrado = extrairCodigoCatalogo(textoLido);
 
-      // 1. Passada primária com PSM 7 (linha única — ideal para código de catálogo)
-      const ret = await worker.recognize(imageSource);
-      const textoLido = ret?.data?.text || '';
-      let codigoEncontrado = extrairCodigoCatalogo(textoLido);
-
-      // 2. Fallback: segunda passada com PSM 6 (bloco) se PSM 7 não detectou
-      if (!codigoEncontrado) {
-        try {
+        // Fallback PSM 6 se necessário
+        if (!codigoEncontrado) {
           await worker.setParameters({ tessedit_pageseg_mode: '6' });
           const ret6 = await worker.recognize(imageSource);
-          const texto6 = ret6?.data?.text || '';
-          codigoEncontrado = extrairCodigoCatalogo(texto6);
-          // Restaura PSM 7 para a próxima captura
+          codigoEncontrado = extrairCodigoCatalogo(ret6?.data?.text || '');
           await worker.setParameters({ tessedit_pageseg_mode: '7' });
-        } catch (e) {
-          console.warn('Fallback PSM 6 falhou:', e);
+        }
+      } catch (errTesseract) {
+        console.warn('OCR local Tesseract não concluiu:', errTesseract);
+      }
+
+      // 2. Se o OCR local não identificou o código com precisão, aciona o leitor assistido por IA (/api/ocr-assist)
+      if (!codigoEncontrado && typeof imageSource === 'string') {
+        try {
+          const resp = await fetch('/api/ocr-assist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: imageSource })
+          });
+          const data = await resp.json();
+          if (data?.success && data.codigo) {
+            codigoEncontrado = data.codigo.trim();
+          }
+        } catch (errIa) {
+          console.warn('Falha no leitor assistido de OCR:', errIa);
         }
       }
 
-      // 3. Se não detectou código na horizontal e autoRotate estiver ativo, tenta rotação 90°
+      // 3. Se ainda assim não encontrou e autoRotate estiver ativo, tenta rotação 90° (lombada vertical)
       if (!codigoEncontrado && autoRotate && typeof imageSource === 'string') {
         try {
           const rotacionada = await rotacionarDataUrl90(imageSource);
-          const retRot = await worker.recognize(rotacionada);
-          const textoRot = retRot?.data?.text || '';
-          const codigoRot = extrairCodigoCatalogo(textoRot);
-          if (codigoRot) {
-            codigoEncontrado = codigoRot;
-            setFotoPreview(rotacionada);
+          setFotoPreview(rotacionada);
+
+          const resp = await fetch('/api/ocr-assist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: rotacionada })
+          });
+          const data = await resp.json();
+          if (data?.success && data.codigo) {
+            codigoEncontrado = data.codigo.trim();
           }
         } catch (e) {
-          console.warn('Tentativa de OCR rotacionado em 90°:', e);
+          console.warn('Tentativa de rotação 90°:', e);
         }
       }
 
-      let resultadoFinal = codigoEncontrado;
-      if (!resultadoFinal) {
-        // Fallback: pega a linha mais curta que contenha caracteres alfanuméricos válidos
-        const linhas = textoLido.split(/\r?\n/).map(l => l.trim()).filter(l => l.length >= 3 && l.length <= 20);
-        resultadoFinal = linhas[0] || '';
-      }
-
-      if (resultadoFinal) {
+      if (codigoEncontrado) {
         playBeep();
+        setTextoDetectado(codigoEncontrado);
+      } else {
+        setTextoDetectado('');
       }
-      setTextoDetectado(resultadoFinal);
     } catch (err) {
       console.error('Erro no OCR:', err);
     } finally {
@@ -462,14 +443,14 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     const vWidth = video.videoWidth || 1280;
     const vHeight = video.videoHeight || 720;
 
-    // Recorta a faixa central onde a mira visual está posicionada (faixa de 24% de altura)
-    const cropWidth = Math.floor(vWidth * 0.80);
-    const cropHeight = Math.floor(vHeight * 0.24);
+    // Recorta a faixa central onde a mira visual está posicionada com margem segura (faixa de 36% de altura)
+    const cropWidth = Math.floor(vWidth * 0.88);
+    const cropHeight = Math.floor(vHeight * 0.36);
     const cropX = Math.floor((vWidth - cropWidth) / 2);
     const cropY = Math.floor((vHeight - cropHeight) / 2);
 
-    // Resolução nítida para OCR (~880px de largura - perfeito para Tesseract sem borramento)
-    const targetWidth = Math.min(cropWidth, 880);
+    // Resolução nítida para OCR sem distorção
+    const targetWidth = Math.min(cropWidth, 1080);
     const targetHeight = Math.floor((cropHeight / cropWidth) * targetWidth);
 
     const canvas = document.createElement('canvas');
@@ -479,10 +460,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
 
     ctx.drawImage(video, cropX, cropY, cropWidth, cropHeight, 0, 0, targetWidth, targetHeight);
 
-    // Processamento de contraste auto-levels
-    processarImagemParaOcr(canvas, targetWidth, targetHeight);
-
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
     setFotoPreview(dataUrl);
     executarOcrEmImagem(dataUrl);
   };
@@ -513,9 +491,8 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         canvas.height = h;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, w, h);
-        processarImagemParaOcr(canvas, w, h);
 
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
         setFotoPreview(dataUrl);
         executarOcrEmImagem(dataUrl);
       };
@@ -644,16 +621,16 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
           {/* Quando fotoPreview existir, ela é exibida por cima sem desmontar a câmera */}
           {fotoPreview && (
             <div style={{ width: '100%', height: '100%', minHeight: '300px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#000', padding: '16px' }}>
-              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>Imagem processada:</span>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px' }}>Foto capturada:</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={fotoPreview} alt="Captura B&W" style={{ maxWidth: '100%', maxHeight: '180px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '6px' }} />
+              <img src={fotoPreview} alt="Captura da câmera" style={{ maxWidth: '100%', maxHeight: '180px', objectFit: 'contain', border: '1px solid var(--border)', borderRadius: '6px' }} />
             </div>
           )}
 
           {processando && (
             <div className="scanner-status-overlay">
               <div className="scanner-spinner" />
-              <span style={{ fontWeight: 600 }}>Lendo caracteres em alto contraste...</span>
+              <span style={{ fontWeight: 600 }}>Lendo código de catálogo...</span>
             </div>
           )}
 
