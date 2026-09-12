@@ -48,9 +48,13 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     }
   };
 
-  // Pré-aquecimento do Tesseract em background ao abrir o modal (Velocidade instantânea)
+  // Pré-aquecimento do Tesseract apenas como último recurso se não houver OCR nativo
   useEffect(() => {
     if (!isOpen) return;
+    if (typeof window !== 'undefined' && 'TextDetector' in window) {
+      // Dispositivo suporta OCR nativo acelerado por hardware: não carrega Tesseract
+      return;
+    }
 
     let cancelado = false;
 
@@ -338,7 +342,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
   };
 
 
-  // Processar imagem via Tesseract.js com fallback automático inteligente via Gemini Flash
+  // Processar imagem via OCR Nativo de Hardware (Android) com fallback otimizado para iOS e Nuvem
   const executarOcrEmImagem = async (imageSource, autoRotate = true) => {
     setProcessando(true);
     setTextoDetectado('');
@@ -346,33 +350,36 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     let codigoEncontrado = '';
 
     try {
-      // 1. Tentar primeiro o OCR local com Tesseract (caso já esteja em cache no navegador)
-      try {
-        let worker = workerRef.current;
-        if (!worker) {
-          const { createWorker } = await import('tesseract.js');
-          worker = await createWorker('eng');
-          await worker.setParameters({ tessedit_pageseg_mode: '7' });
-          workerRef.current = worker;
-        }
+      // 1. OCR Nativo do Dispositivo (Android Chrome Shape Detection API / ML Kit)
+      // Execução ultra-rápida (20ms a 50ms) direta na GPU/NPU do celular
+      if (typeof window !== 'undefined' && 'TextDetector' in window) {
+        try {
+          const detector = new window.TextDetector();
+          let detectTarget = imageSource;
 
-        const ret = await worker.recognize(imageSource);
-        const textoLido = ret?.data?.text || '';
-        codigoEncontrado = extrairCodigoCatalogo(textoLido);
+          if (typeof imageSource === 'string') {
+            detectTarget = await new Promise((resolve, reject) => {
+              const el = new Image();
+              el.crossOrigin = 'anonymous';
+              el.onload = () => resolve(el);
+              el.onerror = reject;
+              el.src = imageSource;
+            });
+          }
 
-        // Fallback PSM 6 se necessário
-        if (!codigoEncontrado) {
-          await worker.setParameters({ tessedit_pageseg_mode: '6' });
-          const ret6 = await worker.recognize(imageSource);
-          codigoEncontrado = extrairCodigoCatalogo(ret6?.data?.text || '');
-          await worker.setParameters({ tessedit_pageseg_mode: '7' });
+          const detectedBlocks = await detector.detect(detectTarget);
+          if (detectedBlocks && detectedBlocks.length > 0) {
+            const rawText = detectedBlocks.map(b => b.rawValue).join('\n');
+            codigoEncontrado = extrairCodigoCatalogo(rawText);
+          }
+        } catch (errNative) {
+          console.warn('TextDetector nativo não processou:', errNative);
         }
-      } catch (errTesseract) {
-        console.warn('OCR local Tesseract não concluiu:', errTesseract);
       }
 
-      // 2. Se o OCR local não identificou o código com precisão, aciona o leitor assistido por IA (/api/ocr-assist)
-      if (!codigoEncontrado && typeof imageSource === 'string') {
+      // 2. Fallback Rápido para iOS Safari e Nuvem (/api/ocr-assist com Gemini Flash-Lite)
+      // Tempo estimado: ~600ms a 800ms
+      if (!codigoEncontrado && typeof imageSource === 'string' && typeof navigator !== 'undefined' && navigator.onLine !== false) {
         try {
           const resp = await fetch('/api/ocr-assist', {
             method: 'POST',
@@ -388,23 +395,63 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         }
       }
 
-      // 3. Se ainda assim não encontrou e autoRotate estiver ativo, tenta rotação 90° (lombada vertical)
+      // 3. Se ainda não encontrou e autoRotate estiver ativo, rotaciona 90° (lombadas verticais)
       if (!codigoEncontrado && autoRotate && typeof imageSource === 'string') {
         try {
           const rotacionada = await rotacionarDataUrl90(imageSource);
           setFotoPreview(rotacionada);
 
-          const resp = await fetch('/api/ocr-assist', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: rotacionada })
-          });
-          const data = await resp.json();
-          if (data?.success && data.codigo) {
-            codigoEncontrado = data.codigo.trim();
+          // Tenta primeiro o TextDetector nativo na imagem rotacionada
+          if (typeof window !== 'undefined' && 'TextDetector' in window) {
+            try {
+              const detector = new window.TextDetector();
+              const imgRot = await new Promise((resolve, reject) => {
+                const el = new Image();
+                el.crossOrigin = 'anonymous';
+                el.onload = () => resolve(el);
+                el.onerror = reject;
+                el.src = rotacionada;
+              });
+              const detectedBlocks = await detector.detect(imgRot);
+              if (detectedBlocks && detectedBlocks.length > 0) {
+                const rawText = detectedBlocks.map(b => b.rawValue).join('\n');
+                codigoEncontrado = extrairCodigoCatalogo(rawText);
+              }
+            } catch (_) {}
+          }
+
+          // Se ainda não achou, fallback para a API na rotacionada
+          if (!codigoEncontrado && typeof navigator !== 'undefined' && navigator.onLine !== false) {
+            const resp = await fetch('/api/ocr-assist', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: rotacionada })
+            });
+            const data = await resp.json();
+            if (data?.success && data.codigo) {
+              codigoEncontrado = data.codigo.trim();
+            }
           }
         } catch (e) {
           console.warn('Tentativa de rotação 90°:', e);
+        }
+      }
+
+      // 4. Fallback Offline de Segurança (Tesseract.js apenas se offline ou como último recurso)
+      if (!codigoEncontrado) {
+        try {
+          let worker = workerRef.current;
+          if (!worker) {
+            const { createWorker } = await import('tesseract.js');
+            worker = await createWorker('eng');
+            await worker.setParameters({ tessedit_pageseg_mode: '7' });
+            workerRef.current = worker;
+          }
+
+          const ret = await worker.recognize(imageSource);
+          codigoEncontrado = extrairCodigoCatalogo(ret?.data?.text || '');
+        } catch (errTesseract) {
+          console.warn('Fallback Tesseract offline não concluiu:', errTesseract);
         }
       }
 
