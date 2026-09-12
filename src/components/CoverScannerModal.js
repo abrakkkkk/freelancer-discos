@@ -308,13 +308,12 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
           </button>
         </div>
 
-        {/* Visor / Área da Câmera (Proporção Quadrada 1:1 com altura máxima controlada) */}
+        {/* Visor / Área da Câmera (Proporção Quadrada 1:1 Real de Capa de Álbum) */}
         <div
           style={{
             position: 'relative',
             width: '100%',
             aspectRatio: '1 / 1',
-            maxHeight: 'min(72vw, 360px)',
             background: '#000',
             overflow: 'hidden',
             display: 'flex',
@@ -337,14 +336,14 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
             }}
           />
 
-          {/* Guia Visual Quadrada de Enquadramento da Capa */}
+          {/* Guia Visual Quadrada de Enquadramento da Capa (1:1 Vinil) */}
           {!fotoPreview && (
             <div
               style={{
                 position: 'absolute',
-                inset: '20px',
-                border: '2px dashed rgba(255, 255, 255, 0.45)',
-                borderRadius: '12px',
+                inset: '16px',
+                border: '2px dashed rgba(255, 255, 255, 0.55)',
+                borderRadius: '14px',
                 pointerEvents: 'none',
                 display: 'flex',
                 flexDirection: 'column',
@@ -355,30 +354,31 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
             >
               {/* Cantoneiras estilizadas */}
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ width: '20px', height: '20px', borderTop: '3px solid #fff', borderLeft: '3px solid #fff', borderTopLeftRadius: '6px' }} />
-                <div style={{ width: '20px', height: '20px', borderTop: '3px solid #fff', borderRight: '3px solid #fff', borderTopRightRadius: '6px' }} />
+                <div style={{ width: '24px', height: '24px', borderTop: '3px solid #fff', borderLeft: '3px solid #fff', borderTopLeftRadius: '8px' }} />
+                <div style={{ width: '24px', height: '24px', borderTop: '3px solid #fff', borderRight: '3px solid #fff', borderTopRightRadius: '8px' }} />
               </div>
 
               <div style={{ textAlign: 'center', padding: '6px 10px' }}>
                 <span
                   style={{
-                    background: 'rgba(0, 0, 0, 0.65)',
+                    background: 'rgba(0, 0, 0, 0.7)',
                     backdropFilter: 'blur(4px)',
                     color: '#fff',
-                    fontSize: '11.5px',
-                    fontWeight: 500,
-                    padding: '3px 10px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    padding: '4px 12px',
                     borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    letterSpacing: '0.2px'
                   }}
                 >
-                  Enquadre a capa frontal do disco
+                  Enquadre a capa frontal do disco (1:1)
                 </span>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ width: '20px', height: '20px', borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', borderBottomLeftRadius: '6px' }} />
-                <div style={{ width: '20px', height: '20px', borderBottom: '3px solid #fff', borderRight: '3px solid #fff', borderBottomRightRadius: '6px' }} />
+                <div style={{ width: '24px', height: '24px', borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', borderBottomLeftRadius: '8px' }} />
+                <div style={{ width: '24px', height: '24px', borderBottom: '3px solid #fff', borderRight: '3px solid #fff', borderBottomRightRadius: '8px' }} />
               </div>
             </div>
           )}
