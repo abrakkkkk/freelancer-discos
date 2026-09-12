@@ -19,7 +19,7 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { IoCamera } from "react-icons/io5";
-import { formatCaixa, cleanDiscogsString } from '@/utils/stringUtils';
+import { formatCaixa, cleanDiscogsString, normalizeCaixa } from '@/utils/stringUtils';
 import AlbumCover from '@/components/AlbumCover';
 
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
@@ -338,11 +338,12 @@ function EditarExcluirContent() {
     const unmaskedPreco = getUnmaskedPreco();
     if (unmaskedPreco < 0) return setMensagem({ tipo: 'error', texto: 'O preço não pode ser negativo.' });
 
+    const finalCaixa = form.caixa?.trim() ? normalizeCaixa(form.caixa.trim(), form.loja || activeStore) : null;
     const updateData = {
       titulo: form.titulo.trim(),
       preco: unmaskedPreco,
       loja: form.loja || null,
-      caixa: form.caixa?.trim() || null,
+      caixa: finalCaixa,
       ano: form.ano?.trim() || null,
       ativo: form.ativo !== false,
     };
@@ -740,7 +741,15 @@ function EditarExcluirContent() {
                         list="caixas-list"
                         value={form.caixa || ''} 
                         onChange={handleChange}
-                        placeholder={form.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? "Ex: 15" : "Ex: 15, Estante A..."}
+                        onBlur={() => {
+                          if (form.caixa) {
+                            const normalizada = normalizeCaixa(form.caixa, form.loja || activeStore);
+                            if (normalizada !== form.caixa) {
+                              setForm(prev => ({ ...prev, caixa: normalizada }));
+                            }
+                          }
+                        }}
+                        placeholder={form.loja === 'Loja 2' ? "Ex: Caixa 5B, 5b..." : form.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? "Ex: 15" : "Ex: 15, Estante A..."}
                         autoComplete="off"
                       />
                       <datalist id="caixas-list">

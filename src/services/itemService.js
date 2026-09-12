@@ -32,7 +32,19 @@ export const itemService = {
     else if (!mostrarAtivos && !mostrarInativos) return { data: [], count: 0 };
 
     // Apply other filters
-    if (filtroCaixa) query = query.eq('caixa', filtroCaixa);
+    if (filtroCaixa) {
+      const matchB = filtroCaixa.match(/^(?:caixa|c)?\s*(\d+)\s*b$/i);
+      const matchNum = filtroCaixa.match(/^(?:caixa|c)?\s*(\d+)$/i);
+      if (matchB) {
+        const num = matchB[1];
+        query = query.in('caixa', [`Caixa ${num}B`, `Caixa ${num}b`, `${num}B`, `${num}b`]);
+      } else if (matchNum) {
+        const num = matchNum[1];
+        query = query.in('caixa', [num, `Caixa ${num}`, `Caixa ${num}B`]);
+      } else {
+        query = query.eq('caixa', filtroCaixa);
+      }
+    }
     if (filtroLoja) query = query.eq('loja', filtroLoja);
     
     // Apply sorting BEFORE JS filtering
@@ -55,7 +67,7 @@ export const itemService = {
         if (isVideo) {
           query = query.ilike('titulo', `%${wildcardWord}%`);
         } else {
-          query = query.or(`titulo.ilike.%${wildcardWord}%,artista.ilike.%${wildcardWord}%`);
+          query = query.or(`titulo.ilike.%${wildcardWord}%,artista.ilike.%${wildcardWord}%,caixa.ilike.%${wildcardWord}%`);
         }
       });
       query = query.limit(5000); // Mantemos limite alto para cobrir falsos positivos
@@ -75,12 +87,18 @@ export const itemService = {
       filteredData = filteredData.filter(item => {
         const itemTitulo = removeAcentos(item.titulo || '');
         const itemArtista = removeAcentos(item.artista || '');
+        const itemCaixa = removeAcentos(item.caixa || '');
+        const itemCaixaSemEspaco = itemCaixa.replace(/\s+/g, '');
         
         return words.every(word => {
+          const wordSemEspaco = word.replace(/\s+/g, '');
           if (isVideo) {
             return itemTitulo.includes(word);
           } else {
-            return itemTitulo.includes(word) || itemArtista.includes(word);
+            return itemTitulo.includes(word) || 
+                   itemArtista.includes(word) || 
+                   itemCaixa.includes(word) ||
+                   (wordSemEspaco && itemCaixaSemEspaco.includes(wordSemEspaco));
           }
         });
       });

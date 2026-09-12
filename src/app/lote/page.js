@@ -10,7 +10,7 @@ import { supabase } from '@/lib/supabase';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS, getStoreColor } from '@/constants/config';
-import { removeAcentos, formatCaixa } from '@/utils/stringUtils';
+import { removeAcentos, formatCaixa, normalizeCaixa } from '@/utils/stringUtils';
 import { useUndo } from '@/contexts/UndoContext';
 import SuccessModal from '@/components/SuccessModal';
 import { useStore } from '@/contexts/StoreContext';
@@ -56,6 +56,8 @@ export default function AcoesEmLote() {
   
   const [novaLocalizacao, setNovaLocalizacao] = useState(() => getLoteStorage('novaLocalizacao', ''));
   const [lojaDestino, setLojaDestino] = useState(() => getLoteStorage('lojaDestino', ''));
+  const [customCaixaLote, setCustomCaixaLote] = useState(false);
+  const { caixas: caixasDestino } = useCaixas(lojaDestino || filtroLoja || activeStore);
   const [confirmarExclusao, setConfirmarExclusao] = useState(false);
   const [confirmarExclusaoNaoSelecionados, setConfirmarExclusaoNaoSelecionados] = useState(false);
   const [successModalMessage, setSuccessModalMessage] = useState('');
@@ -81,7 +83,19 @@ export default function AcoesEmLote() {
     
     try {
       let query = supabase.from(activeTab).select('*').eq('deletado', false).order('titulo', { ascending: true });
-      if (caixaSelecionada) query = query.eq('caixa', caixaSelecionada);
+      if (caixaSelecionada) {
+        const matchB = caixaSelecionada.match(/^(?:caixa|c)?\s*(\d+)\s*b$/i);
+        const matchNum = caixaSelecionada.match(/^(?:caixa|c)?\s*(\d+)$/i);
+        if (matchB) {
+          const num = matchB[1];
+          query = query.in('caixa', [`Caixa ${num}B`, `Caixa ${num}b`, `${num}B`, `${num}b`]);
+        } else if (matchNum) {
+          const num = matchNum[1];
+          query = query.in('caixa', [num, `Caixa ${num}`, `Caixa ${num}B`]);
+        } else {
+          query = query.eq('caixa', caixaSelecionada);
+        }
+      }
       if (filtroLoja) query = query.eq('loja', filtroLoja);
       
       if (buscaDebounced) {
@@ -92,7 +106,7 @@ export default function AcoesEmLote() {
           if (isVideo) {
             query = query.ilike('titulo', `%${wildcardWord}%`);
           } else {
-            query = query.or(`titulo.ilike.%${wildcardWord}%,artista.ilike.%${wildcardWord}%`);
+            query = query.or(`titulo.ilike.%${wildcardWord}%,artista.ilike.%${wildcardWord}%,caixa.ilike.%${wildcardWord}%`);
           }
         });
       }
@@ -110,9 +124,15 @@ export default function AcoesEmLote() {
         itensFiltrados = itensFiltrados.filter(item => {
           const itemTitulo = removeAcentos(item.titulo || '');
           const itemArtista = removeAcentos(item.artista || '');
+          const itemCaixa = removeAcentos(item.caixa || '');
+          const itemCaixaSemEspaco = itemCaixa.replace(/\s+/g, '');
           return words.every(word => {
+            const wordSemEspaco = word.replace(/\s+/g, '');
             if (isVideo) return itemTitulo.includes(word);
-            return itemTitulo.includes(word) || itemArtista.includes(word);
+            return itemTitulo.includes(word) || 
+                   itemArtista.includes(word) || 
+                   itemCaixa.includes(word) ||
+                   (wordSemEspaco && itemCaixaSemEspaco.includes(wordSemEspaco));
           });
         });
       }
@@ -213,7 +233,7 @@ export default function AcoesEmLote() {
     
     let updateData = {};
     if (novaLocalizacao) {
-      updateData.caixa = novaLocalizacao.trim();
+      updateData.caixa = normalizeCaixa(novaLocalizacao.trim(), lojaDestino || filtroLoja || activeStore);
     }
     if (lojaDestino) {
       updateData.loja = lojaDestino;
@@ -404,14 +424,59 @@ export default function AcoesEmLote() {
             </div>
             <div className="bulk-actions-tools" style={{ flexWrap: 'wrap', paddingBottom: '4px', gap: '12px' }}>
               <div className="bulk-move-group" style={{ borderColor: 'var(--accent)', background: 'rgba(255,255,255,0.03)', flexWrap: 'nowrap' }}>
-                <input type="text" placeholder="Localização" value={novaLocalizacao} onChange={(e) => setNovaLocalizacao(e.target.value)} className="bulk-input" style={{ width: '110px', color: '#fff' }} list="caixas-list-lote" />
-                <datalist id="caixas-list-lote">
-                  {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
-                </datalist>
-                <select className="bulk-input" style={{ width: '120px', color: '#fff', borderLeft: '1px solid rgba(255,255,255,0.1)' }} value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
+                <select className="bulk-input" style={{ width: '105px', color: '#fff' }} value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
                   <option value="" style={{ color: '#000' }}>Loja...</option>
                   {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: opt.color, fontWeight: '500' }}>{opt.label}</option>)}
                 </select>
+
+                {!customCaixaLote ? (
+                  <select
+                    className="bulk-input"
+                    style={{ width: '135px', color: '#fff', borderLeft: '1px solid rgba(255,255,255,0.1)', background: 'var(--bg-card)' }}
+                    value={novaLocalizacao}
+                    onChange={(e) => {
+                      if (e.target.value === '__custom__') {
+                        setCustomCaixaLote(true);
+                        setNovaLocalizacao('');
+                      } else {
+                        setNovaLocalizacao(e.target.value);
+                      }
+                    }}
+                  >
+                    <option value="" style={{ color: '#888' }}>Caixa...</option>
+                    {caixasDestino.map(c => (
+                      <option key={`${c.caixa}-${c.loja}`} value={c.caixa} style={{ color: '#fff' }}>
+                        {c.label}
+                      </option>
+                    ))}
+                    <option value="__custom__" style={{ color: 'var(--accent)', fontWeight: 600 }}>+ Digitar...</option>
+                  </select>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', borderLeft: '1px solid rgba(255,255,255,0.1)', flex: 1 }}>
+                    <input
+                      type="text"
+                      placeholder="Ex: 5b, 19b..."
+                      value={novaLocalizacao}
+                      onChange={(e) => setNovaLocalizacao(e.target.value)}
+                      onBlur={(e) => {
+                        const norm = normalizeCaixa(e.target.value, lojaDestino || filtroLoja || activeStore);
+                        if (norm !== e.target.value) setNovaLocalizacao(norm);
+                      }}
+                      className="bulk-input"
+                      style={{ width: '95px', color: '#fff' }}
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setCustomCaixaLote(false)}
+                      style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '11px', padding: '0 6px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                      title="Voltar para seleção por lista"
+                    >
+                      Lista
+                    </button>
+                  </div>
+                )}
+
                 <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px' }} onClick={aplicarMudancas} disabled={loading}>Aplicar</button>
               </div>
               <div className="hide-on-mobile" style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>

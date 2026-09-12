@@ -16,7 +16,7 @@ import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
-import { cleanDiscogsString } from '@/utils/stringUtils';
+import { cleanDiscogsString, normalizeCaixa } from '@/utils/stringUtils';
 
 import { IoCamera } from "react-icons/io5";
 
@@ -268,12 +268,13 @@ export default function AdicionarItem() {
     setIsSubmitting(true);
     try {
       // 1. Inserir item
+      const finalCaixa = form.caixa?.trim() ? normalizeCaixa(form.caixa.trim(), form.loja || activeStore) : null;
       const insertData = {
         titulo: form.titulo.trim(),
         preco: getUnmaskedPreco(),
         loja: form.loja || null,
         observacao: form.observacao || null,
-        caixa: form.caixa?.trim() || null,
+        caixa: finalCaixa,
         ano: form.ano?.trim() || null,
         ativo: form.ativo !== false,
       };
@@ -603,7 +604,15 @@ export default function AdicionarItem() {
                     list="caixas-list"
                     value={form.caixa || ''} 
                     onChange={handleChange}
-                    placeholder={form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? "Ex: 15" : "Ex: 15, Estante A, Prateleira 3..."}
+                    onBlur={() => {
+                      if (form.caixa) {
+                        const normalizada = normalizeCaixa(form.caixa, form.loja || activeStore);
+                        if (normalizada !== form.caixa) {
+                          setForm(prev => ({ ...prev, caixa: normalizada }));
+                        }
+                      }
+                    }}
+                    placeholder={form.loja === 'Loja 2' ? "Ex: Caixa 5B, 5b..." : form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? "Ex: 15" : "Ex: 15, Estante A, Prateleira 3..."}
                     autoComplete="off"
                   />
                   <datalist id="caixas-list">
