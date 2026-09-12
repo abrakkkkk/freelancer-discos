@@ -306,110 +306,126 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
           </button>
         </div>
 
-        {/* Visor / Área da Câmera (Proporção Quadrada 1:1) */}
+        {/* Visor / Área da Câmera (Proporção Quadrada 1:1 com altura máxima controlada) */}
         <div
           style={{
             position: 'relative',
             width: '100%',
             aspectRatio: '1 / 1',
+            maxHeight: 'min(72vw, 360px)',
             background: '#000',
             overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            flexShrink: 0
           }}
         >
-          {!fotoPreview ? (
-            <>
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-              />
+          {/* Câmera ao vivo (permanece sempre montada para evitar pulos de layout) */}
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              display: fotoPreview ? 'none' : 'block'
+            }}
+          />
 
-              {/* Guia Visual Quadrada de Enquadramento da Capa */}
-              <div
-                style={{
-                  position: 'absolute',
-                  inset: '24px',
-                  border: '2px dashed rgba(255, 255, 255, 0.45)',
-                  borderRadius: '12px',
-                  pointerEvents: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.35)'
-                }}
-              >
-                {/* Cantoneiras estilizadas */}
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div style={{ width: '20px', height: '20px', borderTop: '3px solid #fff', borderLeft: '3px solid #fff', borderTopLeftRadius: '6px' }} />
-                  <div style={{ width: '20px', height: '20px', borderTop: '3px solid #fff', borderRight: '3px solid #fff', borderTopRightRadius: '6px' }} />
-                </div>
-
-                <div style={{ textAlign: 'center', padding: '8px 12px' }}>
-                  <span
-                    style={{
-                      background: 'rgba(0, 0, 0, 0.65)',
-                      backdropFilter: 'blur(4px)',
-                      color: '#fff',
-                      fontSize: '12px',
-                      fontWeight: 500,
-                      padding: '4px 10px',
-                      borderRadius: '12px',
-                      border: '1px solid rgba(255, 255, 255, 0.2)'
-                    }}
-                  >
-                    Enquadre a capa frontal do disco
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div style={{ width: '20px', height: '20px', borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', borderBottomLeftRadius: '6px' }} />
-                  <div style={{ width: '20px', height: '20px', borderBottom: '3px solid #fff', borderRight: '3px solid #fff', borderBottomRightRadius: '6px' }} />
-                </div>
+          {/* Guia Visual Quadrada de Enquadramento da Capa */}
+          {!fotoPreview && (
+            <div
+              style={{
+                position: 'absolute',
+                inset: '20px',
+                border: '2px dashed rgba(255, 255, 255, 0.45)',
+                borderRadius: '12px',
+                pointerEvents: 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.35)',
+                zIndex: 2
+              }}
+            >
+              {/* Cantoneiras estilizadas */}
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ width: '20px', height: '20px', borderTop: '3px solid #fff', borderLeft: '3px solid #fff', borderTopLeftRadius: '6px' }} />
+                <div style={{ width: '20px', height: '20px', borderTop: '3px solid #fff', borderRight: '3px solid #fff', borderTopRightRadius: '6px' }} />
               </div>
 
-              {/* Botão de Alternar Câmera */}
-              {cameras.length > 1 && (
-                <button
-                  type="button"
-                  onClick={toggleCamera}
+              <div style={{ textAlign: 'center', padding: '6px 10px' }}>
+                <span
                   style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px',
                     background: 'rgba(0, 0, 0, 0.65)',
-                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    backdropFilter: 'blur(4px)',
                     color: '#fff',
-                    borderRadius: '50%',
-                    width: '44px',
-                    height: '44px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    cursor: 'pointer',
-                    zIndex: 2
+                    fontSize: '11.5px',
+                    fontWeight: 500,
+                    padding: '3px 10px',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
-                  title="Alternar câmera"
-                  aria-label="Alternar câmera"
                 >
-                  <IoCameraReverseOutline size={22} />
-                </button>
-              )}
-            </>
-          ) : (
+                  Enquadre a capa frontal do disco
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ width: '20px', height: '20px', borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', borderBottomLeftRadius: '6px' }} />
+                <div style={{ width: '20px', height: '20px', borderBottom: '3px solid #fff', borderRight: '3px solid #fff', borderBottomRightRadius: '6px' }} />
+              </div>
+            </div>
+          )}
+
+          {/* Botão de Alternar Câmera */}
+          {!fotoPreview && cameras.length > 1 && (
+            <button
+              type="button"
+              onClick={toggleCamera}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'rgba(0, 0, 0, 0.65)',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                color: '#fff',
+                borderRadius: '50%',
+                width: '44px',
+                height: '44px',
+                minWidth: '44px',
+                minHeight: '44px',
+                aspectRatio: '1 / 1',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 3
+              }}
+              title="Alternar câmera"
+              aria-label="Alternar câmera"
+            >
+              <IoCameraReverseOutline size={22} />
+            </button>
+          )}
+
+          {/* Prévia da imagem capturada */}
+          {fotoPreview && (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
               src={fotoPreview}
               alt="Prévia da capa"
-              style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#09090b' }}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                background: '#09090b',
+                display: 'block'
+              }}
             />
           )}
 
@@ -450,14 +466,15 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
         {erro && (
           <div
             style={{
-              padding: '12px 16px',
+              padding: '10px 16px',
               backgroundColor: 'rgba(229, 62, 62, 0.12)',
               borderBottom: '1px solid rgba(229, 62, 62, 0.3)',
               color: '#fc8181',
-              fontSize: '13px',
+              fontSize: '12.5px',
               display: 'flex',
               flexDirection: 'column',
-              gap: '4px'
+              gap: '2px',
+              flexShrink: 0
             }}
           >
             <span style={{ fontWeight: 600 }}>Atenção:</span>
@@ -465,11 +482,43 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
           </div>
         )}
 
-        {/* Rodapé / Controles Mobile-First */}
-        <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {!fotoPreview ? (
+        {/* Rodapé / Controles com Altura Estável para Evitar Pulos Visuais */}
+        <div
+          style={{
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: '12px',
+            minHeight: '144px',
+            boxSizing: 'border-box',
+            flexShrink: 0
+          }}
+        >
+          {fotoPreview && !processando ? (
+            /* Botão de Tentar Novamente quando a captura terminar com erro */
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+              <button
+                type="button"
+                onClick={tentarNovamente}
+                className="btn btn-secondary"
+                style={{
+                  width: '100%',
+                  minHeight: '48px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600
+                }}
+              >
+                <IoRefresh size={18} /> Tirar outra foto
+              </button>
+            </div>
+          ) : (
             <>
-              {/* Botão Obturador Central */}
+              {/* Botão Obturador Central com Dimensões Estritas e Travadas */}
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <button
                   type="button"
@@ -478,15 +527,26 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
                   style={{
                     width: '72px',
                     height: '72px',
+                    minWidth: '72px',
+                    minHeight: '72px',
+                    maxWidth: '72px',
+                    maxHeight: '72px',
+                    aspectRatio: '1 / 1',
+                    flexShrink: 0,
                     borderRadius: '50%',
                     backgroundColor: '#fff',
                     border: '4px solid rgba(255, 255, 255, 0.4)',
                     boxShadow: '0 0 20px rgba(255, 255, 255, 0.25)',
-                    cursor: 'pointer',
+                    cursor: processando ? 'not-allowed' : 'pointer',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    transition: 'transform 0.15s ease'
+                    transition: 'transform 0.15s ease',
+                    padding: 0,
+                    boxSizing: 'border-box',
+                    userSelect: 'none',
+                    WebkitTapHighlightColor: 'transparent',
+                    opacity: processando ? 0.6 : 1
                   }}
                   aria-label="Capturar foto da capa"
                 >
@@ -494,11 +554,21 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
                     style={{
                       width: '56px',
                       height: '56px',
+                      minWidth: '56px',
+                      minHeight: '56px',
+                      aspectRatio: '1 / 1',
+                      flexShrink: 0,
                       borderRadius: '50%',
                       backgroundColor: '#fff',
-                      border: '2px solid #000'
+                      border: '2px solid #18181b',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      pointerEvents: 'none'
                     }}
-                  />
+                  >
+                    <IoCamera size={26} color="#18181b" />
+                  </div>
                 </button>
               </div>
 
@@ -528,28 +598,6 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
                 <IoImageOutline size={18} /> Escolher foto da galeria
               </button>
             </>
-          ) : (
-            /* Botão de Tentar Novamente se falhar */
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <button
-                type="button"
-                onClick={tentarNovamente}
-                disabled={processando}
-                className="btn btn-secondary"
-                style={{
-                  flex: 1,
-                  minHeight: '48px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  fontSize: '14px',
-                  fontWeight: 600
-                }}
-              >
-                <IoRefresh size={18} /> Tirar outra foto
-              </button>
-            </div>
           )}
         </div>
       </div>
