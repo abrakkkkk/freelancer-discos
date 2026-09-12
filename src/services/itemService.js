@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { removeAcentos } from '@/utils/stringUtils';
+import { removeAcentos, extractSearchTokens, calculateItemRelevance } from '@/utils/stringUtils';
 import { caixaService } from '@/services/caixaService';
 
 export const itemService = {
@@ -57,11 +57,14 @@ export const itemService = {
       query = query.order('titulo');
     }
 
-    // Se houver busca, aplicamos um pré-filtro no BD usando curingas (_) nas vogais.
-    // Isso evita o problema do limite de 1000/5000 itens não retornar resultados que estão mais no fim do banco.
+    // Se houver busca, aplicamos um pré-filtro no BD usando tokens inteligentes (descartando stop words e ruídos).
+    // Isso evita o problema de stop words como 'The' ou hífens '-' ocultarem discos como 'Jacksons - Victory'.
+    let searchTokens = null;
     if (busca) {
-      const words = removeAcentos(busca).trim().split(/\s+/);
-      words.forEach(word => {
+      searchTokens = extractSearchTokens(busca);
+      const { effectiveWords } = searchTokens;
+
+      effectiveWords.forEach(word => {
         // Substitui vogais por curinga do SQL '_' que representa exatamente 1 caractere
         const wildcardWord = word.replace(/[aeiou]/g, '_');
         if (isVideo) {
@@ -81,16 +84,16 @@ export const itemService = {
     
     let filteredData = data || [];
     
-    // JS Filtering for accent insensitive search
-    if (busca) {
-      const words = removeAcentos(busca).trim().split(/\s+/);
+    // JS Filtering para busca insensível a acentos e resiliente a stop words
+    if (busca && searchTokens) {
+      const { allWords, effectiveWords } = searchTokens;
       filteredData = filteredData.filter(item => {
         const itemTitulo = removeAcentos(item.titulo || '');
         const itemArtista = removeAcentos(item.artista || '');
         const itemCaixa = removeAcentos(item.caixa || '');
         const itemCaixaSemEspaco = itemCaixa.replace(/\s+/g, '');
         
-        return words.every(word => {
+        return effectiveWords.every(word => {
           const wordSemEspaco = word.replace(/\s+/g, '');
           if (isVideo) {
             return itemTitulo.includes(word);
@@ -102,6 +105,15 @@ export const itemService = {
           }
         });
       });
+
+      // Se a ordenação não foi fixada manualmente pelo usuário, ordena por relevância inteligente
+      if (!ordenarColuna) {
+        filteredData.sort((a, b) => {
+          const scoreA = calculateItemRelevance(a, allWords, effectiveWords, isVideo);
+          const scoreB = calculateItemRelevance(b, allWords, effectiveWords, isVideo);
+          return scoreB - scoreA;
+        });
+      }
     }
 
     // Apply pagination if JS filtering was used
@@ -181,6 +193,8 @@ export const itemService = {
     const tituloClean = titulo.trim();
     const tituloSemAcento = removeAcentos(tituloClean);
 
+    const { effectiveWords: tituloWords } = extractSearchTokens(tituloClean);
+
     let columns = 'id, titulo, preco, loja, caixa, ativo, ano';
     if (!isVideo) columns += ', artista';
 
@@ -189,7 +203,7 @@ export const itemService = {
       .select(columns)
       .eq('deletado', false);
 
-    const words = tituloSemAcento.split(/\s+/).slice(0, 3);
+    const words = tituloWords.slice(0, 3);
     words.forEach(word => {
       if (word.length >= 2) {
         const wildcardWord = word.replace(/[aeiou]/g, '_');
@@ -197,9 +211,10 @@ export const itemService = {
       }
     });
 
+    let artistaWords = [];
     if (!isVideo && artista && artista.trim().length >= 2) {
-      const artistaWords = removeAcentos(artista.trim()).split(/\s+/).slice(0, 2);
-      artistaWords.forEach(w => {
+      artistaWords = extractSearchTokens(artista).effectiveWords;
+      artistaWords.slice(0, 2).forEach(w => {
         if (w.length >= 2) {
           const wildcard = w.replace(/[aeiou]/g, '_');
           query = query.ilike('artista', `%${wildcard}%`);
@@ -216,12 +231,15 @@ export const itemService = {
       const itemTitulo = removeAcentos(item.titulo || '');
       const itemArtista = removeAcentos(item.artista || '');
 
-      const matchTitulo = itemTitulo.includes(tituloSemAcento) || tituloSemAcento.includes(itemTitulo);
+      const matchTitulo = tituloWords.length > 0
+        ? tituloWords.every(w => itemTitulo.includes(w))
+        : (itemTitulo.includes(tituloSemAcento) || tituloSemAcento.includes(itemTitulo));
       if (isVideo) return matchTitulo;
 
       if (artista && artista.trim().length >= 2) {
-        const artistaSemAcento = removeAcentos(artista.trim());
-        const matchArtista = itemArtista.includes(artistaSemAcento) || artistaSemAcento.includes(itemArtista);
+        const matchArtista = artistaWords.length > 0
+          ? artistaWords.every(w => itemArtista.includes(w))
+          : true;
         return matchTitulo && matchArtista;
       }
 
@@ -290,6 +308,7 @@ export const itemService = {
     const isVideo = category === 'dvds' || category === 'vhs';
     const tituloClean = titulo.trim();
     const tituloSemAcento = removeAcentos(tituloClean);
+    const { effectiveWords: tituloWords } = extractSearchTokens(tituloClean);
 
     let columns = 'id, titulo, preco, loja, caixa, ativo, ano';
     if (!isVideo) columns += ', artista';
@@ -304,7 +323,7 @@ export const itemService = {
       query = query.neq('id', excludeId);
     }
 
-    const words = tituloSemAcento.split(/\s+/).slice(0, 3);
+    const words = tituloWords.slice(0, 3);
     words.forEach(word => {
       if (word.length >= 2) {
         const wildcardWord = word.replace(/[aeiou]/g, '_');
@@ -312,9 +331,10 @@ export const itemService = {
       }
     });
 
+    let artistaWords = [];
     if (!isVideo && artista && artista.trim().length >= 2) {
-      const artistaWords = removeAcentos(artista.trim()).split(/\s+/).slice(0, 2);
-      artistaWords.forEach(w => {
+      artistaWords = extractSearchTokens(artista).effectiveWords;
+      artistaWords.slice(0, 2).forEach(w => {
         if (w.length >= 2) {
           const wildcard = w.replace(/[aeiou]/g, '_');
           query = query.ilike('artista', `%${wildcard}%`);
@@ -326,15 +346,19 @@ export const itemService = {
     if (error || !data) return [];
 
     return data.filter(item => {
-      const itemTitulo = removeAcentos(item.titulo || '').toLowerCase();
-      const targetTitulo = tituloSemAcento.toLowerCase();
+      const itemTitulo = removeAcentos(item.titulo || '');
+      const matchTitulo = tituloWords.length > 0
+        ? tituloWords.every(w => itemTitulo.includes(w))
+        : (itemTitulo.includes(tituloSemAcento) || tituloSemAcento.includes(itemTitulo));
+
       if (!isVideo && artista) {
-        const itemArtista = removeAcentos(item.artista || '').toLowerCase();
-        const targetArtista = removeAcentos(artista).toLowerCase();
-        return (itemTitulo.includes(targetTitulo) || targetTitulo.includes(itemTitulo)) &&
-               (itemArtista.includes(targetArtista) || targetArtista.includes(itemArtista));
+        const itemArtista = removeAcentos(item.artista || '');
+        const matchArtista = artistaWords.length > 0
+          ? artistaWords.every(w => itemArtista.includes(w))
+          : true;
+        return matchTitulo && matchArtista;
       }
-      return itemTitulo.includes(targetTitulo) || targetTitulo.includes(itemTitulo);
+      return matchTitulo;
     });
   },
 
