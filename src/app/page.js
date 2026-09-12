@@ -43,11 +43,26 @@ export default function CatalogoClone() {
     if (!artista && !titulo) return;
     const query = `${artista || ''} ${titulo || ''}`.trim();
     catalog.setBusca(query);
+    catalog.setPagina(1);
     setFeedbackMsg({
       tipo: 'success',
-      texto: `Capa identificada: "${query}". Exibindo resultados do estoque.`
+      texto: `Capa identificada: "${[artista, titulo].filter(Boolean).join(' - ')}". Exibindo resultados do estoque.`
     });
   };
+
+  // Auto-dismiss para alertas de feedback (desocupa espaço do viewport mobile após 5 segundos)
+  useEffect(() => {
+    if (!feedbackMsg) return;
+    const timer = setTimeout(() => {
+      setFeedbackMsg(null);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [feedbackMsg]);
+
+  // Limpa avisos residuais ao trocar de aba de categoria
+  useEffect(() => {
+    setFeedbackMsg(null);
+  }, [catalog.activeTab]);
 
   // Sync global store filter with catalog
   useEffect(() => {
@@ -379,7 +394,10 @@ export default function CatalogoClone() {
           </div>
         </div>
 
-        <AlertMessage message={feedbackMsg} />
+        <AlertMessage 
+          message={feedbackMsg} 
+          onClose={() => setFeedbackMsg(null)} 
+        />
 
         {catalog.loading ? (
           <p style={{ color: 'var(--text-muted)' }}>Carregando...</p>

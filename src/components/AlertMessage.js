@@ -1,4 +1,6 @@
-export default function AlertMessage({ message, type = 'error' }) {
+import { IoClose } from 'react-icons/io5';
+
+export default function AlertMessage({ message, type = 'error', onClose }) {
   if (!message) return null;
   
   // Accept either an object { tipo: 'error', texto: '...' } or string
@@ -6,8 +8,40 @@ export default function AlertMessage({ message, type = 'error' }) {
   const alertText = message.texto || message;
 
   return (
-    <div className={`alert alert-${alertType}`}>
-      {alertText}
+    <div 
+      className={`alert alert-${alertType}`}
+      style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        gap: '12px',
+        animation: 'fadeIn 0.2s ease-out'
+      }}
+    >
+      <span style={{ flex: 1 }}>{alertText}</span>
+      {onClose && (
+        <button
+          onClick={onClose}
+          type="button"
+          aria-label="Fechar aviso"
+          style={{
+            background: 'none',
+            border: 'none',
+            color: 'inherit',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '4px',
+            opacity: 0.8,
+            transition: 'opacity 0.15s'
+          }}
+        >
+          <IoClose size={18} />
+        </button>
+      )}
     </div>
   );
 }
+
