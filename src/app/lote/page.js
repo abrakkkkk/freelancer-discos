@@ -27,13 +27,14 @@ const getLoteStorage = (key, defaultValue) => {
 
 export default function AcoesEmLote() {
   const [activeTab, setActiveTab] = useState(() => getLoteStorage('activeTab', CATEGORY_IDS.DISCOS));
-  const { caixas, loading: loadingCaixas } = useCaixas();
   const { activeStore } = useStore();
   
   const [caixaSelecionada, setCaixaSelecionada] = useState(() => getLoteStorage('caixaSelecionada', ''));
   const [filtroLoja, setFiltroLoja] = useState(activeStore || '');
   const [busca, setBusca] = useState(() => getLoteStorage('busca', ''));
   const [buscaDebounced, setBuscaDebounced] = useState(() => getLoteStorage('busca', ''));
+
+  const { caixas, loading: loadingCaixas } = useCaixas(filtroLoja || activeStore);
 
   // Sync with global store
   useEffect(() => {

@@ -18,16 +18,17 @@ import StatusSwitch from '@/components/StatusSwitch';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
+import { IoCamera } from "react-icons/io5";
 import { formatCaixa, cleanDiscogsString } from '@/utils/stringUtils';
 import AlbumCover from '@/components/AlbumCover';
 
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
 const OcrScannerModal = dynamic(() => import('@/components/OcrScannerModal'), { ssr: false });
+const CoverScannerModal = dynamic(() => import('@/components/CoverScannerModal'), { ssr: false });
 
 function EditarExcluirContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { caixas } = useCaixas();
   const { activeStore } = useStore();
 
   const [tipo, setTipo] = useState(searchParams.get('tipo') || CATEGORY_IDS.DISCOS);
@@ -45,6 +46,8 @@ function EditarExcluirContent() {
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isOcrOpen, setIsOcrOpen] = useState(false);
+  const [isCoverScannerOpen, setIsCoverScannerOpen] = useState(false);
+  const [customCaixaMode, setCustomCaixaMode] = useState(false);
   const [scannerTarget, setScannerTarget] = useState('busca'); // 'busca' ou 'discogs'
 
   const [loadedWithId] = useState(!!searchParams.get('id'));
@@ -67,6 +70,8 @@ function EditarExcluirContent() {
     loja: '',
     ativo: true
   }, tipo);
+
+  const { caixas } = useCaixas(form.loja || activeStore);
 
   const [observacoes, setObservacoes] = useState([]);
   const [novaObservacao, setNovaObservacao] = useState('');
@@ -253,14 +258,13 @@ function EditarExcluirContent() {
     }
   };
 
-  const searchDiscogs = async (e) => {
-    if (e) e.preventDefault();
-    if (!queryDiscogs.trim()) return;
+  const searchDiscogsWithQuery = async (queryText) => {
+    if (!queryText || !queryText.trim()) return;
     setIsSearchingDiscogs(true);
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryDiscogs)}`);
+      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryText)}`);
       const data = await res.json();
       if (data.results && data.results.length > 0) {
         setDiscogsResults(data.results);
@@ -274,6 +278,29 @@ function EditarExcluirContent() {
     } finally {
       setIsSearchingDiscogs(false);
     }
+  };
+
+  const handleCoverRecognized = ({ artista, titulo, ano, coverUrl }) => {
+    if (artista || titulo) {
+      const query = `${artista || ''} ${titulo || ''}`.trim();
+      setQueryDiscogs(query);
+      if (coverUrl) {
+        setSelectedCover({
+          thumb: coverUrl,
+          cover: coverUrl,
+        });
+      }
+      setMensagem({
+        tipo: 'success',
+        texto: `Capa reconhecida: "${query}". Buscando edições no Discogs...`,
+      });
+      searchDiscogsWithQuery(query);
+    }
+  };
+
+  const searchDiscogs = async (e) => {
+    if (e) e.preventDefault();
+    searchDiscogsWithQuery(queryDiscogs);
   };
 
   const handleSelectDiscogsResult = (result) => {
@@ -511,6 +538,14 @@ function EditarExcluirContent() {
                     <div className="discogs-scanners-row">
                       <button 
                         type="button" 
+                        onClick={() => setIsCoverScannerOpen(true)}
+                        className="discogs-scanner-chip"
+                        title="Reconhecer capa frontal do disco"
+                      >
+                        <IoCamera size={15} /> Capa
+                      </button>
+                      <button 
+                        type="button" 
                         onClick={() => { setScannerTarget('discogs'); setIsScannerOpen(true); }}
                         className="discogs-scanner-chip"
                         title="Escanear código de barras (CDs e Vinis modernos)"
@@ -667,18 +702,52 @@ function EditarExcluirContent() {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label>{(itemEditando.loja === 'Loja 1' || itemEditando.loja === 'Loja 2') && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}</label>
-                  <input 
-                    name="caixa" 
-                    type="text" 
-                    list="caixas-list"
-                    value={form.caixa || ''} 
-                    onChange={handleChange}
-                    placeholder={itemEditando.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? "Ex: 15" : "Ex: 15, Estante A..."}
-                  />
-                  <datalist id="caixas-list">
-                    {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
-                  </datalist>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <label style={{ marginBottom: 0 }}>
+                      {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && itemEditando.categoria === 'discos' ? 'Caixa' : 'Localização'}
+                    </label>
+                    {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && itemEditando.categoria === 'discos' && (
+                      <button
+                        type="button"
+                        onClick={() => setCustomCaixaMode(!customCaixaMode)}
+                        style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}
+                      >
+                        {customCaixaMode ? '← Selecionar da lista' : '+ Digitar outra'}
+                      </button>
+                    )}
+                  </div>
+                  {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && itemEditando.categoria === 'discos' && !customCaixaMode ? (
+                    <select
+                      name="caixa"
+                      value={form.caixa || ''}
+                      onChange={handleChange}
+                    >
+                      <option value="">Selecione a caixa</option>
+                      {caixas.map(c => (
+                        <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>
+                          {c.label}
+                        </option>
+                      ))}
+                      {form.caixa && !caixas.some(c => c.caixa === form.caixa) && (
+                        <option value={form.caixa}>{form.caixa} (Personalizada)</option>
+                      )}
+                    </select>
+                  ) : (
+                    <>
+                      <input 
+                        name="caixa" 
+                        type="text" 
+                        list="caixas-list"
+                        value={form.caixa || ''} 
+                        onChange={handleChange}
+                        placeholder={form.loja === 'Loja 1' && itemEditando.categoria === 'discos' ? "Ex: 15" : "Ex: 15, Estante A..."}
+                        autoComplete="off"
+                      />
+                      <datalist id="caixas-list">
+                        {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+                      </datalist>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -697,11 +766,30 @@ function EditarExcluirContent() {
             </div>
 
             {/* Ações de Edição */}
-            <div className="edit-actions" style={{ marginTop: '20px', display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'space-between', alignItems: 'stretch' }}>
-              <div className="edit-actions-right" style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', flex: 1, minWidth: '160px' }}>
-                <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => setConfirmarExclusao(itemEditando.id)}>Excluir</button>
-              </div>
-              <button className="btn btn-primary" style={{ flex: 1, minWidth: '160px' }} onClick={salvar}>Salvar Alterações</button>
+            <div className="edit-actions" style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button 
+                type="button"
+                className="btn btn-primary" 
+                style={{ width: '100%', minHeight: '46px', fontSize: '15px', fontWeight: 600 }} 
+                onClick={salvar}
+              >
+                Salvar Alterações
+              </button>
+              <button 
+                type="button"
+                className="btn btn-danger" 
+                style={{ 
+                  width: '100%', 
+                  background: 'transparent', 
+                  border: '1px solid rgba(243, 139, 168, 0.4)', 
+                  color: 'var(--danger)',
+                  minHeight: '40px',
+                  fontSize: '13px'
+                }} 
+                onClick={() => setConfirmarExclusao(itemEditando.id)}
+              >
+                Excluir este item
+              </button>
             </div>
 
             {/* Bloco 3: Observações */}
@@ -746,6 +834,24 @@ function EditarExcluirContent() {
             </div>
           </div>
         )}
+
+        <BarcodeScannerModal
+          isOpen={isScannerOpen}
+          onClose={() => setIsScannerOpen(false)}
+          onScan={handleBarcodeScan}
+        />
+
+        <OcrScannerModal
+          isOpen={isOcrOpen}
+          onClose={() => setIsOcrOpen(false)}
+          onScan={handleOcrScan}
+        />
+
+        <CoverScannerModal
+          isOpen={isCoverScannerOpen}
+          onClose={() => setIsCoverScannerOpen(false)}
+          onCoverRecognized={handleCoverRecognized}
+        />
 
       </div>
     );
@@ -837,6 +943,12 @@ function EditarExcluirContent() {
         isOpen={isOcrOpen}
         onClose={() => setIsOcrOpen(false)}
         onScan={handleOcrScan}
+      />
+
+      <CoverScannerModal
+        isOpen={isCoverScannerOpen}
+        onClose={() => setIsCoverScannerOpen(false)}
+        onCoverRecognized={handleCoverRecognized}
       />
 
     </div>

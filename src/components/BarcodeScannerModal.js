@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import { IoClose, IoCameraReverseOutline } from 'react-icons/io5';
+import { IoClose, IoCameraReverseOutline, IoImageOutline } from 'react-icons/io5';
 import { FaBarcode } from 'react-icons/fa6';
 
 export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
@@ -14,6 +14,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
 
   const scannerRef = useRef(null);
   const audioCtxRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Som sutil de confirmação de leitura via Web Audio API
   const playBeep = () => {
@@ -49,6 +50,41 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
     stopScanner();
     onScan(decodedText.trim());
     onClose();
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setErroCamera(null);
+    setIsStarting(true);
+
+    try {
+      const html5QrCode = new Html5Qrcode('barcode-file-reader', {
+        formatsToSupport: [
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.QR_CODE,
+        ],
+        verbose: false,
+      });
+
+      const decodedText = await html5QrCode.scanFile(file, false);
+      html5QrCode.clear();
+      if (decodedText) {
+        handleDetected(decodedText);
+      }
+    } catch (err) {
+      console.warn('Falha ao decodificar imagem:', err);
+      setErroCamera('Código de barras não encontrado na foto. Tente uma imagem mais nítida/aproximada ou digite o código.');
+    } finally {
+      setIsStarting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   const stopScanner = async () => {
@@ -209,22 +245,41 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
         </div>
 
         <div className="scanner-modal-footer">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
               Aponte a câmera para o código no verso do vinil ou CD
             </span>
-            {cameras.length > 1 && (
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                accept="image/*" 
+                onChange={handleFileUpload} 
+                style={{ display: 'none' }} 
+              />
               <button 
                 type="button" 
-                onClick={toggleCamera} 
+                onClick={() => fileInputRef.current?.click()} 
                 className="btn btn-secondary" 
                 style={{ padding: '6px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
-                title="Alternar câmera"
+                title="Carregar foto da galeria"
               >
-                <IoCameraReverseOutline size={16} /> Alternar
+                <IoImageOutline size={16} /> Foto
               </button>
-            )}
+              {cameras.length > 1 && (
+                <button 
+                  type="button" 
+                  onClick={toggleCamera} 
+                  className="btn btn-secondary" 
+                  style={{ padding: '6px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}
+                  title="Alternar câmera"
+                >
+                  <IoCameraReverseOutline size={16} /> Alternar
+                </button>
+              )}
+            </div>
           </div>
+          <div id="barcode-file-reader" style={{ display: 'none' }} />
 
           <form 
             onSubmit={(e) => {

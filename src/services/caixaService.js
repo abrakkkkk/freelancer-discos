@@ -6,6 +6,19 @@ const STORAGE_PREFIX = 'freelancer_caixas_';
 function formatAndSortCaixas(rawData, currentLoja = '') {
   const allCaixas = new Map();
 
+  // Caixas padrão para Loja 1 (Caixa 1 até Caixa 50)
+  if (!currentLoja || currentLoja === 'Loja 1') {
+    for (let i = 1; i <= 50; i++) {
+      const valorCaixa = String(i);
+      const key = `${valorCaixa}|Loja 1`;
+      allCaixas.set(key, {
+        caixa: valorCaixa,
+        loja: 'Loja 1',
+        label: `Caixa ${i}`,
+      });
+    }
+  }
+
   // Caixas padrão para Loja 2 (Caixa 1B até Caixa 20B)
   // Garante que todas as caixas (inclusive vazias/faltantes) estejam sempre disponíveis
   if (!currentLoja || currentLoja === 'Loja 2') {
@@ -74,6 +87,13 @@ function saveToSession(key, data) {
 
 export const caixaService = {
   _cacheMap: new Map(),
+
+  /**
+   * Retorna caixas padrão imediatamente de forma síncrona para evitar telas vazias
+   */
+  getDefaultCaixas(loja = '') {
+    return formatAndSortCaixas([], loja);
+  },
 
   /**
    * Fetches distinct locations (caixas/localizações), optionally filtered by store.

@@ -39,9 +39,9 @@ export default function AdicionarItem() {
   useMobileLeaveConfirm();
   
   const [activeTab, setActiveTab] = useState(CATEGORY_IDS.DISCOS);
-  const { caixas } = useCaixas();
-  const [mensagem, setMensagem] = useState(null);
   const { activeStore } = useStore();
+  const [customCaixaMode, setCustomCaixaMode] = useState(false);
+  const [mensagem, setMensagem] = useState(null);
 
   const artistaInputRef = useRef(null);
   const tituloInputRef = useRef(null);
@@ -60,6 +60,8 @@ export default function AdicionarItem() {
     sugestoesTitulo, mostrarSugestoesTitulo, setMostrarSugestoesTitulo,
     selectSuggestion, getUnmaskedPreco
   } = useItemForm(initialFormWithStore, activeTab);
+
+  const { caixas } = useCaixas(form.loja || activeStore);
 
   const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
 
@@ -563,18 +565,52 @@ export default function AdicionarItem() {
               </select>
             </div>
             <div className="form-group">
-              <label>{(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS ? 'Caixa' : 'Localização'} {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}</label>
-              <input 
-                name="caixa" 
-                type="text" 
-                list="caixas-list"
-                value={form.caixa || ''} 
-                onChange={handleChange}
-                placeholder={form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? "Ex: 15" : "Ex: 15, Estante A, Prateleira 3..."}
-              />
-              <datalist id="caixas-list">
-                {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
-              </datalist>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                <label style={{ marginBottom: 0 }}>
+                  {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS ? 'Caixa' : 'Localização'} {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}
+                </label>
+                {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS && (
+                  <button
+                    type="button"
+                    onClick={() => setCustomCaixaMode(!customCaixaMode)}
+                    style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px', fontWeight: 500 }}
+                  >
+                    {customCaixaMode ? '← Selecionar da lista' : '+ Digitar outra'}
+                  </button>
+                )}
+              </div>
+              {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS && !customCaixaMode ? (
+                <select
+                  name="caixa"
+                  value={form.caixa || ''}
+                  onChange={handleChange}
+                >
+                  <option value="">Selecione a caixa</option>
+                  {caixas.map(c => (
+                    <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>
+                      {c.label}
+                    </option>
+                  ))}
+                  {form.caixa && !caixas.some(c => c.caixa === form.caixa) && (
+                    <option value={form.caixa}>{form.caixa} (Personalizada)</option>
+                  )}
+                </select>
+              ) : (
+                <>
+                  <input 
+                    name="caixa" 
+                    type="text" 
+                    list="caixas-list"
+                    value={form.caixa || ''} 
+                    onChange={handleChange}
+                    placeholder={form.loja === 'Loja 1' && activeTab === CATEGORY_IDS.DISCOS ? "Ex: 15" : "Ex: 15, Estante A, Prateleira 3..."}
+                    autoComplete="off"
+                  />
+                  <datalist id="caixas-list">
+                    {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
+                  </datalist>
+                </>
+              )}
             </div>
           </div>
 

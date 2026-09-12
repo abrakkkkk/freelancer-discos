@@ -44,3 +44,6 @@ next-env.d.ts
 
 # agent customizations
 .agents/
+
+# audit screenshots
+public/audit_screenshots/

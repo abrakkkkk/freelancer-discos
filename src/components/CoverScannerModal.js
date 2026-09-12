@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { IoClose, IoCameraReverseOutline, IoCamera, IoRefresh, IoImageOutline } from 'react-icons/io5';
 import { computeDHash, findInVisualCache, saveToVisualCache } from '@/utils/visualHash';
 
-export default function CoverScannerModal({ isOpen, onClose, onRecognized, title = 'Reconhecer Capa' }) {
+export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCoverRecognized, title = 'Reconhecer Capa' }) {
+  const handleRecognizedCallback = onRecognized || onCoverRecognized;
   const [stream, setStream] = useState(null);
   const [erro, setErro] = useState(null);
   const [processando, setProcessando] = useState(false);
@@ -133,8 +134,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
       if (matchCache) {
         playBeep();
         stopCamera();
-        if (onRecognized) {
-          onRecognized({
+        if (handleRecognizedCallback) {
+          handleRecognizedCallback({
             artista: matchCache.artista,
             titulo: matchCache.titulo,
             ano: matchCache.ano,
@@ -173,8 +174,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
 
       playBeep();
       stopCamera();
-      if (onRecognized) {
-        onRecognized({
+      if (handleRecognizedCallback) {
+        handleRecognizedCallback({
           artista: data.artista,
           titulo: data.titulo,
           ano: data.ano,
@@ -241,6 +242,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, title
 
   return (
     <div
+      className="cover-scanner-overlay"
       style={{
         position: 'fixed',
         inset: 0,

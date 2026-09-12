@@ -25,8 +25,9 @@ import AlertMessage from '@/components/AlertMessage';
 import { useReposicao } from '@/contexts/ReposicaoContext';
 
 export default function CatalogoClone() {
-  const { caixas } = useCaixas();
   const catalog = useCatalog(CATEGORY_IDS.DISCOS);
+  const { activeStore } = useStore();
+  const { caixas } = useCaixas(catalog.filtroLoja || activeStore);
   const [exportando, setExportando] = useState(false);
   const [itemParaExcluir, setItemParaExcluir] = useState(null);
   const [isExcluindo, setIsExcluindo] = useState(false);
@@ -36,7 +37,6 @@ export default function CatalogoClone() {
   const [isCoverScannerOpen, setIsCoverScannerOpen] = useState(false);
 
   const { registerUndo } = useUndo();
-  const { activeStore } = useStore();
   const { adicionarTarefa, removerTarefa } = useReposicao();
 
   const handleCoverRecognized = ({ artista, titulo }) => {
