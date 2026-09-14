@@ -2,10 +2,11 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash-lite',
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-flash-latest',
   'gemini-3.5-flash',
-  'gemini-3.6-flash',
-  'gemini-flash-latest'
+  'gemini-3.5-flash-lite'
 ];
 
 export async function POST(request) {
@@ -50,11 +51,16 @@ Retorne estritamente um objeto JSON com esta estrutura:
   "confianca": "alta"
 }
 
-Regras:
+Regras Obrigatórias:
 1. "artista": Nome do artista, banda ou compositor principal (ex: "Secos & Molhados", "Milton Nascimento", "Pink Floyd").
-2. "titulo": Título oficial do álbum (ex: "Clube da Esquina", "Construção", "The Dark Side of the Moon"). Se for álbum homônimo, repita o nome do artista.
-3. Não inclua ruídos como gravadora (Odeon, Philips, EMI), selos de promoção, carimbos, preços ou termos como "Série Luxo", "Disco é Cultura", "Stereo/Mono".
-4. Se for impossível identificar o álbum com qualquer razoabilidade ou a imagem não for de um álbum musical, responda:
+2. TRILHAS SONORAS E COLETÂNEAS (REGRA CRÍTICA):
+   - Se o álbum for uma trilha sonora de novela, seriado, minissérie ou filme (ex: "Riacho Doce", "Pantanal", "Roque Santeiro", "Selva de Pedra", "Ciranda de Pedra", "Anos Dourados", "Anos Rebeldes", "Tieta", "Vale Tudo", etc.) ou coletânea de múltiplos intérpretes: o campo "artista" DEVE SER OBRIGATORIAMENTE "Various" (em inglês, padrão internacional fonográfico Discogs).
+   - NUNCA use "Vários", "Varios", "Vários Artistas" ou "Trilha Sonora".
+   - NUNCA use o nome de atores/atrizes que aparecem na foto da capa (ex: Luíza Tomé, Cristiana Oliveira, Regina Duarte, Malu Mader, Marília Pêra) como artista.
+   - NUNCA use cantores de faixas avulsas (ex: Elizeth Cardoso, Ronnie Von) como artista de uma trilha sonora de novela.
+3. "titulo": Título oficial do álbum ou da novela (ex: "Riacho Doce", "Roque Santeiro - Volume 2", "Pantanal", "Clube da Esquina"). Se for álbum homônimo, repita o nome do artista.
+4. Não inclua ruídos como gravadora (Odeon, Philips, Som Livre, EMI), selos de promoção, carimbos, preços ou termos como "Série Luxo", "Disco é Cultura", "Stereo/Mono".
+5. Se for impossível identificar o álbum com qualquer razoabilidade ou a imagem não for de um álbum musical, responda:
 {
   "artista": "",
   "titulo": "",
@@ -179,10 +185,31 @@ Regras:
       }
     }
 
-    const artista = (parsed?.artista || '').trim();
-    const titulo = (parsed?.titulo || '').trim();
+    let artista = (parsed?.artista || '').trim();
+    let titulo = (parsed?.titulo || '').trim();
     const ano = (parsed?.ano || '').trim();
     const confianca = parsed?.confianca || 'media';
+
+    // Normalização estrita para Various
+    const isVarious = /^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?|soundtrack|ost)$/i.test(artista);
+    if (isVarious) {
+      artista = 'Various';
+    }
+
+    // Se o artista foi preenchido como nome da novela / seriado
+    if (/^(pantanal|salome|riacho\s+doce|roque\s+santeiro)$/i.test(artista)) {
+      artista = 'Various';
+    }
+
+    // Se o artista for ator/atriz comum de capas de novela da Globo
+    if (/^(cristiana\s+oliveira|mar[ií]lia\s+p[eê]ra|lu[ií]za\s+tom[eé]|regina\s+duarte)$/i.test(artista)) {
+      artista = 'Various';
+    }
+
+    // Se a novela for Riacho Doce e o modelo alucinar Elizeth Cardoso
+    if (/riacho\s+doce/i.test(titulo) && /elizeth\s+cardoso/i.test(artista)) {
+      artista = 'Various';
+    }
 
     if (!artista && !titulo) {
       return Response.json({

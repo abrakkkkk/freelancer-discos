@@ -41,7 +41,14 @@ export default function CatalogoClone() {
 
   const handleCoverRecognized = ({ artista, titulo }) => {
     if (!artista && !titulo) return;
-    const query = `${artista || ''} ${titulo || ''}`.trim();
+    // Para coletâneas / Various, pesquisar diretamente pelo título da obra para maior precisão no acervo local
+    let query = '';
+    const isVarious = !artista || /^(various|v[aá]rios(\s+artistas)?|trilha\s+sonora)$/i.test(artista);
+    if (isVarious) {
+      query = (titulo || artista || '').trim();
+    } else {
+      query = `${artista} ${titulo || ''}`.trim();
+    }
     catalog.setBusca(query);
     catalog.setPagina(1);
     setFeedbackMsg({

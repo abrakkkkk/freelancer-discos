@@ -269,6 +269,14 @@ function EditarExcluirContent() {
       if (data.results && data.results.length > 0) {
         setDiscogsResults(data.results);
         setShowDiscogsDropdown(true);
+        // Pré-seleciona capa do melhor resultado caso o usuário não tenha escolhido uma
+        const bestMatch = data.results.find(r => r.thumb || r.cover_image) || data.results[0];
+        if (bestMatch && (bestMatch.thumb || bestMatch.cover_image)) {
+          setSelectedCover(prev => prev || {
+            thumb: bestMatch.thumb || null,
+            cover: bestMatch.cover_image || bestMatch.thumb || null
+          });
+        }
       } else {
         setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado no Discogs.' });
       }
@@ -282,7 +290,11 @@ function EditarExcluirContent() {
 
   const handleCoverRecognized = ({ artista, titulo, ano, coverUrl }) => {
     if (artista || titulo) {
-      const query = `${artista || ''} ${titulo || ''}`.trim();
+      let normArtista = artista;
+      if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(normArtista)) {
+        normArtista = 'Various';
+      }
+      const query = `${normArtista || ''} ${titulo || ''}`.trim();
       setQueryDiscogs(query);
       if (coverUrl) {
         setSelectedCover({

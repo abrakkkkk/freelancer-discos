@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+// Rota de busca Discogs com suporte a q, catno e barcode
 
 function normalizeCatno(str) {
   if (!str) return '';
@@ -69,13 +69,13 @@ export async function GET(request) {
   const catnoParam = searchParams.get('catno');
 
   if (!query && !barcode && !catnoParam) {
-    return NextResponse.json({ error: 'Query parameter "q", "catno" or "barcode" is required' }, { status: 400 });
+    return Response.json({ error: 'Query parameter "q", "catno" or "barcode" is required' }, { status: 400 });
   }
 
   const cacheKey = `b:${barcode || ''}|c:${catnoParam || ''}|q:${query || ''}`;
   const cached = getFromCache(cacheKey);
   if (cached) {
-    return NextResponse.json(cached, {
+    return Response.json(cached, {
       headers: { 'X-Cache': 'HIT' }
     });
   }
@@ -84,7 +84,7 @@ export async function GET(request) {
   const secret = process.env.DISCOGS_SECRET;
 
   if (!key || !secret) {
-    return NextResponse.json({ error: 'Discogs credentials not configured' }, { status: 500 });
+    return Response.json({ error: 'Discogs credentials not configured' }, { status: 500 });
   }
 
   const headers = {
@@ -99,16 +99,23 @@ export async function GET(request) {
       const url = `https://api.discogs.com/database/search?type=release&per_page=15&barcode=${encodeURIComponent(cleanBarcode)}`;
       const response = await fetch(url, { headers });
       if (!response.ok) {
-        return NextResponse.json({ error: 'Failed to fetch from Discogs' }, { status: response.status });
+        return Response.json({ error: 'Failed to fetch from Discogs' }, { status: response.status });
       }
       const data = await response.json();
       setToCache(cacheKey, data);
-      return NextResponse.json(data);
+      return Response.json(data);
     }
 
     // 2. Busca por Catálogo ou Termo de Busca (q)
     const rawSearch = catnoParam || query;
-    const cleanQ = rawSearch.trim();
+    let cleanQ = rawSearch.trim();
+
+    // Normaliza variações em português de Vários/Trilha Sonora para Various (compatibilidade com Discogs)
+    const isVariousType = /\b(v[aá]rios(\s+artistas)?|trilha\s+sonora(\s+original)?)\b/i.test(cleanQ);
+    if (isVariousType) {
+      cleanQ = cleanQ.replace(/\b(v[aá]rios(\s+artistas)?|trilha\s+sonora(\s+original)?)\b/gi, 'Various').trim();
+    }
+
     const normQuery = normalizeCatno(cleanQ);
     const isCatnoSearch = !!catnoParam || /\d/.test(cleanQ);
 
@@ -122,6 +129,18 @@ export async function GET(request) {
         .then(r => r.ok ? r.json() : { results: [] })
         .catch(() => ({ results: [] }))
     );
+
+    // Se for termo com Various (coletânea/novela), busca também com país Brasil e termo limpo
+    if (/^various\s+/i.test(cleanQ)) {
+      const titleOnly = cleanQ.replace(/^various\s+/i, '').trim();
+      if (titleOnly.length >= 3) {
+        requests.push(
+          fetch(`https://api.discogs.com/database/search?type=release&per_page=10&country=Brazil&q=${encodeURIComponent(titleOnly)}`, { headers })
+            .then(r => r.ok ? r.json() : { results: [] })
+            .catch(() => ({ results: [] }))
+        );
+      }
+    }
 
     if (isCatnoSearch) {
       // Prioridade: Busca no catálogo brasileiro para as variações principais (até 2 variações)
@@ -201,7 +220,7 @@ export async function GET(request) {
     const sortedResults = Array.from(map.values()).sort((a, b) => b._score - a._score);
     const payload = { results: sortedResults };
     setToCache(cacheKey, payload);
-    return NextResponse.json(payload);
+    return Response.json(payload);
   } catch (error) {
     console.error('Discogs Fetch Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

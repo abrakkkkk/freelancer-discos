@@ -117,18 +117,24 @@ export default function AdicionarItem() {
   const handleCoverRecognized = async ({ artista, titulo, ano }) => {
     if (!artista && !titulo) return;
 
+    // Normaliza variações de Vários para Various (padrão Discogs)
+    let normArtista = artista;
+    if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(normArtista)) {
+      normArtista = 'Various';
+    }
+
     setForm(prev => ({
       ...prev,
-      artista: artista || prev.artista,
+      artista: normArtista || prev.artista,
       titulo: titulo || prev.titulo,
       ano: ano || prev.ano,
     }));
 
-    const query = `${artista || ''} ${titulo || ''}`.trim();
+    const query = `${normArtista || ''} ${titulo || ''}`.trim();
     setQueryDiscogs(query);
     setMensagem({
       tipo: 'success',
-      texto: `Capa identificada: ${[artista, titulo].filter(Boolean).join(' - ')}${ano ? ` (${ano})` : ''}. Buscando prensagens no Discogs...`
+      texto: `Capa identificada: ${[normArtista, titulo].filter(Boolean).join(' - ')}${ano ? ` (${ano})` : ''}. Buscando prensagens no Discogs...`
     });
 
     if (query) {
@@ -142,8 +148,10 @@ export default function AdicionarItem() {
         if (data.results && data.results.length > 0) {
           setDiscogsResults(data.results);
           setShowDiscogsDropdown(true);
-          if (data.results.length === 1) {
-            handleSelectDiscogsResult(data.results[0]);
+          // Auto-seleciona a primeira edição com capa disponível para preenchimento imediato
+          const bestMatch = data.results.find(r => r.thumb || r.cover_image) || data.results[0];
+          if (bestMatch) {
+            handleSelectDiscogsResult(bestMatch);
           }
         }
       } catch (err) {

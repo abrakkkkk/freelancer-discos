@@ -1,9 +1,9 @@
 // Algoritmo dHash (Difference Hash) perceptual de 64 bits para cache visual no navegador
 // Roda em < 2ms usando canvas offscreen sem bibliotecas externas
 
-const CACHE_STORAGE_KEY = 'freelancer_visual_cover_cache_v1';
+const CACHE_STORAGE_KEY = 'freelancer_visual_cover_cache_v2';
 const MAX_CACHE_ENTRIES = 500;
-const DEFAULT_HAMMING_THRESHOLD = 6; // Até 6 bits de diferença de 64 bits (tolerância a pequenas variações de luz/ângulo)
+const DEFAULT_HAMMING_THRESHOLD = 2; // Tolerância estrita (até 2 bits) para evitar falsos positivos entre álbuns distintos
 
 /**
  * Calcula o dHash de 64 bits a partir de um HTMLCanvasElement, HTMLImageElement ou HTMLVideoElement.
