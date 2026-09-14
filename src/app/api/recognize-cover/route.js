@@ -2,11 +2,9 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-2.5-flash',
-  'gemini-2.5-flash-lite',
-  'gemini-flash-latest',
-  'gemini-3.5-flash',
-  'gemini-3.5-flash-lite'
+  'gemini-3.5-flash-lite',
+  'gemini-3.6-flash',
+  'gemini-flash-latest'
 ];
 
 export async function POST(request) {
@@ -72,17 +70,17 @@ Regras Obrigatórias:
     let geminiData = null;
     let lastError = null;
 
-    // Tenta os modelos disponíveis em ordem de prioridade com timeout adequado para mobile
+    // Tenta os modelos disponíveis em ordem de prioridade (flash-lite prioritário para resposta em ~1.2s)
     for (const model of GEMINI_MODELS) {
       try {
         const generationConfig = {
           responseMimeType: 'application/json',
           temperature: 0,
-          maxOutputTokens: 800
+          maxOutputTokens: 150
         };
 
-        // gemini-3.5-flash suporta desativar thinking para respostas instantâneas sem estourar orçamento de tokens
-        if (model === 'gemini-3.5-flash') {
+        // Modelos que suportam desativação explícita de thinking para resposta imediata
+        if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
           generationConfig.thinkingConfig = { thinkingBudget: 0 };
         }
 
@@ -103,7 +101,7 @@ Regras Obrigatórias:
           generationConfig
         };
 
-        const timeoutMs = model === 'gemini-3.5-flash-lite' ? 9000 : 7000;
+        const timeoutMs = model === 'gemini-3.5-flash-lite' ? 4500 : 5000;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
         const res = await fetch(url, {
           method: 'POST',

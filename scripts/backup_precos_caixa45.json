@@ -1,0 +1,1492 @@
+[
+  {
+    "id": 14252,
+    "artista": "",
+    "titulo": "Love is in the air 3",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14253,
+    "artista": "MPB 4",
+    "titulo": "Antologia",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14254,
+    "artista": "",
+    "titulo": "Alipio Martins",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14256,
+    "artista": "Jose Tapajos",
+    "titulo": "O idolo do povao",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14257,
+    "artista": "",
+    "titulo": "Banda boiadeiros do forro",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14258,
+    "artista": "Os 3 do Nordeste",
+    "titulo": "Proibido Cochilar",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14259,
+    "artista": "Miltinho",
+    "titulo": "Os grandes sucessos de",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14260,
+    "artista": "Documentos da musica brasileira vol 5",
+    "titulo": "Musica de camara do Brasil (lacrado)",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14261,
+    "artista": "Philip Glass",
+    "titulo": "The photographer",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14262,
+    "artista": "Jack Constanzo",
+    "titulo": "Afro can can (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14263,
+    "artista": "Oscar Galende",
+    "titulo": "Ritmo tropical (oscar capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14264,
+    "artista": "Armandinho e o Trio Eletrico Dodo e Osmar",
+    "titulo": "Folia Eletrica",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14265,
+    "artista": "Andy Williams",
+    "titulo": "Sucessos de",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14266,
+    "artista": "Andre Penazzi",
+    "titulo": "Orgao Samba Percussao vol 2",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14267,
+    "artista": "Agnaldo Rayol",
+    "titulo": "Quando o amor de chama",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14268,
+    "artista": "Catedral do samba",
+    "titulo": "Gravado ao vivo",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14269,
+    "artista": "Genival Lacerda",
+    "titulo": "O Senador do Rojao",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14270,
+    "artista": "Chiclet",
+    "titulo": "1978",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14271,
+    "artista": "",
+    "titulo": "Quartetto cetra",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14274,
+    "artista": "Luizinho Solista Clarinete",
+    "titulo": "Chorando Baixinho",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14275,
+    "artista": "",
+    "titulo": "Alipio Martins",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14276,
+    "artista": "Roberto Muller",
+    "titulo": "O romantico de sempre",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14277,
+    "artista": "Assis Valente",
+    "titulo": "1989",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14278,
+    "artista": "Santo Morales",
+    "titulo": "E tempo de romance",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14279,
+    "artista": "Forrro Chapeu de palha",
+    "titulo": "Ninguem e de ferro",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14280,
+    "artista": "Luiz Gonzaga",
+    "titulo": "Meus Sucessos com Humberto Teixeira",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14281,
+    "artista": "Carimbo",
+    "titulo": "Candango do Ype",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14283,
+    "artista": "",
+    "titulo": "SOS Brasil",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14284,
+    "artista": "Genival Santos",
+    "titulo": "1980",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14286,
+    "artista": "Coral Sao Joao",
+    "titulo": "Sao Luiz do Maranhao",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14288,
+    "artista": "Turminha Patati Patata",
+    "titulo": "No reino encantado do circo",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14289,
+    "artista": "Pinduca",
+    "titulo": "Carimbo e Sirimbo",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14290,
+    "artista": "Tati",
+    "titulo": "Um grande amor",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14291,
+    "artista": "Simone",
+    "titulo": "Desejos",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14292,
+    "artista": "Duda orquestra",
+    "titulo": "Frevo",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14293,
+    "artista": "Lilico",
+    "titulo": "Eu Show o Invocado",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14294,
+    "artista": "",
+    "titulo": "Sucessos MPB",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14296,
+    "artista": "Toninho Guedes",
+    "titulo": "Ta Gostoso",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14297,
+    "artista": "Leila Guimaraes",
+    "titulo": "Villa lobos",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14298,
+    "artista": "Ernane",
+    "titulo": "Um Reforço no Norte",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14300,
+    "artista": "Banda de Pau e Corda",
+    "titulo": "Vivencia",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14301,
+    "artista": "",
+    "titulo": "Jose Roberto e seus Sucessos Vol. II",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14302,
+    "artista": "Ernane",
+    "titulo": "Um Segredo a Dizer",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14303,
+    "artista": "Tony Araujo",
+    "titulo": "Forro no Xerem",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14304,
+    "artista": "Sergio Ricardo",
+    "titulo": "Nova historia da Musica Popular Brasileira",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14305,
+    "artista": "Os populares de Igarape Miri",
+    "titulo": "Lambadas incrementadas",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14306,
+    "artista": "Conjunto alta tensao",
+    "titulo": "Noel",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14307,
+    "artista": "Timico",
+    "titulo": "Carimbo no Rio de Janeiro",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14308,
+    "artista": "Jader Carvalho",
+    "titulo": "O pais dos nordestinos",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14309,
+    "artista": "Reinaldo",
+    "titulo": "Bom dia meu amigo",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14310,
+    "artista": "Lambateria tropical",
+    "titulo": "2",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14311,
+    "artista": "Maria Creuza",
+    "titulo": "Doce Veneno",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14312,
+    "artista": "Jose Alexandre",
+    "titulo": "Alma de musico",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14313,
+    "artista": "Carlinhos Felix",
+    "titulo": "Coisas da vida",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14314,
+    "artista": "Severino Januario",
+    "titulo": "1976",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14315,
+    "artista": "Orquestra Sul Americana",
+    "titulo": "Coleçao Metais em Romance",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14316,
+    "artista": "Nonato",
+    "titulo": "Coisas do Amor",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14317,
+    "artista": "Os Carbonos",
+    "titulo": "1976",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14318,
+    "artista": "Gilberto Gil",
+    "titulo": "Dia dorim noite neon (obs capa)",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14319,
+    "artista": "Mario Zan",
+    "titulo": "Os grandes sucessos de (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14320,
+    "artista": "Pitanga",
+    "titulo": "Brasa viva (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14321,
+    "artista": "Hebe Camargo",
+    "titulo": "Hebe",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14322,
+    "artista": "Marcio Greyck",
+    "titulo": "O melhor de",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14323,
+    "artista": "Wanderley",
+    "titulo": "1970",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14324,
+    "artista": "Banco do Brasil apresenta Fernando Gallo - Musica",
+    "titulo": "Brasil",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14325,
+    "artista": "Coral do Estado do Ceara",
+    "titulo": "Cancioneiros do Ceara",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14326,
+    "artista": "Edith Veiga",
+    "titulo": "Como se fosse",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14327,
+    "artista": "",
+    "titulo": "Nostalgia eletronica orquestra",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14328,
+    "artista": "",
+    "titulo": "borba de paula",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14330,
+    "artista": "Roberto Muller",
+    "titulo": "Por um momento apenas",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14331,
+    "artista": "Wando",
+    "titulo": "Bem vindo",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14332,
+    "artista": "Isaura Garcia",
+    "titulo": "Nua & Crua",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14333,
+    "artista": "",
+    "titulo": "Alta Tensao",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14334,
+    "artista": "",
+    "titulo": "Nova Historia da Musica Popular Brasileira: Tom Jobim",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14335,
+    "artista": "Dede Badaro",
+    "titulo": "Meu canto meu samba",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14336,
+    "artista": "Karina",
+    "titulo": "1989",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14337,
+    "artista": "Banda do pinduca",
+    "titulo": "Carnaval",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14338,
+    "artista": "Nat King Cole",
+    "titulo": "Disco de ouro",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14339,
+    "artista": "Barry Ryan",
+    "titulo": "1970",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14340,
+    "artista": "Joe Jackson",
+    "titulo": "Night and day",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14341,
+    "artista": "Diversos",
+    "titulo": "Ave Maria",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14342,
+    "artista": "Traditional Jazz Band",
+    "titulo": "Sucesso nos USA",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14343,
+    "artista": "",
+    "titulo": "Nova Historia da Musica Popular Brasileira: Cartola",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14344,
+    "artista": "Geraldo Kristi",
+    "titulo": "Sem fronteiras",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14345,
+    "artista": "",
+    "titulo": "Russo e sua lira (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14347,
+    "artista": "The Clyde Shelton singers",
+    "titulo": "Mamy blue",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14348,
+    "artista": "Cher",
+    "titulo": "Dark lady (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14349,
+    "artista": "Nat King Cole",
+    "titulo": "Unforgettable / songs by",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14350,
+    "artista": "Vava dos oito baixos",
+    "titulo": "Quem vai me dar orucum",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14351,
+    "artista": "The four aces",
+    "titulo": "Em seus braços (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14352,
+    "artista": "Andre Penazzi",
+    "titulo": "Novo Orgao Samba Percussao",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14353,
+    "artista": "Lial Bentes",
+    "titulo": "Amor censurado (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14354,
+    "artista": "Frank Sinatra & Duke Ellington",
+    "titulo": "Francis A Sinatra & Edward K",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14355,
+    "artista": "",
+    "titulo": "Sucessos latinos",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14356,
+    "artista": "Peter Duchin",
+    "titulo": "Transition",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14357,
+    "artista": "Percussive Jazz",
+    "titulo": "Volume 2",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14358,
+    "artista": "Elizabeth e Ciro",
+    "titulo": "A bossa eterna de",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14359,
+    "artista": "",
+    "titulo": "Historia da Musica Popular Brasileira: Joao Bosco & Aldir Blanc",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14360,
+    "artista": "Preciso te ver",
+    "titulo": "PIM",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14361,
+    "artista": "Ismael Carlos",
+    "titulo": "Eternamente brega (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14362,
+    "artista": "Sergio Albuquerque",
+    "titulo": "Com o coração doendo",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14363,
+    "artista": "Angela Maria",
+    "titulo": "16 seleçoes de sucessos de",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14364,
+    "artista": "Tania Ayres",
+    "titulo": "Faz me rir",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14365,
+    "artista": "Joaozito",
+    "titulo": "Minha musa",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14366,
+    "artista": "Alipio Martins",
+    "titulo": "Eu chega la",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14367,
+    "artista": "Toquinho",
+    "titulo": "Sonho dourado",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14368,
+    "artista": "Banda Patrulha",
+    "titulo": "Na rua (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14369,
+    "artista": "Luiz Gonzaga JR",
+    "titulo": "Plano de voo (obs capa)",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14370,
+    "artista": "Silvio Caldas",
+    "titulo": "O seresteiro",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14371,
+    "artista": "Orlando Silva",
+    "titulo": "Uma dor e uma saudade",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14372,
+    "artista": "Lucio Alves",
+    "titulo": "A voz de",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14373,
+    "artista": "Silvio Caldas",
+    "titulo": "1977",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14374,
+    "artista": "Gilberto Alves",
+    "titulo": "de sempre",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14375,
+    "artista": "Ge Maria",
+    "titulo": "1982",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14377,
+    "artista": "Genival Santos",
+    "titulo": "1982",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14378,
+    "artista": "Luis Carlos Magno",
+    "titulo": "Indiana",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14379,
+    "artista": "Roberto Ribeiro",
+    "titulo": "1983",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14380,
+    "artista": "Paulo Nunes",
+    "titulo": "Falando ao Coraçao",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14381,
+    "artista": "Pery Ribeiro",
+    "titulo": "Pery (obs capa)",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14382,
+    "artista": "Silvar e seu regional",
+    "titulo": "Saudade presente vol 2",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14383,
+    "artista": "Vovo Mafalda",
+    "titulo": "1983",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14384,
+    "artista": "Capri",
+    "titulo": "Chando no Pagode",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14386,
+    "artista": "Dalva de Oliveira",
+    "titulo": "Tangos",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14387,
+    "artista": "Dalva de Oliveira",
+    "titulo": "Boleros",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14388,
+    "artista": "Paulinho Nunes",
+    "titulo": "Natal jovem",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14390,
+    "artista": "Sebastiao do Rojao",
+    "titulo": "Oi Eu de novo no forro",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14391,
+    "artista": "J Pereira",
+    "titulo": "Orfao com 5 anos",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14393,
+    "artista": "Ely Batista",
+    "titulo": "Amante malicioso",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14394,
+    "artista": "",
+    "titulo": "Fernando Mendes",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14395,
+    "artista": "Trio brasileiro",
+    "titulo": "1987",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14396,
+    "artista": "Domingos Pecci",
+    "titulo": "Magoas de um chorao vol 3",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14397,
+    "artista": "Angelo Maximo",
+    "titulo": "1972",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14400,
+    "artista": "Fernando Mendes",
+    "titulo": "Feitiço",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14403,
+    "artista": "",
+    "titulo": "Pim",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14405,
+    "artista": "Tato Junior",
+    "titulo": "Socas e Lambadas",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14406,
+    "artista": "Ivan Peter",
+    "titulo": "Bye Bye Amor",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14407,
+    "artista": "",
+    "titulo": "Magalhaes e sua Guitarra",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14408,
+    "artista": "Emilio Santiago",
+    "titulo": "Brasileiríssimas",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14411,
+    "artista": "",
+    "titulo": "Trio do Fafa",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14412,
+    "artista": "Marçal",
+    "titulo": "Recompensa",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14413,
+    "artista": "Pekin",
+    "titulo": "Impossivel Parar o Sol",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14414,
+    "artista": "Eraldo Reis",
+    "titulo": "O Idolo Solitario - Mundo Deserto",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14416,
+    "artista": "Lulu Santos",
+    "titulo": "ritmo do momento",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14418,
+    "artista": "",
+    "titulo": "Geraldo Azevedo -",
+    "preco": null,
+    "deletado": true,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14419,
+    "artista": "Josmar Assis",
+    "titulo": "1983",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14421,
+    "artista": "Meus caros amigos",
+    "titulo": "Chico Buarque",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14422,
+    "artista": "A flor da pele",
+    "titulo": "Ney",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14423,
+    "artista": "",
+    "titulo": "Paulo Diniz -",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14424,
+    "artista": "Nana Caymmi",
+    "titulo": "Wagner Tiso",
+    "preco": null,
+    "deletado": false,
+    "ativo": true,
+    "caixa": "45",
+    "loja": "Loja 1"
+  }
+]

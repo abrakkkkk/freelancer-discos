@@ -16,7 +16,7 @@ import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
-import { cleanDiscogsString, normalizeCaixa } from '@/utils/stringUtils';
+import { cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
 
 import { IoCamera } from "react-icons/io5";
 
@@ -117,8 +117,11 @@ export default function AdicionarItem() {
   const handleCoverRecognized = async ({ artista, titulo, ano }) => {
     if (!artista && !titulo) return;
 
-    // Normaliza variações de Vários para Various (padrão Discogs)
-    let normArtista = artista;
+    // Normaliza e formata o termo exato para busca eficiente no Discogs
+    const query = formatDiscogsQuery(artista, titulo);
+
+    // Preenche preventivamente os dados no formulário caso o usuário não selecione nenhuma edição
+    let normArtista = (artista || '').trim();
     if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(normArtista)) {
       normArtista = 'Various';
     }
@@ -130,11 +133,11 @@ export default function AdicionarItem() {
       ano: ano || prev.ano,
     }));
 
-    const query = `${normArtista || ''} ${titulo || ''}`.trim();
+    // Mantém o termo formatado visível no input de busca do Discogs
     setQueryDiscogs(query);
     setMensagem({
       tipo: 'success',
-      texto: `Capa identificada: ${[normArtista, titulo].filter(Boolean).join(' - ')}${ano ? ` (${ano})` : ''}. Buscando prensagens no Discogs...`
+      texto: `Capa identificada: "${query}"${ano ? ` (${ano})` : ''}. Buscando prensagens no Discogs...`
     });
 
     if (query) {
@@ -147,12 +150,17 @@ export default function AdicionarItem() {
         const data = await res.json();
         if (data.results && data.results.length > 0) {
           setDiscogsResults(data.results);
+          // Abre o dropdown para o usuário visualizar e escolher com certeza a prensagem correta
           setShowDiscogsDropdown(true);
-          // Auto-seleciona a primeira edição com capa disponível para preenchimento imediato
-          const bestMatch = data.results.find(r => r.thumb || r.cover_image) || data.results[0];
-          if (bestMatch) {
-            handleSelectDiscogsResult(bestMatch);
-          }
+          setMensagem({
+            tipo: 'success',
+            texto: `Capa identificada: "${query}". Selecione a prensagem correta abaixo ou confirme os dados.`
+          });
+        } else {
+          setMensagem({
+            tipo: 'success',
+            texto: `Capa identificada: "${query}". Nenhuma prensagem encontrada no Discogs; campos preenchidos.`
+          });
         }
       } catch (err) {
         console.error('Erro na busca Discogs pós-reconhecimento:', err);

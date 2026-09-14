@@ -19,7 +19,7 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { IoCamera } from "react-icons/io5";
-import { formatCaixa, cleanDiscogsString, normalizeCaixa } from '@/utils/stringUtils';
+import { formatCaixa, cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
 import AlbumCover from '@/components/AlbumCover';
 
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
@@ -290,11 +290,7 @@ function EditarExcluirContent() {
 
   const handleCoverRecognized = ({ artista, titulo, ano, coverUrl }) => {
     if (artista || titulo) {
-      let normArtista = artista;
-      if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(normArtista)) {
-        normArtista = 'Various';
-      }
-      const query = `${normArtista || ''} ${titulo || ''}`.trim();
+      const query = formatDiscogsQuery(artista, titulo);
       setQueryDiscogs(query);
       if (coverUrl) {
         setSelectedCover({
@@ -304,7 +300,7 @@ function EditarExcluirContent() {
       }
       setMensagem({
         tipo: 'success',
-        texto: `Capa reconhecida: "${query}". Buscando edições no Discogs...`,
+        texto: `Capa reconhecida: "${query}". Selecione a prensagem correta no Discogs abaixo ou confirme os dados.`,
       });
       searchDiscogsWithQuery(query);
     }

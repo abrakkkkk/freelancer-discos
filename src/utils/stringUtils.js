@@ -77,6 +77,43 @@ export function cleanDiscogsString(texto) {
     .trim();
 }
 
+/**
+ * Formata artista e título para busca otimizada no Discogs.
+ * - Padroniza coletâneas/trilhas para "Various [Título]"
+ * - Evita repetição em álbuns homônimos (ex: "Secos & Molhados")
+ * - Remove anotações e ruídos como "(obs capa)", "(lacrado)"
+ */
+export function formatDiscogsQuery(artista, titulo) {
+  let art = (artista || '').trim();
+  let tit = (titulo || '').trim();
+
+  // Remove anotações residuais entre parênteses do título ou artista
+  tit = tit.replace(/\s*\([^)]*(?:obs|capa|lacrado|importado|edicao)[^)]*\)/gi, '').trim();
+  art = art.replace(/\s*\([^)]*(?:obs|capa|lacrado|importado|edicao)[^)]*\)/gi, '').trim();
+
+  // Normaliza variações de Vários para Various
+  if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(art)) {
+    art = 'Various';
+  }
+
+  if (!art && !tit) return '';
+  if (!art) return tit;
+  if (!tit) return art;
+
+  // Se o álbum for homônimo (ex: Artista = Titulo), não duplica na busca
+  if (art.toLowerCase() === tit.toLowerCase()) {
+    return art;
+  }
+
+  // Coletânea ou trilha sonora de novela
+  if (art.toLowerCase() === 'various') {
+    return `Various ${tit}`;
+  }
+
+  return `${art} - ${tit}`;
+}
+
+
 export const MUSIC_STOP_WORDS = new Set([
   // Artigos e preposições (Inglês)
   'the', 'a', 'an', 'and', 'of',
