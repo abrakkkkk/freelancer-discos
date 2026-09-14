@@ -359,8 +359,9 @@ function EditarExcluirContent() {
       if (tipo === CATEGORY_IDS.DISCOS) {
         const artistaAlterado = temArtista && (updateData.artista || '').trim().toLowerCase() !== (snapshotAntes.artista || '').trim().toLowerCase();
         const tituloAlterado = (updateData.titulo || '').trim().toLowerCase() !== (snapshotAntes.titulo || '').trim().toLowerCase();
+        const anoAlterado = (updateData.ano || '').trim() !== (snapshotAntes.ano || '').trim();
 
-        if (artistaAlterado || tituloAlterado || selectedCover) {
+        if (artistaAlterado || tituloAlterado || anoAlterado || selectedCover) {
           // 1. Limpa o cache local no sessionStorage do navegador
           if (typeof window !== 'undefined') {
             try {
@@ -372,7 +373,8 @@ function EditarExcluirContent() {
               });
               const chosenImg = selectedCover?.thumb || selectedCover?.cover;
               if (chosenImg) {
-                const qKey = `${(updateData.artista || '').trim()} ${(updateData.titulo || '').trim()}`.toLowerCase();
+                const cleanAno = (updateData.ano || '').trim();
+                const qKey = `${(updateData.artista || '').trim()} ${(updateData.titulo || '').trim()} ${cleanAno}`.trim().toLowerCase();
                 sessionStorage.setItem(`cover_${itemEditando.id}_${qKey}`, chosenImg);
                 sessionStorage.setItem(`cover_${qKey}`, chosenImg);
               }
@@ -388,6 +390,7 @@ function EditarExcluirContent() {
                 id: itemEditando.id,
                 artista: updateData.artista || '',
                 titulo: updateData.titulo || '',
+                ano: updateData.ano || '',
                 cover: selectedCover?.cover || null,
                 thumb: selectedCover?.thumb || null,
               })
@@ -494,7 +497,7 @@ function EditarExcluirContent() {
           <button className="btn btn-secondary btn-back" style={{ flexShrink: 0 }} onClick={voltarParaBusca}>← Voltar</button>
           <div className="titleGroup" style={{ flex: 1, minWidth: '200px', display: 'flex', alignItems: 'center', gap: '12px' }}>
             {tipo === CATEGORY_IDS.DISCOS && (
-              <AlbumCover artista={form.artista} titulo={form.titulo} id={itemEditando?.id} size={48} />
+              <AlbumCover artista={form.artista} titulo={form.titulo} ano={form.ano} id={itemEditando?.id} size={48} />
             )}
             <div>
               <h1 className="page-title" style={{ textAlign: 'left', margin: 0, fontSize: '20px' }}>Editando {tipoNome}</h1>

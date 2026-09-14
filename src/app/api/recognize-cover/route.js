@@ -62,40 +62,48 @@ Regras:
   "confianca": "baixa"
 }`;
 
-    const payload = {
-      contents: [
-        {
-          parts: [
-            { text: systemPrompt },
-            {
-              inline_data: {
-                mime_type: mimeType,
-                data: base64Data
-              }
-            }
-          ]
-        }
-      ],
-      generationConfig: {
-        responseMimeType: 'application/json',
-        temperature: 0,
-        maxOutputTokens: 60
-      }
-    };
-
     let geminiRes = null;
     let geminiData = null;
     let lastError = null;
 
-    // Tenta os modelos disponíveis em ordem de prioridade com fallback rápido (timeout 4.5s)
+    // Tenta os modelos disponíveis em ordem de prioridade com timeout adequado para mobile
     for (const model of GEMINI_MODELS) {
       try {
+        const generationConfig = {
+          responseMimeType: 'application/json',
+          temperature: 0,
+          maxOutputTokens: 800
+        };
+
+        // gemini-3.5-flash suporta desativar thinking para respostas instantâneas sem estourar orçamento de tokens
+        if (model === 'gemini-3.5-flash') {
+          generationConfig.thinkingConfig = { thinkingBudget: 0 };
+        }
+
+        const payload = {
+          contents: [
+            {
+              parts: [
+                { text: systemPrompt },
+                {
+                  inline_data: {
+                    mime_type: mimeType,
+                    data: base64Data
+                  }
+                }
+              ]
+            }
+          ],
+          generationConfig
+        };
+
+        const timeoutMs = model === 'gemini-3.5-flash-lite' ? 9000 : 7000;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(4500)
+          signal: AbortSignal.timeout(timeoutMs)
         });
 
         const data = await res.json();
@@ -105,7 +113,7 @@ Regras:
           break;
         } else {
           lastError = data.error?.message || `Erro ${res.status}`;
-          // Se for 404 (modelo descontinuado) ou 503 (alta demanda), tenta o próximo modelo
+          // Se for 404 (modelo descontinuado) ou 503 (alta demanda) ou 429 (quota), tenta o próximo modelo
           if (res.status === 404 || res.status === 503 || res.status === 429) {
             continue;
           } else {
@@ -119,8 +127,18 @@ Regras:
 
     if (!geminiData || !geminiRes || !geminiRes.ok) {
       console.error('Erro ao chamar Gemini Vision:', lastError);
+      const isQuota = typeof lastError === 'string' && (lastError.includes('quota') || lastError.includes('429') || lastError.includes('RESOURCE_EXHAUSTED'));
+      const isTimeout = typeof lastError === 'string' && (lastError.includes('timeout') || lastError.includes('aborted'));
+
+      let friendlyError = `Falha na análise da capa: ${lastError || 'Serviço indisponível'}`;
+      if (isQuota) {
+        friendlyError = 'Limite temporário de requisições da IA atingido. Aguarde alguns instantes e tente novamente.';
+      } else if (isTimeout) {
+        friendlyError = 'O servidor demorou para responder. Verifique sua conexão e tente novamente.';
+      }
+
       return Response.json(
-        { success: false, error: `Falha na análise da capa: ${lastError || 'Serviço indisponível'}` },
+        { success: false, error: friendlyError },
         { status: 502 }
       );
     }
@@ -137,17 +155,34 @@ Regras:
     let parsed = null;
     try {
       const jsonMatch = candidateText.match(/\{[\s\S]*\}/);
-      parsed = JSON.parse(jsonMatch ? jsonMatch[0] : candidateText);
+      const toParse = jsonMatch ? jsonMatch[0] : candidateText.replace(/```json/g, '').replace(/```/g, '').trim();
+      parsed = JSON.parse(toParse);
     } catch (_) {
-      // Limpeza de blocos de código se o modelo devolver markdown
-      const cleaned = candidateText.replace(/```json/g, '').replace(/```/g, '').trim();
-      parsed = JSON.parse(cleaned);
+      // Fallback resiliente: extração por regex caso o JSON esteja truncado ou com texto introdutório
+      const artistaMatch = candidateText.match(/"artista"\s*:\s*"([^"]*)"/i);
+      const tituloMatch = candidateText.match(/"titulo"\s*:\s*"([^"]*)"/i);
+      const anoMatch = candidateText.match(/"ano"\s*:\s*"([^"]*)"/i);
+      const confiancaMatch = candidateText.match(/"confianca"\s*:\s*"([^"]*)"/i);
+
+      if (artistaMatch || tituloMatch) {
+        parsed = {
+          artista: artistaMatch ? artistaMatch[1] : '',
+          titulo: tituloMatch ? tituloMatch[1] : '',
+          ano: anoMatch ? anoMatch[1] : '',
+          confianca: confiancaMatch ? confiancaMatch[1] : 'media'
+        };
+      } else {
+        return Response.json({
+          success: false,
+          error: 'Capa não reconhecida. Tente ajustar o enquadramento, melhorar a iluminação ou utilizar o OCR da lombada.'
+        });
+      }
     }
 
-    const artista = (parsed.artista || '').trim();
-    const titulo = (parsed.titulo || '').trim();
-    const ano = (parsed.ano || '').trim();
-    const confianca = parsed.confianca || 'media';
+    const artista = (parsed?.artista || '').trim();
+    const titulo = (parsed?.titulo || '').trim();
+    const ano = (parsed?.ano || '').trim();
+    const confianca = parsed?.confianca || 'media';
 
     if (!artista && !titulo) {
       return Response.json({

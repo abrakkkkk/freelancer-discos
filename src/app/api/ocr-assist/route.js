@@ -68,12 +68,7 @@ Regras obrigatórias:
             }
           ]
         }
-      ],
-      generationConfig: {
-        responseMimeType: 'application/json',
-        temperature: 0,
-        maxOutputTokens: 50
-      }
+      ]
     };
 
     let geminiRes = null;
@@ -82,12 +77,40 @@ Regras obrigatórias:
 
     for (const model of GEMINI_MODELS) {
       try {
+        const generationConfig = {
+          responseMimeType: 'application/json',
+          temperature: 0,
+          maxOutputTokens: 800
+        };
+
+        if (model === 'gemini-3.5-flash') {
+          generationConfig.thinkingConfig = { thinkingBudget: 0 };
+        }
+
+        const payload = {
+          contents: [
+            {
+              parts: [
+                { text: systemPrompt },
+                {
+                  inlineData: {
+                    mimeType: mimeType,
+                    data: base64Data
+                  }
+                }
+              ]
+            }
+          ],
+          generationConfig
+        };
+
+        const timeoutMs = model === 'gemini-3.5-flash-lite' ? 9000 : 7000;
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(4500)
+          signal: AbortSignal.timeout(timeoutMs)
         });
 
         const data = await res.json();
@@ -98,7 +121,11 @@ Regras obrigatórias:
         } else {
           lastError = data.error?.message || `Erro ${res.status}`;
           console.warn(`Tentativa Gemini OCR com ${model} falhou (${res.status}): ${lastError}`);
-          continue;
+          if (res.status === 404 || res.status === 503 || res.status === 429) {
+            continue;
+          } else {
+            break;
+          }
         }
       } catch (err) {
         lastError = err.message;
@@ -107,8 +134,18 @@ Regras obrigatórias:
     }
 
     if (!geminiData || !geminiRes) {
+      const isQuota = typeof lastError === 'string' && (lastError.includes('quota') || lastError.includes('429') || lastError.includes('RESOURCE_EXHAUSTED'));
+      const isTimeout = typeof lastError === 'string' && (lastError.includes('timeout') || lastError.includes('aborted'));
+
+      let friendlyError = `Não foi possível ler o código com IA: ${lastError || 'Serviço indisponível'}`;
+      if (isQuota) {
+        friendlyError = 'Limite temporário de requisições da IA atingido. Aguarde alguns instantes.';
+      } else if (isTimeout) {
+        friendlyError = 'Tempo limite de leitura esgotado. Tente aproximar a câmera da lombada.';
+      }
+
       return Response.json(
-        { success: false, error: `Não foi possível ler o código com IA: ${lastError || 'Timeout'}` },
+        { success: false, error: friendlyError },
         { status: 502 }
       );
     }
@@ -123,25 +160,31 @@ Regras obrigatórias:
 
     let parsed = null;
     try {
-      parsed = JSON.parse(rawText);
-    } catch {
       const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        parsed = JSON.parse(jsonMatch[0]);
+      const toParse = jsonMatch ? jsonMatch[0] : rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+      parsed = JSON.parse(toParse);
+    } catch {
+      const codigoMatch = rawText.match(/"codigo"\s*:\s*"([^"]*)"/i);
+      const confiancaMatch = rawText.match(/"confianca"\s*:\s*"([^"]*)"/i);
+      if (codigoMatch) {
+        parsed = {
+          codigo: codigoMatch[1],
+          confianca: confiancaMatch ? confiancaMatch[1] : 'media'
+        };
       } else {
         return Response.json(
-          { success: false, error: 'Resposta da IA não está em formato JSON válido.' },
+          { success: false, error: 'Não foi possível isolar um código válido nesta imagem.' },
           { status: 502 }
         );
       }
     }
 
-    const codigoLimpo = (parsed.codigo || '').trim();
+    const codigoLimpo = (parsed?.codigo || '').trim();
 
     return Response.json({
       success: true,
       codigo: codigoLimpo,
-      confianca: parsed.confianca || 'media'
+      confianca: parsed?.confianca || 'media'
     });
   } catch (error) {
     console.error('Erro na rota /api/ocr-assist:', error);

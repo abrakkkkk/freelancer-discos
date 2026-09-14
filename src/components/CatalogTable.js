@@ -99,7 +99,7 @@ export default function CatalogTable({
                   style={d.ativo === false ? { opacity: 0.5 } : {}}
                 >
                   <td data-label="Capa" className="cell-capa">
-                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={70} />
+                    <AlbumCover artista={d.artista} titulo={d.titulo} ano={d.ano} id={d.id} size={70} />
                   </td>
 
                   {/* Informações limpas para exibição mobile: sem os rótulos 'Local', 'Preço', etc. */}
@@ -189,7 +189,7 @@ export default function CatalogTable({
               <tr key={d.id} className="catalog-row" style={d.ativo === false ? { opacity: 0.5 } : {}}>
                 {isDiscosTab && (
                   <td data-label="Capa" className="cell-capa">
-                    <AlbumCover artista={d.artista} titulo={d.titulo} id={d.id} size={44} />
+                    <AlbumCover artista={d.artista} titulo={d.titulo} ano={d.ano} id={d.id} size={44} />
                   </td>
                 )}
                 <td data-label="Local">{getDisplayCaixa(d)}</td>

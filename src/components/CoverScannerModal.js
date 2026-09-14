@@ -157,10 +157,15 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
         body: JSON.stringify({ image: base64Image })
       });
 
-      const data = await res.json();
+      let data = null;
+      try {
+        data = await res.json();
+      } catch (_) {
+        throw new Error('Falha na comunicação com o servidor de inteligência visual. Tente novamente.');
+      }
 
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Capa não reconhecida.');
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Capa não reconhecida. Tente aproximar ou ajustar o enquadramento.');
       }
 
       // Salva no cache visual local para que futuras leituras sejam instantâneas
