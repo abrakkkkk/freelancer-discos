@@ -2,15 +2,24 @@
 
 const GEMINI_MODELS = [
   'gemini-3.5-flash-lite',
-  'gemini-3.5-flash',
+  'gemini-flash-lite-latest',
   'gemini-3.6-flash',
   'gemini-flash-latest'
 ];
 
+function getGeminiKeys() {
+  const raw = [
+    process.env.GEMINI_API_KEY,
+    process.env.GEMINI_API_KEY_SECONDARY,
+    process.env.GEMINI_API_KEY_BACKUP
+  ].filter(Boolean);
+  return [...new Set(raw.flatMap(k => k.split(',').map(s => s.trim()).filter(Boolean)))];
+}
+
 export async function POST(request) {
   try {
-    const key = process.env.GEMINI_API_KEY;
-    if (!key) {
+    const keys = getGeminiKeys();
+    if (keys.length === 0) {
       return Response.json(
         { success: false, error: 'Chave GEMINI_API_KEY não configurada no servidor.' },
         { status: 500 }
@@ -55,81 +64,70 @@ Regras obrigatórias:
   "confianca": "baixa"
 }`;
 
-    const payload = {
-      contents: [
-        {
-          parts: [
-            { text: systemPrompt },
-            {
-              inlineData: {
-                mimeType: mimeType,
-                data: base64Data
-              }
-            }
-          ]
-        }
-      ]
-    };
-
     let geminiRes = null;
     let geminiData = null;
     let lastError = null;
 
-    for (const model of GEMINI_MODELS) {
-      try {
-        const generationConfig = {
-          responseMimeType: 'application/json',
-          temperature: 0,
-          maxOutputTokens: 800
-        };
+    keysLoop: for (const key of keys) {
+      for (const model of GEMINI_MODELS) {
+        try {
+          const generationConfig = {
+            responseMimeType: 'application/json',
+            temperature: 0,
+            maxOutputTokens: 200
+          };
 
-        if (model === 'gemini-3.5-flash') {
-          generationConfig.thinkingConfig = { thinkingBudget: 0 };
-        }
-
-        const payload = {
-          contents: [
-            {
-              parts: [
-                { text: systemPrompt },
-                {
-                  inlineData: {
-                    mimeType: mimeType,
-                    data: base64Data
-                  }
-                }
-              ]
-            }
-          ],
-          generationConfig
-        };
-
-        const timeoutMs = model === 'gemini-3.5-flash-lite' ? 9000 : 7000;
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-          signal: AbortSignal.timeout(timeoutMs)
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          geminiRes = res;
-          geminiData = data;
-          break;
-        } else {
-          lastError = data.error?.message || `Erro ${res.status}`;
-          console.warn(`Tentativa Gemini OCR com ${model} falhou (${res.status}): ${lastError}`);
-          if (res.status === 404 || res.status === 503 || res.status === 429) {
-            continue;
-          } else {
-            break;
+          if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
+            generationConfig.thinkingConfig = { thinkingBudget: 0 };
           }
+
+          const payload = {
+            contents: [
+              {
+                parts: [
+                  { text: systemPrompt },
+                  {
+                    inlineData: {
+                      mimeType: mimeType,
+                      data: base64Data
+                    }
+                  }
+                ]
+              }
+            ],
+            generationConfig
+          };
+
+          const timeoutMs = model.includes('lite') ? 3500 : 4500;
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: AbortSignal.timeout(timeoutMs)
+          });
+
+          const data = await res.json();
+          if (res.ok) {
+            geminiRes = res;
+            geminiData = data;
+            break keysLoop;
+          } else {
+            lastError = data.error?.message || `Erro ${res.status}`;
+            console.warn(`Tentativa Gemini OCR com ${model} falhou (${res.status}): ${lastError}`);
+            if (res.status === 429) {
+              break; // Cota esgotada nesta chave, pula para a próxima chave
+            }
+            if (res.status === 404 || res.status === 503 || res.status === 400) {
+              continue;
+            } else {
+              break;
+            }
+          }
+        } catch (err) {
+          lastError = err.message;
+          console.warn(`Tentativa Gemini OCR com ${model} disparou exceção: ${err.message}`);
         }
-      } catch (err) {
-        lastError = err.message;
-        console.warn(`Tentativa Gemini OCR com ${model} disparou exceção: ${err.message}`);
       }
     }
 

@@ -1,11 +1,15 @@
 import fs from 'fs';
 import path from 'path';
 
-const CACHE_FILE = path.resolve(process.cwd(), 'src/data/covers_cache.json');
+const PRIMARY_CACHE_FILE = path.resolve(process.cwd(), '.cache/covers_cache.json');
+const LEGACY_CACHE_FILE = path.resolve(process.cwd(), 'src/data/covers_cache.json');
+
 let initialCovers = {};
 try {
-  if (fs.existsSync(CACHE_FILE)) {
-    initialCovers = JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'));
+  if (fs.existsSync(PRIMARY_CACHE_FILE)) {
+    initialCovers = JSON.parse(fs.readFileSync(PRIMARY_CACHE_FILE, 'utf-8'));
+  } else if (fs.existsSync(LEGACY_CACHE_FILE)) {
+    initialCovers = JSON.parse(fs.readFileSync(LEGACY_CACHE_FILE, 'utf-8'));
   }
 } catch (_) {}
 
@@ -15,30 +19,46 @@ function getFromCache(key) {
   return runtimeMemoryCache.get(key) || null;
 }
 
+let saveDebounceTimer = null;
+let isSavingCache = false;
+
+function scheduleSaveCache() {
+  // Apenas grava em disco no ambiente de desenvolvimento local (fora da Vercel / serverless)
+  if (process.env.NODE_ENV === 'production' || process.env.VERCEL) return;
+
+  if (saveDebounceTimer) {
+    clearTimeout(saveDebounceTimer);
+  }
+
+  saveDebounceTimer = setTimeout(async () => {
+    if (isSavingCache) {
+      scheduleSaveCache();
+      return;
+    }
+    isSavingCache = true;
+    try {
+      const dir = path.dirname(PRIMARY_CACHE_FILE);
+      if (!fs.existsSync(dir)) {
+        await fs.promises.mkdir(dir, { recursive: true });
+      }
+      const currentCacheObj = Object.fromEntries(runtimeMemoryCache);
+      await fs.promises.writeFile(PRIMARY_CACHE_FILE, JSON.stringify(currentCacheObj, null, 2), 'utf-8');
+    } catch (_) {
+      // Ignora silenciosamente erros de gravação em disco
+    } finally {
+      isSavingCache = false;
+    }
+  }, 2000);
+}
+
 function setToCache(key, payload) {
   runtimeMemoryCache.set(key, payload);
-
-  // Apenas tenta gravar em disco no ambiente local (fora da Vercel / serverless)
-  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-    try {
-      const dir = path.dirname(CACHE_FILE);
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      const currentCacheObj = Object.fromEntries(runtimeMemoryCache);
-      fs.writeFileSync(CACHE_FILE, JSON.stringify(currentCacheObj, null, 2), 'utf-8');
-    } catch (_) {
-      // Ignora silenciosamente se o disco for read-only
-    }
-  }
+  scheduleSaveCache();
 }
 
 function deleteFromCache(key) {
   runtimeMemoryCache.delete(key);
-  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-    try {
-      const currentCacheObj = Object.fromEntries(runtimeMemoryCache);
-      fs.writeFileSync(CACHE_FILE, JSON.stringify(currentCacheObj, null, 2), 'utf-8');
-    } catch (_) {}
-  }
+  scheduleSaveCache();
 }
 
 function normalizeSearchQuery(str) {
