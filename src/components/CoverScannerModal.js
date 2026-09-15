@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { IoClose, IoCameraReverseOutline, IoCamera, IoRefresh, IoImageOutline } from 'react-icons/io5';
-import { computeDHash, findInVisualCache, saveToVisualCache } from '@/utils/visualHash';
+import { computeDHash, computeVisualVector, findBestVisualMatch, saveToVisualCache, saveToVisualVectorCache } from '@/utils/visualHash';
+import { matchLocalStock } from '@/utils/coverFastMatch';
 
 export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCoverRecognized, title = 'Reconhecer Capa' }) {
   const handleRecognizedCallback = onRecognized || onCoverRecognized;
@@ -95,13 +96,13 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     await startCamera(nextCam.deviceId);
   };
 
-  // Redimensiona para crop central 1:1 de 560x560 em JPEG super leve (~35KB) e extrai dHash
+  // Redimensiona para crop central 1:1 de 384x384 em WebP ultra-leve (~12KB) e extrai dHash + Vetor denso de 256-dim
   const recortarEComprimir = (origem) => {
     const canvas = document.createElement('canvas');
-    const size = 560;
+    const size = 384;
     canvas.width = size;
     canvas.height = size;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
     let srcW = 800;
     let srcH = 600;
@@ -120,31 +121,40 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
 
     ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, size, size);
 
-    // Gera o hash perceptual visual da capa
+    // 1. Gera o hash perceptual e o vetor de 256 dimensões
     const hash = computeDHash(canvas);
-    const base64 = canvas.toDataURL('image/jpeg', 0.75);
+    const vector = computeVisualVector(canvas);
 
-    return { base64, hash };
+    // 2. Exporta prioritariamente em WebP (qualidade 0.65, ~12KB) com fallback para JPEG
+    let base64 = '';
+    try {
+      base64 = canvas.toDataURL('image/webp', 0.65);
+      if (!base64.startsWith('data:image/webp')) {
+        base64 = canvas.toDataURL('image/jpeg', 0.70);
+      }
+    } catch (_) {
+      base64 = canvas.toDataURL('image/jpeg', 0.70);
+    }
+
+    return { base64, hash, vector };
   };
 
-  const enviarParaReconhecimento = async (base64Image, hashCalculado = null) => {
-    // 1. Verificação instantânea no Cache Visual Perceptual (< 5ms, sem rede)
-    if (hashCalculado) {
-      const matchCache = findInVisualCache(hashCalculado);
-      if (matchCache) {
-        playBeep();
-        stopCamera();
-        if (handleRecognizedCallback) {
-          handleRecognizedCallback({
-            artista: matchCache.artista,
-            titulo: matchCache.titulo,
-            ano: matchCache.ano,
-            confianca: 'alta'
-          });
-        }
-        onClose();
-        return;
+  const enviarParaReconhecimento = async (base64Image, hashCalculado = null, vectorCalculado = null) => {
+    // 1. Camada 1: Verificação Instantânea via Embeddings Vetoriais (256-dim) / dHash (< 5ms, sem rede)
+    const matchCache = findBestVisualMatch({ hash: hashCalculado, vector: vectorCalculado });
+    if (matchCache) {
+      playBeep();
+      stopCamera();
+      if (handleRecognizedCallback) {
+        handleRecognizedCallback({
+          artista: matchCache.artista,
+          titulo: matchCache.titulo,
+          ano: matchCache.ano,
+          confianca: 'alta'
+        });
       }
+      onClose();
+      return;
     }
 
     setProcessando(true);
@@ -168,7 +178,14 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
         throw new Error(data?.error || 'Capa não reconhecida. Tente aproximar ou ajustar o enquadramento.');
       }
 
-      // Salva no cache visual local para que futuras leituras sejam instantâneas
+      // Salva no cache vetorial (256-dim) e no cache dHash para reconhecimento futuro instantâneo (< 5ms)
+      if (vectorCalculado) {
+        saveToVisualVectorCache(vectorCalculado, {
+          artista: data.artista,
+          titulo: data.titulo,
+          ano: data.ano
+        });
+      }
       if (hashCalculado) {
         saveToVisualCache(hashCalculado, {
           artista: data.artista,
@@ -198,9 +215,9 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   const capturarDoVideo = () => {
     if (!videoRef.current || processando) return;
     try {
-      const { base64, hash } = recortarEComprimir(videoRef.current);
+      const { base64, hash, vector } = recortarEComprimir(videoRef.current);
       setFotoPreview(base64);
-      enviarParaReconhecimento(base64, hash);
+      enviarParaReconhecimento(base64, hash, vector);
     } catch (err) {
       setErro('Erro ao capturar frame do vídeo.');
     }
@@ -214,9 +231,9 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     reader.onload = (event) => {
       const img = new Image();
       img.onload = () => {
-        const { base64, hash } = recortarEComprimir(img);
+        const { base64, hash, vector } = recortarEComprimir(img);
         setFotoPreview(base64);
-        enviarParaReconhecimento(base64, hash);
+        enviarParaReconhecimento(base64, hash, vector);
       };
       img.src = event.target.result;
     };
