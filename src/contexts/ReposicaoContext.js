@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { itemService } from '@/services/itemService';
 import { movimentacaoService } from '@/services/movimentacaoService';
+import { formatCaixa } from '@/utils/stringUtils';
 
 const STORAGE_KEY = 'freelancer_tarefas_reposicao';
 
@@ -104,7 +105,7 @@ export function ReposicaoProvider({ children }) {
     );
 
     // 2. Registrar movimentação de entrada
-    const destinoLocal = itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'estoque ativo';
+    const destinoLocal = itemSaida.caixa ? formatCaixa(itemSaida.caixa, itemSaida.loja) : 'estoque ativo';
     const movData = movimentacaoService.createMovementPayload(
       categoria,
       reserva.id,

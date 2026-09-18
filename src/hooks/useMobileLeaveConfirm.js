@@ -19,12 +19,17 @@ export function useMobileLeaveConfirm(shouldConfirm = true) {
     // Push a dummy state to history so we can intercept the back button
     window.history.pushState(null, '', window.location.href);
     
+    let isLeaving = false;
+
     const handlePopState = (e) => {
+      if (isLeaving) return;
       if (window.innerWidth <= 768) {
         const confirmed = window.confirm("Você tem certeza que quer sair dessa página?");
         if (!confirmed) {
           window.history.pushState(null, '', window.location.href);
         } else {
+          isLeaving = true;
+          window.removeEventListener('popstate', handlePopState);
           window.history.back();
         }
       }

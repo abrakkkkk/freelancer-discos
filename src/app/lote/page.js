@@ -9,6 +9,7 @@ import { movimentacaoService } from '@/services/movimentacaoService';
 import { supabase } from '@/lib/supabase';
 import CategoryTabs from '@/components/CategoryTabs';
 import AlertMessage from '@/components/AlertMessage';
+import ConfirmModal from '@/components/ConfirmModal';
 import { CATEGORY_IDS, STORE_OPTIONS, getStoreColor } from '@/constants/config';
 import { removeAcentos, formatCaixa, normalizeCaixa } from '@/utils/stringUtils';
 import { useUndo } from '@/contexts/UndoContext';
@@ -63,6 +64,15 @@ export default function AcoesEmLote() {
   const [successModalMessage, setSuccessModalMessage] = useState('');
 
   const { registerUndo } = useUndo();
+
+  // Auto-dismiss para alertas de feedback (desocupa espaço do viewport mobile após 5 segundos)
+  useEffect(() => {
+    if (!mensagem) return;
+    const timer = setTimeout(() => {
+      setMensagem(null);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [mensagem]);
 
   // Salva automaticamente o rascunho de alteração em lote no sessionStorage
   useEffect(() => {
@@ -261,10 +271,14 @@ export default function AcoesEmLote() {
     handleBulkAction(
       async () => {
         await itemService.bulkUpdate(activeTab, selecionados, { deletado: true });
-        const movements = selecionadosData.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'exclusao', item.quantidade || 1, 'Exclusão em lote'));
-        await supabase.from('movimentacoes').insert(movements);
+        // REGRA 1.2: Apenas itens ATIVOS geram movimentação de saída ('saida'). Inativos são apenas deletados.
+        const itensAtivos = selecionadosData.filter(item => item.ativo !== false);
+        if (itensAtivos.length > 0) {
+          const movements = itensAtivos.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'saida', item.quantidade || 1, 'Saída (Exclusão em lote)'));
+          await supabase.from('movimentacoes').insert(movements);
+        }
       },
-      (count) => `${count} item(ns) excluídos (ocultados do catálogo).`,
+      (count) => `${count} item(ns) excluído(s).`,
       selecionadosData
     ).then(() => setConfirmarExclusao(false));
   };
@@ -278,8 +292,12 @@ export default function AcoesEmLote() {
     handleBulkAction(
       async () => {
         await itemService.bulkUpdate(activeTab, ids, { deletado: true });
-        const movements = naoSelecionados.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'exclusao', item.quantidade || 1, 'Exclusão de não selecionados'));
-        await supabase.from('movimentacoes').insert(movements);
+        // REGRA 1.2: Apenas itens ATIVOS geram movimentação de saída ('saida'). Inativos são apenas deletados.
+        const itensAtivos = naoSelecionados.filter(item => item.ativo !== false);
+        if (itensAtivos.length > 0) {
+          const movements = itensAtivos.map(item => movimentacaoService.createMovementPayload(activeTab, item.id, 'saida', item.quantidade || 1, 'Saída (Exclusão não selecionados)'));
+          await supabase.from('movimentacoes').insert(movements);
+        }
       },
       (count) => `${count} item(ns) não selecionados excluídos.`,
       naoSelecionados
@@ -343,7 +361,7 @@ export default function AcoesEmLote() {
           </div>
         </div>
 
-        <AlertMessage message={mensagem} />
+        <AlertMessage message={mensagem} onClose={() => setMensagem(null)} />
 
       <SuccessModal 
         isOpen={!!successModalMessage} 
@@ -477,38 +495,82 @@ export default function AcoesEmLote() {
                   </div>
                 )}
 
-                <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px' }} onClick={aplicarMudancas} disabled={loading}>Aplicar</button>
+                <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px', minHeight: '44px' }} onClick={aplicarMudancas} disabled={loading}>Aplicar</button>
               </div>
-              <div className="hide-on-mobile" style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
-              <button className="btn btn-secondary hide-on-mobile" style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap' }} onClick={inativarSelecionados} disabled={loading}>Inativar</button>
-              {confirmarExclusao ? (
-                <div className="hide-on-mobile" style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                  <button className="btn btn-danger" style={{ whiteSpace: 'nowrap' }} onClick={excluirSelecionados} disabled={loading}>Confirmar</button>
-                  <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', padding: '6px 12px' }} onClick={() => setConfirmarExclusao(false)}>Cancelar</button>
-                </div>
-              ) : (
-                <button className="btn btn-danger hide-on-mobile" style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap' }} onClick={() => setConfirmarExclusao(true)} disabled={loading}>Excluir</button>
-              )}
+              <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
+              <button 
+                type="button"
+                className="btn btn-secondary" 
+                style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap', minHeight: '44px' }} 
+                onClick={inativarSelecionados} 
+                disabled={loading}
+              >
+                Inativar
+              </button>
+              <button 
+                type="button"
+                className="btn btn-danger" 
+                style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap', minHeight: '44px' }} 
+                onClick={() => setConfirmarExclusao(true)} 
+                disabled={loading}
+              >
+                Excluir
+              </button>
 
               {caixaSelecionada && (
                 <>
-                  <div className="hide-on-mobile" style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
-                  {confirmarExclusaoNaoSelecionados ? (
-                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                      <button className="btn btn-danger" style={{ whiteSpace: 'nowrap' }} onClick={excluirNaoSelecionados} disabled={loading}>Confirmar</button>
-                      <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', padding: '6px 12px' }} onClick={() => setConfirmarExclusaoNaoSelecionados(false)}>Cancelar</button>
-                    </div>
-                  ) : (
-                    <button className="btn btn-danger" style={{ background: 'var(--danger)', color: '#fff', whiteSpace: 'nowrap' }} onClick={() => setConfirmarExclusaoNaoSelecionados(true)} disabled={loading}>
-                      Apagar não marcados
-                    </button>
-                  )}
+                  <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
+                  <button 
+                    type="button"
+                    className="btn btn-danger" 
+                    style={{ background: 'var(--danger)', color: '#fff', whiteSpace: 'nowrap', minHeight: '44px' }} 
+                    onClick={() => setConfirmarExclusaoNaoSelecionados(true)} 
+                    disabled={loading}
+                  >
+                    Apagar não marcados
+                  </button>
                 </>
               )}
             </div>
           </div>
         </div>
         )}
+
+        <ConfirmModal
+          isOpen={confirmarExclusao}
+          title="Confirmar Exclusão em Lote"
+          message={
+            <span>
+              Tem certeza que deseja excluir <strong>{selecionados.length}</strong> item(ns) selecionado(s)?
+              <br />
+              Itens ativos terão saída registrada no histórico. Itens inativos serão removidos sem registrar saída.
+            </span>
+          }
+          confirmText="Sim, excluir selecionados"
+          cancelText="Cancelar"
+          variant="danger"
+          isSubmitting={loading}
+          onConfirm={excluirSelecionados}
+          onClose={() => setConfirmarExclusao(false)}
+        />
+
+        <ConfirmModal
+          isOpen={confirmarExclusaoNaoSelecionados}
+          title="Confirmar Exclusão dos Não Marcados"
+          message={
+            <span>
+              Tem certeza que deseja excluir todos os itens <strong>não marcados</strong> desta caixa?
+              <br />
+              Esta ação removerá os itens não selecionados do catálogo.
+            </span>
+          }
+          confirmText="Sim, apagar não marcados"
+          cancelText="Cancelar"
+          variant="danger"
+          isSubmitting={loading}
+          onConfirm={excluirNaoSelecionados}
+          onClose={() => setConfirmarExclusaoNaoSelecionados(false)}
+        />
 
       </div>
     </div>

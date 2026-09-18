@@ -43,6 +43,15 @@ export default function AdicionarItem() {
   const [customCaixaMode, setCustomCaixaMode] = useState(false);
   const [mensagem, setMensagem] = useState(null);
 
+  // Auto-dismiss para alertas de feedback (desocupa espaço do viewport mobile após 5 segundos)
+  useEffect(() => {
+    if (!mensagem) return;
+    const timer = setTimeout(() => {
+      setMensagem(null);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [mensagem]);
+
   const artistaInputRef = useRef(null);
   const tituloInputRef = useRef(null);
 
@@ -348,7 +357,7 @@ export default function AdicionarItem() {
         tipo: 'success', 
         texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText}${lojaText}.` 
       });
-      setForm({ ...INITIAL_FORM, caixa: form.caixa, loja: form.loja, ativo: form.ativo !== false });
+      setForm({ ...INITIAL_FORM, caixa: finalCaixa || form.caixa, loja: form.loja, ativo: form.ativo !== false });
 
       setQueryDiscogs('');
       setDiscogsResults([]);
@@ -380,7 +389,7 @@ export default function AdicionarItem() {
       
       <div className="mainCard">
         <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
-        <AlertMessage message={mensagem} />
+        <AlertMessage message={mensagem} onClose={() => setMensagem(null)} />
 
         <form onSubmit={handleSubmit} className="form-container-desktop" style={{ marginTop: '24px' }}>
         

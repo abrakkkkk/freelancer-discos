@@ -21,6 +21,9 @@ import { useStore } from '@/contexts/StoreContext';
 import { IoCamera } from "react-icons/io5";
 import { formatCaixa, cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
 import AlbumCover from '@/components/AlbumCover';
+import ConfirmModal from '@/components/ConfirmModal';
+import { useReposicao } from '@/contexts/ReposicaoContext';
+import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
 
 const BarcodeScannerModal = dynamic(() => import('@/components/BarcodeScannerModal'), { ssr: false });
 const OcrScannerModal = dynamic(() => import('@/components/OcrScannerModal'), { ssr: false });
@@ -30,14 +33,25 @@ function EditarExcluirContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { activeStore } = useStore();
+  const { adicionarTarefa } = useReposicao();
 
   const [tipo, setTipo] = useState(searchParams.get('tipo') || CATEGORY_IDS.DISCOS);
   const [tela, setTela] = useState('busca'); 
+  useMobileLeaveConfirm(tela === 'edicao'); 
   const [termo, setTermo] = useState('');
   const [resultados, setResultados] = useState([]);
   const [mostrarInativos, setMostrarInativos] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
+
+  // Auto-dismiss para alertas de feedback (desocupa espaço do viewport mobile após 5 segundos)
+  useEffect(() => {
+    if (!mensagem) return;
+    const timer = setTimeout(() => {
+      setMensagem(null);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [mensagem]);
 
   const [queryDiscogs, setQueryDiscogs] = useState('');
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
@@ -432,6 +446,25 @@ function EditarExcluirContent() {
         const movData = movimentacaoService.createMovementPayload(tipo, id, 'saida', itemParaExcluir?.quantidade || 1, 'Saída (Excluído via Edição)');
         await movimentacaoService.registerMovement(movData);
         setMensagem({ tipo: 'success', texto: `Saída do ${tipoNome} registrada.` });
+
+        // REGRA 1.3: Fluxo de reposição automática para itens ativos
+        try {
+          const replacements = await itemService.findReplacements(tipo, {
+            titulo: itemParaExcluir?.titulo,
+            artista: itemParaExcluir?.artista,
+            excludeId: id,
+          });
+          if (replacements && replacements.length > 0) {
+            adicionarTarefa({
+              itemSaida: itemParaExcluir,
+              reserva: replacements[0],
+              totalReservas: replacements.length,
+              categoria: tipo,
+            });
+          }
+        } catch (e) {
+          console.warn('Erro ao buscar reposições após exclusão:', e);
+        }
       } else {
         setMensagem({ tipo: 'success', texto: `${tipoNome} (Inativo) excluído com sucesso.` });
       }
@@ -514,7 +547,7 @@ function EditarExcluirContent() {
           </div>
         </div>
 
-        <AlertMessage message={mensagem} />
+        <AlertMessage message={mensagem} onClose={() => setMensagem(null)} />
 
         <div className="mainCard">
           <div className="form-container-desktop" style={{ marginTop: '16px' }}>
@@ -842,18 +875,27 @@ function EditarExcluirContent() {
           </div>
         </div>
 
-        {confirmarExclusao && (
-          <div className="modal-overlay" onClick={() => setConfirmarExclusao(null)}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h3>Confirmar Saída</h3>
-              <p>Tem certeza que deseja registrar a saída de <strong>{temArtista && itemEditando.artista ? `${itemEditando.artista} — ` : ''}{itemEditando.titulo}</strong>?<br/>Esta ação não pode ser desfeita, exceto com o histórico atual.</p>
-              <div className="modal-actions">
-                <button className="btn btn-secondary" onClick={() => setConfirmarExclusao(null)}>Cancelar</button>
-                <button className="btn btn-danger" onClick={() => { excluir(confirmarExclusao); voltarParaBusca(); }}>Sim, registrar saída</button>
-              </div>
-            </div>
-          </div>
-        )}
+        <ConfirmModal
+          isOpen={!!confirmarExclusao}
+          title={itemEditando?.ativo !== false ? 'Confirmar Saída' : 'Confirmar Exclusão'}
+          message={
+            <span>
+              Tem certeza que deseja {itemEditando?.ativo !== false ? 'registrar a saída de' : 'excluir o item reserva'}{' '}
+              <strong>{temArtista && itemEditando?.artista ? `${itemEditando.artista} — ` : ''}{itemEditando?.titulo}</strong>?
+              <br />
+              {itemEditando?.ativo !== false ? 'Esta ação atualizará o estoque físico e registrará a saída no histórico.' : 'Esta ação removerá o item inativo do estoque.'}
+            </span>
+          }
+          confirmText={itemEditando?.ativo !== false ? 'Sim, registrar saída' : 'Sim, excluir'}
+          cancelText="Cancelar"
+          variant="danger"
+          onConfirm={() => {
+            const id = confirmarExclusao;
+            excluir(id);
+            voltarParaBusca();
+          }}
+          onClose={() => setConfirmarExclusao(null)}
+        />
 
         <BarcodeScannerModal
           isOpen={isScannerOpen}
@@ -888,7 +930,7 @@ function EditarExcluirContent() {
 
       <div className="mainCard">
         <CategoryTabs activeTab={tipo} onTabChange={(t) => { setTipo(t); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }} />
-        <AlertMessage message={mensagem} />
+        <AlertMessage message={mensagem} onClose={() => setMensagem(null)} />
 
         <div className="filterCard" style={{ marginTop: '24px' }}>
           <div className="filters" style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flexWrap: 'wrap' }}>

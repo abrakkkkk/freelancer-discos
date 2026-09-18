@@ -74,6 +74,7 @@ export default function CatalogoClone() {
   // Sync global store filter with catalog
   useEffect(() => {
     catalog.setFiltroLoja(activeStore);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeStore]);
 
   const getPageIcon = () => {

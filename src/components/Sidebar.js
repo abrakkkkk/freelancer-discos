@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { PiVinylRecord } from "react-icons/pi";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { MdCurrencyExchange, MdLayers, MdHistory } from "react-icons/md";
+import { MdLayers, MdHistory } from "react-icons/md";
 import { useStore } from '@/contexts/StoreContext';
 import { STORE_OPTIONS } from '@/constants/config';
 import ReposicaoBell from '@/components/ReposicaoBell';

@@ -1,11 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { PiVinylRecord } from "react-icons/pi";
 import { IoIosAddCircleOutline } from "react-icons/io";
-import { MdCurrencyExchange, MdHistory, MdLayers } from "react-icons/md";
-import { TbTools } from "react-icons/tb";
+import { MdHistory, MdLayers, MdDownload } from "react-icons/md";
+import { useStore } from '@/contexts/StoreContext';
 
 const links = [
   { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={20} /> },
@@ -13,10 +14,6 @@ const links = [
   { href: '/lote', label: 'Lotes', icon: <MdLayers size={20} /> },
   { href: '/movimentacoes', label: 'Histórico', icon: <MdHistory size={20} /> },
 ];
-
-import { useState } from 'react';
-import { MdDownload } from "react-icons/md";
-import { useStore } from '@/contexts/StoreContext';
 
 export default function BottomNav() {
   const pathname = usePathname();

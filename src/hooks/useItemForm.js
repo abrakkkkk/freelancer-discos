@@ -63,7 +63,7 @@ export function useItemForm(initialState, category) {
         titulo: sug.titulo,
         artista: sug.artista || prev.artista,
         preco: precoFormatado || prev.preco,
-        loja: sug.loja || prev.loja
+        loja: prev.loja || sug.loja
       }));
       setMostrarSugestoesTitulo(false);
     }
