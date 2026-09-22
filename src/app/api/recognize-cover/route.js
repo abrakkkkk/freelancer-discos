@@ -2,9 +2,10 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash-lite',
-  'gemini-flash-lite-latest',
+  'gemini-3-flash-preview',
+  'gemini-3.1-flash-lite-preview',
   'gemini-3.6-flash',
+  'gemini-3.5-flash-lite',
   'gemini-flash-latest'
 ];
 
@@ -91,7 +92,7 @@ Regras Obrigatórias:
           };
 
           // Modelos que suportam desativação explícita de thinking para resposta imediata
-          if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
+          if (model === 'gemini-3-flash-preview' || model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
             generationConfig.thinkingConfig = { thinkingBudget: 0 };
           }
 
@@ -112,7 +113,7 @@ Regras Obrigatórias:
             generationConfig
           };
 
-          const timeoutMs = model.includes('lite') ? 3500 : 4500;
+          const timeoutMs = 3000;
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
           const res = await fetch(url, {
             method: 'POST',
