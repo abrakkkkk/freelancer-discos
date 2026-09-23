@@ -1,8 +1,7 @@
 // Rota API Next.js para leitura assistida de codigos de catalogo fonograficos dificeis via Gemini Vision
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash-lite',
-  'gemini-flash-lite-latest',
+  'gemini-3.5-flash',
   'gemini-3.6-flash',
   'gemini-flash-latest'
 ];
@@ -74,12 +73,9 @@ Regras obrigatórias:
           const generationConfig = {
             responseMimeType: 'application/json',
             temperature: 0,
+            thinkingConfig: { thinkingBudget: 0 },
             maxOutputTokens: 200
           };
-
-          if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
-            generationConfig.thinkingConfig = { thinkingBudget: 0 };
-          }
 
           const payload = {
             contents: [
@@ -98,7 +94,7 @@ Regras obrigatórias:
             generationConfig
           };
 
-          const timeoutMs = model.includes('lite') ? 3500 : 4500;
+          const timeoutMs = 6500;
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
           const res = await fetch(url, {
             method: 'POST',
@@ -115,11 +111,8 @@ Regras obrigatórias:
           } else {
             lastError = data.error?.message || `Erro ${res.status}`;
             console.warn(`Tentativa Gemini OCR com ${model} falhou (${res.status}): ${lastError}`);
-            if (res.status === 429) {
-              break; // Cota esgotada nesta chave, pula para a próxima chave
-            }
-            if (res.status === 404 || res.status === 503 || res.status === 400) {
-              continue;
+            if (res.status === 429 || res.status === 503 || res.status === 404 || res.status === 400) {
+              continue; // Tenta próximo modelo da chave antes de pular para outra chave
             } else {
               break;
             }

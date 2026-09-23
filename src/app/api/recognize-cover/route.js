@@ -2,10 +2,8 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-3-flash-preview',
-  'gemini-3.1-flash-lite-preview',
+  'gemini-3.5-flash',
   'gemini-3.6-flash',
-  'gemini-3.5-flash-lite',
   'gemini-flash-latest'
 ];
 
@@ -81,20 +79,16 @@ Regras Obrigatórias:
     let geminiData = null;
     let lastError = null;
 
-    // Itera por chaves de API disponíveis (caso atinja quota 429 em uma, chave secundária assume)
+    // Itera por chaves de API disponíveis
     keysLoop: for (const key of keys) {
       for (const model of GEMINI_MODELS) {
         try {
           const generationConfig = {
             responseMimeType: 'application/json',
             temperature: 0,
-            maxOutputTokens: 150
+            thinkingConfig: { thinkingBudget: 0 },
+            maxOutputTokens: 250
           };
-
-          // Modelos que suportam desativação explícita de thinking para resposta imediata
-          if (model === 'gemini-3-flash-preview' || model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
-            generationConfig.thinkingConfig = { thinkingBudget: 0 };
-          }
 
           const payload = {
             contents: [
@@ -113,7 +107,7 @@ Regras Obrigatórias:
             generationConfig
           };
 
-          const timeoutMs = 3000;
+          const timeoutMs = 7500;
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
           const res = await fetch(url, {
             method: 'POST',
@@ -129,12 +123,8 @@ Regras Obrigatórias:
             break keysLoop;
           } else {
             lastError = data.error?.message || `Erro ${res.status}`;
-            // Se for 429 (quota esgotada nesta chave), pula imediatamente para a próxima chave
-            if (res.status === 429) {
-              break; // sai do loop de modelos e vai para a próxima chave no keysLoop
-            }
-            // Se for 404 (descontinuado), 503 (alta demanda) ou 400, tenta próximo modelo
-            if (res.status === 404 || res.status === 503 || res.status === 400) {
+            // Se for 429 ou 503, tenta próximo modelo da chave antes de pular para outra chave
+            if (res.status === 429 || res.status === 503 || res.status === 404 || res.status === 400) {
               continue;
             } else {
               break;
