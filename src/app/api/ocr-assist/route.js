@@ -1,8 +1,9 @@
 // Rota API Next.js para leitura assistida de codigos de catalogo fonograficos dificeis via Gemini Vision
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash',
   'gemini-3.6-flash',
+  'gemini-flash-lite-latest',
+  'gemini-3.5-flash-lite',
   'gemini-flash-latest'
 ];
 
@@ -73,9 +74,13 @@ Regras obrigatórias:
           const generationConfig = {
             responseMimeType: 'application/json',
             temperature: 0,
-            thinkingConfig: { thinkingBudget: 0 },
             maxOutputTokens: 200
           };
+
+          // Apenas modelos que suportam thinkingBudget: 0 sem estourar 400
+          if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
+            generationConfig.thinkingConfig = { thinkingBudget: 0 };
+          }
 
           const payload = {
             contents: [
@@ -94,7 +99,7 @@ Regras obrigatórias:
             generationConfig
           };
 
-          const timeoutMs = 6500;
+          const timeoutMs = model.includes('lite') ? 6000 : 10000;
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
           const res = await fetch(url, {
             method: 'POST',
@@ -111,8 +116,13 @@ Regras obrigatórias:
           } else {
             lastError = data.error?.message || `Erro ${res.status}`;
             console.warn(`Tentativa Gemini OCR com ${model} falhou (${res.status}): ${lastError}`);
-            if (res.status === 429 || res.status === 503 || res.status === 404 || res.status === 400) {
-              continue; // Tenta próximo modelo da chave antes de pular para outra chave
+            // Se for 429 (quota esgotada nesta chave), pula imediatamente para a próxima chave
+            if (res.status === 429) {
+              break; // sai do loop de modelos e vai para a próxima chave no keysLoop
+            }
+            // Se for 404 (descontinuado), 503 (alta demanda) ou 400, tenta próximo modelo
+            if (res.status === 404 || res.status === 503 || res.status === 400) {
+              continue;
             } else {
               break;
             }

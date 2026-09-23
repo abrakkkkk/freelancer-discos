@@ -2,8 +2,9 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash',
   'gemini-3.6-flash',
+  'gemini-flash-lite-latest',
+  'gemini-3.5-flash-lite',
   'gemini-flash-latest'
 ];
 
@@ -86,9 +87,13 @@ Regras Obrigatórias:
           const generationConfig = {
             responseMimeType: 'application/json',
             temperature: 0,
-            thinkingConfig: { thinkingBudget: 0 },
             maxOutputTokens: 250
           };
+
+          // Apenas modelos que suportam thinkingBudget: 0 sem estourar 400
+          if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
+            generationConfig.thinkingConfig = { thinkingBudget: 0 };
+          }
 
           const payload = {
             contents: [
@@ -96,8 +101,8 @@ Regras Obrigatórias:
                 parts: [
                   { text: systemPrompt },
                   {
-                    inline_data: {
-                      mime_type: mimeType,
+                    inlineData: {
+                      mimeType: mimeType,
                       data: base64Data
                     }
                   }
@@ -107,7 +112,7 @@ Regras Obrigatórias:
             generationConfig
           };
 
-          const timeoutMs = 7500;
+          const timeoutMs = model.includes('lite') ? 6000 : 10000;
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
           const res = await fetch(url, {
             method: 'POST',
@@ -123,8 +128,13 @@ Regras Obrigatórias:
             break keysLoop;
           } else {
             lastError = data.error?.message || `Erro ${res.status}`;
-            // Se for 429 ou 503, tenta próximo modelo da chave antes de pular para outra chave
-            if (res.status === 429 || res.status === 503 || res.status === 404 || res.status === 400) {
+            console.warn(`Tentativa Gemini Capa com ${model} falhou (${res.status}): ${lastError}`);
+            // Se for 429 (quota esgotada nesta chave), pula imediatamente para a próxima chave
+            if (res.status === 429) {
+              break; // sai do loop de modelos e vai para a próxima chave no keysLoop
+            }
+            // Se for 404 (descontinuado), 503 (alta demanda) ou 400, tenta próximo modelo
+            if (res.status === 404 || res.status === 503 || res.status === 400) {
               continue;
             } else {
               break;
@@ -132,6 +142,7 @@ Regras Obrigatórias:
           }
         } catch (err) {
           lastError = err.message;
+          console.warn(`Tentativa Gemini Capa com ${model} disparou exceção: ${err.message}`);
         }
       }
     }
