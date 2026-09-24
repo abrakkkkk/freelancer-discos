@@ -17,10 +17,11 @@ function getGeminiKeys() {
 
 export async function POST(request) {
   try {
-    const keys = getGeminiKeys();
-    if (keys.length === 0) {
+    const groqKey = process.env.GROQ_API_KEY?.trim();
+    const geminiKeys = getGeminiKeys();
+    if (!groqKey && geminiKeys.length === 0) {
       return Response.json(
-        { success: false, error: 'Chave GEMINI_API_KEY não configurada no servidor.' },
+        { success: false, error: 'Nenhuma chave de IA (GROQ_API_KEY ou GEMINI_API_KEY) configurada no servidor.' },
         { status: 500 }
       );
     }
@@ -74,80 +75,125 @@ Regras Obrigatórias:
   "confianca": "baixa"
 }`;
 
-    let geminiRes = null;
-    let geminiData = null;
+    let candidateText = null;
     let lastError = null;
 
-    // Itera por chaves de API disponíveis
-    keysLoop: for (const key of keys) {
-      for (const model of GEMINI_MODELS) {
-        try {
-          const generationConfig = {
-            responseMimeType: 'application/json',
-            temperature: 0,
-            maxOutputTokens: 80
-          };
-
-          // Apenas modelos que suportam thinkingBudget: 0 sem estourar 400
-          if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
-            generationConfig.thinkingConfig = { thinkingBudget: 0 };
-          }
-
-          const payload = {
-            contents: [
+    // 1. TENTATIVA PRIORITÁRIA: Groq Vision (qwen/qwen3.8-27b - ultra-rápido ~800ms)
+    if (groqKey) {
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${groqKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'qwen/qwen3.8-27b',
+            messages: [
+              { role: 'system', content: systemPrompt },
               {
-                parts: [
-                  { text: systemPrompt },
+                role: 'user',
+                content: [
+                  { type: 'text', text: 'Analise a imagem da capa do álbum musical e responda estritamente o JSON requisitado.' },
                   {
-                    inlineData: {
-                      mimeType: mimeType,
-                      data: base64Data
+                    type: 'image_url',
+                    image_url: {
+                      url: `data:${mimeType};base64,${base64Data}`
                     }
                   }
                 ]
               }
             ],
-            generationConfig
-          };
+            response_format: { type: 'json_object' },
+            max_tokens: 80,
+            temperature: 0
+          }),
+          signal: AbortSignal.timeout(4500)
+        });
 
-          const timeoutMs = 25000;
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: AbortSignal.timeout(timeoutMs)
-          });
+        if (groqRes.ok) {
+          const groqData = await groqRes.json();
+          candidateText = groqData.choices?.[0]?.message?.content?.trim();
+        } else {
+          const errData = await groqRes.json().catch(() => ({}));
+          lastError = errData?.error?.message || `Groq status ${groqRes.status}`;
+          console.warn('Groq Vision falhou, acionando fallback Gemini:', lastError);
+        }
+      } catch (errGroq) {
+        lastError = errGroq.message;
+        console.warn('Groq Vision indisponível, acionando fallback Gemini:', errGroq.message);
+      }
+    }
 
-          const data = await res.json();
-          if (res.ok) {
-            geminiRes = res;
-            geminiData = data;
-            break keysLoop;
-          } else {
-            lastError = data.error?.message || `Erro ${res.status}`;
-            console.warn(`Tentativa Gemini Capa com ${model} falhou (${res.status}): ${lastError}`);
-            // Se for 429 (quota esgotada nesta chave), pula imediatamente para a próxima chave
-            if (res.status === 429) {
-              break; // sai do loop de modelos e vai para a próxima chave no keysLoop
+    // 2. FALLBACK AUTOMÁTICO: Google Gemini Vision
+    if (!candidateText && geminiKeys.length > 0) {
+      keysLoop: for (const key of geminiKeys) {
+        for (const model of GEMINI_MODELS) {
+          try {
+            const generationConfig = {
+              responseMimeType: 'application/json',
+              temperature: 0,
+              maxOutputTokens: 80
+            };
+
+            if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
+              generationConfig.thinkingConfig = { thinkingBudget: 0 };
             }
-            // Se for 404 (descontinuado), 503 (alta demanda) ou 400, tenta próximo modelo
-            if (res.status === 404 || res.status === 503 || res.status === 400) {
-              continue;
+
+            const payload = {
+              contents: [
+                {
+                  parts: [
+                    { text: systemPrompt },
+                    {
+                      inlineData: {
+                        mimeType: mimeType,
+                        data: base64Data
+                      }
+                    }
+                  ]
+                }
+              ],
+              generationConfig
+            };
+
+            const timeoutMs = 25000;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+            const res = await fetch(url, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+              signal: AbortSignal.timeout(timeoutMs)
+            });
+
+            const data = await res.json();
+            if (res.ok) {
+              const parts = data.candidates?.[0]?.content?.parts || [];
+              candidateText = parts.map(p => p.text).filter(Boolean).join('\n').trim();
+              if (candidateText) break keysLoop;
             } else {
-              break;
+              lastError = data.error?.message || `Erro ${res.status}`;
+              console.warn(`Tentativa Gemini Capa com ${model} falhou (${res.status}): ${lastError}`);
+              if (res.status === 429) {
+                break;
+              }
+              if (res.status === 404 || res.status === 503 || res.status === 400) {
+                continue;
+              } else {
+                break;
+              }
             }
+          } catch (err) {
+            lastError = err.message;
+            console.warn(`Tentativa Gemini Capa com ${model} disparou exceção: ${err.message}`);
           }
-        } catch (err) {
-          lastError = err.message;
-          console.warn(`Tentativa Gemini Capa com ${model} disparou exceção: ${err.message}`);
         }
       }
     }
 
-    if (!geminiData || !geminiRes || !geminiRes.ok) {
-      console.error('Erro ao chamar Gemini Vision:', lastError);
-      const isQuota = typeof lastError === 'string' && (lastError.includes('quota') || lastError.includes('429') || lastError.includes('RESOURCE_EXHAUSTED'));
+    if (!candidateText) {
+      console.error('Falha na análise visual (Groq e Gemini):', lastError);
+      const isQuota = typeof lastError === 'string' && (lastError.includes('quota') || lastError.includes('429') || lastError.includes('RESOURCE_EXHAUSTED') || lastError.includes('rate_limit'));
       const isTimeout = typeof lastError === 'string' && (lastError.includes('timeout') || lastError.includes('aborted'));
 
       let friendlyError = `Falha na análise da capa: ${lastError || 'Serviço indisponível'}`;
@@ -162,9 +208,6 @@ Regras Obrigatórias:
         { status: 502 }
       );
     }
-
-    const parts = geminiData.candidates?.[0]?.content?.parts || [];
-    const candidateText = parts.map(p => p.text).filter(Boolean).join('\n').trim();
     if (!candidateText) {
       return Response.json(
         { success: false, error: 'A inteligência visual não retornou dados para esta imagem.' },
