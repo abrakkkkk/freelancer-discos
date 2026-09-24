@@ -3,13 +3,39 @@
 import { useState, useEffect } from 'react';
 import { PiVinylRecord } from 'react-icons/pi';
 
-const memoryCoverCache = new Map();
+export const memoryCoverCache = new Map();
 
-export default function AlbumCover({ artista, titulo, ano, id, size = 80 }) {
-  const [coverUrl, setCoverUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
+export function setAlbumCoverCache(id, qKey, url) {
+  if (id) memoryCoverCache.set(String(id), url);
+  if (qKey) memoryCoverCache.set(qKey.toLowerCase(), url);
+  if (id && qKey) memoryCoverCache.set(`${id}_${qKey.toLowerCase()}`, url);
+}
+
+export function clearAlbumCoverCache(id) {
+  if (!id) return;
+  const idStr = String(id);
+  for (const key of memoryCoverCache.keys()) {
+    if (key === idStr || key.startsWith(`${idStr}_`)) {
+      memoryCoverCache.delete(key);
+    }
+  }
+}
+
+export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUrl = null }) {
+  const [coverUrl, setCoverUrl] = useState(capaUrl || null);
+  const [loading, setLoading] = useState(!capaUrl);
 
   useEffect(() => {
+    if (capaUrl) {
+      setCoverUrl(capaUrl);
+      setLoading(false);
+      const cleanAno = ano && String(ano) !== 'null' ? String(ano).trim() : '';
+      const q = `${artista || ''} ${titulo || ''}`.trim();
+      const qKey = `${q} ${cleanAno}`.trim().toLowerCase();
+      setAlbumCoverCache(id, qKey, capaUrl);
+      return;
+    }
+
     let isMounted = true;
     const cleanAno = ano && String(ano) !== 'null' ? String(ano).trim() : '';
     const q = `${artista || ''} ${titulo || ''}`.trim();
@@ -83,7 +109,7 @@ export default function AlbumCover({ artista, titulo, ano, id, size = 80 }) {
       isMounted = false;
       controller.abort();
     };
-  }, [artista, titulo, ano, id]);
+  }, [artista, titulo, ano, id, capaUrl]);
 
   const containerStyle = {
     width: `${size}px`,

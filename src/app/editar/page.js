@@ -20,7 +20,7 @@ import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { IoCamera } from "react-icons/io5";
 import { formatCaixa, cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
-import AlbumCover from '@/components/AlbumCover';
+import AlbumCover, { setAlbumCoverCache, clearAlbumCoverCache } from '@/components/AlbumCover';
 import ConfirmModal from '@/components/ConfirmModal';
 import { useReposicao } from '@/contexts/ReposicaoContext';
 import { useMobileLeaveConfirm } from '@/hooks/useMobileLeaveConfirm';
@@ -245,7 +245,7 @@ function EditarExcluirContent() {
 
   function abrirEdicao(item) {
     setItemEditando(item);
-    setSelectedCover(null);
+    setSelectedCover(item.capa_url ? { thumb: item.capa_url, cover: item.capa_url } : null);
     setForm({
       artista: item.artista || '',
       titulo: item.titulo || '',
@@ -283,14 +283,6 @@ function EditarExcluirContent() {
       if (data.results && data.results.length > 0) {
         setDiscogsResults(data.results);
         setShowDiscogsDropdown(true);
-        // Pré-seleciona capa do melhor resultado caso o usuário não tenha escolhido uma
-        const bestMatch = data.results.find(r => r.thumb || r.cover_image) || data.results[0];
-        if (bestMatch && (bestMatch.thumb || bestMatch.cover_image)) {
-          setSelectedCover(prev => prev || {
-            thumb: bestMatch.thumb || null,
-            cover: bestMatch.cover_image || bestMatch.thumb || null
-          });
-        }
       } else {
         setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado no Discogs.' });
       }
@@ -342,12 +334,16 @@ function EditarExcluirContent() {
         thumb: result.thumb || null,
         cover: result.cover_image || result.thumb || null
       });
+      setMensagem({
+        tipo: 'success',
+        texto: `Capa selecionada com sucesso! Clique em "Salvar Alterações" para confirmar.`
+      });
     }
 
     setForm(prev => ({
       ...prev,
-      artista,
-      titulo,
+      artista: artista || prev.artista,
+      titulo: titulo || prev.titulo,
       ano: year || prev.ano,
     }));
     
@@ -361,6 +357,7 @@ function EditarExcluirContent() {
     if (unmaskedPreco < 0) return setMensagem({ tipo: 'error', texto: 'O preço não pode ser negativo.' });
 
     const finalCaixa = form.caixa?.trim() ? normalizeCaixa(form.caixa.trim(), form.loja || activeStore) : null;
+    const chosenCoverUrl = selectedCover ? (selectedCover.cover || selectedCover.thumb) : null;
     const updateData = {
       titulo: form.titulo.trim(),
       preco: unmaskedPreco,
@@ -368,6 +365,7 @@ function EditarExcluirContent() {
       caixa: finalCaixa,
       ano: form.ano?.trim() || null,
       ativo: form.ativo !== false,
+      capa_url: chosenCoverUrl || null,
     };
     if (temArtista) updateData.artista = form.artista;
 
@@ -377,14 +375,22 @@ function EditarExcluirContent() {
       const updatedItem = { ...itemEditando, ...updateData };
       setItemEditando(updatedItem);
 
-      // Sincronização e invalidação automática de capa se os dados do disco mudaram
+      // Sincronização e invalidação de cache de capa no navegador e servidor
       if (tipo === CATEGORY_IDS.DISCOS) {
-        const artistaAlterado = temArtista && (updateData.artista || '').trim().toLowerCase() !== (snapshotAntes.artista || '').trim().toLowerCase();
-        const tituloAlterado = (updateData.titulo || '').trim().toLowerCase() !== (snapshotAntes.titulo || '').trim().toLowerCase();
-        const anoAlterado = (updateData.ano || '').trim() !== (snapshotAntes.ano || '').trim();
+        const cleanAno = (updateData.ano || '').trim();
+        const qKey = `${(updateData.artista || '').trim()} ${(updateData.titulo || '').trim()} ${cleanAno}`.trim().toLowerCase();
 
-        if (artistaAlterado || tituloAlterado || anoAlterado || selectedCover) {
-          // 1. Limpa o cache local no sessionStorage do navegador
+        if (chosenCoverUrl) {
+          setAlbumCoverCache(itemEditando.id, qKey, chosenCoverUrl);
+          if (typeof window !== 'undefined') {
+            try {
+              sessionStorage.setItem(`cover_${itemEditando.id}_${qKey}`, chosenCoverUrl);
+              sessionStorage.setItem(`cover_${qKey}`, chosenCoverUrl);
+              sessionStorage.setItem(`cover_${itemEditando.id}`, chosenCoverUrl);
+            } catch (e) {}
+          }
+        } else {
+          clearAlbumCoverCache(itemEditando.id);
           if (typeof window !== 'undefined') {
             try {
               const idPrefix = `cover_${itemEditando.id}`;
@@ -393,43 +399,25 @@ function EditarExcluirContent() {
                   sessionStorage.removeItem(k);
                 }
               });
-              const chosenImg = selectedCover?.thumb || selectedCover?.cover;
-              if (chosenImg) {
-                const cleanAno = (updateData.ano || '').trim();
-                const qKey = `${(updateData.artista || '').trim()} ${(updateData.titulo || '').trim()} ${cleanAno}`.trim().toLowerCase();
-                sessionStorage.setItem(`cover_${itemEditando.id}_${qKey}`, chosenImg);
-                sessionStorage.setItem(`cover_${qKey}`, chosenImg);
-              }
             } catch (e) {}
           }
+        }
 
-          // 2. Atualiza imediatamente o cache de capas no servidor
-          try {
-            await fetch('/api/cover', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                id: itemEditando.id,
-                artista: updateData.artista || '',
-                titulo: updateData.titulo || '',
-                ano: updateData.ano || '',
-                cover: selectedCover?.cover || null,
-                thumb: selectedCover?.thumb || null,
-              })
-            });
-          } catch (e) {
-            console.warn('Erro ao atualizar capa:', e);
-          }
-
-          // 3. Salva a capa diretamente no Supabase para sincronização em tempo real com o site da loja
-          const chosenCoverUrl = selectedCover?.cover || selectedCover?.thumb;
-          if (chosenCoverUrl) {
-            try {
-              await supabase.from(tipo).update({ capa_url: chosenCoverUrl }).eq('id', itemEditando.id);
-            } catch (errSupabaseCover) {
-              // Ignora caso a coluna ainda não tenha sido criada no banco
-            }
-          }
+        try {
+          await fetch('/api/cover', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: itemEditando.id,
+              artista: updateData.artista || '',
+              titulo: updateData.titulo || '',
+              ano: updateData.ano || '',
+              cover: chosenCoverUrl || null,
+              thumb: chosenCoverUrl || null,
+            })
+          });
+        } catch (e) {
+          console.warn('Erro ao sincronizar capa no servidor:', e);
         }
       }
 
@@ -548,7 +536,14 @@ function EditarExcluirContent() {
           <button className="btn btn-secondary btn-back" style={{ flexShrink: 0 }} onClick={voltarParaBusca}>← Voltar</button>
           <div className="titleGroup" style={{ flex: 1, minWidth: '200px', display: 'flex', alignItems: 'center', gap: '12px' }}>
             {tipo === CATEGORY_IDS.DISCOS && (
-              <AlbumCover artista={form.artista} titulo={form.titulo} ano={form.ano} id={itemEditando?.id} size={48} />
+              <AlbumCover 
+                artista={form.artista} 
+                titulo={form.titulo} 
+                ano={form.ano} 
+                id={itemEditando?.id} 
+                capaUrl={selectedCover?.thumb || selectedCover?.cover || (selectedCover === null ? null : itemEditando?.capa_url)} 
+                size={48} 
+              />
             )}
             <div>
               <h1 className="page-title" style={{ textAlign: 'left', margin: 0, fontSize: '20px' }}>Editando {tipoNome}</h1>
@@ -666,6 +661,53 @@ function EditarExcluirContent() {
                           </li>
                         ))}
                       </ul>
+                    )}
+                    {selectedCover && (selectedCover.thumb || selectedCover.cover) && (
+                      <div style={{
+                        marginTop: '12px',
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        background: 'rgba(56, 161, 105, 0.08)',
+                        border: '1px solid rgba(56, 161, 105, 0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '12px'
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          <img 
+                            src={selectedCover.thumb || selectedCover.cover} 
+                            alt="Capa selecionada" 
+                            style={{ width: '44px', height: '44px', borderRadius: '6px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.2)' }} 
+                          />
+                          <div>
+                            <span style={{ fontSize: '13px', fontWeight: 600, color: '#48bb78', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              ✓ Capa selecionada
+                            </span>
+                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                              {selectedCover.cover !== itemEditando?.capa_url 
+                                ? 'Pronta para atualizar. Clique em "Salvar Alterações" para confirmar.' 
+                                : 'Capa atual do disco.'}
+                            </span>
+                          </div>
+                        </div>
+                        <button 
+                          type="button" 
+                          onClick={() => setSelectedCover(null)}
+                          style={{
+                            background: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid var(--border)',
+                            borderRadius: '4px',
+                            color: 'var(--text-muted)',
+                            fontSize: '11px',
+                            cursor: 'pointer',
+                            padding: '5px 10px'
+                          }}
+                          title="Remover seleção de capa"
+                        >
+                          Remover
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>

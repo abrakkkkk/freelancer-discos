@@ -21,7 +21,7 @@ export const itemService = {
     // Determine columns based on category
     const isVideo = category === 'dvds' || category === 'vhs';
     
-    let columns = 'id, titulo, preco, ativo, loja, observacao, caixa, ano';
+    let columns = 'id, titulo, preco, ativo, loja, observacao, caixa, ano, capa_url';
     if (!isVideo) columns += ', artista';
 
     let query = supabase.from(category).select(columns, { count: 'exact' }).eq('deletado', false);

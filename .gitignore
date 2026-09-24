@@ -46,3 +46,7 @@ next-env.d.ts
 
 # audit screenshots
 public/audit_screenshots/
+
+# standalone external site junction
+/site-loja
+

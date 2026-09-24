@@ -154,7 +154,7 @@ export async function GET(request) {
         if (isSameQuery) {
           return Response.json(cachedById, {
             headers: {
-              'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400',
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
               'X-Cache': 'HIT-ID',
             },
           });
@@ -171,7 +171,7 @@ export async function GET(request) {
         }
         return Response.json(cachedByQ, {
           headers: {
-            'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
             'X-Cache': 'HIT-Q',
           },
         });
@@ -203,9 +203,7 @@ export async function GET(request) {
 
     return Response.json(payload, {
       headers: {
-        'Cache-Control': cover || thumb 
-          ? 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400'
-          : 'no-cache, no-store',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
         'X-Cache': 'MISS',
       },
     });
