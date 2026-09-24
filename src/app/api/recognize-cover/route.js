@@ -2,11 +2,8 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-flash-lite-latest',
   'gemini-3.5-flash-lite',
-  'gemini-3.1-flash-lite',
-  'gemini-3.6-flash',
-  'gemini-flash-latest'
+  'gemini-3.6-flash'
 ];
 
 function getGeminiKeys() {
@@ -113,7 +110,7 @@ Regras Obrigatórias:
             generationConfig
           };
 
-          const timeoutMs = model.includes('lite') ? 6000 : 10000;
+          const timeoutMs = 25000;
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
           const res = await fetch(url, {
             method: 'POST',

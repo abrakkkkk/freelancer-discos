@@ -1,11 +1,8 @@
 // Rota API Next.js para leitura assistida de codigos de catalogo fonograficos dificeis via Gemini Vision
 
 const GEMINI_MODELS = [
-  'gemini-flash-lite-latest',
   'gemini-3.5-flash-lite',
-  'gemini-3.1-flash-lite',
-  'gemini-3.6-flash',
-  'gemini-flash-latest'
+  'gemini-3.6-flash'
 ];
 
 function getGeminiKeys() {
@@ -100,7 +97,7 @@ Regras obrigatórias:
             generationConfig
           };
 
-          const timeoutMs = model.includes('lite') ? 6000 : 10000;
+          const timeoutMs = 25000;
           const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
           const res = await fetch(url, {
             method: 'POST',
