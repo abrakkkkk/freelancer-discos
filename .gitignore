@@ -43,8 +43,6 @@ next-env.d.ts
 
 *.traineddata
 
-# agent customizations
-.agents/
 
 # audit screenshots
 public/audit_screenshots/
