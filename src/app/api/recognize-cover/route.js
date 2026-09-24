@@ -85,7 +85,7 @@ Regras Obrigatórias:
           const generationConfig = {
             responseMimeType: 'application/json',
             temperature: 0,
-            maxOutputTokens: 250
+            maxOutputTokens: 80
           };
 
           // Apenas modelos que suportam thinkingBudget: 0 sem estourar 400

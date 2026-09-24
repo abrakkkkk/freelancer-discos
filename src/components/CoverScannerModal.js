@@ -119,15 +119,12 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
 
     ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, size, size);
 
-    // Exporta prioritariamente em WebP (qualidade 0.80) com fallback para JPEG
+    // Exporta em JPEG otimizado (qualidade 0.70) para transmissão ultra-rápida via rede móvel
     let base64 = '';
     try {
-      base64 = canvas.toDataURL('image/webp', 0.80);
-      if (!base64.startsWith('data:image/webp')) {
-        base64 = canvas.toDataURL('image/jpeg', 0.85);
-      }
+      base64 = canvas.toDataURL('image/jpeg', 0.70);
     } catch (_) {
-      base64 = canvas.toDataURL('image/jpeg', 0.85);
+      base64 = canvas.toDataURL('image/png');
     }
 
     return { base64 };
