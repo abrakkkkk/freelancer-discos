@@ -420,6 +420,16 @@ function EditarExcluirContent() {
           } catch (e) {
             console.warn('Erro ao atualizar capa:', e);
           }
+
+          // 3. Salva a capa diretamente no Supabase para sincronização em tempo real com o site da loja
+          const chosenCoverUrl = selectedCover?.cover || selectedCover?.thumb;
+          if (chosenCoverUrl) {
+            try {
+              await supabase.from(tipo).update({ capa_url: chosenCoverUrl }).eq('id', itemEditando.id);
+            } catch (errSupabaseCover) {
+              // Ignora caso a coluna ainda não tenha sido criada no banco
+            }
+          }
         }
       }
 
