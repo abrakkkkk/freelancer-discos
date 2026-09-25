@@ -47,8 +47,7 @@ export async function POST(request) {
     }
 
     const systemPrompt = `Você é um especialista em identificação de discos de vinil, CDs e capas de álbuns musicais (MPB, Samba, Rock, Bossa Nova, Pop, Internacional).
-Analise com máxima atenção a imagem desta capa de álbum de música.
-Mesmo que a tipografia seja estilizada, caligráfica, psicodélica ou que a arte seja puramente visual/fotográfica sem texto explícito, use seu conhecimento histórico fonográfico para identificar com precisão a obra.
+Analise com máxima atenção a imagem desta capa de álbum de música em alta resolução.
 
 Retorne estritamente um objeto JSON com esta estrutura:
 {
@@ -58,16 +57,20 @@ Retorne estritamente um objeto JSON com esta estrutura:
   "confianca": "alta"
 }
 
-Regras Obrigatórias:
-1. "artista": Nome do artista, banda ou compositor principal (ex: "Secos & Molhados", "Milton Nascimento", "Pink Floyd").
-2. TRILHAS SONORAS E COLETÂNEAS (REGRA CRÍTICA):
+Regras Obrigatórias e Anti-Alucinação:
+1. LEITURA EXATA DO TEXTO (REGRA ANTI-ALUCINAÇÃO):
+   - Se houver texto ou nome impresso na capa (artista ou título), transcreva EXATAMENTE o que está escrito.
+   - NUNCA invente, deduza ou troque o cantor por outro famoso ou parecido se o nome real estiver legível na capa.
+   - Se a capa tiver apenas a foto do cantor sem texto explícito, identifique com muito rigor visual antes de responder; em caso de dúvida entre artistas similares, priorize a fidelidade à obra fonográfica real.
+2. "artista": Nome do artista, banda ou compositor principal (ex: "Secos & Molhados", "Milton Nascimento", "Pink Floyd").
+3. TRILHAS SONORAS E COLETÂNEAS (REGRA CRÍTICA):
    - Se o álbum for uma trilha sonora de novela, seriado, minissérie ou filme (ex: "Riacho Doce", "Pantanal", "Roque Santeiro", "Selva de Pedra", "Ciranda de Pedra", "Anos Dourados", "Anos Rebeldes", "Tieta", "Vale Tudo", etc.) ou coletânea de múltiplos intérpretes: o campo "artista" DEVE SER OBRIGATORIAMENTE "Various" (em inglês, padrão internacional fonográfico Discogs).
    - NUNCA use "Vários", "Varios", "Vários Artistas" ou "Trilha Sonora".
    - NUNCA use o nome de atores/atrizes que aparecem na foto da capa (ex: Luíza Tomé, Cristiana Oliveira, Regina Duarte, Malu Mader, Marília Pêra) como artista.
    - NUNCA use cantores de faixas avulsas (ex: Elizeth Cardoso, Ronnie Von) como artista de uma trilha sonora de novela.
-3. "titulo": Título oficial do álbum ou da novela (ex: "Riacho Doce", "Roque Santeiro - Volume 2", "Pantanal", "Clube da Esquina"). Se for álbum homônimo, repita o nome do artista.
-4. Não inclua ruídos como gravadora (Odeon, Philips, Som Livre, EMI), selos de promoção, carimbos, preços ou termos como "Série Luxo", "Disco é Cultura", "Stereo/Mono".
-5. Se for impossível identificar o álbum com qualquer razoabilidade ou a imagem não for de um álbum musical, responda:
+4. "titulo": Título oficial do álbum ou da novela (ex: "Riacho Doce", "Roque Santeiro - Volume 2", "Pantanal", "Clube da Esquina"). Se for álbum homônimo, repita o nome do artista.
+5. Não inclua ruídos como gravadora (Odeon, Philips, Som Livre, EMI), selos de promoção, carimbos, preços ou termos como "Série Luxo", "Disco é Cultura", "Stereo/Mono".
+6. Se for impossível identificar o álbum com qualquer razoabilidade ou a imagem não for de um álbum musical, responda:
 {
   "artista": "",
   "titulo": "",
@@ -113,7 +116,17 @@ Regras Obrigatórias:
 
         if (groqRes.ok) {
           const groqData = await groqRes.json();
-          candidateText = groqData.choices?.[0]?.message?.content?.trim();
+          const rawText = groqData.choices?.[0]?.message?.content?.trim();
+          try {
+            const parsed = JSON.parse(rawText);
+            if ((parsed.artista || parsed.titulo) && parsed.confianca !== 'baixa') {
+              candidateText = rawText;
+            } else {
+              console.warn('Groq retornou resultado inconclusivo ou baixa confiança, acionando fallback Gemini');
+            }
+          } catch (_) {
+            candidateText = rawText;
+          }
         } else {
           const errData = await groqRes.json().catch(() => ({}));
           lastError = errData?.error?.message || `Groq status ${groqRes.status}`;

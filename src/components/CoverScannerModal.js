@@ -47,9 +47,11 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
 
     try {
       const constraints = {
-        video: deviceId
-          ? { deviceId: { exact: deviceId }, width: { ideal: 1280 }, height: { ideal: 1280 } }
-          : { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 1280 } }
+        video: {
+          ...(deviceId ? { deviceId: { exact: deviceId } } : { facingMode: { ideal: 'environment' } }),
+          width: { ideal: 1920, min: 1280 },
+          height: { ideal: 1080, min: 720 }
+        }
       };
 
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -57,6 +59,23 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+      }
+
+      // Ativar autofoco contínuo e modo macro se disponíveis no hardware da câmera
+      const track = mediaStream.getVideoTracks()[0];
+      if (track) {
+        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+        const advanced = [];
+        if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
+          advanced.push({ focusMode: 'continuous' });
+        } else if (capabilities.focusMode && capabilities.focusMode.includes('macro')) {
+          advanced.push({ focusMode: 'macro' });
+        }
+        if (advanced.length > 0 && track.applyConstraints) {
+          try {
+            await track.applyConstraints({ advanced });
+          } catch (_) {}
+        }
       }
 
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -94,35 +113,42 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     await startCamera(nextCam.deviceId);
   };
 
-  // Redimensiona para enquadramento 1:1 quadrado fiel (512x512) para máxima nitidez no Gemini Vision
+  // Redimensiona mantendo a resolução normal da câmera do celular (1080p a 1280p em 1:1) com máxima nitidez de fontes
   const recortarEComprimir = (origem) => {
-    const canvas = document.createElement('canvas');
-    const size = 512;
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-    let srcW = 800;
-    let srcH = 600;
+    let srcW = 1920;
+    let srcH = 1080;
 
     if (origem instanceof HTMLVideoElement) {
-      srcW = origem.videoWidth || 800;
-      srcH = origem.videoHeight || 600;
+      srcW = origem.videoWidth || 1920;
+      srcH = origem.videoHeight || 1080;
     } else if (origem instanceof HTMLImageElement) {
-      srcW = origem.naturalWidth || origem.width || 800;
-      srcH = origem.naturalHeight || origem.height || 600;
+      srcW = origem.naturalWidth || origem.width || 1920;
+      srcH = origem.naturalHeight || origem.height || 1080;
+    } else if (typeof ImageBitmap !== 'undefined' && origem instanceof ImageBitmap) {
+      srcW = origem.width;
+      srcH = origem.height;
     }
 
     const sSize = Math.min(srcW, srcH);
     const sx = (srcW - sSize) / 2;
     const sy = (srcH - sSize) / 2;
 
-    ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, size, size);
+    // Resolução normal da câmera do celular (alta fidelidade até 1280x1280 em 1:1)
+    const targetSize = Math.min(sSize, 1280);
 
-    // Exporta em JPEG otimizado (qualidade 0.70) para transmissão ultra-rápida via rede móvel
+    const canvas = document.createElement('canvas');
+    canvas.width = targetSize;
+    canvas.height = targetSize;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, targetSize, targetSize);
+
+    // Exporta em JPEG de alta qualidade (0.85) para evitar compressão destrutiva em textos e detalhes faciais
     let base64 = '';
     try {
-      base64 = canvas.toDataURL('image/jpeg', 0.70);
+      base64 = canvas.toDataURL('image/jpeg', 0.85);
     } catch (_) {
       base64 = canvas.toDataURL('image/png');
     }
@@ -170,14 +196,33 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     }
   };
 
-  const capturarDoVideo = () => {
+  const capturarDoVideo = async () => {
     if (!videoRef.current || processando) return;
     try {
-      const { base64 } = recortarEComprimir(videoRef.current);
+      let base64 = '';
+      const track = stream?.getVideoTracks?.()[0];
+      // Tenta tirar foto na resolução nativa do sensor da câmera via ImageCapture
+      if (typeof window !== 'undefined' && 'ImageCapture' in window && track && track.readyState === 'live') {
+        try {
+          const imageCapture = new window.ImageCapture(track);
+          const blob = await imageCapture.takePhoto();
+          const imgBitmap = await createImageBitmap(blob);
+          const res = recortarEComprimir(imgBitmap);
+          base64 = res.base64;
+        } catch (e) {
+          console.warn('ImageCapture fallback para frame de vídeo:', e);
+        }
+      }
+
+      if (!base64) {
+        const res = recortarEComprimir(videoRef.current);
+        base64 = res.base64;
+      }
+
       setFotoPreview(base64);
       enviarParaReconhecimento(base64);
     } catch (err) {
-      setErro('Erro ao capturar frame do vídeo.');
+      setErro('Erro ao capturar frame da câmera.');
     }
   };
 
