@@ -245,7 +245,7 @@ function EditarExcluirContent() {
 
   function abrirEdicao(item) {
     setItemEditando(item);
-    setSelectedCover(item.capa_url ? { thumb: item.capa_url, cover: item.capa_url } : null);
+    setSelectedCover(null);
     setForm({
       artista: item.artista || '',
       titulo: item.titulo || '',
@@ -265,6 +265,7 @@ function EditarExcluirContent() {
       router.push('/');
     } else {
       setItemEditando(null);
+      setSelectedCover(null);
       setTela('busca');
       setShowDiscogsDropdown(false);
       setDiscogsResults([]);
@@ -334,10 +335,6 @@ function EditarExcluirContent() {
         thumb: result.thumb || null,
         cover: result.cover_image || result.thumb || null
       });
-      setMensagem({
-        tipo: 'success',
-        texto: `Capa selecionada com sucesso! Clique em "Salvar Alterações" para confirmar.`
-      });
     }
 
     setForm(prev => ({
@@ -357,7 +354,7 @@ function EditarExcluirContent() {
     if (unmaskedPreco < 0) return setMensagem({ tipo: 'error', texto: 'O preço não pode ser negativo.' });
 
     const finalCaixa = form.caixa?.trim() ? normalizeCaixa(form.caixa.trim(), form.loja || activeStore) : null;
-    const chosenCoverUrl = selectedCover ? (selectedCover.cover || selectedCover.thumb) : null;
+    const chosenCoverUrl = selectedCover ? (selectedCover.cover || selectedCover.thumb) : (itemEditando?.capa_url || null);
     const updateData = {
       titulo: form.titulo.trim(),
       preco: unmaskedPreco,
@@ -374,6 +371,7 @@ function EditarExcluirContent() {
       await itemService.updateItem(tipo, itemEditando.id, updateData);
       const updatedItem = { ...itemEditando, ...updateData };
       setItemEditando(updatedItem);
+      setSelectedCover(null);
 
       // Sincronização e invalidação de cache de capa no navegador e servidor
       if (tipo === CATEGORY_IDS.DISCOS) {
@@ -541,7 +539,7 @@ function EditarExcluirContent() {
                 titulo={form.titulo} 
                 ano={form.ano} 
                 id={itemEditando?.id} 
-                capaUrl={selectedCover?.thumb || selectedCover?.cover || (selectedCover === null ? null : itemEditando?.capa_url)} 
+                capaUrl={selectedCover ? (selectedCover.thumb || selectedCover.cover) : itemEditando?.capa_url} 
                 size={48} 
               />
             )}
@@ -662,53 +660,7 @@ function EditarExcluirContent() {
                         ))}
                       </ul>
                     )}
-                    {selectedCover && (selectedCover.thumb || selectedCover.cover) && (
-                      <div style={{
-                        marginTop: '12px',
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        background: 'rgba(56, 161, 105, 0.08)',
-                        border: '1px solid rgba(56, 161, 105, 0.3)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '12px'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          <img 
-                            src={selectedCover.thumb || selectedCover.cover} 
-                            alt="Capa selecionada" 
-                            style={{ width: '44px', height: '44px', borderRadius: '6px', objectFit: 'cover', border: '1px solid rgba(255,255,255,0.2)' }} 
-                          />
-                          <div>
-                            <span style={{ fontSize: '13px', fontWeight: 600, color: '#48bb78', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              ✓ Capa selecionada
-                            </span>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                              {selectedCover.cover !== itemEditando?.capa_url 
-                                ? 'Pronta para atualizar. Clique em "Salvar Alterações" para confirmar.' 
-                                : 'Capa atual do disco.'}
-                            </span>
-                          </div>
-                        </div>
-                        <button 
-                          type="button" 
-                          onClick={() => setSelectedCover(null)}
-                          style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid var(--border)',
-                            borderRadius: '4px',
-                            color: 'var(--text-muted)',
-                            fontSize: '11px',
-                            cursor: 'pointer',
-                            padding: '5px 10px'
-                          }}
-                          title="Remover seleção de capa"
-                        >
-                          Remover
-                        </button>
-                      </div>
-                    )}
+
                   </div>
                 </div>
               )}
