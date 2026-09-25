@@ -18,3 +18,4 @@ Em 100% das sessões, você DEVE consultar e acionar as skills e regras do proje
 4. **Planejamento e Execução:** Para tarefas de múltiplos passos, usar `writing-plans` seguido de `executing-plans` ou `subagent-driven-development`.
 5. **Verificação Obrigatória:** Antes de declarar conclusão ou fazer commit/push, rodar `verification-before-completion` (evidências reais de build/testes).
 6. **Regras Locais Obrigatórias:** Seguir sempre `.agents/rules/i-have-adhd.md`, `.agents/rules/mobile-first.md` e `.agents/rules/project-architecture.md`.
+7. **Deploy Contínuo:** Sempre commitar e fazer push direto para a branch `main` ao concluir e validar cada alteração.
