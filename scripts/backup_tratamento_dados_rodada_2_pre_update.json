@@ -1,0 +1,1690 @@
+[
+  {
+    "id": 7035,
+    "artista": "",
+    "titulo": "Georgia Satellites",
+    "atualizado_em": "2026-08-10T20:43:44.857158",
+    "caixa": "3",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7093,
+    "artista": "",
+    "titulo": "Spaceark",
+    "atualizado_em": "2026-08-10T20:43:44.857158",
+    "caixa": "3",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7549,
+    "artista": "",
+    "titulo": "Mojmir Balling 1964-1976",
+    "atualizado_em": "2026-08-10T20:43:45.959097",
+    "caixa": "6",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7599,
+    "artista": "",
+    "titulo": "The Electrifying Eddie Harris",
+    "atualizado_em": "2026-08-10T20:43:45.959097",
+    "caixa": "6",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7613,
+    "artista": "",
+    "titulo": "Cafe Creme (IMP)",
+    "atualizado_em": "2026-08-10T20:43:45.959097",
+    "caixa": "6",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7839,
+    "artista": "",
+    "titulo": "Barabajagal interpretado por Donovan",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "7",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7941,
+    "artista": "",
+    "titulo": "Snail",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7962,
+    "artista": "",
+    "titulo": "APOCALYPSE",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8104,
+    "artista": "",
+    "titulo": "Lo Mejor de Roberto Carlos",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "52",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8109,
+    "artista": "",
+    "titulo": "Este e Claudio de Barros",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8128,
+    "artista": "",
+    "titulo": "Otacilio Batista do Pajeu",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8174,
+    "artista": "",
+    "titulo": "Os grandes sucessos de ERASMO CARLOS",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8217,
+    "artista": "",
+    "titulo": "Grandes Sucessos de Chico Buarque Volume 2",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8219,
+    "artista": "",
+    "titulo": "Grupo KATINGUELÊ",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8245,
+    "artista": "",
+    "titulo": "são joão autêntico Jackson do Pandeiro",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8258,
+    "artista": "",
+    "titulo": "Semente DOROTY MARQUES",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8348,
+    "artista": "",
+    "titulo": "Grupo Raizes",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8366,
+    "artista": "",
+    "titulo": "Joao do Vale",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8383,
+    "artista": "",
+    "titulo": "Joao Lopes",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8386,
+    "artista": "",
+    "titulo": "Bendego",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8454,
+    "artista": "",
+    "titulo": "OS JOVENS -",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8457,
+    "artista": "",
+    "titulo": "Marilia Vinicius",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8527,
+    "artista": "",
+    "titulo": "Sergio Souto",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8567,
+    "artista": "",
+    "titulo": "Geraldo Vandré 5 anos de canção",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8573,
+    "artista": "",
+    "titulo": "A bossa dos cariocas",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8618,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Diana",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8622,
+    "artista": "",
+    "titulo": "Zezinho e seu Sombalanço",
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8845,
+    "artista": "",
+    "titulo": "A Grande Musica de Sergio Ricardo",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "12",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8893,
+    "artista": "",
+    "titulo": "Tubarao",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "13",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8991,
+    "artista": "",
+    "titulo": "O Espirito da Coisa",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "13",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9078,
+    "artista": "",
+    "titulo": "Camisa de Vênus",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "13",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9096,
+    "artista": "",
+    "titulo": "O melhor de Reginaldo Rossi",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9133,
+    "artista": "",
+    "titulo": "Os brasas de Maraú",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9140,
+    "artista": "",
+    "titulo": "São João autêntico de Jackson do Pandeiro",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9144,
+    "artista": "",
+    "titulo": "o melhor de Marinês",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9172,
+    "artista": "",
+    "titulo": "Elino Julião e Messias Holanda",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9186,
+    "artista": "",
+    "titulo": "Biá e seus batutas",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9212,
+    "artista": "",
+    "titulo": "João do acordeon (de PARACURU)",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9242,
+    "artista": "",
+    "titulo": "Gerson e seu 8 Baixos",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9245,
+    "artista": "",
+    "titulo": "Dance com Ze Maria e seu Conjunto",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9261,
+    "artista": "",
+    "titulo": "Anastácia",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9300,
+    "artista": "",
+    "titulo": "O Talento de Nana Caymmi",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "15",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9320,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Joao Nogueira",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "15",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9439,
+    "artista": "",
+    "titulo": "Camarão e seu Arcodeon",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "15",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9545,
+    "artista": "",
+    "titulo": "A Musica e a Poesia de Vinicius Vol. 2",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "16",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9562,
+    "artista": "",
+    "titulo": "Lobao",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "16",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9563,
+    "artista": "",
+    "titulo": "Só pra contrariar",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "16",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9583,
+    "artista": "",
+    "titulo": "Dani Turcheto  madeira torta",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "16",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9595,
+    "artista": "",
+    "titulo": "Quando o Carnaval Chegar",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "16",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9629,
+    "artista": "",
+    "titulo": "Grupo Axis",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "17",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9653,
+    "artista": "",
+    "titulo": "Fatima Guedes",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "17",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9677,
+    "artista": "",
+    "titulo": "Katia Lee",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "17",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9710,
+    "artista": "",
+    "titulo": "EDU e BETHÂNIA",
+    "atualizado_em": "2026-08-10T20:43:50.524491",
+    "caixa": "17",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9950,
+    "artista": "",
+    "titulo": "O Extraordinario Bola Sete",
+    "atualizado_em": "2026-08-10T20:43:50.524491",
+    "caixa": "52",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 10791,
+    "artista": "",
+    "titulo": "The best of Olodum",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "23",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 10810,
+    "artista": "",
+    "titulo": "Asa de Aguia",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "23",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 10951,
+    "artista": "",
+    "titulo": "A bossa eterna de Elizeth e  Gyro vol 2",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 10978,
+    "artista": "",
+    "titulo": "FRANCISCO CAVALCANTE",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11030,
+    "artista": "",
+    "titulo": "Clara Sverner e Paulo Moura",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11044,
+    "artista": "",
+    "titulo": "Os Demonios da Garoa interpretam Adoniran Barbosa",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11057,
+    "artista": "",
+    "titulo": "As Musicas de Dorival Caymmi",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11075,
+    "artista": "",
+    "titulo": "Sua majestade Jackson do Pandeiro",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11082,
+    "artista": "",
+    "titulo": "A Arte de Gilberto Gil",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11088,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Joao Bosco",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11092,
+    "artista": "",
+    "titulo": "Grandes Sucessos de Elza Soares",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11100,
+    "artista": "",
+    "titulo": "ZÉ PAULO",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11144,
+    "artista": "",
+    "titulo": "O melhor dos velhinhos transviados",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "25",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11241,
+    "artista": "",
+    "titulo": "A música de Gonzaguinha",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "25",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11260,
+    "artista": "",
+    "titulo": "Grupo Xodó",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "25",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11284,
+    "artista": "",
+    "titulo": "A arte negra de Wilson Moreira e Nei Lopes",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "25",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11293,
+    "artista": "",
+    "titulo": "A meiga Elizeth",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11317,
+    "artista": "",
+    "titulo": "Ari Lobo",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11330,
+    "artista": "",
+    "titulo": "assim sou eu.. ODAIR JOSÉ",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11386,
+    "artista": "",
+    "titulo": "Do Coraçao do Ceara com Ivanildo e seu Conjunto",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11463,
+    "artista": "",
+    "titulo": "Elizete interpreta Vinicius",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11469,
+    "artista": "",
+    "titulo": "Grupo Molejo volume 2",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11514,
+    "artista": "",
+    "titulo": "Flavio Carvalho",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "27",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11620,
+    "artista": "",
+    "titulo": "o talento de Milton Nascimento",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "27",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11677,
+    "artista": "",
+    "titulo": "Eric Burdon Declares \"WAR\"",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11713,
+    "artista": "",
+    "titulo": "A Imortal Billie Holiday",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11716,
+    "artista": "",
+    "titulo": "Archive of Folk & Jazz Music: Charlie Parker Volume III",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11728,
+    "artista": "",
+    "titulo": "The Best of Jimmy Cliff",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11733,
+    "artista": "",
+    "titulo": "Standards by Ray Anthony",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11742,
+    "artista": "",
+    "titulo": "The Incredible Soul of B.B. King",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11747,
+    "artista": "",
+    "titulo": "The Best of jimmy smith",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11750,
+    "artista": "",
+    "titulo": "The best of PROCOL HARUM",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11758,
+    "artista": "",
+    "titulo": "Marcos Lazaro apresenta Sempre Ray Charles",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11766,
+    "artista": "",
+    "titulo": "More Sucesses of Nat King Cole",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11794,
+    "artista": "",
+    "titulo": "Sergio Mendes' Favorite Things",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11807,
+    "artista": "",
+    "titulo": "The Best of The Mahavishnu Orchestra",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11817,
+    "artista": "",
+    "titulo": "a arte inimitável de Ella Fitzgerald",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11821,
+    "artista": "",
+    "titulo": "Ellington 55",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11843,
+    "artista": "",
+    "titulo": "HIGH VOLTAGE The Count Basie Orchestra",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11845,
+    "artista": "",
+    "titulo": "A jazz portrait of Frank Sinatra by the Oscar Peterson Trio",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11859,
+    "artista": "",
+    "titulo": "Pete Fountain's Golden Favorites",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11862,
+    "artista": "",
+    "titulo": "The Best of Isaac Hayes",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11879,
+    "artista": "",
+    "titulo": "Ella & Louis",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11905,
+    "artista": "",
+    "titulo": "The Best Off LITTLE WALTER",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11912,
+    "artista": "",
+    "titulo": "Archive of Jazz Series: Charlie Mingus",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11933,
+    "artista": "",
+    "titulo": "The Best of The Spinners",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11947,
+    "artista": "",
+    "titulo": "Grandes Interpretaçoes de Frank Sinatra",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11964,
+    "artista": "",
+    "titulo": "Apresentando Sammy Davis Jr.",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11968,
+    "artista": "",
+    "titulo": "A arte de BARRY WHITE",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11987,
+    "artista": "",
+    "titulo": "The best of The Stylistics",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11992,
+    "artista": "",
+    "titulo": "L.L Cool J",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11997,
+    "artista": "",
+    "titulo": "Momento Brasileiro Billy Eckstine",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11999,
+    "artista": "",
+    "titulo": "Ella in Berlin",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12003,
+    "artista": "",
+    "titulo": "The best off B.B King",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12010,
+    "artista": "",
+    "titulo": "His Best The Electric B.B King",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12059,
+    "artista": "",
+    "titulo": "AFRODISIAC the main ingredient",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12132,
+    "artista": "",
+    "titulo": "The Other Side of Lalo Schifrin",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12145,
+    "artista": "",
+    "titulo": "I am Earth Wind & Fire",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12147,
+    "artista": "",
+    "titulo": "The Best of Dexter Gordon",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12166,
+    "artista": "",
+    "titulo": "Gerry Mulligan's Greatest Hits Volume 1",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12192,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Michael Jackson Vol.2",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12203,
+    "artista": "",
+    "titulo": "The best off Ella Fitzgerald",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12205,
+    "artista": "",
+    "titulo": "Danny Williams",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12219,
+    "artista": "",
+    "titulo": "Rio Jazz Orchestra",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "31",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12295,
+    "artista": "",
+    "titulo": "The Real Pearl Bailey recorded",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "31",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12346,
+    "artista": "",
+    "titulo": "The Best of Duke Ellington and his Famous Orchestra",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "31",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12392,
+    "artista": "",
+    "titulo": "Fatima Melo",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "32",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12461,
+    "artista": "",
+    "titulo": "Ana Belen",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "32",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12484,
+    "artista": "",
+    "titulo": "Cesar Veneno",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "32",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12565,
+    "artista": "",
+    "titulo": "O Meu Amigo Erasmo Carlos",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "33",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12606,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Cauby",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "33",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12634,
+    "artista": "",
+    "titulo": "Coruja e seus Tangaras",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "33",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12645,
+    "artista": "",
+    "titulo": "Jayne",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "33",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12731,
+    "artista": "",
+    "titulo": "Dicro",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12733,
+    "artista": "",
+    "titulo": "A Musica de Dolores Duran (OBS: Capa)",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12751,
+    "artista": "",
+    "titulo": "Naldo Kleber",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12761,
+    "artista": "",
+    "titulo": "Mauricio de oliveira",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12768,
+    "artista": "",
+    "titulo": "Magalhaes e sua Guitarra",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12797,
+    "artista": "",
+    "titulo": "Os 7 Velhinhos",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12821,
+    "artista": "",
+    "titulo": "Gilberto Montenegro",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12848,
+    "artista": "",
+    "titulo": "Carmelia Alves",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12897,
+    "artista": "",
+    "titulo": "A Arte de Os Cariocas (2 Lps)",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12915,
+    "artista": "",
+    "titulo": "Marcus Vinicius da Cruz de Melo Moraes",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12923,
+    "artista": "",
+    "titulo": "Heraldo Correa",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12939,
+    "artista": "",
+    "titulo": "Maria Lucia Godoy interpreta Villa Lobos",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12957,
+    "artista": "",
+    "titulo": "Os Maiores Sucessos de Joao Nogueira",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12967,
+    "artista": "",
+    "titulo": "Nova Historia da Musica Popular Brasileira: Joao do Vale",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12968,
+    "artista": "",
+    "titulo": "Nova Historia da Musica Popular Brasileira: Milton Nascimento",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12970,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Reginaldo Rossi",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12981,
+    "artista": "",
+    "titulo": "O melhor de Renato e seus Blue Caps",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13017,
+    "artista": "",
+    "titulo": "Joel e Gervano",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "36",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13059,
+    "artista": "",
+    "titulo": "Grandes Sucessos de Erasmo Carlos",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "36",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13102,
+    "artista": "",
+    "titulo": "O Melhor de Canhoto e seu Regional",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "36",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13134,
+    "artista": "",
+    "titulo": "Paulo Sergio Vol.10",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "36",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13156,
+    "artista": "",
+    "titulo": "Detynho",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "37",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13262,
+    "artista": "",
+    "titulo": "A Musica de Carlos Parana",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "37",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13272,
+    "artista": "",
+    "titulo": "Marion Duarte",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "37",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13368,
+    "artista": "",
+    "titulo": "The Best of Oakridge Boys (IMP)",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "38",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13392,
+    "artista": "",
+    "titulo": "Feliciano",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "38",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13397,
+    "artista": "",
+    "titulo": "Canta o Trio Cristal",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "38",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13474,
+    "artista": "",
+    "titulo": "Best of Philippe Lavil (IMP)",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "39",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13516,
+    "artista": "",
+    "titulo": "1000 airplanes on the roof",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "39",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13541,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Harry James",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "39",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13544,
+    "artista": "",
+    "titulo": "Best of Gladys Knight & The Pips",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "39",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13630,
+    "artista": "",
+    "titulo": "Presença de Frankie Laine",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "40",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13732,
+    "artista": "",
+    "titulo": "The Best of Frank Sinatra Volume 2",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "41",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13740,
+    "artista": "",
+    "titulo": "Jesus Christ Superstar",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "41",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13795,
+    "artista": "",
+    "titulo": "Halley Flamarion",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13832,
+    "artista": "",
+    "titulo": "Louisiana's Le Roux",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13883,
+    "artista": "",
+    "titulo": "La Mejor Musica de Horacio Salgan y su Orquestra",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13905,
+    "artista": "",
+    "titulo": "The four tops",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13946,
+    "artista": "",
+    "titulo": "Grupo Favela & Genaro",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13951,
+    "artista": "",
+    "titulo": "A Arte de Paul Mauriat",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13953,
+    "artista": "",
+    "titulo": "Presença de Richard Clayderman",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13963,
+    "artista": "",
+    "titulo": "Cha Cha Cha With Tito Puente At Grossingers",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13967,
+    "artista": "",
+    "titulo": "The Best of Commodores",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13978,
+    "artista": "",
+    "titulo": "George Frideric Handel",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14009,
+    "artista": "",
+    "titulo": "Wagners Greatest Hits (IMP)",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14025,
+    "artista": "",
+    "titulo": "Los Gomes Conjunto Paraguaio Internacional",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14057,
+    "artista": "",
+    "titulo": "San Francisco e outros Sucessos de Bobby Solo",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14064,
+    "artista": "",
+    "titulo": "LES SURFS -",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14066,
+    "artista": "",
+    "titulo": "isabel parra de chile",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14069,
+    "artista": "",
+    "titulo": "Alice Faye",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14070,
+    "artista": "",
+    "titulo": "Lena Horne",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14088,
+    "artista": "",
+    "titulo": "Jimmy Makulis",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14104,
+    "artista": "",
+    "titulo": "Lena Zavaroni",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14128,
+    "artista": "",
+    "titulo": "R.B Greaves",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14130,
+    "artista": "",
+    "titulo": "Beatle Classics By Enoch Light (IMP)",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14145,
+    "artista": "",
+    "titulo": "Dr. Hook Rising",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14149,
+    "artista": "",
+    "titulo": "Livio Salles e seu Piano",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14153,
+    "artista": "",
+    "titulo": "Patti Dahlstrom",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14182,
+    "artista": "",
+    "titulo": "Piazzolla y su Quinteto en el Teatro Regina",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14222,
+    "artista": "",
+    "titulo": "The Original Frank Sinatra",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14224,
+    "artista": "",
+    "titulo": "The best of Sinatra",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14238,
+    "artista": "",
+    "titulo": "The Concert Sinatra",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14247,
+    "artista": "",
+    "titulo": "Welcome to the club Nat King Cole",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14334,
+    "artista": "",
+    "titulo": "Nova Historia da Musica Popular Brasileira: Tom Jobim",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14343,
+    "artista": "",
+    "titulo": "Nova Historia da Musica Popular Brasileira: Cartola",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14359,
+    "artista": "",
+    "titulo": "Historia da Musica Popular Brasileira: Joao Bosco & Aldir Blanc",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14407,
+    "artista": "",
+    "titulo": "Magalhaes e sua Guitarra",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14411,
+    "artista": "",
+    "titulo": "Trio do Fafa",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "45",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14428,
+    "artista": "",
+    "titulo": "Chitaozinho e Xororo",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14462,
+    "artista": "",
+    "titulo": "O Melhor de Marcio Greyck",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14477,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Jose Roberto",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14495,
+    "artista": "",
+    "titulo": "Barbosa Lima interpreta Francisco Mignone",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14505,
+    "artista": "",
+    "titulo": "Cesar Augusto",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14519,
+    "artista": "",
+    "titulo": "14 Grandes Sucessos de Jose Roberto",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14574,
+    "artista": "",
+    "titulo": "Claudia Novais",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14580,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Emilinha Borba",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "46",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14615,
+    "artista": "",
+    "titulo": "Os Grandes Sucessos de Sylvio Mazzucca e sua Orquestra",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14653,
+    "artista": "",
+    "titulo": "Heraldo Correa",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14655,
+    "artista": "",
+    "titulo": "Grandes Interpretaçoes de Doris Day",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14675,
+    "artista": "",
+    "titulo": "Ze Keti 1978 (Abril)",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14738,
+    "artista": "",
+    "titulo": "10 Anos de Renato e seus Blue Caps",
+    "atualizado_em": "2026-08-10T20:43:59.682185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 25925,
+    "artista": "Manoel Maurício",
+    "titulo": "O Melhor de Manoel Maurício",
+    "atualizado_em": "2026-09-15T13:14:39.32593",
+    "caixa": "Caixa 23B",
+    "loja": "Loja 2"
+  },
+  {
+    "id": 26766,
+    "artista": "Fátima Mello",
+    "titulo": "Safadeza",
+    "atualizado_em": "2026-09-17T16:22:18.037622",
+    "caixa": "Caixa 25B",
+    "loja": "Loja 2"
+  },
+  {
+    "id": 26840,
+    "artista": "Secos & Molhados",
+    "titulo": "Secos & Molhados",
+    "atualizado_em": "2026-09-22T12:18:43.079613",
+    "caixa": "18",
+    "loja": "Loja 1"
+  }
+]
