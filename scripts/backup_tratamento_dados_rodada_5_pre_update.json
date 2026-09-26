@@ -1,0 +1,1302 @@
+[
+  {
+    "id": 7882,
+    "artista": "The Rolling Stones",
+    "titulo": "From The Vault",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "7",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7931,
+    "artista": "Can",
+    "titulo": "Live in Stuttgart",
+    "ano": "1975",
+    "preco": 385,
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8298,
+    "artista": "Jon Hendricks",
+    "titulo": "Salud! Joao Gilberto",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8434,
+    "artista": "Roberto Carlos",
+    "titulo": "E Proibido Fumar",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8539,
+    "artista": "Arandas Junior",
+    "titulo": "Aguas Correntes",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-10T20:43:47.783232",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9355,
+    "artista": "Convite",
+    "titulo": "Quarteto Vozes e Grupo Chorinho Novo",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-09-26T16:48:10.737",
+    "caixa": "15",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 17420,
+    "artista": "Sambalanço Trio",
+    "titulo": "Sambalanço Trio",
+    "ano": null,
+    "preco": 650,
+    "atualizado_em": "2026-08-17T12:38:12.063468",
+    "caixa": "52",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 17871,
+    "artista": "Sheilami",
+    "titulo": "Tudo Pra Te Agradar",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-09-26T16:48:35.908",
+    "caixa": "23",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20798,
+    "artista": "Bonobo",
+    "titulo": "The North Borders",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T12:48:34.503588",
+    "caixa": "52",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20877,
+    "artista": "Gonzaguinha do Baião",
+    "titulo": "Tá rasgado sim",
+    "ano": null,
+    "preco": 450,
+    "atualizado_em": "2026-08-17T15:39:13.13087",
+    "caixa": "52",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20892,
+    "artista": "Tulipa Ruiz",
+    "titulo": "Dancê",
+    "ano": null,
+    "preco": 450,
+    "atualizado_em": "2026-08-17T16:20:34.211688",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20905,
+    "artista": "Chico Buarque",
+    "titulo": "Caravanas",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T16:37:15.732471",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20908,
+    "artista": "Letrux",
+    "titulo": "Aos Prantos",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T16:39:20.225324",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20910,
+    "artista": "Kelly Key",
+    "titulo": "Kelly Key",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T16:40:51.376814",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20912,
+    "artista": "Karina Buhr",
+    "titulo": "Longe de Onde",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T16:42:18.419016",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20917,
+    "artista": "Céu",
+    "titulo": "Acústico",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-17T16:46:42.143",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20923,
+    "artista": "Elza Soares",
+    "titulo": "End of the World Remixes",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-17T17:01:21.093926",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20929,
+    "artista": "Roberta Campos",
+    "titulo": "Varrendo a Lua",
+    "ano": null,
+    "preco": 500,
+    "atualizado_em": "2026-08-17T17:11:02.752061",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20935,
+    "artista": " Adriana Calcanhotto",
+    "titulo": "Margem",
+    "ano": null,
+    "preco": 450,
+    "atualizado_em": "2026-08-17T17:16:02.519045",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20955,
+    "artista": "Maria Gadú",
+    "titulo": "Guelã",
+    "ano": null,
+    "preco": 500,
+    "atualizado_em": "2026-08-17T17:38:47.513276",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20956,
+    "artista": "João Donato",
+    "titulo": "Gozando a Existência",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T17:39:49.787885",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20962,
+    "artista": "Sandy & Junior",
+    "titulo": "Identidade",
+    "ano": null,
+    "preco": 450,
+    "atualizado_em": "2026-08-17T17:46:51.492174",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20963,
+    "artista": "Anelis Assumpção",
+    "titulo": "Amigos Imaginários",
+    "ano": "2014",
+    "preco": 350,
+    "atualizado_em": "2026-08-17T17:47:21.358679",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20965,
+    "artista": "Cícero",
+    "titulo": "A praia",
+    "ano": null,
+    "preco": 450,
+    "atualizado_em": "2026-08-17T17:48:38.296553",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20967,
+    "artista": "Sandy & Junior",
+    "titulo": "Sandy & Junior",
+    "ano": "2001",
+    "preco": 450,
+    "atualizado_em": "2026-08-17T17:51:05.585827",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20975,
+    "artista": "Xenia França",
+    "titulo": "Xenia",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-17T18:01:46.498124",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20978,
+    "artista": "Tássia Reis",
+    "titulo": "Próspera",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-17T18:04:29.561407",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20979,
+    "artista": "Rubel",
+    "titulo": "Casas",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T18:05:01.317698",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20983,
+    "artista": "Xuxa",
+    "titulo": "Só faltava você",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T18:11:05.275779",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20986,
+    "artista": "Tulipa Ruiz",
+    "titulo": "Efêmera",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-17T18:14:35.263475",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21003,
+    "artista": "Moby",
+    "titulo": "Innocents",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T18:37:58.600519",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21008,
+    "artista": "Miranda Lambert",
+    "titulo": "Postcards From Texas",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-17T18:41:54.057439",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21012,
+    "artista": "Metallica",
+    "titulo": "...And Justice For All",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-17T18:43:28.562378",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21017,
+    "artista": "Natanael Cano",
+    "titulo": "Porque La Demora",
+    "ano": "2025",
+    "preco": 395,
+    "atualizado_em": "2026-08-17T18:46:04.151806",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21025,
+    "artista": "Sara Bareilles",
+    "titulo": "Amidst The Chaos - Live From The Holl",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-17T18:51:30.338362",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21035,
+    "artista": "Fifty Shades Darker",
+    "titulo": "Fifty Shades Darker",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T19:08:49.007515",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21039,
+    "artista": "Deftones",
+    "titulo": "White Pony",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-17T19:13:10.848584",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21044,
+    "artista": "The Veronicas",
+    "titulo": "The Secret Life Of",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T19:19:10.959072",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21045,
+    "artista": "...featuring",
+    "titulo": "Norah Jones",
+    "ano": null,
+    "preco": 380,
+    "atualizado_em": "2026-09-26T16:48:17.366",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21046,
+    "artista": "Celine Dion",
+    "titulo": "Let's Talk About Love",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-17T19:21:10.095053",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21047,
+    "artista": "Celine Dion",
+    "titulo": "Courage",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T19:21:30.504775",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21049,
+    "artista": "The Veronicas",
+    "titulo": "Hook Me Up",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-17T19:22:48.00333",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21050,
+    "artista": "Celine Dion",
+    "titulo": "Falling Into You",
+    "ano": null,
+    "preco": 380,
+    "atualizado_em": "2026-08-17T19:23:06.493349",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21057,
+    "artista": "Various",
+    "titulo": "Killing Eve Season Two (Original Series Soundtrack)",
+    "ano": null,
+    "preco": 380,
+    "atualizado_em": "2026-08-17T19:28:17.079149",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21058,
+    "artista": "The Pretty Reckless",
+    "titulo": "Who You Selling For",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-17T19:29:23.697634",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21059,
+    "artista": "H.e.r",
+    "titulo": "H.e.r",
+    "ano": null,
+    "preco": 360,
+    "atualizado_em": "2026-09-26T16:48:17.366",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21062,
+    "artista": "Ella Gold",
+    "titulo": "The Original Classics",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-17T19:32:53.243118",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21064,
+    "artista": "Zaz",
+    "titulo": "Effet Miroir",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-09-26T16:48:17.366",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21065,
+    "artista": "Zaz",
+    "titulo": "Effet Miroir",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-09-26T16:48:17.656",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21070,
+    "artista": "The Pretty Reckless",
+    "titulo": "Death By Rock And Roll",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T12:26:02.895459",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21072,
+    "artista": "Sara Bareilles",
+    "titulo": "Kaleidoscope Heart",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T12:27:24.805222",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21078,
+    "artista": "Carrie Underwood",
+    "titulo": "My Savior",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-18T12:32:07.505374",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21079,
+    "artista": "Sara Bareilles",
+    "titulo": "Amidst The Chaos",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-18T12:32:33.571566",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21086,
+    "artista": "Hans Zimmer, Rupert Gregson-Williams",
+    "titulo": "The Crown (Season One Soundtrack)",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-18T12:38:45.142419",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21089,
+    "artista": "Sevdaliza",
+    "titulo": "Shabrang",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-18T12:41:13.224282",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21090,
+    "artista": "Shakira",
+    "titulo": "She Wolf",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T12:42:00.753578",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21094,
+    "artista": "Adele",
+    "titulo": "30",
+    "ano": "2021",
+    "preco": 350,
+    "atualizado_em": "2026-08-18T12:44:08.361879",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21097,
+    "artista": "Norah Jones",
+    "titulo": "...Little Broken Hearts",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T12:46:23.092258",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21102,
+    "artista": "Ellie Goulding",
+    "titulo": "Lights IO",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T12:54:21.582775",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21103,
+    "artista": "Shawn Mendes",
+    "titulo": "MTV Unplugged",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-18T12:54:43.27587",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21106,
+    "artista": "Vanessa Carlton",
+    "titulo": "Double Live and Covers",
+    "ano": null,
+    "preco": 450,
+    "atualizado_em": "2026-08-18T12:57:05.38474",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21108,
+    "artista": "Celine Dion",
+    "titulo": "These Are Special Times",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T12:57:55.8857",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21109,
+    "artista": "Carrie Underwood",
+    "titulo": "Storyteller",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T12:58:23.424628",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21110,
+    "artista": "Carrie Underwood",
+    "titulo": "Greatest Hits: Decade #1",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-18T12:59:38.534976",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21111,
+    "artista": "Sara Bareilles",
+    "titulo": "The Blessed Unrest",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T13:00:20.5493",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21112,
+    "artista": "Carrie Underwood",
+    "titulo": "Some Hearts",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-18T13:01:58.631547",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21114,
+    "artista": "Tarja",
+    "titulo": "Act I",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-18T13:02:44.565318",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21115,
+    "artista": "Dido",
+    "titulo": "Still On My Mind",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-18T13:06:17.951624",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21116,
+    "artista": "Soap&skin",
+    "titulo": "From Gas to Solid / You Are My Friend",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-09-26T16:48:17.657",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21123,
+    "artista": "Pearl Jam",
+    "titulo": "Backspacer",
+    "ano": null,
+    "preco": 380,
+    "atualizado_em": "2026-08-18T13:15:26.149674",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21137,
+    "artista": "Birdy",
+    "titulo": "Young Heart",
+    "ano": null,
+    "preco": 380,
+    "atualizado_em": "2026-08-18T13:29:27.209827",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21138,
+    "artista": "Joep Beving",
+    "titulo": "Prehension",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T13:30:13.757082",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21142,
+    "artista": "Soley",
+    "titulo": "We Sink",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-18T13:31:49.2931",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21143,
+    "artista": "Pink Martini",
+    "titulo": "Je Dis Oui!",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-18T13:32:24.891503",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21144,
+    "artista": "Gabrielle Aplin",
+    "titulo": "Light Up The Dark",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-18T13:32:56.674762",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21147,
+    "artista": "Diana Krall",
+    "titulo": "Love Scenes",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-18T13:35:37.536395",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21150,
+    "artista": "Alice Cooper",
+    "titulo": "Detroit Stories",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-18T13:40:03.892671",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21937,
+    "artista": "Alceu Valença",
+    "titulo": "Molhado De Suor",
+    "ano": "2023",
+    "preco": 350,
+    "atualizado_em": "2026-08-21T15:11:16.366337",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21949,
+    "artista": "Softing Machine",
+    "titulo": "Floating World Live",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-21T15:18:46.481252",
+    "caixa": "19",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21968,
+    "artista": "The Midnight Orchestra",
+    "titulo": "The Sound Of The Night",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-21T15:33:42.610367",
+    "caixa": "19",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21991,
+    "artista": "Pingo de Fortaleza",
+    "titulo": "Batuque",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-21T15:53:23.004451",
+    "caixa": "19",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22563,
+    "artista": "The Beatles",
+    "titulo": "The Beatles' Story",
+    "ano": null,
+    "preco": 385,
+    "atualizado_em": "2026-08-25T15:16:06.40121",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22592,
+    "artista": "Pessoal do Ceará",
+    "titulo": "Meu corpo minha embalagem todo gasto na viagem",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-25T16:06:58.061066",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22701,
+    "artista": "Taylor Swift",
+    "titulo": "The life of a showgirl",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-25T18:30:27.947114",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22702,
+    "artista": "Michael Jackson",
+    "titulo": "Dangerous",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-25T18:30:50.975024",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22703,
+    "artista": "Billie Eilish",
+    "titulo": "Happier Than Ever",
+    "ano": null,
+    "preco": 395,
+    "atualizado_em": "2026-08-25T18:31:19.570937",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22708,
+    "artista": "Ana Frango Elétrico",
+    "titulo": "Little Electric Chicken Heart",
+    "ano": "2020",
+    "preco": 400,
+    "atualizado_em": "2026-08-25T18:33:47.782813",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22709,
+    "artista": "Júpiter Maçã",
+    "titulo": "Uma tarde na fruteira",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-25T18:34:14.893624",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22711,
+    "artista": "Jão",
+    "titulo": "Anti-herói",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-25T18:35:25.150985",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22826,
+    "artista": "Rupert Gregson-Williams",
+    "titulo": "Wonder Woman (Original Motion Picture Soundtrack)",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-08-26T14:24:31.418726",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22827,
+    "artista": "Big Little Lies",
+    "titulo": "Big Little Lies - Music from the HBO Limited Series",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-08-26T14:25:15.920961",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 23334,
+    "artista": "Terço",
+    "titulo": "Terço",
+    "ano": "1973",
+    "preco": 350,
+    "atualizado_em": "2026-08-31T17:33:46.112831",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 23425,
+    "artista": "Aphex Twin",
+    "titulo": "Selected Ambient Works",
+    "ano": null,
+    "preco": 350,
+    "atualizado_em": "2026-09-01T12:50:49.393445",
+    "caixa": "52",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 24363,
+    "artista": "Tim Maia",
+    "titulo": "Racional Vol. 2",
+    "ano": "1975",
+    "preco": 350,
+    "atualizado_em": "2026-09-03T17:25:34.741806",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 24668,
+    "artista": "Djavan",
+    "titulo": "Malásia",
+    "ano": "2025",
+    "preco": 350,
+    "atualizado_em": "2026-09-05T13:39:04.707688",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 24688,
+    "artista": "Savoy Brown",
+    "titulo": "Street Corner Talking",
+    "ano": "1971",
+    "preco": 350,
+    "atualizado_em": "2026-09-08T12:52:48.919104",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 24704,
+    "artista": "Vida Nova",
+    "titulo": "Vida Nova",
+    "ano": null,
+    "preco": 450,
+    "atualizado_em": "2026-09-08T18:30:41.276202",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 24705,
+    "artista": "Marlene",
+    "titulo": "Explosiva!",
+    "ano": "1959",
+    "preco": 900,
+    "atualizado_em": "2026-09-08T18:31:03.704656",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 25127,
+    "artista": "Marina Sena",
+    "titulo": "Coisas Naturais",
+    "ano": "2025",
+    "preco": 500,
+    "atualizado_em": "2026-09-10T15:21:16.702829",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 26861,
+    "artista": "Abaeté e Banda Água Cristalina",
+    "titulo": "Nasce Uma Flor",
+    "ano": null,
+    "preco": 400,
+    "atualizado_em": "2026-09-26T16:48:07.32",
+    "caixa": "14",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8248,
+    "artista": "Novos Baianos",
+    "titulo": "1974",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-09-26T16:48:09.37",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8854,
+    "artista": "Tia Neiva",
+    "titulo": "No Limiar do Iii Mil",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-09-26T16:48:29.918",
+    "caixa": "12",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20888,
+    "artista": "Adriana Calcanhotto",
+    "titulo": "A Mulher Do Pau Brasil",
+    "ano": "2018",
+    "preco": 300,
+    "atualizado_em": "2026-08-17T16:15:30.467162",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20934,
+    "artista": "Adriana Partimpim",
+    "titulo": "Partimpim Tlês",
+    "ano": "2012",
+    "preco": 300,
+    "atualizado_em": "2026-08-17T17:15:29.682488",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20957,
+    "artista": " Adriana Calcanhotto",
+    "titulo": "Remix Século XXI",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T17:41:16.307109",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20966,
+    "artista": "Sandy & Junior",
+    "titulo": "Sandy & Junior",
+    "ano": "2006",
+    "preco": 300,
+    "atualizado_em": "2026-08-17T17:50:04.608315",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20987,
+    "artista": " Adriana Calcanhotto",
+    "titulo": "Só",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T18:15:42.832251",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20988,
+    "artista": "Aline Wirley",
+    "titulo": "Indômita",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T18:16:30.092625",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 20989,
+    "artista": "Letuce",
+    "titulo": "Estilhaça",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T18:17:20.028581",
+    "caixa": "49",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21005,
+    "artista": "Lana Del Rey",
+    "titulo": "Violet  Bent Backwards Over The Grass",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T18:39:36.769396",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21028,
+    "artista": "Maria Mena",
+    "titulo": "Apparently Unaffected",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T18:59:32.241714",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21033,
+    "artista": "Wilco",
+    "titulo": "A Ghost Is Born",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-17T19:07:41.45534",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21071,
+    "artista": "Maria Mena",
+    "titulo": "Her Ultimate Collection",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-18T12:26:48.262632",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21074,
+    "artista": "Silvia Machete",
+    "titulo": "Rhonda",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-18T12:29:38.209832",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21076,
+    "artista": "Maria Mena",
+    "titulo": "White Turns Blue",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-18T12:30:48.030349",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21091,
+    "artista": "Shawn Mendes",
+    "titulo": "Wonder",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-18T12:42:33.160333",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 21092,
+    "artista": "Amy Winehouse",
+    "titulo": "The Ska Collection",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-18T12:43:13.330736",
+    "caixa": "51",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 22077,
+    "artista": "Mariza",
+    "titulo": "A Suave",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-21T17:13:42.112615",
+    "caixa": "18",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 23289,
+    "artista": "Toots Thielemans",
+    "titulo": "O Assobiador e sua Guitarra",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-31T13:03:43.921084",
+    "caixa": "20",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 23290,
+    "artista": "Boogarins",
+    "titulo": "Bacuri",
+    "ano": "2025",
+    "preco": 300,
+    "atualizado_em": "2026-08-31T13:08:17.610752",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 23305,
+    "artista": "Bacamarte",
+    "titulo": "Depois do Fim",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-31T13:18:43.389607",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 23306,
+    "artista": "Quarteto em Cy",
+    "titulo": "Quarteto em Cy",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-31T13:19:18.27007",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 23308,
+    "artista": "Joyce",
+    "titulo": "Encontro Marcado",
+    "ano": null,
+    "preco": 300,
+    "atualizado_em": "2026-08-31T13:19:49.706372",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 24686,
+    "artista": "Blue Öyster Cult",
+    "titulo": "Cultösaurus Erectus",
+    "ano": "1980",
+    "preco": 300,
+    "atualizado_em": "2026-09-08T12:51:23.84516",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 24708,
+    "artista": "Various",
+    "titulo": "Caminhada Dos Mártires",
+    "ano": "1986",
+    "preco": 300,
+    "atualizado_em": "2026-09-08T18:32:28.786615",
+    "caixa": "11",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 26811,
+    "artista": "Danzig",
+    "titulo": "Danzig",
+    "ano": "1984",
+    "preco": 300,
+    "atualizado_em": "2026-09-22T12:07:32.411768",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 26821,
+    "artista": "Doris Monteiro",
+    "titulo": "Doris Monteiro",
+    "ano": "1970",
+    "preco": 300,
+    "atualizado_em": "2026-09-22T12:11:27.177021",
+    "caixa": "12",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 27075,
+    "artista": "Caetano Veloso, Gal Costa, Gilberto Gil & Maria Bethânia",
+    "titulo": "Doces Bárbaros",
+    "ano": "1976",
+    "preco": 300,
+    "atualizado_em": "2026-09-26T16:48:07.32",
+    "caixa": "10",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 27251,
+    "artista": "Racionais Mc's",
+    "titulo": "Holocausto Urbano",
+    "ano": "1991",
+    "preco": 300,
+    "atualizado_em": "2026-09-26T16:48:27.644",
+    "caixa": "50",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 27257,
+    "artista": "Novos Baianos",
+    "titulo": "Novos Baianos",
+    "ano": "1974",
+    "preco": 300,
+    "atualizado_em": "2026-09-25T17:53:28.14589",
+    "caixa": "10",
+    "loja": "Loja 1"
+  }
+]
