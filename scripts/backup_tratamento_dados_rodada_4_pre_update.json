@@ -1,0 +1,394 @@
+[
+  {
+    "id": 7555,
+    "artista": "",
+    "titulo": "Rock Made in Germany '79",
+    "atualizado_em": "2026-08-10T20:43:45.959097",
+    "caixa": "6",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7842,
+    "artista": "",
+    "titulo": "The Killers (Coletanea de Artistas Antigos)",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "7",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7947,
+    "artista": "",
+    "titulo": "Aquarius Band",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 7983,
+    "artista": "",
+    "titulo": "Zabriskie Point",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "8",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8055,
+    "artista": "",
+    "titulo": "A bienal do samba",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 8158,
+    "artista": "",
+    "titulo": "Gaya",
+    "atualizado_em": "2026-08-10T20:43:46.872481",
+    "caixa": "9",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9011,
+    "artista": "",
+    "titulo": "Ultra Leve",
+    "atualizado_em": "2026-08-10T20:43:48.696474",
+    "caixa": "13",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9365,
+    "artista": "",
+    "titulo": "Os Muiraquitans no Carimbo (OBS: CAPA)",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "15",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 9472,
+    "artista": "",
+    "titulo": "Show 1° de Maio",
+    "atualizado_em": "2026-08-10T20:43:49.59896",
+    "caixa": "16",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 10952,
+    "artista": "",
+    "titulo": "A Musica de Paulo Vanzolini/Carmem Costa/Paulo Marquez",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 10971,
+    "artista": "",
+    "titulo": "LOS MANEROS",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 10991,
+    "artista": "",
+    "titulo": "II festival internacional da cançao popular rio",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11034,
+    "artista": "",
+    "titulo": "Os diplomatas no samba com Paulo Roberto ao orgao",
+    "atualizado_em": "2026-08-10T20:43:52.378216",
+    "caixa": "24",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11291,
+    "artista": "",
+    "titulo": "1a Cantoria da Musica Nordestina",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11400,
+    "artista": "",
+    "titulo": "Trio Tamoyo interpreta Ritmos Variados",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "26",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11491,
+    "artista": "",
+    "titulo": "Coompor canta lupi",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "27",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11537,
+    "artista": "",
+    "titulo": "Benito Juarez interpretam Carlos Gomes e Almeida Prado",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "27",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11625,
+    "artista": "",
+    "titulo": "Ai Vem a Sonora Matancera com Celio Gonzalez",
+    "atualizado_em": "2026-08-10T20:43:53.288965",
+    "caixa": "27",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11782,
+    "artista": "",
+    "titulo": "Black Power Volume 2",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11784,
+    "artista": "",
+    "titulo": "Black Power Volume 1",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "29",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 11910,
+    "artista": "",
+    "titulo": "King Jammy All Stars",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "28",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12077,
+    "artista": "",
+    "titulo": "Super Soul Hits Vol.II",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12083,
+    "artista": "",
+    "titulo": "Jermaine",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12128,
+    "artista": "",
+    "titulo": "Syreeta",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12135,
+    "artista": "",
+    "titulo": "40 Super Oldies",
+    "atualizado_em": "2026-08-10T20:43:54.199743",
+    "caixa": "30",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12426,
+    "artista": "",
+    "titulo": "Uma Tetulias no Maguary com Ivanildo e seu Conjunto",
+    "atualizado_em": "2026-08-10T20:43:55.113442",
+    "caixa": "32",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12836,
+    "artista": "",
+    "titulo": "Idelberto Nascimento apresenta o Bregao",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "34",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 12874,
+    "artista": "",
+    "titulo": "Adalbert Lutter",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "35",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13132,
+    "artista": "",
+    "titulo": "Quarteto Em",
+    "atualizado_em": "2026-08-10T20:43:56.035753",
+    "caixa": "36",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13268,
+    "artista": "",
+    "titulo": "Os 8 Baixos de Rato Branco",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "37",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13327,
+    "artista": "",
+    "titulo": "16 Italo Hits (IMP)",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "38",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13458,
+    "artista": "",
+    "titulo": "Bravissimo 1983 (IMP)",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "39",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13582,
+    "artista": "",
+    "titulo": "Explosao Mundial Vol.4",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "40",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13632,
+    "artista": "",
+    "titulo": "As 14 Mais Vol.21",
+    "atualizado_em": "2026-08-10T20:43:56.935708",
+    "caixa": "40",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13713,
+    "artista": "",
+    "titulo": "Jovem Hits Pan 2",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "41",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13800,
+    "artista": "",
+    "titulo": "Uri Geller 1976 (OBS: Capa)",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13819,
+    "artista": "",
+    "titulo": "Play Bach Volume 1",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13874,
+    "artista": "",
+    "titulo": "The Best Of Chris Barber & Bilk Acker (IMP)",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13918,
+    "artista": "",
+    "titulo": "Tootsie",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "42",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13950,
+    "artista": "",
+    "titulo": "The Melodic Sound of Gao's Piano",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 13971,
+    "artista": "",
+    "titulo": "Fathers and Sons",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14022,
+    "artista": "",
+    "titulo": "How to Save a Marriage and Ruin Your Life",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14050,
+    "artista": "",
+    "titulo": "New York e outros sucessos do cinema",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14098,
+    "artista": "",
+    "titulo": "The Karate Kid Part II",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "43",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14142,
+    "artista": "",
+    "titulo": "Tukley",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14173,
+    "artista": "",
+    "titulo": "Newport in New York '72",
+    "atualizado_em": "2026-08-10T20:43:57.844703",
+    "caixa": "44",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14661,
+    "artista": "",
+    "titulo": "As 14 Mais do Festival de San Remo",
+    "atualizado_em": "2026-08-10T20:43:58.752185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14730,
+    "artista": "",
+    "titulo": "Sarah + 2 (OBS: CAPA)",
+    "atualizado_em": "2026-08-10T20:43:59.682185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  },
+  {
+    "id": 14742,
+    "artista": "",
+    "titulo": "Now 12 Top Hits",
+    "atualizado_em": "2026-08-10T20:43:59.682185",
+    "caixa": "47",
+    "loja": "Loja 1"
+  }
+]

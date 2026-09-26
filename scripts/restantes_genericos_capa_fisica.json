@@ -88,17 +88,6 @@
     "preco": 250
   },
   {
-    "id": 7555,
-    "artista": "",
-    "titulo": "Rock Made in Germany '79",
-    "categoria": "Caixote Importados",
-    "caixa": "6",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 150
-  },
-  {
     "id": 7810,
     "artista": "",
     "titulo": "The People Tree",
@@ -108,17 +97,6 @@
     "observacao": null,
     "ano": null,
     "preco": 80
-  },
-  {
-    "id": 7842,
-    "artista": "",
-    "titulo": "The Killers (Coletanea de Artistas Antigos)",
-    "categoria": "Classic Rock",
-    "caixa": "7",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 100
   },
   {
     "id": 7845,
@@ -154,17 +132,6 @@
     "preco": 100
   },
   {
-    "id": 7947,
-    "artista": "",
-    "titulo": "Aquarius Band",
-    "categoria": "Classic Rock",
-    "caixa": "8",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": "1971",
-    "preco": 120
-  },
-  {
     "id": 7963,
     "artista": "",
     "titulo": "Hot Road",
@@ -176,17 +143,6 @@
     "preco": 95
   },
   {
-    "id": 7983,
-    "artista": "",
-    "titulo": "Zabriskie Point",
-    "categoria": "Classic Rock",
-    "caixa": "8",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 120
-  },
-  {
     "id": 8017,
     "artista": "",
     "titulo": "Gaz",
@@ -196,17 +152,6 @@
     "observacao": null,
     "ano": "1979",
     "preco": 150
-  },
-  {
-    "id": 8055,
-    "artista": "",
-    "titulo": "A bienal do samba",
-    "categoria": "Música Brasileira",
-    "caixa": "9",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 100
   },
   {
     "id": 8059,
@@ -251,17 +196,6 @@
     "observacao": null,
     "ano": null,
     "preco": 75
-  },
-  {
-    "id": 8158,
-    "artista": "",
-    "titulo": "Gaya",
-    "categoria": "Música Brasileira",
-    "caixa": "9",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": "1970",
-    "preco": 180
   },
   {
     "id": 8303,
@@ -418,17 +352,6 @@
     "preco": 85
   },
   {
-    "id": 9011,
-    "artista": "",
-    "titulo": "Ultra Leve",
-    "categoria": "Rock Nacional",
-    "caixa": "13",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 100
-  },
-  {
     "id": 9075,
     "artista": "",
     "titulo": "Como é bom ser PUNK",
@@ -550,17 +473,6 @@
     "preco": 85
   },
   {
-    "id": 9365,
-    "artista": "",
-    "titulo": "Os Muiraquitans no Carimbo (OBS: CAPA)",
-    "categoria": "Brasileiro Geral",
-    "caixa": "15",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 65
-  },
-  {
     "id": 9445,
     "artista": "",
     "titulo": "País de Caruaru",
@@ -570,17 +482,6 @@
     "observacao": null,
     "ano": null,
     "preco": 150
-  },
-  {
-    "id": 9472,
-    "artista": "",
-    "titulo": "Show 1° de Maio",
-    "categoria": "Brasileiro Geral",
-    "caixa": "16",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 75
   },
   {
     "id": 9616,
@@ -759,17 +660,6 @@
     "preco": 50
   },
   {
-    "id": 10952,
-    "artista": "",
-    "titulo": "A Musica de Paulo Vanzolini/Carmem Costa/Paulo Marquez",
-    "categoria": "Regionais",
-    "caixa": "24",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 60
-  },
-  {
     "id": 10957,
     "artista": "",
     "titulo": "Ediçao historica bossa nova vol 11",
@@ -801,39 +691,6 @@
     "observacao": null,
     "ano": null,
     "preco": 50
-  },
-  {
-    "id": 10971,
-    "artista": "",
-    "titulo": "LOS MANEROS",
-    "categoria": "Regionais",
-    "caixa": "24",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 85
-  },
-  {
-    "id": 10991,
-    "artista": "",
-    "titulo": "II festival internacional da cançao popular rio",
-    "categoria": "Regionais",
-    "caixa": "24",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 50
-  },
-  {
-    "id": 11034,
-    "artista": "",
-    "titulo": "Os diplomatas no samba com Paulo Roberto ao orgao",
-    "categoria": "Regionais",
-    "caixa": "24",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 60
   },
   {
     "id": 11051,
@@ -946,17 +803,6 @@
     "preco": 120
   },
   {
-    "id": 11291,
-    "artista": "",
-    "titulo": "1a Cantoria da Musica Nordestina",
-    "categoria": "Regionais",
-    "caixa": "26",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 75
-  },
-  {
     "id": 11313,
     "artista": "",
     "titulo": "Capital do frevo Volume 4",
@@ -977,17 +823,6 @@
     "observacao": null,
     "ano": null,
     "preco": 80
-  },
-  {
-    "id": 11400,
-    "artista": "",
-    "titulo": "Trio Tamoyo interpreta Ritmos Variados",
-    "categoria": "Regionais",
-    "caixa": "26",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 100
   },
   {
     "id": 11426,
@@ -1012,31 +847,9 @@
     "preco": 50
   },
   {
-    "id": 11491,
-    "artista": "",
-    "titulo": "Coompor canta lupi",
-    "categoria": "Regionais",
-    "caixa": "27",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 80
-  },
-  {
     "id": 11505,
     "artista": "",
     "titulo": "Acalantos brasileiros",
-    "categoria": "Regionais",
-    "caixa": "27",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 50
-  },
-  {
-    "id": 11537,
-    "artista": "",
-    "titulo": "Benito Juarez interpretam Carlos Gomes e Almeida Prado",
     "categoria": "Regionais",
     "caixa": "27",
     "loja": "Loja 1",
@@ -1076,17 +889,6 @@
     "observacao": null,
     "ano": null,
     "preco": 50
-  },
-  {
-    "id": 11625,
-    "artista": "",
-    "titulo": "Ai Vem a Sonora Matancera com Celio Gonzalez",
-    "categoria": "Regionais",
-    "caixa": "27",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 75
   },
   {
     "id": 11641,
@@ -1155,28 +957,6 @@
     "preco": 100
   },
   {
-    "id": 11782,
-    "artista": "",
-    "titulo": "Black Power Volume 2",
-    "categoria": "Jazz e Blues",
-    "caixa": "29",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 120
-  },
-  {
-    "id": 11784,
-    "artista": "",
-    "titulo": "Black Power Volume 1",
-    "categoria": "Jazz e Blues",
-    "caixa": "29",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 100
-  },
-  {
     "id": 11785,
     "artista": "",
     "titulo": "Passion",
@@ -1221,17 +1001,6 @@
     "preco": 95
   },
   {
-    "id": 11910,
-    "artista": "",
-    "titulo": "King Jammy All Stars",
-    "categoria": "Jazz e Blues",
-    "caixa": "28",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 70
-  },
-  {
     "id": 11951,
     "artista": "",
     "titulo": "Sons & Efeitos II",
@@ -1274,50 +1043,6 @@
     "observacao": null,
     "ano": null,
     "preco": 70
-  },
-  {
-    "id": 12077,
-    "artista": "",
-    "titulo": "Super Soul Hits Vol.II",
-    "categoria": "Black Music e Reggae",
-    "caixa": "30",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 100
-  },
-  {
-    "id": 12083,
-    "artista": "",
-    "titulo": "Jermaine",
-    "categoria": "Black Music e Reggae",
-    "caixa": "30",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 80
-  },
-  {
-    "id": 12128,
-    "artista": "",
-    "titulo": "Syreeta",
-    "categoria": "Black Music e Reggae",
-    "caixa": "30",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": "1980",
-    "preco": 95
-  },
-  {
-    "id": 12135,
-    "artista": "",
-    "titulo": "40 Super Oldies",
-    "categoria": "Black Music e Reggae",
-    "caixa": "30",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 90
   },
   {
     "id": 12179,
@@ -1406,17 +1131,6 @@
     "observacao": null,
     "ano": null,
     "preco": 50
-  },
-  {
-    "id": 12426,
-    "artista": "",
-    "titulo": "Uma Tetulias no Maguary com Ivanildo e seu Conjunto",
-    "categoria": "Bregas",
-    "caixa": "32",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 120
   },
   {
     "id": 12453,
@@ -1540,17 +1254,6 @@
     "preco": 35
   },
   {
-    "id": 12836,
-    "artista": "",
-    "titulo": "Idelberto Nascimento apresenta o Bregao",
-    "categoria": "Bregas",
-    "caixa": "34",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 50
-  },
-  {
     "id": 12838,
     "artista": "",
     "titulo": "Musica Popular do Centro Oeste Sudeste 2",
@@ -1582,17 +1285,6 @@
     "observacao": null,
     "ano": null,
     "preco": 80
-  },
-  {
-    "id": 12874,
-    "artista": "",
-    "titulo": "Adalbert Lutter",
-    "categoria": "Bregas",
-    "caixa": "35",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 30
   },
   {
     "id": 12900,
@@ -1661,17 +1353,6 @@
     "preco": 45
   },
   {
-    "id": 13132,
-    "artista": "",
-    "titulo": "Quarteto Em",
-    "categoria": "Bregas",
-    "caixa": "36",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 60
-  },
-  {
     "id": 13186,
     "artista": "",
     "titulo": "Guitarradas vol 5",
@@ -1705,17 +1386,6 @@
     "preco": 50
   },
   {
-    "id": 13268,
-    "artista": "",
-    "titulo": "Os 8 Baixos de Rato Branco",
-    "categoria": "Bregas",
-    "caixa": "37",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 55
-  },
-  {
     "id": 13273,
     "artista": "",
     "titulo": "Forro no Sertao",
@@ -1738,17 +1408,6 @@
     "preco": 50
   },
   {
-    "id": 13327,
-    "artista": "",
-    "titulo": "16 Italo Hits (IMP)",
-    "categoria": "Entrada Lado Esquerdo",
-    "caixa": "38",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 60
-  },
-  {
     "id": 13337,
     "artista": "",
     "titulo": "Greece",
@@ -1769,17 +1428,6 @@
     "observacao": null,
     "ano": null,
     "preco": 60
-  },
-  {
-    "id": 13458,
-    "artista": "",
-    "titulo": "Bravissimo 1983 (IMP)",
-    "categoria": "Entrada Lado Esquerdo",
-    "caixa": "39",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 50
   },
   {
     "id": 13545,
@@ -1826,17 +1474,6 @@
     "preco": 30
   },
   {
-    "id": 13582,
-    "artista": "",
-    "titulo": "Explosao Mundial Vol.4",
-    "categoria": "Entrada Lado Esquerdo",
-    "caixa": "40",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 30
-  },
-  {
     "id": 13603,
     "artista": "",
     "titulo": "12 Succes (IMP)",
@@ -1851,17 +1488,6 @@
     "id": 13614,
     "artista": "",
     "titulo": "In Love",
-    "categoria": "Entrada Lado Esquerdo",
-    "caixa": "40",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 25
-  },
-  {
-    "id": 13632,
-    "artista": "",
-    "titulo": "As 14 Mais Vol.21",
     "categoria": "Entrada Lado Esquerdo",
     "caixa": "40",
     "loja": "Loja 1",
@@ -1914,28 +1540,6 @@
     "preco": 45
   },
   {
-    "id": 13713,
-    "artista": "",
-    "titulo": "Jovem Hits Pan 2",
-    "categoria": "Entrada Lado Esquerdo",
-    "caixa": "41",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 40
-  },
-  {
-    "id": 13800,
-    "artista": "",
-    "titulo": "Uri Geller 1976 (OBS: Capa)",
-    "categoria": "Banheiro Direita",
-    "caixa": "42",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 25
-  },
-  {
     "id": 13802,
     "artista": "",
     "titulo": "Napoli Canta",
@@ -1969,17 +1573,6 @@
     "preco": 30
   },
   {
-    "id": 13819,
-    "artista": "",
-    "titulo": "Play Bach Volume 1",
-    "categoria": "Banheiro Direita",
-    "caixa": "42",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 20
-  },
-  {
     "id": 13820,
     "artista": "",
     "titulo": "Missa Jazz",
@@ -2000,17 +1593,6 @@
     "observacao": null,
     "ano": null,
     "preco": 50
-  },
-  {
-    "id": 13874,
-    "artista": "",
-    "titulo": "The Best Of Chris Barber & Bilk Acker (IMP)",
-    "categoria": "Banheiro Direita",
-    "caixa": "42",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 110
   },
   {
     "id": 13881,
@@ -2035,17 +1617,6 @@
     "preco": 85
   },
   {
-    "id": 13918,
-    "artista": "",
-    "titulo": "Tootsie",
-    "categoria": "Banheiro Direita",
-    "caixa": "42",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 50
-  },
-  {
     "id": 13924,
     "artista": "",
     "titulo": "Decada Explosiva",
@@ -2066,28 +1637,6 @@
     "observacao": null,
     "ano": null,
     "preco": 20
-  },
-  {
-    "id": 13950,
-    "artista": "",
-    "titulo": "The Melodic Sound of Gao's Piano",
-    "categoria": "Banheiro Direita",
-    "caixa": "43",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 80
-  },
-  {
-    "id": 13971,
-    "artista": "",
-    "titulo": "Fathers and Sons",
-    "categoria": "Banheiro Direita",
-    "caixa": "43",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": "1982",
-    "preco": 60
   },
   {
     "id": 14001,
@@ -2112,17 +1661,6 @@
     "preco": 85
   },
   {
-    "id": 14022,
-    "artista": "",
-    "titulo": "How to Save a Marriage and Ruin Your Life",
-    "categoria": "Banheiro Direita",
-    "caixa": "43",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 30
-  },
-  {
     "id": 14048,
     "artista": "",
     "titulo": "SILVER",
@@ -2132,17 +1670,6 @@
     "observacao": null,
     "ano": null,
     "preco": 50
-  },
-  {
-    "id": 14050,
-    "artista": "",
-    "titulo": "New York e outros sucessos do cinema",
-    "categoria": "Banheiro Direita",
-    "caixa": "43",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 30
   },
   {
     "id": 14063,
@@ -2181,17 +1708,6 @@
     "id": 14096,
     "artista": "",
     "titulo": "Flash Back Hits",
-    "categoria": "Banheiro Direita",
-    "caixa": "43",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 45
-  },
-  {
-    "id": 14098,
-    "artista": "",
-    "titulo": "The Karate Kid Part II",
     "categoria": "Banheiro Direita",
     "caixa": "43",
     "loja": "Loja 1",
@@ -2244,17 +1760,6 @@
     "preco": 50
   },
   {
-    "id": 14142,
-    "artista": "",
-    "titulo": "Tukley",
-    "categoria": "Banheiro Direita",
-    "caixa": "44",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": "1980",
-    "preco": 40
-  },
-  {
     "id": 14144,
     "artista": "",
     "titulo": "Historia de Um Amor",
@@ -2297,17 +1802,6 @@
     "observacao": null,
     "ano": "1974",
     "preco": 30
-  },
-  {
-    "id": 14173,
-    "artista": "",
-    "titulo": "Newport in New York '72",
-    "categoria": "Banheiro Direita",
-    "caixa": "44",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 80
   },
   {
     "id": 14190,
@@ -2420,17 +1914,6 @@
     "preco": 30
   },
   {
-    "id": 14661,
-    "artista": "",
-    "titulo": "As 14 Mais do Festival de San Remo",
-    "categoria": "Banheiro Esquerdo",
-    "caixa": "47",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": "1968",
-    "preco": 50
-  },
-  {
     "id": 14687,
     "artista": "",
     "titulo": "Os Pais dos Nordestinos",
@@ -2464,17 +1947,6 @@
     "preco": 40
   },
   {
-    "id": 14730,
-    "artista": "",
-    "titulo": "Sarah + 2 (OBS: CAPA)",
-    "categoria": "Banheiro Esquerdo",
-    "caixa": "47",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 30
-  },
-  {
     "id": 14734,
     "artista": "",
     "titulo": "Os Melhores",
@@ -2484,16 +1956,5 @@
     "observacao": null,
     "ano": "1985",
     "preco": 40
-  },
-  {
-    "id": 14742,
-    "artista": "",
-    "titulo": "Now 12 Top Hits",
-    "categoria": "Banheiro Esquerdo",
-    "caixa": "47",
-    "loja": "Loja 1",
-    "observacao": null,
-    "ano": null,
-    "preco": 30
   }
 ]
