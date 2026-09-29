@@ -119,6 +119,9 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
           Html5QrcodeSupportedFormats.QR_CODE,
         ],
         verbose: false,
+        experimentalFeatures: {
+          useBarCodeDetectorIfSupported: true,
+        },
       });
 
       scannerRef.current = html5QrCode;
@@ -152,20 +155,82 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
         return { width: Math.max(220, width), height: Math.max(140, height) };
       };
 
-      await html5QrCode.start(
-        cameraToUse,
-        {
-          fps: 15,
-          qrbox: qrboxFunction,
-          aspectRatio: 1.333333,
-        },
-        (decodedText) => {
-          handleDetected(decodedText);
-        },
-        () => {
-          // Frame sem código detectado (normal)
+      // Configuração de alta resolução e foco contínuo exclusivo para código de barras
+      const videoConstraints = {
+        ...(preferredCameraId 
+          ? { deviceId: { exact: preferredCameraId } } 
+          : { facingMode: { ideal: 'environment' } }),
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        advanced: [{ focusMode: 'continuous' }],
+      };
+
+      try {
+        await html5QrCode.start(
+          cameraToUse,
+          {
+            fps: 20,
+            qrbox: qrboxFunction,
+            aspectRatio: 1.333333,
+            videoConstraints,
+          },
+          (decodedText) => {
+            handleDetected(decodedText);
+          },
+          () => {
+            // Frame sem código detectado (normal)
+          }
+        );
+      } catch (startErr) {
+        console.warn('Tentativa com videoConstraints avançadas falhou, iniciando fallback padrão:', startErr);
+        await html5QrCode.start(
+          cameraToUse,
+          {
+            fps: 15,
+            qrbox: qrboxFunction,
+            aspectRatio: 1.333333,
+          },
+          (decodedText) => {
+            handleDetected(decodedText);
+          },
+          () => {}
+        );
+      }
+
+      // Aplicar otimizações de foco contínuo e zoom na track ativa
+      try {
+        const videoElem = document.querySelector('#barcode-reader-container video');
+        const track = videoElem?.srcObject?.getVideoTracks?.()[0];
+        if (track && track.getCapabilities) {
+          const caps = track.getCapabilities();
+          const advanced = [];
+
+          if (caps.focusMode) {
+            if (caps.focusMode.includes('continuous')) {
+              advanced.push({ focusMode: 'continuous' });
+            } else if (caps.focusMode.includes('macro')) {
+              advanced.push({ focusMode: 'macro' });
+            }
+          }
+
+          // Leve zoom (1.25x a 1.4x) se suportado, para evitar que o usuário precise
+          // aproximar além da distância focal mínima do sensor (que causa borrão físico)
+          if (caps.zoom) {
+            const minZ = caps.zoom.min || 1;
+            const maxZ = caps.zoom.max || 1;
+            const zoomIdeal = Math.min(maxZ, Math.max(minZ, 1.3));
+            if (zoomIdeal > minZ) {
+              advanced.push({ zoom: zoomIdeal });
+            }
+          }
+
+          if (advanced.length > 0) {
+            await track.applyConstraints({ advanced });
+          }
         }
-      );
+      } catch (trackErr) {
+        console.warn('Ajuste fino de foco/zoom na track não suportado:', trackErr);
+      }
 
       setIsStarting(false);
     } catch (err) {
@@ -176,6 +241,23 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
           ? 'Permissão de acesso à câmera negada. Habilite a câmera nas configurações do seu navegador para escanear.'
           : 'Não foi possível acessar a câmera. Digite o código de barras manualmente abaixo.'
       );
+    }
+  };
+
+  const triggerFocus = async () => {
+    try {
+      const videoElem = document.querySelector('#barcode-reader-container video');
+      const track = videoElem?.srcObject?.getVideoTracks?.()[0];
+      if (track && track.getCapabilities) {
+        const caps = track.getCapabilities();
+        if (caps.focusMode && (caps.focusMode.includes('continuous') || caps.focusMode.includes('macro'))) {
+          await track.applyConstraints({
+            advanced: [{ focusMode: caps.focusMode.includes('continuous') ? 'continuous' : 'macro' }]
+          });
+        }
+      }
+    } catch (e) {
+      // silencioso
     }
   };
 
@@ -223,7 +305,12 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
           </button>
         </div>
 
-        <div className="scanner-viewfinder-wrapper">
+        <div 
+          className="scanner-viewfinder-wrapper" 
+          onClick={triggerFocus}
+          title="Toque para refocar"
+          style={{ cursor: 'pointer' }}
+        >
           <div id="barcode-reader-container" style={{ width: '100%', minHeight: '260px' }} />
 
           {isStarting && !erroCamera && (
@@ -247,7 +334,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
         <div className="scanner-modal-footer">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-              Aponte a câmera para o código no verso do vinil ou CD
+              Aponte para o código (toque no vídeo para refocar)
             </span>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <input 
