@@ -200,15 +200,7 @@ export default function AdicionarItem() {
           setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${data.results.length} edições encontradas. Escolha uma abaixo.` });
         }
       } else {
-        const fallbackRes = await fetch(`/api/discogs?q=${encodeURIComponent(barcode)}`);
-        const fallbackData = await fallbackRes.json();
-        if (fallbackData.results && fallbackData.results.length > 0) {
-          setDiscogsResults(fallbackData.results);
-          setShowDiscogsDropdown(true);
-          setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${fallbackData.results.length} edições encontradas.` });
-        } else {
-          setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado no Discogs para o código de barras "${barcode}".` });
-        }
+        setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado no Discogs para o código de barras "${barcode}".` });
       }
     } catch (err) {
       console.error(err);
