@@ -44,6 +44,11 @@ function EditarExcluirContent() {
   const [mensagem, setMensagem] = useState(null);
   const [confirmarExclusao, setConfirmarExclusao] = useState(null);
 
+  // Pré-carrega o leitor de código de barras em background para abertura instantânea
+  useEffect(() => {
+    import('@/components/BarcodeScannerModal');
+  }, []);
+
   // Auto-dismiss para alertas de feedback (desocupa espaço do viewport mobile após 5 segundos)
   useEffect(() => {
     if (!mensagem) return;

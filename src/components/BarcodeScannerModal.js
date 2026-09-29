@@ -219,7 +219,7 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
     try {
       await stopScanner();
 
-      // Suporta EXCLUSIVAMENTE formatos de comércio de discos/CDs (elimina Code 39 que gera falsos números)
+      // Suporta EXCLUSIVAMENTE formatos de comércio de discos/CDs
       const html5QrCode = new Html5Qrcode('barcode-reader-container', {
         formatsToSupport: [
           Html5QrcodeSupportedFormats.EAN_13,
@@ -236,72 +236,47 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
 
       scannerRef.current = html5QrCode;
 
-      // Obter lista de câmeras disponíveis
-      const devices = await Html5Qrcode.getCameras();
-      setCameras(devices || []);
-
-      let cameraToUse;
-      if (preferredCameraId) {
-        cameraToUse = { deviceId: { exact: preferredCameraId } };
-        setCameraIdAtiva(preferredCameraId);
-      } else {
-        // Sem forçar deviceId prévio para permitir que o navegador mobile
-        // escolha a lente traseira principal padrão (com foco automático verdadeiro)
-        cameraToUse = { facingMode: 'environment' };
-        if (devices && devices.length > 0) {
-          setCameraIdAtiva(devices[0].id);
-        }
-      }
+      // Inicia imediatamente com a câmera traseira padrão sem travar a UI aguardando enumeração
+      const cameraToUse = preferredCameraId 
+        ? { deviceId: { exact: preferredCameraId } } 
+        : { facingMode: 'environment' };
 
       const qrboxFunction = (viewfinderWidth, viewfinderHeight) => {
-        // Enquadramento horizontal calibrado para código de barras de vinis/CDs
         const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
         const width = Math.floor(minEdge * 0.88);
         const height = Math.floor(width * 0.48);
         return { width: Math.max(220, width), height: Math.max(110, height) };
       };
 
-      // Resolução 720p ideal: proporciona ótima nitidez por barra com altíssimo framerate e foco estável
-      const videoConstraints = {
-        ...(preferredCameraId 
-          ? { deviceId: { exact: preferredCameraId } } 
-          : { facingMode: { ideal: 'environment' } }),
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        advanced: [{ focusMode: 'continuous' }],
-      };
+      // Inicialização direta instantânea
+      await html5QrCode.start(
+        cameraToUse,
+        {
+          fps: 20,
+          qrbox: qrboxFunction,
+          aspectRatio: 1.333333,
+        },
+        (decodedText) => {
+          handleRawScan(decodedText);
+        },
+        () => {}
+      );
 
-      try {
-        await html5QrCode.start(
-          cameraToUse,
-          {
-            fps: 20,
-            qrbox: qrboxFunction,
-            aspectRatio: 1.333333,
-            videoConstraints,
-          },
-          (decodedText) => {
-            handleRawScan(decodedText);
-          },
-          () => {}
-        );
-      } catch (startErr) {
-        console.warn('Tentativa com videoConstraints avançadas falhou, fallback padrão:', startErr);
-        await html5QrCode.start(
-          cameraToUse,
-          {
-            fps: 15,
-            qrbox: qrboxFunction,
-            aspectRatio: 1.333333,
-          },
-          (decodedText) => {
-            handleRawScan(decodedText);
-          },
-          () => {}
-        );
-      }
+      setIsStarting(false);
 
-      // Detecção de hardware: Foco Contínuo, Lanterna (Flash) e Zoom Digital/Óptico
+      // Obter lista de câmeras em background (assíncrono sem bloquear a abertura)
+      Html5Qrcode.getCameras().then(devices => {
+        if (devices && devices.length > 0) {
+          setCameras(devices);
+          if (preferredCameraId) {
+            setCameraIdAtiva(preferredCameraId);
+          } else {
+            setCameraIdAtiva(devices[0].id);
+          }
+        }
+      }).catch(() => {});
+
+      // Detecção de hardware: Foco Contínuo, Lanterna e Zoom na track já em execução
       try {
         const videoElem = document.querySelector('#barcode-reader-container video');
         const track = videoElem?.srcObject?.getVideoTracks?.()[0];
@@ -327,7 +302,6 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
           if (caps.zoom && caps.zoom.max > 1) {
             setHasZoom(true);
             setZoomCapabilities({ min: caps.zoom.min || 1, max: caps.zoom.max });
-            // Zoom inicial de 1.4x evita aproximação excessiva que desfoca o sensor
             const initialZoom = Math.min(caps.zoom.max, Math.max(caps.zoom.min || 1, 1.4));
             setZoomLevel(initialZoom);
             advanced.push({ zoom: initialZoom });
@@ -342,8 +316,6 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
       } catch (trackErr) {
         console.warn('Ajuste de capacidades da câmera não suportado neste aparelho:', trackErr);
       }
-
-      setIsStarting(false);
     } catch (err) {
       console.error('Erro ao iniciar câmera:', err);
       setIsStarting(false);
@@ -366,11 +338,8 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
 
   useEffect(() => {
     if (isOpen) {
-      const timer = setTimeout(() => {
-        startScanner();
-      }, 150);
+      startScanner();
       return () => {
-        clearTimeout(timer);
         stopScanner();
       };
     } else {

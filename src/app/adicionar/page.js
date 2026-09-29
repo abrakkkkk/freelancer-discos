@@ -43,6 +43,11 @@ export default function AdicionarItem() {
   const [customCaixaMode, setCustomCaixaMode] = useState(false);
   const [mensagem, setMensagem] = useState(null);
 
+  // Pré-carrega o leitor de código de barras em background para abertura instantânea
+  useEffect(() => {
+    import('@/components/BarcodeScannerModal');
+  }, []);
+
   // Auto-dismiss para alertas de feedback (desocupa espaço do viewport mobile após 5 segundos)
   useEffect(() => {
     if (!mensagem) return;
