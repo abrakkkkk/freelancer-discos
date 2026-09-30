@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { PiVinylRecord } from 'react-icons/pi';
+import { PiVinylRecord, PiDisc } from 'react-icons/pi';
 
 export const memoryCoverCache = new Map();
 
@@ -21,28 +21,27 @@ export function clearAlbumCoverCache(id) {
   }
 }
 
-export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUrl = null }) {
+export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUrl = null, tipo = 'discos' }) {
   const [coverUrl, setCoverUrl] = useState(capaUrl || null);
   const [loading, setLoading] = useState(!capaUrl);
 
   useEffect(() => {
-    if (capaUrl) {
-      setCoverUrl(capaUrl);
-      setLoading(false);
-      const cleanAno = ano && String(ano) !== 'null' ? String(ano).trim() : '';
-      const q = `${artista || ''} ${titulo || ''}`.trim();
-      const qKey = `${q} ${cleanAno}`.trim().toLowerCase();
-      setAlbumCoverCache(id, qKey, capaUrl);
-      return;
-    }
-
-    let isMounted = true;
     const cleanAno = ano && String(ano) !== 'null' ? String(ano).trim() : '';
     const q = `${artista || ''} ${titulo || ''}`.trim();
     const qWithAno = `${q} ${cleanAno}`.trim();
     const qKey = qWithAno.toLowerCase();
-    // Inclui a chave da busca (artista + titulo + ano) para invalidar automaticamente se o disco for editado
-    const cacheKey = id ? `${id}_${qKey}` : qKey;
+    const scopedId = id ? (tipo ? `${tipo}_${id}` : String(id)) : '';
+
+    if (capaUrl) {
+      setCoverUrl(capaUrl);
+      setLoading(false);
+      setAlbumCoverCache(scopedId || id, qKey, capaUrl);
+      return;
+    }
+
+    let isMounted = true;
+    // Inclui namespace do tipo e chave da busca (artista + titulo + ano) para isolamento
+    const cacheKey = scopedId ? `${scopedId}_${qKey}` : (id ? `${id}_${qKey}` : qKey);
 
     if (!cacheKey || !q) {
       setCoverUrl(null);
@@ -72,13 +71,14 @@ export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUr
     setCoverUrl(null);
     setLoading(true);
 
-    // 3. Buscar na API com versão da query (evita cache HTTP antigo do navegador)
+    // 3. Buscar na API com versão da query e tipo
     const controller = new AbortController();
 
     async function fetchCover() {
       try {
         const anoParam = cleanAno ? `&ano=${encodeURIComponent(cleanAno)}` : '';
-        const res = await fetch(`/api/cover?id=${encodeURIComponent(id || '')}&q=${encodeURIComponent(q)}${anoParam}&v=${encodeURIComponent(qKey)}`, {
+        const tipoParam = tipo ? `&tipo=${encodeURIComponent(tipo)}` : '';
+        const res = await fetch(`/api/cover?id=${encodeURIComponent(id || '')}&q=${encodeURIComponent(q)}${anoParam}${tipoParam}&v=${encodeURIComponent(qKey)}`, {
           signal: controller.signal
         });
         if (!res.ok) throw new Error('Cover fetch failed');
@@ -109,7 +109,7 @@ export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUr
       isMounted = false;
       controller.abort();
     };
-  }, [artista, titulo, ano, id, capaUrl]);
+  }, [artista, titulo, ano, id, capaUrl, tipo]);
 
   const containerStyle = {
     width: `${size}px`,
@@ -149,11 +149,19 @@ export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUr
 
   return (
     <div style={containerStyle} className="album-cover-container album-cover-placeholder">
-      <PiVinylRecord
-        size={Math.round(size * 0.48)}
-        color="rgba(255, 255, 255, 0.3)"
-        style={loading ? { animation: 'pulse 1.5s infinite' } : {}}
-      />
+      {tipo === 'cds' ? (
+        <PiDisc
+          size={Math.round(size * 0.48)}
+          color="rgba(255, 255, 255, 0.3)"
+          style={loading ? { animation: 'pulse 1.5s infinite' } : {}}
+        />
+      ) : (
+        <PiVinylRecord
+          size={Math.round(size * 0.48)}
+          color="rgba(255, 255, 255, 0.3)"
+          style={loading ? { animation: 'pulse 1.5s infinite' } : {}}
+        />
+      )}
     </div>
   );
 }

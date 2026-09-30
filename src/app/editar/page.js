@@ -379,26 +379,31 @@ function EditarExcluirContent() {
       setSelectedCover(null);
 
       // Sincronização e invalidação de cache de capa no navegador e servidor
-      if (tipo === CATEGORY_IDS.DISCOS) {
+      if (tipo === CATEGORY_IDS.DISCOS || tipo === CATEGORY_IDS.CDS) {
         const cleanAno = (updateData.ano || '').trim();
         const qKey = `${(updateData.artista || '').trim()} ${(updateData.titulo || '').trim()} ${cleanAno}`.trim().toLowerCase();
 
         if (chosenCoverUrl) {
+          setAlbumCoverCache(`${tipo}_${itemEditando.id}`, qKey, chosenCoverUrl);
           setAlbumCoverCache(itemEditando.id, qKey, chosenCoverUrl);
           if (typeof window !== 'undefined') {
             try {
+              sessionStorage.setItem(`cover_${tipo}_${itemEditando.id}_${qKey}`, chosenCoverUrl);
               sessionStorage.setItem(`cover_${itemEditando.id}_${qKey}`, chosenCoverUrl);
               sessionStorage.setItem(`cover_${qKey}`, chosenCoverUrl);
+              sessionStorage.setItem(`cover_${tipo}_${itemEditando.id}`, chosenCoverUrl);
               sessionStorage.setItem(`cover_${itemEditando.id}`, chosenCoverUrl);
             } catch (e) {}
           }
         } else {
+          clearAlbumCoverCache(`${tipo}_${itemEditando.id}`);
           clearAlbumCoverCache(itemEditando.id);
           if (typeof window !== 'undefined') {
             try {
-              const idPrefix = `cover_${itemEditando.id}`;
+              const idPrefix = `cover_${tipo}_${itemEditando.id}`;
+              const legacyPrefix = `cover_${itemEditando.id}`;
               Object.keys(sessionStorage).forEach(k => {
-                if (k.startsWith(idPrefix) || k.includes(String(itemEditando.id))) {
+                if (k.startsWith(idPrefix) || k.startsWith(legacyPrefix) || k.includes(String(itemEditando.id))) {
                   sessionStorage.removeItem(k);
                 }
               });
@@ -412,6 +417,7 @@ function EditarExcluirContent() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               id: itemEditando.id,
+              tipo: tipo,
               artista: updateData.artista || '',
               titulo: updateData.titulo || '',
               ano: updateData.ano || '',
@@ -568,7 +574,7 @@ function EditarExcluirContent() {
         <div className="topHeader" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', gap: '16px', flexWrap: 'wrap' }}>
           <button className="btn btn-secondary btn-back" style={{ flexShrink: 0 }} onClick={voltarParaBusca}>← Voltar</button>
           <div className="titleGroup" style={{ flex: 1, minWidth: '200px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {tipo === CATEGORY_IDS.DISCOS && (
+            {(tipo === CATEGORY_IDS.DISCOS || tipo === CATEGORY_IDS.CDS) && (
               <AlbumCover 
                 artista={form.artista} 
                 titulo={form.titulo} 
@@ -576,6 +582,7 @@ function EditarExcluirContent() {
                 id={itemEditando?.id} 
                 capaUrl={selectedCover ? (selectedCover.thumb || selectedCover.cover) : itemEditando?.capa_url} 
                 size={48} 
+                tipo={tipo}
               />
             )}
             <div>

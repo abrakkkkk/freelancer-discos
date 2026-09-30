@@ -136,6 +136,7 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const rawQ = searchParams.get('q') || '';
   const id = searchParams.get('id') || '';
+  const tipo = searchParams.get('tipo') || searchParams.get('category') || '';
   const ano = searchParams.get('ano') || searchParams.get('year') || '';
   const refresh = searchParams.get('refresh') === 'true';
 
@@ -143,19 +144,36 @@ export async function GET(request) {
   const cleanAno = ano && String(ano) !== 'null' ? String(ano).trim() : '';
   const qFull = `${q} ${cleanAno}`.trim();
   const qKey = qFull.toLowerCase();
-  const idKey = id ? String(id) : '';
+  const scopedId = id ? (tipo ? `${tipo}_${id}` : String(id)) : '';
+  const rawId = id ? String(id) : '';
 
   if (!refresh) {
-    // 1. Se tem idKey, verifica se há cache com imagem válida no idKey
-    if (idKey) {
-      const cachedById = getFromCache(idKey);
+    // 1. Se tem id, verifica primeiro o cache com namespace do tipo
+    if (scopedId) {
+      const cachedByScopedId = getFromCache(scopedId);
+      if (cachedByScopedId && (cachedByScopedId.cover || cachedByScopedId.thumb)) {
+        const isSameQuery = !cachedByScopedId.q || !qKey || cachedByScopedId.q.toLowerCase() === qKey;
+        if (isSameQuery) {
+          return Response.json(cachedByScopedId, {
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'X-Cache': 'HIT-ID',
+            },
+          });
+        }
+      }
+    }
+
+    // Fallback legado para o ID cru apenas se for discos ou tipo não especificado
+    if (rawId && (!tipo || tipo === 'discos')) {
+      const cachedById = getFromCache(rawId);
       if (cachedById && (cachedById.cover || cachedById.thumb)) {
         const isSameQuery = !cachedById.q || !qKey || cachedById.q.toLowerCase() === qKey;
         if (isSameQuery) {
           return Response.json(cachedById, {
             headers: {
               'Cache-Control': 'no-cache, no-store, must-revalidate',
-              'X-Cache': 'HIT-ID',
+              'X-Cache': 'HIT-RAW-ID',
             },
           });
         }
@@ -166,9 +184,8 @@ export async function GET(request) {
     if (qKey) {
       const cachedByQ = getFromCache(qKey);
       if (cachedByQ && (cachedByQ.cover || cachedByQ.thumb)) {
-        if (idKey) {
-          setToCache(idKey, { ...cachedByQ, q: qKey });
-        }
+        if (scopedId) setToCache(scopedId, { ...cachedByQ, q: qKey });
+        if (rawId && (!tipo || tipo === 'discos')) setToCache(rawId, { ...cachedByQ, q: qKey });
         return Response.json(cachedByQ, {
           headers: {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -197,7 +214,8 @@ export async function GET(request) {
 
     const payload = { cover, thumb, q: qKey, ano: cleanAno };
     if (cover || thumb) {
-      if (idKey) setToCache(idKey, payload);
+      if (scopedId) setToCache(scopedId, payload);
+      if (rawId && (!tipo || tipo === 'discos')) setToCache(rawId, payload);
       if (qKey) setToCache(qKey, payload);
     }
 
@@ -216,10 +234,11 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { id, artista = '', titulo = '', ano = '', cover, thumb } = body;
+    const { id, tipo = '', artista = '', titulo = '', ano = '', cover, thumb } = body;
 
     const cleanAno = ano && String(ano) !== 'null' ? String(ano).trim() : '';
-    const idKey = id ? String(id) : '';
+    const scopedId = id ? (tipo ? `${tipo}_${id}` : String(id)) : '';
+    const rawId = id ? String(id) : '';
     const rawQ = `${artista || ''} ${titulo || ''}`.trim();
     const q = normalizeSearchQuery(rawQ);
     const qFull = `${q} ${cleanAno}`.trim();
@@ -228,14 +247,16 @@ export async function POST(request) {
     // Se o cliente forneceu diretamente a imagem (ex: escolheu no dropdown Discogs)
     if (cover || thumb) {
       const payload = { cover: cover || thumb, thumb: thumb || cover, q: qKey, ano: cleanAno };
-      if (idKey) setToCache(idKey, payload);
+      if (scopedId) setToCache(scopedId, payload);
+      if (rawId && (!tipo || tipo === 'discos')) setToCache(rawId, payload);
       if (qKey) setToCache(qKey, payload);
       return Response.json({ success: true, ...payload });
     }
 
     if (!q) {
       const emptyPayload = { cover: null, thumb: null, q: '' };
-      if (idKey) setToCache(idKey, emptyPayload);
+      if (scopedId) setToCache(scopedId, emptyPayload);
+      if (rawId && (!tipo || tipo === 'discos')) setToCache(rawId, emptyPayload);
       return Response.json({ success: true, ...emptyPayload });
     }
 
@@ -251,7 +272,8 @@ export async function POST(request) {
     const newCover = result?.cover_image || newThumb || null;
 
     const payload = { cover: newCover, thumb: newThumb, q: qKey, ano: cleanAno };
-    if (idKey) setToCache(idKey, payload);
+    if (scopedId) setToCache(scopedId, payload);
+    if (rawId && (!tipo || tipo === 'discos')) setToCache(rawId, payload);
     if (qKey) setToCache(qKey, payload);
 
     return Response.json({ success: true, ...payload });
@@ -264,8 +286,12 @@ export async function POST(request) {
 export async function DELETE(request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get('id');
+  const tipo = searchParams.get('tipo') || '';
   if (id) {
     deleteFromCache(String(id));
+    if (tipo) {
+      deleteFromCache(`${tipo}_${id}`);
+    }
   }
   return Response.json({ success: true });
 }

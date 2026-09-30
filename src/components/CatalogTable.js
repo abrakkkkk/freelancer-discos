@@ -16,7 +16,8 @@ export default function CatalogTable({
 }) {
   const isVideo = activeTab === 'dvds' || activeTab === 'vhs';
   const itemName = activeTab === 'discos' ? 'discos' : activeTab === 'dvds' ? 'DVDs' : activeTab === 'vhs' ? 'VHS' : 'CDs';
-  const isDiscosTab = activeTab === 'discos';
+  const hasCover = activeTab === 'discos' || activeTab === 'cds';
+  const isAudioCard = activeTab === 'discos' || activeTab === 'cds';
 
   const renderSortIcon = (coluna) => {
     if (ordenarColuna !== coluna) {
@@ -45,7 +46,7 @@ export default function CatalogTable({
       <table className="styledTable">
         <thead>
           <tr>
-            {isDiscosTab && (
+            {hasCover && (
               <th style={{ width: '64px', textAlign: 'center' }}>CAPA</th>
             )}
             <th>
@@ -88,9 +89,7 @@ export default function CatalogTable({
         </thead>
         <tbody>
           {itens.map((d) => {
-            const isDiscoCard = isDiscosTab;
-
-            if (isDiscoCard) {
+            if (isAudioCard) {
               const isLoja1 = d.loja === 'Loja 1';
               return (
                 <tr 
@@ -99,7 +98,7 @@ export default function CatalogTable({
                   style={d.ativo === false ? { opacity: 0.5 } : {}}
                 >
                   <td data-label="Capa" className="cell-capa">
-                    <AlbumCover artista={d.artista} titulo={d.titulo} ano={d.ano} id={d.id} capaUrl={d.capa_url} size={70} />
+                    <AlbumCover artista={d.artista} titulo={d.titulo} ano={d.ano} id={d.id} capaUrl={d.capa_url} size={70} tipo={activeTab} />
                   </td>
 
                   {/* Informações limpas para exibição mobile: sem os rótulos 'Local', 'Preço', etc. */}
@@ -187,9 +186,9 @@ export default function CatalogTable({
             // Renderização padrão para outras categorias
             return (
               <tr key={d.id} className="catalog-row" style={d.ativo === false ? { opacity: 0.5 } : {}}>
-                {isDiscosTab && (
+                {hasCover && (
                   <td data-label="Capa" className="cell-capa">
-                    <AlbumCover artista={d.artista} titulo={d.titulo} ano={d.ano} id={d.id} capaUrl={d.capa_url} size={44} />
+                    <AlbumCover artista={d.artista} titulo={d.titulo} ano={d.ano} id={d.id} capaUrl={d.capa_url} size={44} tipo={activeTab} />
                   </td>
                 )}
                 <td data-label="Local">{getDisplayCaixa(d)}</td>

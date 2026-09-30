@@ -291,6 +291,7 @@ export default function AdicionarItem() {
     try {
       // 1. Inserir item
       const finalCaixa = form.caixa?.trim() ? normalizeCaixa(form.caixa.trim(), form.loja || activeStore) : null;
+      const chosenCover = selectedCover?.cover || selectedCover?.thumb || null;
       const insertData = {
         titulo: form.titulo.trim(),
         preco: getUnmaskedPreco(),
@@ -299,6 +300,7 @@ export default function AdicionarItem() {
         caixa: finalCaixa,
         ano: form.ano?.trim() || null,
         ativo: form.ativo !== false,
+        capa_url: chosenCover,
       };
 
       if (!isVideo) insertData.artista = form.artista.trim();
@@ -322,13 +324,16 @@ export default function AdicionarItem() {
         }
       }
 
-      if (activeTab === CATEGORY_IDS.DISCOS) {
+      if (activeTab === CATEGORY_IDS.DISCOS || activeTab === CATEGORY_IDS.CDS) {
         const coverToSend = selectedCover?.cover || selectedCover?.thumb;
         const qKey = `${(insertData.artista || '').trim()} ${(insertData.titulo || '').trim()}`.toLowerCase();
         if (coverToSend && typeof window !== 'undefined') {
           try {
+            sessionStorage.setItem(`cover_${activeTab}_${itemInfo.id}_${qKey}`, coverToSend);
             sessionStorage.setItem(`cover_${itemInfo.id}_${qKey}`, coverToSend);
             sessionStorage.setItem(`cover_${qKey}`, coverToSend);
+            sessionStorage.setItem(`cover_${activeTab}_${itemInfo.id}`, coverToSend);
+            sessionStorage.setItem(`cover_${itemInfo.id}`, coverToSend);
           } catch (_) {}
         }
         try {
@@ -337,8 +342,10 @@ export default function AdicionarItem() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               id: itemInfo.id,
+              tipo: activeTab,
               artista: insertData.artista || '',
               titulo: insertData.titulo || '',
+              ano: insertData.ano || '',
               cover: selectedCover?.cover || null,
               thumb: selectedCover?.thumb || null,
             })
