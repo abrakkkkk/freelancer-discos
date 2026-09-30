@@ -2,8 +2,10 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash-lite',
-  'gemini-3.6-flash'
+  'gemini-flash-lite-latest',
+  'gemini-flash-latest',
+  'gemini-3.5-flash',
+  'gemini-3.8-flash'
 ];
 
 function getGeminiKeys() {
@@ -17,11 +19,11 @@ function getGeminiKeys() {
 
 export async function POST(request) {
   try {
-    const groqKey = process.env.GROQ_API_KEY?.trim();
     const geminiKeys = getGeminiKeys();
-    if (!groqKey && geminiKeys.length === 0) {
+    const groqKey = process.env.GROQ_API_KEY?.trim();
+    if (geminiKeys.length === 0 && !groqKey) {
       return Response.json(
-        { success: false, error: 'Nenhuma chave de IA (GROQ_API_KEY ou GEMINI_API_KEY) configurada no servidor.' },
+        { success: false, error: 'Nenhuma chave de inteligência visual (GEMINI_API_KEY ou GROQ_API_KEY) configurada no servidor.' },
         { status: 500 }
       );
     }
@@ -46,110 +48,55 @@ export async function POST(request) {
       base64Data = matches[2];
     }
 
-    const systemPrompt = `Você é um especialista em identificação de discos de vinil, CDs e capas de álbuns musicais (MPB, Samba, Rock, Bossa Nova, Pop, Internacional).
-Analise com máxima atenção a imagem desta capa de álbum de música em alta resolução.
+    const systemPrompt = `Você é o maior especialista mundial em identificação visual de discos de vinil, CDs e capas de álbuns de música (MPB, Rock, Bossa Nova, Samba, Jazz, Pop, Clássica, Internacional).
+Analise com extrema atenção e fidelidade visual esta imagem de capa de álbum.
 
-Retorne estritamente um objeto JSON com esta estrutura:
+MUITAS CAPAS HISTÓRICAS NÃO TÊM NENHUM TEXTO, NOME OU TÍTULO IMPRESSO (por exemplo:
+- Pink Floyd: 'The Dark Side of the Moon' (apenas o prisma refletindo o arco-íris sobre fundo preto), 'The Wall' (tijolos brancos), 'Wish You Were Here' (dois homens de terno se cumprimentando, um em chamas).
+- The Beatles: 'Abbey Road' (quatro integrantes cruzando a faixa de pedestres, sem texto), 'White Album' (fundo branco).
+- Led Zeppelin: 'Houses of the Holy' (crianças subindo pedras alaranjadas), 'Led Zeppelin IV' (homem curvado com lenha em parede descascada).
+- Milton Nascimento & Lô Borges: 'Clube da Esquina' (dois garotos sentados na margem de estrada de terra em Minas Gerais).
+- Secos & Molhados: cabeças dos 4 integrantes maquiados servidas em bandejas à mesa.
+- Elis & Tom: foto de Elis Regina e Tom Jobim sorrindo juntos.
+- Caetano Veloso, Gilberto Gil, Chico Buarque, Tim Maia, Raul Seixas, Gal Costa, Rita Lee, Jorge Ben, etc.).
+
+DIRETRIZES FUNDAMENTAIS DE IDENTIFICAÇÃO VISUAL:
+1. RECONHECIMENTO VISUAL PURO (CAPAS SEM TEXTO OU COM ARTE VISUAL):
+   - Se a capa NÃO tiver texto legível ou for puramente artística, identifique o álbum pelo RECONHECIMENTO VISUAL DA ARTE, FOTOGRAFIA, CENÁRIO, ILUSTRAÇÃO OU ROSTO DOS MÚSICOS.
+   - Utilize sua memória visual enciclopédica do catálogo fonográfico mundial para associar a imagem ao álbum oficial exato.
+2. CAPAS COM TEXTO IMPRESSO:
+   - Se houver texto legível com nome do artista e/ou título, transcreva EXATAMENTE como impresso. NUNCA invente ou troque o nome por outro parecido.
+3. TRILHAS SONORAS E COLETÂNEAS DE VÁRIOS INTÉRPRETES:
+   - Se o álbum for trilha sonora de novela, seriado ou filme (ex: "Riacho Doce", "Pantanal", "Roque Santeiro", "Vale Tudo", etc.) ou coletânea de múltiplos intérpretes: o campo "artista" DEVE SER OBRIGATORIAMENTE "Various" (padrão fonográfico internacional).
+   - NUNCA use o nome de atores/atrizes que aparecem na foto da capa (ex: Luíza Tomé, Cristiana Oliveira, Regina Duarte, Malu Mader).
+4. REGRA CRÍTICA ANTI-ALUCINAÇÃO (NUNCA INVENTE NOMES):
+   - Se você NÃO tiver certeza real de qual álbum específico se trata, ou a foto for genérica/inconclusiva, defina "confianca": "baixa" e deixe "artista" e "titulo" vazios.
+   - NUNCA invente o nome de um cantor famoso só porque a foto tem alguém remotamente semelhante.
+
+Retorne estritamente um JSON neste formato:
 {
+  "descricao_visual": "Breve descrição do que você vê na imagem (ex: prisma com arco-íris sobre fundo preto)",
   "artista": "Nome do Artista ou Grupo",
   "titulo": "Nome do Álbum",
   "ano": "1973",
   "confianca": "alta"
-}
-
-Regras Obrigatórias e Anti-Alucinação:
-1. LEITURA EXATA DO TEXTO (REGRA ANTI-ALUCINAÇÃO):
-   - Se houver texto ou nome impresso na capa (artista ou título), transcreva EXATAMENTE o que está escrito.
-   - NUNCA invente, deduza ou troque o cantor por outro famoso ou parecido se o nome real estiver legível na capa.
-   - Se a capa tiver apenas a foto do cantor sem texto explícito, identifique com muito rigor visual antes de responder; em caso de dúvida entre artistas similares, priorize a fidelidade à obra fonográfica real.
-2. "artista": Nome do artista, banda ou compositor principal (ex: "Secos & Molhados", "Milton Nascimento", "Pink Floyd").
-3. TRILHAS SONORAS E COLETÂNEAS (REGRA CRÍTICA):
-   - Se o álbum for uma trilha sonora de novela, seriado, minissérie ou filme (ex: "Riacho Doce", "Pantanal", "Roque Santeiro", "Selva de Pedra", "Ciranda de Pedra", "Anos Dourados", "Anos Rebeldes", "Tieta", "Vale Tudo", etc.) ou coletânea de múltiplos intérpretes: o campo "artista" DEVE SER OBRIGATORIAMENTE "Various" (em inglês, padrão internacional fonográfico Discogs).
-   - NUNCA use "Vários", "Varios", "Vários Artistas" ou "Trilha Sonora".
-   - NUNCA use o nome de atores/atrizes que aparecem na foto da capa (ex: Luíza Tomé, Cristiana Oliveira, Regina Duarte, Malu Mader, Marília Pêra) como artista.
-   - NUNCA use cantores de faixas avulsas (ex: Elizeth Cardoso, Ronnie Von) como artista de uma trilha sonora de novela.
-4. "titulo": Título oficial do álbum ou da novela (ex: "Riacho Doce", "Roque Santeiro - Volume 2", "Pantanal", "Clube da Esquina"). Se for álbum homônimo, repita o nome do artista.
-5. Não inclua ruídos como gravadora (Odeon, Philips, Som Livre, EMI), selos de promoção, carimbos, preços ou termos como "Série Luxo", "Disco é Cultura", "Stereo/Mono".
-6. Se for impossível identificar o álbum com qualquer razoabilidade ou a imagem não for de um álbum musical, responda:
-{
-  "artista": "",
-  "titulo": "",
-  "ano": "",
-  "confianca": "baixa"
 }`;
 
     let candidateText = null;
     let lastError = null;
 
-    // 1. TENTATIVA PRIORITÁRIA: Groq Vision (qwen/qwen3.8-27b - ultra-rápido ~800ms)
-    if (groqKey) {
-      try {
-        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${groqKey}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            model: 'qwen/qwen3.8-27b',
-            messages: [
-              { role: 'system', content: systemPrompt },
-              {
-                role: 'user',
-                content: [
-                  { type: 'text', text: 'Analise a imagem da capa do álbum musical e responda estritamente o JSON requisitado.' },
-                  {
-                    type: 'image_url',
-                    image_url: {
-                      url: `data:${mimeType};base64,${base64Data}`
-                    }
-                  }
-                ]
-              }
-            ],
-            response_format: { type: 'json_object' },
-            max_tokens: 80,
-            temperature: 0
-          }),
-          signal: AbortSignal.timeout(4500)
-        });
-
-        if (groqRes.ok) {
-          const groqData = await groqRes.json();
-          const rawText = groqData.choices?.[0]?.message?.content?.trim();
-          try {
-            const parsed = JSON.parse(rawText);
-            if ((parsed.artista || parsed.titulo) && parsed.confianca !== 'baixa') {
-              candidateText = rawText;
-            } else {
-              console.warn('Groq retornou resultado inconclusivo ou baixa confiança, acionando fallback Gemini');
-            }
-          } catch (_) {
-            candidateText = rawText;
-          }
-        } else {
-          const errData = await groqRes.json().catch(() => ({}));
-          lastError = errData?.error?.message || `Groq status ${groqRes.status}`;
-          console.warn('Groq Vision falhou, acionando fallback Gemini:', lastError);
-        }
-      } catch (errGroq) {
-        lastError = errGroq.message;
-        console.warn('Groq Vision indisponível, acionando fallback Gemini:', errGroq.message);
-      }
-    }
-
-    // 2. FALLBACK AUTOMÁTICO: Google Gemini Vision
-    if (!candidateText && geminiKeys.length > 0) {
+    // 1. TENTATIVA PRIORITÁRIA: Google Gemini Vision (Ultra-preciso em reconhecimento visual sem texto)
+    if (geminiKeys.length > 0) {
       keysLoop: for (const key of geminiKeys) {
         for (const model of GEMINI_MODELS) {
           try {
             const generationConfig = {
               responseMimeType: 'application/json',
               temperature: 0,
-              maxOutputTokens: 80
+              maxOutputTokens: 150
             };
 
-            if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
+            if (model === 'gemini-flash-latest' || model === 'gemini-3.8-flash') {
               generationConfig.thinkingConfig = { thinkingBudget: 0 };
             }
 
@@ -170,7 +117,7 @@ Regras Obrigatórias e Anti-Alucinação:
               generationConfig
             };
 
-            const timeoutMs = 25000;
+            const timeoutMs = 18000;
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
             const res = await fetch(url, {
               method: 'POST',
@@ -201,6 +148,53 @@ Regras Obrigatórias e Anti-Alucinação:
             console.warn(`Tentativa Gemini Capa com ${model} disparou exceção: ${err.message}`);
           }
         }
+      }
+    }
+
+    // 2. FALLBACK SECUNDÁRIO: Groq Vision (se Gemini estiver sem cota)
+    if (!candidateText && groqKey) {
+      try {
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${groqKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: 'qwen/qwen3.8-27b',
+            messages: [
+              { role: 'system', content: systemPrompt },
+              {
+                role: 'user',
+                content: [
+                  { type: 'text', text: 'Analise a imagem da capa do álbum musical e responda estritamente o JSON requisitado.' },
+                  {
+                    type: 'image_url',
+                    image_url: {
+                      url: `data:${mimeType};base64,${base64Data}`
+                    }
+                  }
+                ]
+              }
+            ],
+            response_format: { type: 'json_object' },
+            max_tokens: 150,
+            temperature: 0
+          }),
+          signal: AbortSignal.timeout(4500)
+        });
+
+        if (groqRes.ok) {
+          const groqData = await groqRes.json();
+          candidateText = groqData.choices?.[0]?.message?.content?.trim();
+        } else {
+          const errData = await groqRes.json().catch(() => ({}));
+          lastError = errData?.error?.message || `Groq status ${groqRes.status}`;
+          console.warn('Groq Vision falhou:', lastError);
+        }
+      } catch (errGroq) {
+        lastError = errGroq.message;
+        console.warn('Groq Vision disparou exceção:', errGroq.message);
       }
     }
 

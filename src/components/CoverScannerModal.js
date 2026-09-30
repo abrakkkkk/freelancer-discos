@@ -1,7 +1,17 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { IoClose, IoCameraReverseOutline, IoCamera, IoRefresh, IoImageOutline } from 'react-icons/io5';
+import { 
+  IoClose, 
+  IoCameraReverseOutline, 
+  IoCamera, 
+  IoRefresh, 
+  IoImageOutline,
+  IoFlash,
+  IoFlashOutline,
+  IoExpandOutline,
+  IoContractOutline
+} from 'react-icons/io5';
 
 export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCoverRecognized, title = 'Reconhecer Capa' }) {
   const handleRecognizedCallback = onRecognized || onCoverRecognized;
@@ -11,6 +21,14 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   const [fotoPreview, setFotoPreview] = useState(null);
   const [cameras, setCameras] = useState([]);
   const [cameraIdAtiva, setCameraIdAtiva] = useState(null);
+
+  // Controles de hardware de câmera (zoom, lanterna e enquadramento)
+  const [hasTorch, setHasTorch] = useState(false);
+  const [torchOn, setTorchOn] = useState(false);
+  const [hasZoom, setHasZoom] = useState(false);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [zoomRange, setZoomRange] = useState({ min: 1, max: 1, step: 0.1 });
+  const [modoAmplo, setModoAmplo] = useState(false); // false = Guia 1:1 quadrada; true = Sensor completo sem crop
 
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -46,11 +64,12 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     stopCamera();
 
     try {
+      // Constraints otimizadas: sem min restritivo para abertura instantânea e sem lag no hardware
       const constraints = {
         video: {
           ...(deviceId ? { deviceId: { exact: deviceId } } : { facingMode: { ideal: 'environment' } }),
-          width: { ideal: 1920, min: 1280 },
-          height: { ideal: 1080, min: 720 }
+          width: { ideal: 1920, max: 1920 },
+          height: { ideal: 1080, max: 1080 }
         }
       };
 
@@ -59,18 +78,39 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        videoRef.current.play?.().catch(() => {});
       }
 
-      // Ativar autofoco contínuo e modo macro se disponíveis no hardware da câmera
       const track = mediaStream.getVideoTracks()[0];
       if (track) {
         const capabilities = track.getCapabilities ? track.getCapabilities() : {};
         const advanced = [];
+
+        // Autofoco contínuo sem forçar macro (macro causa zoom excessivo / teleobjetiva)
         if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
           advanced.push({ focusMode: 'continuous' });
-        } else if (capabilities.focusMode && capabilities.focusMode.includes('macro')) {
-          advanced.push({ focusMode: 'macro' });
         }
+
+        // Hardware Zoom: detecta suporte e força zoom mínimo (1x ou min) para não abrir com zoom excessivo
+        if (capabilities.zoom) {
+          setHasZoom(true);
+          const minZ = capabilities.zoom.min || 1;
+          const maxZ = capabilities.zoom.max || 1;
+          const stepZ = capabilities.zoom.step || 0.1;
+          setZoomRange({ min: minZ, max: maxZ, step: stepZ });
+          setZoomLevel(minZ);
+          advanced.push({ zoom: minZ });
+        } else {
+          setHasZoom(false);
+        }
+
+        // Lanterna
+        if (capabilities.torch) {
+          setHasTorch(true);
+        } else {
+          setHasTorch(false);
+        }
+
         if (advanced.length > 0 && track.applyConstraints) {
           try {
             await track.applyConstraints({ advanced });
@@ -78,18 +118,20 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
         }
       }
 
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(d => d.kind === 'videoinput');
-      setCameras(videoDevices);
-
-      if (!deviceId && videoDevices.length > 0) {
-        const backCam = videoDevices.find(d =>
-          d.label.toLowerCase().includes('back') ||
-          d.label.toLowerCase().includes('traseira') ||
-          d.label.toLowerCase().includes('rear') ||
-          d.label.toLowerCase().includes('environment')
-        );
-        setCameraIdAtiva(backCam ? backCam.deviceId : videoDevices[0].deviceId);
+      // Enumeração assíncrona de câmeras em background para não travar a abertura inicial
+      if (navigator.mediaDevices.enumerateDevices) {
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+          const videoDevices = devices.filter(d => d.kind === 'videoinput');
+          setCameras(videoDevices);
+          if (!deviceId && videoDevices.length > 0) {
+            const backCam = videoDevices.find(d =>
+              /back|traseira|rear|environment/i.test(d.label)
+            );
+            if (backCam) {
+              setCameraIdAtiva(backCam.deviceId);
+            }
+          }
+        }).catch(() => {});
       }
     } catch (err) {
       console.error('Erro ao acessar a câmera:', err);
@@ -98,6 +140,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   };
 
   const stopCamera = () => {
+    setTorchOn(false);
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
       setStream(null);
@@ -113,7 +156,44 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     await startCamera(nextCam.deviceId);
   };
 
-  // Redimensiona mantendo a resolução normal da câmera do celular (1080p a 1280p em 1:1) com máxima nitidez de fontes
+  const applyZoom = async (level) => {
+    try {
+      const track = stream?.getVideoTracks?.()[0];
+      if (track && track.applyConstraints) {
+        await track.applyConstraints({ advanced: [{ zoom: level }] });
+        setZoomLevel(level);
+      }
+    } catch (e) {
+      console.warn('Erro ao aplicar zoom:', e);
+    }
+  };
+
+  const toggleTorch = async () => {
+    try {
+      const track = stream?.getVideoTracks?.()[0];
+      if (track && track.applyConstraints) {
+        const next = !torchOn;
+        await track.applyConstraints({ advanced: [{ torch: next }] });
+        setTorchOn(next);
+      }
+    } catch (e) {
+      console.warn('Erro ao alternar lanterna:', e);
+    }
+  };
+
+  const triggerFocus = async (e) => {
+    try {
+      const track = stream?.getVideoTracks?.()[0];
+      if (track && track.applyConstraints) {
+        const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+        if (capabilities.focusMode && capabilities.focusMode.includes('continuous')) {
+          await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+        }
+      }
+    } catch (_) {}
+  };
+
+  // Redimensiona mantendo ALTA RESOLUÇÃO (Full HD até 1920x1920) e máxima nitidez visual
   const recortarEComprimir = (origem) => {
     let srcW = 1920;
     let srcH = 1080;
@@ -133,8 +213,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     const sx = (srcW - sSize) / 2;
     const sy = (srcH - sSize) / 2;
 
-    // Resolução normal da câmera do celular (alta fidelidade até 1280x1280 em 1:1)
-    const targetSize = Math.min(sSize, 1280);
+    // Alta resolução (Full HD até 1920x1920 quadrado para máxima fidelidade visual em capas sem texto)
+    const targetSize = Math.min(sSize, 1920);
 
     const canvas = document.createElement('canvas');
     canvas.width = targetSize;
@@ -145,10 +225,10 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, targetSize, targetSize);
 
-    // Exporta em JPEG de alta qualidade (0.85) para evitar compressão destrutiva em textos e detalhes faciais
+    // Exporta em JPEG de alta qualidade (0.92) para preservar detalhes artísticos e ilustrações finas
     let base64 = '';
     try {
-      base64 = canvas.toDataURL('image/jpeg', 0.85);
+      base64 = canvas.toDataURL('image/jpeg', 0.92);
     } catch (_) {
       base64 = canvas.toDataURL('image/png');
     }
@@ -201,7 +281,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     try {
       let base64 = '';
       const track = stream?.getVideoTracks?.()[0];
-      // Tenta tirar foto na resolução nativa do sensor da câmera via ImageCapture
+      
+      // Tenta tirar foto na resolução nativa máxima do sensor (ImageCapture até 12MP/4K)
       if (typeof window !== 'undefined' && 'ImageCapture' in window && track && track.readyState === 'live') {
         try {
           const imageCapture = new window.ImageCapture(track);
@@ -251,14 +332,6 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   };
 
   useEffect(() => {
-    // Higieniza resíduos de cache visual anterior do navegador para evitar repetição de álbuns
-    if (typeof window !== 'undefined' && window.localStorage) {
-      try {
-        localStorage.removeItem('freelancer_visual_vector_cache_v1');
-        localStorage.removeItem('freelancer_visual_cover_cache_v2');
-      } catch (_) {}
-    }
-
     if (isOpen) {
       setFotoPreview(null);
       setErro(null);
@@ -310,13 +383,13 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: '14px 16px',
+            padding: '12px 16px',
             borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <IoCamera size={20} color="var(--accent, #e53e3e)" />
-            <h2 style={{ fontSize: '17px', fontWeight: 600, color: '#fff', margin: 0 }}>
+            <h2 style={{ fontSize: '16px', fontWeight: 600, color: '#fff', margin: 0 }}>
               {title}
             </h2>
           </div>
@@ -327,8 +400,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
               background: 'transparent',
               border: 'none',
               color: 'var(--text-muted, #a1a1aa)',
-              width: '44px',
-              height: '44px',
+              width: '40px',
+              height: '40px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -341,21 +414,24 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
           </button>
         </div>
 
-        {/* Visor / Área da Câmera (Proporção Quadrada 1:1 Real de Capa de Álbum) */}
+        {/* Visor / Área da Câmera */}
         <div
+          onClick={triggerFocus}
           style={{
             position: 'relative',
             width: '100%',
-            aspectRatio: '1 / 1',
+            aspectRatio: modoAmplo ? '4 / 3' : '1 / 1',
             background: '#000',
             overflow: 'hidden',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            flexShrink: 0
+            flexShrink: 0,
+            cursor: 'crosshair',
+            transition: 'aspect-ratio 0.2s ease'
           }}
         >
-          {/* Câmera ao vivo (permanece sempre montada para evitar pulos de layout) */}
+          {/* Câmera ao vivo */}
           <video
             ref={videoRef}
             autoPlay
@@ -364,7 +440,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
             style={{
               width: '100%',
               height: '100%',
-              objectFit: 'cover',
+              objectFit: modoAmplo ? 'contain' : 'cover',
               display: fotoPreview ? 'none' : 'block'
             }}
           />
@@ -374,7 +450,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
             <div
               style={{
                 position: 'absolute',
-                inset: '16px',
+                inset: modoAmplo ? '8px' : '16px',
                 border: '2px dashed rgba(255, 255, 255, 0.55)',
                 borderRadius: '14px',
                 pointerEvents: 'none',
@@ -387,65 +463,114 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
             >
               {/* Cantoneiras estilizadas */}
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ width: '24px', height: '24px', borderTop: '3px solid #fff', borderLeft: '3px solid #fff', borderTopLeftRadius: '8px' }} />
-                <div style={{ width: '24px', height: '24px', borderTop: '3px solid #fff', borderRight: '3px solid #fff', borderTopRightRadius: '8px' }} />
+                <div style={{ width: '22px', height: '22px', borderTop: '3px solid #fff', borderLeft: '3px solid #fff', borderTopLeftRadius: '8px' }} />
+                <div style={{ width: '22px', height: '22px', borderTop: '3px solid #fff', borderRight: '3px solid #fff', borderTopRightRadius: '8px' }} />
               </div>
 
-              <div style={{ textAlign: 'center', padding: '6px 10px' }}>
+              <div style={{ textAlign: 'center', padding: '4px 8px' }}>
                 <span
                   style={{
-                    background: 'rgba(0, 0, 0, 0.7)',
+                    background: 'rgba(0, 0, 0, 0.72)',
                     backdropFilter: 'blur(4px)',
                     color: '#fff',
-                    fontSize: '12px',
+                    fontSize: '11.5px',
                     fontWeight: 600,
-                    padding: '4px 12px',
+                    padding: '3px 10px',
                     borderRadius: '12px',
                     border: '1px solid rgba(255, 255, 255, 0.25)',
                     letterSpacing: '0.2px'
                   }}
                 >
-                  Enquadre a capa frontal do disco (1:1)
+                  {modoAmplo ? 'Sensor Amplo (Sem Zoom Óptico)' : 'Enquadre a capa frontal (1:1)'}
                 </span>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ width: '24px', height: '24px', borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', borderBottomLeftRadius: '8px' }} />
-                <div style={{ width: '24px', height: '24px', borderBottom: '3px solid #fff', borderRight: '3px solid #fff', borderBottomRightRadius: '8px' }} />
+                <div style={{ width: '22px', height: '22px', borderBottom: '3px solid #fff', borderLeft: '3px solid #fff', borderBottomLeftRadius: '8px' }} />
+                <div style={{ width: '22px', height: '22px', borderBottom: '3px solid #fff', borderRight: '3px solid #fff', borderBottomRightRadius: '8px' }} />
               </div>
             </div>
           )}
 
-          {/* Botão de Alternar Câmera */}
-          {!fotoPreview && cameras.length > 1 && (
-            <button
-              type="button"
-              onClick={toggleCamera}
+          {/* Barra de Ações Rápidas Flutuantes no Canto Superior */}
+          {!fotoPreview && (
+            <div
               style={{
                 position: 'absolute',
-                top: '12px',
-                right: '12px',
-                background: 'rgba(0, 0, 0, 0.65)',
-                border: '1px solid rgba(255, 255, 255, 0.25)',
-                color: '#fff',
-                borderRadius: '50%',
-                width: '44px',
-                height: '44px',
-                minWidth: '44px',
-                minHeight: '44px',
-                aspectRatio: '1 / 1',
-                flexShrink: 0,
+                top: '10px',
+                right: '10px',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                cursor: 'pointer',
-                zIndex: 3
+                gap: '8px',
+                zIndex: 4
               }}
-              title="Alternar câmera"
-              aria-label="Alternar câmera"
             >
-              <IoCameraReverseOutline size={22} />
-            </button>
+              {/* Alternar Lanterna */}
+              {hasTorch && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); toggleTorch(); }}
+                  style={{
+                    background: torchOn ? '#e53e3e' : 'rgba(0, 0, 0, 0.65)',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: '38px',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}
+                  title={torchOn ? 'Desligar lanterna' : 'Ligar lanterna'}
+                >
+                  {torchOn ? <IoFlash size={18} /> : <IoFlashOutline size={18} />}
+                </button>
+              )}
+
+              {/* Alternar Modo Amplo (evita zoom óptico do crop 1:1) */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setModoAmplo(!modoAmplo); }}
+                style={{
+                  background: modoAmplo ? '#e53e3e' : 'rgba(0, 0, 0, 0.65)',
+                  border: '1px solid rgba(255, 255, 255, 0.25)',
+                  color: '#fff',
+                  borderRadius: '50%',
+                  width: '38px',
+                  height: '38px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer'
+                }}
+                title={modoAmplo ? 'Modo Quadrado (1:1)' : 'Modo Sensor Completo (Sem Zoom)'}
+              >
+                {modoAmplo ? <IoContractOutline size={18} /> : <IoExpandOutline size={18} />}
+              </button>
+
+              {/* Alternar Câmera */}
+              {cameras.length > 1 && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); toggleCamera(); }}
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.65)',
+                    border: '1px solid rgba(255, 255, 255, 0.25)',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: '38px',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer'
+                  }}
+                  title="Alternar câmera"
+                >
+                  <IoCameraReverseOutline size={19} />
+                </button>
+              )}
+            </div>
           )}
 
           {/* Prévia da imagem capturada */}
@@ -470,7 +595,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
               style={{
                 position: 'absolute',
                 inset: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.78)',
+                backgroundColor: 'rgba(0, 0, 0, 0.82)',
                 backdropFilter: 'blur(3px)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -491,11 +616,82 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
                 }}
               />
               <span style={{ fontSize: '14px', fontWeight: 600, color: '#fff' }}>
-                Identificando...
+                Reconhecendo arte visual...
+              </span>
+              <span style={{ fontSize: '11px', color: 'var(--text-muted, #a1a1aa)' }}>
+                Identificando capa e obra fonográfica
               </span>
             </div>
           )}
         </div>
+
+        {/* Controles de Zoom de Hardware (Botões rápidos 0.5x, 1x, 2x) */}
+        {!fotoPreview && hasZoom && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              padding: '6px 12px',
+              background: '#121214',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
+            }}
+          >
+            {zoomRange.min < 0.9 && (
+              <button
+                type="button"
+                onClick={() => applyZoom(zoomRange.min)}
+                style={{
+                  padding: '3px 12px',
+                  borderRadius: '12px',
+                  border: zoomLevel === zoomRange.min ? '1px solid #e53e3e' : '1px solid rgba(255, 255, 255, 0.15)',
+                  background: zoomLevel === zoomRange.min ? 'rgba(229, 62, 62, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                  color: '#fff',
+                  fontSize: '11.5px',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                0.5x (Grande Angular)
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => applyZoom(1)}
+              style={{
+                padding: '3px 12px',
+                borderRadius: '12px',
+                border: Math.abs(zoomLevel - 1) < 0.2 ? '1px solid #e53e3e' : '1px solid rgba(255, 255, 255, 0.15)',
+                background: Math.abs(zoomLevel - 1) < 0.2 ? 'rgba(229, 62, 62, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                color: '#fff',
+                fontSize: '11.5px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}
+            >
+              1x (Padrão)
+            </button>
+            {zoomRange.max >= 2 && (
+              <button
+                type="button"
+                onClick={() => applyZoom(2)}
+                style={{
+                  padding: '3px 12px',
+                  borderRadius: '12px',
+                  border: Math.abs(zoomLevel - 2) < 0.2 ? '1px solid #e53e3e' : '1px solid rgba(255, 255, 255, 0.15)',
+                  background: Math.abs(zoomLevel - 2) < 0.2 ? 'rgba(229, 62, 62, 0.2)' : 'rgba(255, 255, 255, 0.05)',
+                  color: '#fff',
+                  fontSize: '11.5px',
+                  fontWeight: 600,
+                  cursor: 'pointer'
+                }}
+              >
+                2x (Zoom)
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Mensagem de Erro (se houver) */}
         {erro && (
@@ -517,21 +713,20 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
           </div>
         )}
 
-        {/* Rodapé / Controles com Altura Estável para Evitar Pulos Visuais */}
+        {/* Rodapé / Controles */}
         <div
           style={{
-            padding: '16px',
+            padding: '14px 16px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            gap: '12px',
-            minHeight: '144px',
+            gap: '10px',
+            minHeight: '130px',
             boxSizing: 'border-box',
             flexShrink: 0
           }}
         >
           {fotoPreview && !processando ? (
-            /* Botão de Tentar Novamente quando a captura terminar com erro */
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
               <button
                 type="button"
@@ -539,7 +734,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
                 className="btn btn-secondary"
                 style={{
                   width: '100%',
-                  minHeight: '48px',
+                  minHeight: '46px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -553,19 +748,19 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
             </div>
           ) : (
             <>
-              {/* Botão Obturador Central com Dimensões Estritas e Travadas */}
+              {/* Botão Obturador Central */}
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <button
                   type="button"
                   onClick={capturarDoVideo}
                   disabled={processando || !!erro}
                   style={{
-                    width: '72px',
-                    height: '72px',
-                    minWidth: '72px',
-                    minHeight: '72px',
-                    maxWidth: '72px',
-                    maxHeight: '72px',
+                    width: '68px',
+                    height: '68px',
+                    minWidth: '68px',
+                    minHeight: '68px',
+                    maxWidth: '68px',
+                    maxHeight: '68px',
                     aspectRatio: '1 / 1',
                     flexShrink: 0,
                     borderRadius: '50%',
@@ -587,10 +782,10 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
                 >
                   <div
                     style={{
-                      width: '56px',
-                      height: '56px',
-                      minWidth: '56px',
-                      minHeight: '56px',
+                      width: '52px',
+                      height: '52px',
+                      minWidth: '52px',
+                      minHeight: '52px',
                       aspectRatio: '1 / 1',
                       flexShrink: 0,
                       borderRadius: '50%',
@@ -602,7 +797,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
                       pointerEvents: 'none'
                     }}
                   >
-                    <IoCamera size={26} color="#18181b" />
+                    <IoCamera size={24} color="#18181b" />
                   </div>
                 </button>
               </div>
@@ -621,7 +816,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
                 disabled={processando}
                 className="btn btn-secondary"
                 style={{
-                  minHeight: '44px',
+                  minHeight: '40px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -630,7 +825,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
                   fontWeight: 500
                 }}
               >
-                <IoImageOutline size={18} /> Escolher foto da galeria
+                <IoImageOutline size={17} /> Escolher foto da galeria
               </button>
             </>
           )}
