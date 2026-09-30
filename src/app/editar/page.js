@@ -262,7 +262,7 @@ function EditarExcluirContent() {
     });
     setMensagem(null);
     setTela('edicao');
-    carregarObservacoes(item.id);
+    carregarObservacoes(item.id, item);
   }
 
   const voltarParaBusca = () => {
@@ -504,11 +504,27 @@ function EditarExcluirContent() {
 
   const getObsField = () => tipo === 'discos' ? 'disco_id' : tipo === 'dvds' ? 'dvd_id' : tipo === 'cds' ? 'cd_id' : 'vhs_id';
 
-  const carregarObservacoes = async (id) => {
+  const carregarObservacoes = async (id, itemFallback) => {
     setLoadingObs(true);
-    const { data } = await supabase.from('observacoes_disco').select('*').eq(getObsField(), id).order('criado_em', { ascending: false });
-    setObservacoes(data || []);
-    setLoadingObs(false);
+    try {
+      const { data } = await supabase.from('observacoes_disco').select('*').eq(getObsField(), id).order('criado_em', { ascending: false });
+      let lista = data || [];
+      const itemAlvo = itemFallback || itemEditando;
+      if (lista.length === 0 && itemAlvo?.observacao) {
+        lista = [{
+          id: `legado_${id}`,
+          observacao: itemAlvo.observacao,
+          criado_em: itemAlvo.created_at || itemAlvo.criado_em || new Date().toISOString(),
+          isLegacy: true
+        }];
+      }
+      setObservacoes(lista);
+    } catch (err) {
+      console.error('Erro ao carregar observações:', err);
+      setObservacoes([]);
+    } finally {
+      setLoadingObs(false);
+    }
   };
 
   const adicionarObservacao = async () => {
@@ -516,17 +532,31 @@ function EditarExcluirContent() {
     try {
       const { data, error } = await supabase.from('observacoes_disco').insert({ [getObsField()]: itemEditando.id, observacao: novaObservacao.trim() }).select().single();
       if (error) throw error;
-      setObservacoes([data, ...observacoes]);
+      setObservacoes(prev => [data, ...prev.filter(o => !o.isLegacy)]);
       setNovaObservacao('');
+      try {
+        await itemService.updateItem(tipo, itemEditando.id, { observacao: novaObservacao.trim() });
+      } catch (_) {}
     } catch (err) {
-      setMensagem({ tipo: 'error', texto: 'Erro ao adicionar observação: ' + err.message });
+      if (err.message && err.message.includes('disco_id') && err.message.includes('not-null')) {
+        setMensagem({ tipo: 'error', texto: 'A coluna "disco_id" no Supabase ainda possui restrição NOT NULL. Execute o script fix_observacoes_disco.sql no SQL Editor do Supabase.' });
+      } else {
+        setMensagem({ tipo: 'error', texto: 'Erro ao adicionar observação: ' + err.message });
+      }
     }
   };
 
-  const excluirObservacao = async (id) => {
+  const excluirObservacao = async (obsOrId) => {
+    const id = typeof obsOrId === 'object' ? obsOrId.id : obsOrId;
+    const isLegacy = typeof obsOrId === 'object' ? obsOrId.isLegacy : String(id).startsWith('legado_');
     try {
-      await supabase.from('observacoes_disco').delete().eq('id', id);
-      setObservacoes(prev => prev.filter(o => o.id !== id));
+      if (isLegacy) {
+        await itemService.updateItem(tipo, itemEditando.id, { observacao: null });
+        setObservacoes(prev => prev.filter(o => o.id !== id));
+      } else {
+        await supabase.from('observacoes_disco').delete().eq('id', id);
+        setObservacoes(prev => prev.filter(o => o.id !== id));
+      }
     } catch (err) {
       setMensagem({ tipo: 'error', texto: 'Erro ao excluir observação: ' + err.message });
     }
@@ -873,7 +903,7 @@ function EditarExcluirContent() {
                         <tr key={obs.id}>
                           <td data-label="Data" style={{ color: 'var(--text-muted)', fontSize: '13px', whiteSpace: 'nowrap' }}>{new Date(obs.criado_em.endsWith('Z') ? obs.criado_em : obs.criado_em + 'Z').toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })}</td>
                           <td data-label="Observação">{obs.observacao}</td>
-                          <td data-label="Excluir" style={{ textAlign: 'center' }}><button onClick={() => excluirObservacao(obs.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '16px', padding: '10px' }}>✕</button></td>
+                          <td data-label="Excluir" style={{ textAlign: 'center' }}><button onClick={() => excluirObservacao(obs)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '16px', padding: '10px' }}>✕</button></td>
                         </tr>
                       ))}
                     </tbody>

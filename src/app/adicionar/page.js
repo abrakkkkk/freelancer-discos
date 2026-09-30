@@ -312,10 +312,14 @@ export default function AdicionarItem() {
       // 3. Registrar Observação se existir
       if (form.observacao?.trim()) {
         const obsField = activeTab === 'discos' ? 'disco_id' : activeTab === 'dvds' ? 'dvd_id' : activeTab === 'cds' ? 'cd_id' : 'vhs_id';
-        await movimentacaoService.registerInitialObservation({
-          [obsField]: itemInfo.id,
-          observacao: form.observacao.trim()
-        });
+        try {
+          await movimentacaoService.registerInitialObservation({
+            [obsField]: itemInfo.id,
+            observacao: form.observacao.trim()
+          });
+        } catch (obsErr) {
+          console.warn('Aviso: item cadastrado com observação, mas não foi possível registrar na tabela observacoes_disco:', obsErr);
+        }
       }
 
       if (activeTab === CATEGORY_IDS.DISCOS) {
