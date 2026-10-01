@@ -489,24 +489,6 @@ function EditarExcluirContent() {
     }
   };
 
-  const toggleAtivo = async (item) => {
-    const novoStatus = !item.ativo;
-    try {
-      const snapshotAntes = JSON.parse(JSON.stringify(item));
-      await itemService.updateItem(tipo, item.id, { ativo: novoStatus });
-      const updatedItem = { ...item, ativo: novoStatus };
-      setItemEditando(updatedItem);
-      setMensagem({ tipo: 'success', texto: novoStatus ? `${tipoNome} reativado!` : `${tipoNome} inativado!` });
-      setResultados(prev => prev.map(d => d.id === item.id ? updatedItem : d));
-      registerUndo(tipo, [snapshotAntes], () => {
-        carregarItemPorId(item.id);
-        buscar();
-      });
-    } catch (err) {
-      setMensagem({ tipo: 'error', texto: err.message });
-    }
-  };
-
 
   const getObsField = () => tipo === 'discos' ? 'disco_id' : tipo === 'dvds' ? 'dvd_id' : tipo === 'cds' ? 'cd_id' : 'vhs_id';
 

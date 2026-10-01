@@ -26,14 +26,3 @@ export const getStoreColor = (storeName) => {
   const store = STORE_OPTIONS.find(opt => opt.value === storeName);
   return store ? store.color : 'inherit';
 };
-
-export const STATUS_OPTIONS = {
-  ACTIVE: 'ativo',
-  INACTIVE: 'inativo',
-};
-
-export const MOVEMENT_TYPES = {
-  ENTRADA: 'entrada',
-  SAIDA: 'saida',
-  EXCLUSAO: 'exclusao',
-};

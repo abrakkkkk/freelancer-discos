@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { MdNotificationsNone, MdNotifications, MdCheckCircle, MdClose, MdLayers } from 'react-icons/md';
+import { MdNotificationsNone, MdNotifications, MdCheckCircle, MdClose } from 'react-icons/md';
 import { useReposicao } from '@/contexts/ReposicaoContext';
 
 export default function ReposicaoBell() {

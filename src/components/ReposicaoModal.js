@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PiVinylRecord } from 'react-icons/pi';
-import { MdCheckCircle, MdClose, MdLayers } from 'react-icons/md';
+import { MdCheckCircle, MdLayers } from 'react-icons/md';
 
 export default function ReposicaoModal({
   isOpen,
