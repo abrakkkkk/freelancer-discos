@@ -1,6 +1,8 @@
 // Rota API Next.js para reconhecimento de capa via Gemini Vision
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
+import { createHash } from 'crypto';
+
 // Ordem por velocidade medida (benchmark real com billing ativo):
 // gemini-3.6-flash ~1.5s | gemini-3.5-flash ~1.9s | gemini-3.8-flash ~3.5s | gemini-flash-latest ~4s
 const GEMINI_MODELS = [
@@ -17,6 +19,37 @@ function getGeminiKeys() {
     process.env.GEMINI_API_KEY_BACKUP
   ].filter(Boolean);
   return [...new Set(raw.flatMap(k => k.split(',').map(s => s.trim()).filter(Boolean)))];
+}
+
+// Cache em memória: evita chamadas repetidas à API para a mesma imagem
+// TTL 24h, máximo 500 entradas (~2KB cada = ~1MB de RAM no pico)
+const recognitionCache = new Map();
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
+const CACHE_MAX_ENTRIES = 500;
+
+function getImageHash(base64Data) {
+  // Hash rápido: usa os primeiros 2048 chars + tamanho total (suficiente para distinguir imagens)
+  const sample = base64Data.substring(0, 2048) + ':' + base64Data.length;
+  return createHash('sha256').update(sample).digest('hex').substring(0, 16);
+}
+
+function getCachedResult(hash) {
+  const entry = recognitionCache.get(hash);
+  if (!entry) return null;
+  if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+    recognitionCache.delete(hash);
+    return null;
+  }
+  return entry.result;
+}
+
+function setCachedResult(hash, result) {
+  // Evita estouro de memória: remove entrada mais antiga se atingir o limite
+  if (recognitionCache.size >= CACHE_MAX_ENTRIES) {
+    const oldestKey = recognitionCache.keys().next().value;
+    recognitionCache.delete(oldestKey);
+  }
+  recognitionCache.set(hash, { result, timestamp: Date.now() });
 }
 
 export async function POST(request) {
@@ -48,6 +81,14 @@ export async function POST(request) {
     if (matches) {
       mimeType = matches[1];
       base64Data = matches[2];
+    }
+
+    // Cache hit: retorna resultado anterior instantaneamente (0ms, 0 custo)
+    const imageHash = getImageHash(base64Data);
+    const cached = getCachedResult(imageHash);
+    if (cached) {
+      console.log(`[Cover Recognition] Cache hit (${imageHash}) — economia de 1 chamada API`);
+      return Response.json(cached);
     }
 
     // Prompt compacto (~400 tokens vs ~1125 anterior) — mesma qualidade, ~500ms mais rápido
@@ -276,13 +317,18 @@ JSON estrito:
       });
     }
 
-    return Response.json({
+    const successResult = {
       success: true,
       artista,
       titulo,
       ano,
       confianca
-    });
+    };
+
+    // Salva no cache para evitar chamada duplicada à API
+    setCachedResult(imageHash, successResult);
+
+    return Response.json(successResult);
   } catch (err) {
     console.error('Erro interno em /api/recognize-cover:', err);
     return Response.json(
