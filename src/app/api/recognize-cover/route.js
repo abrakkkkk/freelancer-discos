@@ -172,20 +172,23 @@ JSON estrito:
       return text;
     }
 
-    // Race: dispara ambos em paralelo, usa o primeiro que responder com sucesso
-    const raceCandidates = [];
-    if (geminiKeys.length > 0) raceCandidates.push(tryGemini());
-    if (groqKey) raceCandidates.push(tryGroq());
-
-    if (raceCandidates.length > 0) {
-      // Promise.any resolve com o PRIMEIRO sucesso; ignora rejeições enquanto houver candidatos
+    // Gemini primeiro (mais preciso), Groq só como fallback de emergência (alucina títulos)
+    if (geminiKeys.length > 0) {
       try {
-        candidateText = await Promise.any(raceCandidates);
-      } catch (aggregateErr) {
-        // Todas as promises falharam
-        const errors = aggregateErr.errors || [aggregateErr];
-        lastError = errors.map(e => e.message).join(' | ');
-        console.error('Todas as tentativas de reconhecimento falharam:', lastError);
+        candidateText = await tryGemini();
+      } catch (err) {
+        lastError = err.message;
+        console.warn('[Cover] Gemini falhou, tentando Groq como fallback:', err.message);
+      }
+    }
+
+    // Fallback: Groq Vision (só se Gemini falhar completamente — menos preciso, alucina títulos)
+    if (!candidateText && groqKey) {
+      try {
+        candidateText = await tryGroq();
+      } catch (errGroq) {
+        lastError = [lastError, errGroq.message].filter(Boolean).join(' | ');
+        console.warn('[Cover] Groq fallback também falhou:', errGroq.message);
       }
     }
 
