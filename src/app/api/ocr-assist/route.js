@@ -196,12 +196,7 @@ Regras obrigatórias:
         { status: 502 }
       );
     }
-    if (!rawText) {
-      return Response.json(
-        { success: false, error: 'A IA não retornou dados legíveis.' },
-        { status: 502 }
-      );
-    }
+
 
     let parsed = null;
     try {

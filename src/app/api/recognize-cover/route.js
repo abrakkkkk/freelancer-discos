@@ -99,9 +99,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
     let candidateText = null;
     let lastError = null;
 
-    // === ESTRATÉGIA DE RACE PARALELO ===
-    // Dispara Gemini (modelo mais rápido) e Groq simultaneamente.
-    // Quem responder primeiro com sucesso vence. Latência típica: ~1.5s em vez de ~4s.
+    // Gemini sequencial primário (mais rápido e preciso) -> Groq fallback emergencial
 
     const geminiPayload = {
       contents: [{
@@ -241,12 +239,6 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
       return Response.json(
         { success: false, error: friendlyError },
         { status: 502 }
-      );
-    }
-    if (!candidateText) {
-      return Response.json(
-        { success: false, error: 'A inteligência visual não retornou dados para esta imagem.' },
-        { status: 422 }
       );
     }
 
