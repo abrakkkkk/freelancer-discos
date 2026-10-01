@@ -93,7 +93,7 @@ Retorne estritamente um JSON neste formato:
             const generationConfig = {
               responseMimeType: 'application/json',
               temperature: 0,
-              maxOutputTokens: 150
+              maxOutputTokens: 250
             };
 
             if (model.includes('flash')) {
@@ -117,8 +117,9 @@ Retorne estritamente um JSON neste formato:
               generationConfig
             };
 
-            const timeoutMs = 18000;
+            const timeoutMs = 7000;
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+            const t0 = Date.now();
             const res = await fetch(url, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -127,13 +128,17 @@ Retorne estritamente um JSON neste formato:
             });
 
             const data = await res.json();
+            const durationMs = Date.now() - t0;
             if (res.ok) {
               const parts = data.candidates?.[0]?.content?.parts || [];
               candidateText = parts.map(p => p.text).filter(Boolean).join('\n').trim();
-              if (candidateText) break keysLoop;
+              if (candidateText) {
+                console.log(`[Cover Recognition] Sucesso com ${model} em ${durationMs}ms`);
+                break keysLoop;
+              }
             } else {
               lastError = data.error?.message || `Erro ${res.status}`;
-              console.warn(`Tentativa Gemini Capa com ${model} falhou (${res.status}): ${lastError}`);
+              console.warn(`Tentativa Gemini Capa com ${model} falhou em ${durationMs}ms (${res.status}): ${lastError}`);
               if (res.status === 429) {
                 break;
               }

@@ -213,8 +213,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     const sx = (srcW - sSize) / 2;
     const sy = (srcH - sSize) / 2;
 
-    // Alta resolução (Full HD até 1920x1920 quadrado para máxima fidelidade visual em capas sem texto)
-    const targetSize = Math.min(sSize, 1920);
+    // Resolução ideal para Gemini Vision (800x800 quadrado): cabe perfeitamente em 1 tile de visão, pesando ~80KB em vez de 3MB
+    const targetSize = Math.min(sSize, 800);
 
     const canvas = document.createElement('canvas');
     canvas.width = targetSize;
@@ -225,10 +225,10 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, targetSize, targetSize);
 
-    // Exporta em JPEG de alta qualidade (0.92) para preservar detalhes artísticos e ilustrações finas
+    // Exporta em JPEG otimizado (0.82) para envio ultrarrápido (<100ms de upload)
     let base64 = '';
     try {
-      base64 = canvas.toDataURL('image/jpeg', 0.92);
+      base64 = canvas.toDataURL('image/jpeg', 0.82);
     } catch (_) {
       base64 = canvas.toDataURL('image/png');
     }
@@ -279,26 +279,9 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   const capturarDoVideo = async () => {
     if (!videoRef.current || processando) return;
     try {
-      let base64 = '';
-      const track = stream?.getVideoTracks?.()[0];
-      
-      // Tenta tirar foto na resolução nativa máxima do sensor (ImageCapture até 12MP/4K)
-      if (typeof window !== 'undefined' && 'ImageCapture' in window && track && track.readyState === 'live') {
-        try {
-          const imageCapture = new window.ImageCapture(track);
-          const blob = await imageCapture.takePhoto();
-          const imgBitmap = await createImageBitmap(blob);
-          const res = recortarEComprimir(imgBitmap);
-          base64 = res.base64;
-        } catch (e) {
-          console.warn('ImageCapture fallback para frame de vídeo:', e);
-        }
-      }
-
-      if (!base64) {
-        const res = recortarEComprimir(videoRef.current);
-        base64 = res.base64;
-      }
+      // Captura direta e instantânea do frame de vídeo ativo (0ms de atraso de obturador)
+      const res = recortarEComprimir(videoRef.current);
+      const base64 = res.base64;
 
       setFotoPreview(base64);
       enviarParaReconhecimento(base64);
