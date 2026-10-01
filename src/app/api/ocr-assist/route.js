@@ -1,7 +1,8 @@
 // Rota API Next.js para leitura assistida de codigos de catalogo fonograficos dificeis via Gemini Vision
 
 const GEMINI_MODELS = [
-  'gemini-3.5-flash-lite',
+  'gemini-3.8-flash',
+  'gemini-flash-latest',
   'gemini-3.6-flash'
 ];
 
@@ -124,7 +125,7 @@ Regras obrigatórias:
               maxOutputTokens: 50
             };
 
-            if (model === 'gemini-3.6-flash' || model === 'gemini-flash-latest') {
+            if (model.includes('flash')) {
               generationConfig.thinkingConfig = { thinkingBudget: 0 };
             }
 

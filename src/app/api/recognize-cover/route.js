@@ -2,10 +2,10 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 const GEMINI_MODELS = [
-  'gemini-flash-lite-latest',
+  'gemini-3.8-flash',
   'gemini-flash-latest',
-  'gemini-3.5-flash',
-  'gemini-3.8-flash'
+  'gemini-3.6-flash',
+  'gemini-3.5-flash'
 ];
 
 function getGeminiKeys() {
@@ -96,7 +96,7 @@ Retorne estritamente um JSON neste formato:
               maxOutputTokens: 150
             };
 
-            if (model === 'gemini-flash-latest' || model === 'gemini-3.8-flash') {
+            if (model.includes('flash')) {
               generationConfig.thinkingConfig = { thinkingBudget: 0 };
             }
 
