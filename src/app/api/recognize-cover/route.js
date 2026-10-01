@@ -91,17 +91,10 @@ export async function POST(request) {
       return Response.json(cached);
     }
 
-    // Prompt compacto (~400 tokens vs ~1125 anterior) — mesma qualidade, ~500ms mais rápido
-    const systemPrompt = `Especialista em identificação visual de capas de vinil, CD e álbuns (MPB, Rock, Bossa Nova, Samba, Jazz, Pop, Clássica, Internacional).
-
-REGRAS:
-1. VISUAL PURO: Muitas capas icônicas não têm texto. Identifique pela arte, foto, cenário ou rosto dos músicos usando sua memória enciclopédica do catálogo fonográfico mundial.
-2. TEXTO: Se houver texto legível, transcreva EXATAMENTE. NUNCA invente nomes.
-3. TRILHAS/COLETÂNEAS: Trilha sonora de novela/filme ou coletânea = artista "Various". NUNCA use nome de atores da capa.
-4. ANTI-ALUCINAÇÃO: Sem certeza real → confianca "baixa", artista e titulo vazios. NUNCA invente.
-
-JSON estrito:
-{"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
+    // Prompt ultra-compacto (~70 tokens) — reduz latência e custo de tokens
+    const systemPrompt = `Identifique artista, título e ano da capa de disco (vinil/CD).
+REGRAS: 1. Use memória visual ou transcreva o texto exato da capa; NUNCA invente nomes. 2. Coletânea ou trilha sonora de novela/filme = artista "Various". 3. Se incerto, deixe artista/titulo vazios e confianca "baixa".
+JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
 
     let candidateText = null;
     let lastError = null;
