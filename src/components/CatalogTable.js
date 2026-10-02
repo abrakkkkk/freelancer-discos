@@ -39,9 +39,6 @@ export default function CatalogTable({
 
   const getEdicaoTag = (d) => {
     if (!d || !d.observacao) return null;
-    const caixaStr = String(d.caixa || '').trim();
-    const isCaixaNova = ['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(caixaStr);
-    if (!isCaixaNova) return null;
     const match = d.observacao.match(/^\[([^\]]+)\]/);
     return match ? match[1] : null;
   };

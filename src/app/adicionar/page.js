@@ -330,8 +330,7 @@ export default function AdicionarItem() {
       const chosenCover = selectedCover?.cover || selectedCover?.thumb || null;
 
       let finalObservacao = form.observacao?.trim() || null;
-      const isCaixaNova = ['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(String(form.caixa || '').trim());
-      if (isCaixaNova && (seloPrensagem.trim() || anoPrensagem.trim())) {
+      if (activeTab === CATEGORY_IDS.DISCOS && (seloPrensagem.trim() || anoPrensagem.trim())) {
         const tag = [seloPrensagem.trim(), anoPrensagem.trim()].filter(Boolean).join(' • ');
         finalObservacao = tag ? `[${tag}] ${finalObservacao || ''}`.trim() : finalObservacao;
       }
@@ -713,11 +712,11 @@ export default function AdicionarItem() {
                 </>
               )}
 
-              {['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(String(form.caixa || '').trim()) && (
+              {activeTab === CATEGORY_IDS.DISCOS && (
                 <div style={{ marginTop: '12px', padding: '12px 14px', background: 'rgba(168, 85, 247, 0.05)', border: '1px solid rgba(168, 85, 247, 0.25)', borderRadius: '8px', width: '100%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <span style={{ fontSize: '13px', fontWeight: 600, color: '#c084fc' }}>
-                      Prensagem Nova / Edição Especial (Caixa {form.caixa})
+                      Prensagem / Edição
                     </span>
                   </div>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>

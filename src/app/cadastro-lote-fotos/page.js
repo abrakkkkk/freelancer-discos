@@ -386,10 +386,9 @@ export default function CadastroLoteFotos() {
         const finalCaixa = item.caixa?.trim() ? normalizeCaixa(item.caixa.trim(), loja) : (caixaPadrao ? normalizeCaixa(caixaPadrao, loja) : null);
         const precoNumerico = Number(String(item.preco || '0').replace(/\D/g, '')) || 0;
 
-        // Se for Caixa 49, 50 ou 51, inclui o selo e ano formatados na observação
+        // Inclui o selo e ano formatados na observação [Selo • Ano] se disponíveis
         let finalObservacao = null;
-        const isCaixaNova = ['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(String(finalCaixa || '').trim());
-        if (isCaixaNova && (item.selo?.trim() || item.ano?.trim())) {
+        if (item.selo?.trim() || item.ano?.trim()) {
           const tag = [item.selo?.trim(), item.ano?.trim()].filter(Boolean).join(' • ');
           if (tag) finalObservacao = `[${tag}]`;
         }

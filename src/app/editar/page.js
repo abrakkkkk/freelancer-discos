@@ -333,11 +333,8 @@ function EditarExcluirContent() {
     setTela('edicao');
     carregarObservacoes(item.id, item);
 
-    // Discos das Caixas 49, 50 e 51: preenche e abre a pesquisa do Discogs automaticamente na aba de edição
-    const caixaLimpa = String(item.caixa || '').toLowerCase().replace(/caixa|\s|b/gi, '');
-    const isCaixaPrensagem = ['49', '50', '51'].includes(caixaLimpa);
-
-    if (tipo === CATEGORY_IDS.DISCOS && isCaixaPrensagem) {
+    // Discos: preenche e abre a pesquisa do Discogs automaticamente na aba de edição para todos os discos do estoque
+    if (tipo === CATEGORY_IDS.DISCOS) {
       const query = formatDiscogsQuery(item.artista, item.titulo);
       if (query.trim()) {
         setQueryDiscogs(query);
@@ -446,9 +443,7 @@ function EditarExcluirContent() {
     };
     if (temArtista) updateData.artista = form.artista;
 
-    const caixaLimpa = String(form.caixa || '').toLowerCase().replace(/caixa|\s|b/gi, '');
-    const isCaixaNova = ['49', '50', '51'].includes(caixaLimpa);
-    if (isCaixaNova) {
+    if (tipo === CATEGORY_IDS.DISCOS) {
       const tag = [seloPrensagem.trim(), anoPrensagem.trim()].filter(Boolean).join(' • ');
       let existingObs = itemEditando?.observacao || '';
       if (existingObs.startsWith('[')) {
@@ -926,8 +921,8 @@ function EditarExcluirContent() {
                 </div>
               </div>
 
-              {/* Recurso especial para Caixas 49, 50 e 51 (Três Selos, Noize, Rocinante, etc.) */}
-              {['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(String(form.caixa || '').trim()) && (
+              {/* Recurso de edição de prensagem / selo para discos */}
+              {tipo === CATEGORY_IDS.DISCOS && (
                 <div style={{
                   background: 'rgba(124, 58, 237, 0.08)',
                   border: '1px solid rgba(124, 58, 237, 0.25)',
@@ -947,10 +942,10 @@ function EditarExcluirContent() {
                       padding: '2px 6px',
                       borderRadius: '4px'
                     }}>
-                      Edição Especial
+                      Edição / Prensagem
                     </span>
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                      Reedições modernas (Três Selos, Noize, etc.)
+                      Identificação do selo e ano da edição
                     </span>
                   </div>
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
