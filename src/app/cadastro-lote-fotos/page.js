@@ -15,43 +15,53 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import AlertMessage from '@/components/AlertMessage';
 
 // Helper para redimensionar imagem no cliente via Canvas (evita uploads de 5MB do celular)
+// Helper resiliente para redimensionar imagem no cliente via Canvas (evita uploads pesados e nunca rejeita)
 async function resizeImage(file, maxDimension = 800) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
+      const dataUrlRaw = e.target.result;
       const img = new Image();
       img.onload = () => {
-        let width = img.width;
-        let height = img.height;
+        try {
+          let width = img.width;
+          let height = img.height;
 
-        if (width > height) {
-          if (width > maxDimension) {
-            height = Math.round((height * maxDimension) / width);
-            width = maxDimension;
+          if (width > height) {
+            if (width > maxDimension) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            }
+          } else {
+            if (height > maxDimension) {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
           }
-        } else {
-          if (height > maxDimension) {
-            width = Math.round((width * maxDimension) / height);
-            height = maxDimension;
-          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+          resolve({
+            dataUrl,
+            originalPreview: dataUrlRaw
+          });
+        } catch (_) {
+          resolve({ dataUrl: dataUrlRaw, originalPreview: dataUrlRaw });
         }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-        resolve({
-          dataUrl,
-          originalPreview: e.target.result
-        });
       };
-      img.onerror = reject;
-      img.src = e.target.result;
+      img.onerror = () => {
+        resolve({ dataUrl: dataUrlRaw, originalPreview: dataUrlRaw });
+      };
+      img.src = dataUrlRaw;
     };
-    reader.onerror = reject;
+    reader.onerror = () => {
+      resolve({ dataUrl: null, originalPreview: null });
+    };
     reader.readAsDataURL(file);
   });
 }
@@ -99,27 +109,28 @@ export default function CadastroLoteFotos() {
     setProcessando(true);
     setProgresso({ atual: 0, total: files.length });
 
-    const novosItens = [];
-
     for (let i = 0; i < files.length; i++) {
       setProgresso({ atual: i + 1, total: files.length });
       const file = files[i];
 
       try {
-        // 1. Redimensiona a foto
+        // 1. Redimensiona a foto (nunca trava)
         const { dataUrl, originalPreview } = await resizeImage(file, 800);
+        const previewUrl = originalPreview || dataUrl || (typeof URL !== 'undefined' ? URL.createObjectURL(file) : '');
 
         // 2. Chama Gemini Vision
         let geminiData = null;
-        try {
-          const res = await fetch('/api/recognize-cover', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: dataUrl })
-          });
-          geminiData = await res.json();
-        } catch (err) {
-          console.warn('Erro ao chamar recognize-cover:', err);
+        if (dataUrl) {
+          try {
+            const res = await fetch('/api/recognize-cover', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: dataUrl })
+            });
+            geminiData = await res.json();
+          } catch (err) {
+            console.warn('Erro ao chamar recognize-cover:', err);
+          }
         }
 
         const artistaGemini = geminiData?.artista || '';
@@ -145,13 +156,19 @@ export default function CadastroLoteFotos() {
         }
 
         const finalArtista = artistaGemini || discogsMatch?.artist || '';
-        const finalTitulo = tituloGemini || discogsMatch?.title?.split(' - ')?.[1] || discogsMatch?.title || '';
+        let finalTitulo = tituloGemini;
+        if (!finalTitulo && discogsMatch?.title) {
+          const parts = discogsMatch.title.split(' - ');
+          finalTitulo = parts[1] || parts[0];
+        }
+        if (!finalTitulo) finalTitulo = '';
+
         const finalAno = anoGemini || (discogsMatch?.year ? String(discogsMatch.year) : '');
         const finalCapa = discogsMatch?.thumb || discogsMatch?.cover_image || null;
 
-        novosItens.push({
+        const novoItem = {
           id: `item-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
-          fotoPreview: originalPreview,
+          fotoPreview: previewUrl,
           artista: finalArtista,
           titulo: finalTitulo,
           ano: finalAno,
@@ -161,14 +178,31 @@ export default function CadastroLoteFotos() {
           capaUrl: finalCapa,
           confianca,
           discogsResults: discogsMatch ? [discogsMatch] : [],
-          selecionado: confianca !== 'baixa' && !!finalTitulo
-        });
+          selecionado: true // SEMPRE selecionado por padrão para que o lote inteiro seja aproveitado!
+        };
+
+        // Adiciona PROGRESSIVAMENTE para que o usuário veja cada disco aparecer na hora
+        setItens(prev => [...prev, novoItem]);
       } catch (err) {
         console.error(`Erro ao processar arquivo ${file.name}:`, err);
+        // Mesmo com erro inesperado, adiciona o card com a foto para não perder o disco
+        setItens(prev => [...prev, {
+          id: `item-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
+          fotoPreview: typeof URL !== 'undefined' ? URL.createObjectURL(file) : '',
+          artista: '',
+          titulo: '',
+          ano: '',
+          preco: precoPadrao || '',
+          caixa: caixaPadrao || '',
+          selo: '',
+          capaUrl: null,
+          confianca: 'baixa',
+          discogsResults: [],
+          selecionado: true
+        }]);
       }
     }
 
-    setItens(prev => [...prev, ...novosItens]);
     setProcessando(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
