@@ -48,13 +48,12 @@ export async function GET(request) {
   const query = searchParams.get('q');
   const barcode = searchParams.get('barcode');
   const catnoParam = searchParams.get('catno');
-  const formatParam = (searchParams.get('format') || 'vinyl').toLowerCase();
 
   if (!query && !barcode && !catnoParam) {
     return Response.json({ error: 'Query parameter "q", "catno" or "barcode" is required' }, { status: 400 });
   }
 
-  const cacheKey = `b:${barcode || ''}|c:${catnoParam || ''}|q:${query || ''}|f:${formatParam}`;
+  const cacheKey = `b:${barcode || ''}|c:${catnoParam || ''}|q:${query || ''}`;
   const cached = getFromCache(cacheKey);
   if (cached) {
     return Response.json(cached, {
@@ -151,21 +150,9 @@ export async function GET(request) {
         score += 500;
       }
 
-      // Prioridade máxima para edições brasileiras
+      // Prioridade para edições brasileiras
       if (item.country === 'Brazil') {
         score += 300;
-      }
-
-      // Prioridade pesada para formato selecionado (Vinil vs CD)
-      const isVinyl = Array.isArray(item.format) && item.format.some(f => /vinyl|lp|12"|7"/i.test(f));
-      const isCD = Array.isArray(item.format) && item.format.some(f => /\bcd\b/i.test(f));
-
-      if (formatParam === 'vinyl') {
-        if (isVinyl) score += 1000;
-        else if (isCD) score -= 400;
-      } else if (formatParam === 'cd') {
-        if (isCD) score += 1000;
-        else if (isVinyl) score -= 400;
       }
 
       return { score, isExact };

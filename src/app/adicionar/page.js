@@ -17,7 +17,7 @@ import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
 import { cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
-import { searchMusicHybrid, extractSeloPrensagem } from '@/utils/musicSearchClient';
+import { fetchDiscogs, extractSeloPrensagem } from '@/utils/discogsClient';
 
 import { IoCamera } from "react-icons/io5";
 
@@ -130,13 +130,12 @@ export default function AdicionarItem() {
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const data = await searchMusicHybrid({ q: queryDiscogs, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
-        if (results && results.length > 0) {
-          setDiscogsResults(results);
-          setShowDiscogsDropdown(true);
-        }
-      });
-      if (!data.results || data.results.length === 0) {
+      const data = await fetchDiscogs({ q: queryDiscogs }, signal);
+      const results = data.results || [];
+      if (results.length > 0) {
+        setDiscogsResults(results);
+        setShowDiscogsDropdown(true);
+      } else {
         setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado.' });
       }
     } catch (err) {
@@ -183,13 +182,11 @@ export default function AdicionarItem() {
       setShowDiscogsDropdown(false);
 
       try {
-        const data = await searchMusicHybrid({ q: query, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
-          if (results && results.length > 0) {
-            setDiscogsResults(results);
-            setShowDiscogsDropdown(true);
-          }
-        });
-        if (data.results && data.results.length > 0) {
+        const data = await fetchDiscogs({ q: query }, signal);
+        const results = data.results || [];
+        if (results.length > 0) {
+          setDiscogsResults(results);
+          setShowDiscogsDropdown(true);
           setMensagem({
             tipo: 'success',
             texto: `Capa identificada: "${query}". Selecione a prensagem correta abaixo ou confirme os dados.`
@@ -219,19 +216,18 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const data = await searchMusicHybrid({ barcode, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
-        if (results && results.length > 0) {
-          if (results.length === 1) {
-            handleSelectDiscogsResult(results[0]);
-            setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${results[0].title}` });
-          } else {
-            setDiscogsResults(results);
-            setShowDiscogsDropdown(true);
-            setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${results.length} edições encontradas. Escolha uma abaixo.` });
-          }
+      const data = await fetchDiscogs({ barcode }, signal);
+      const results = data.results || [];
+      if (results.length > 0) {
+        if (results.length === 1) {
+          handleSelectDiscogsResult(results[0]);
+          setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${results[0].title}` });
+        } else {
+          setDiscogsResults(results);
+          setShowDiscogsDropdown(true);
+          setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${results.length} edições encontradas. Escolha uma abaixo.` });
         }
-      });
-      if (!data.results || data.results.length === 0) {
+      } else {
         setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado para o código de barras "${barcode}".` });
       }
     } catch (err) {
@@ -253,19 +249,18 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const data = await searchMusicHybrid({ catno: codigoTexto, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
-        if (results && results.length > 0) {
-          if (results.length === 1) {
-            handleSelectDiscogsResult(results[0]);
-            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${results[0].title}` });
-          } else {
-            setDiscogsResults(results);
-            setShowDiscogsDropdown(true);
-            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${results.length} edições encontradas. Escolha uma abaixo.` });
-          }
+      const data = await fetchDiscogs({ catno: codigoTexto }, signal);
+      const results = data.results || [];
+      if (results.length > 0) {
+        if (results.length === 1) {
+          handleSelectDiscogsResult(results[0]);
+          setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${results[0].title}` });
+        } else {
+          setDiscogsResults(results);
+          setShowDiscogsDropdown(true);
+          setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${results.length} edições encontradas. Escolha uma abaixo.` });
         }
-      });
-      if (!data.results || data.results.length === 0) {
+      } else {
         setMensagem({ tipo: 'error', texto: `Nenhum resultado encontrado para o código "${codigoTexto}".` });
       }
     } catch (err) {
@@ -556,11 +551,6 @@ export default function AdicionarItem() {
                               {extractSeloPrensagem(result) && (
                                 <span style={{ background: 'rgba(167, 139, 250, 0.15)', color: '#c084fc', border: '1px solid rgba(167, 139, 250, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
                                   {extractSeloPrensagem(result).toUpperCase()}
-                                </span>
-                              )}
-                              {result.source === 'musicbrainz' && (
-                                <span style={{ background: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.25)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                                  MUSICBRAINZ
                                 </span>
                               )}
                             </div>

@@ -20,7 +20,7 @@ import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { IoCamera } from "react-icons/io5";
 import { formatCaixa, cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
-import { searchMusicHybrid, extractSeloPrensagem } from '@/utils/musicSearchClient';
+import { fetchDiscogs, extractSeloPrensagem } from '@/utils/discogsClient';
 import AlbumCover, { setAlbumCoverCache, clearAlbumCoverCache } from '@/components/AlbumCover';
 import ConfirmModal from '@/components/ConfirmModal';
 import { useReposicao } from '@/contexts/ReposicaoContext';
@@ -163,19 +163,18 @@ function EditarExcluirContent() {
       setShowDiscogsDropdown(false);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ barcode, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
-          if (results && results.length > 0) {
-            if (results.length === 1) {
-              handleSelectDiscogsResult(results[0]);
-              setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${results[0].title}` });
-            } else {
-              setDiscogsResults(results);
-              setShowDiscogsDropdown(true);
-              setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${results.length} edições encontradas. Escolha uma abaixo.` });
-            }
+        const data = await fetchDiscogs({ barcode }, signal);
+        const results = data.results || [];
+        if (results.length > 0) {
+          if (results.length === 1) {
+            handleSelectDiscogsResult(results[0]);
+            setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${results[0].title}` });
+          } else {
+            setDiscogsResults(results);
+            setShowDiscogsDropdown(true);
+            setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${results.length} edições encontradas. Escolha uma abaixo.` });
           }
-        });
-        if (!data.results || data.results.length === 0) {
+        } else {
           setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado para o código "${barcode}".` });
         }
       } catch (err) {
@@ -189,7 +188,7 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ barcode, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal);
+        const data = await fetchDiscogs({ barcode }, signal);
         const first = data.results?.[0];
         let termoFinal = barcode;
         if (first && first.title) {
@@ -217,19 +216,18 @@ function EditarExcluirContent() {
       setShowDiscogsDropdown(false);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ catno: codigoTexto, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
-          if (results && results.length > 0) {
-            if (results.length === 1) {
-              handleSelectDiscogsResult(results[0]);
-              setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${results[0].title}` });
-            } else {
-              setDiscogsResults(results);
-              setShowDiscogsDropdown(true);
-              setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${results.length} edições encontradas.` });
-            }
+        const data = await fetchDiscogs({ catno: codigoTexto }, signal);
+        const results = data.results || [];
+        if (results.length > 0) {
+          if (results.length === 1) {
+            handleSelectDiscogsResult(results[0]);
+            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${results[0].title}` });
+          } else {
+            setDiscogsResults(results);
+            setShowDiscogsDropdown(true);
+            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${results.length} edições encontradas.` });
           }
-        });
-        if (!data.results || data.results.length === 0) {
+        } else {
           setMensagem({ tipo: 'error', texto: `Nenhum resultado para o código "${codigoTexto}".` });
         }
       } catch (err) {
@@ -243,7 +241,7 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ catno: codigoTexto, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal);
+        const data = await fetchDiscogs({ catno: codigoTexto }, signal);
         const first = data.results?.[0];
         let termoFinal = codigoTexto;
         if (first && first.title) {
@@ -332,13 +330,12 @@ function EditarExcluirContent() {
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const data = await searchMusicHybrid({ q: queryText, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
-        if (results && results.length > 0) {
-          setDiscogsResults(results);
-          setShowDiscogsDropdown(true);
-        }
-      });
-      if (!data.results || data.results.length === 0) {
+      const data = await fetchDiscogs({ q: queryText }, signal);
+      const results = data.results || [];
+      if (results.length > 0) {
+        setDiscogsResults(results);
+        setShowDiscogsDropdown(true);
+      } else {
         setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado.' });
       }
     } catch (err) {
@@ -747,11 +744,6 @@ function EditarExcluirContent() {
                                   {extractSeloPrensagem(result) && (
                                     <span style={{ background: 'rgba(167, 139, 250, 0.15)', color: '#c084fc', border: '1px solid rgba(167, 139, 250, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
                                       {extractSeloPrensagem(result).toUpperCase()}
-                                    </span>
-                                  )}
-                                  {result.source === 'musicbrainz' && (
-                                    <span style={{ background: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.25)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                                      MUSICBRAINZ
                                     </span>
                                   )}
                                 </div>
