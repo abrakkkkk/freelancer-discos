@@ -116,6 +116,23 @@ export default function CadastroLoteFotos() {
     if (activeStore && !loja) setLoja(activeStore);
   }, [activeStore, loja]);
 
+  // Auto-dismiss de mensagens de feedback para mobile
+  useEffect(() => {
+    if (!sucessoFinal) return;
+    const timer = setTimeout(() => {
+      setSucessoFinal(null);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [sucessoFinal]);
+
+  useEffect(() => {
+    if (!mensagem) return;
+    const timer = setTimeout(() => {
+      setMensagem(null);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [mensagem]);
+
   // Upload e processamento das fotos com streaming visual e proteção anti-bloqueio
   const handleFilesSelected = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -411,66 +428,47 @@ export default function CadastroLoteFotos() {
   const totalSelecionados = itens.filter(i => i.selecionado).length;
 
   return (
-    <div className="pageContainer" style={{ maxWidth: '1100px', margin: '0 auto', padding: '16px' }}>
+    <div className="pageContainer" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: 'calc(var(--bottom-nav-height, 62px) + 32px)' }}>
       
       {/* Top Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <h1 className="page-title" style={{ margin: 0, fontSize: '22px' }}>Cadastro em Lote por Fotos</h1>
-            <span style={{ fontSize: '10px', background: 'rgba(234, 179, 8, 0.15)', color: '#eab308', border: '1px solid rgba(234, 179, 8, 0.3)', padding: '2px 6px', borderRadius: '4px', fontWeight: 700 }}>
-              TESTE PRIVADO
-            </span>
-          </div>
-          <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            Faça upload das fotos das capas e compare o reconhecimento lado a lado sem alucinações.
-          </span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', width: '100%' }}>
+        <div className="titleGroup" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <FaCamera size={22} color="var(--accent)" />
+          <h1 className="page-title" style={{ margin: 0, fontSize: '20px', letterSpacing: '-0.025em' }}>Cadastro por Fotos</h1>
         </div>
-        <Link href="/" className="btn btn-secondary" style={{ fontSize: '13px' }}>
-          ← Voltar ao Acervo
+        <Link href="/" className="btn btn-secondary" style={{ fontSize: '12px', padding: '5px 12px', minHeight: '32px', display: 'inline-flex', alignItems: 'center' }}>
+          Voltar
         </Link>
       </div>
 
       {mensagem && <AlertMessage tipo={mensagem.tipo} texto={mensagem.texto} onClose={() => setMensagem(null)} />}
       
       {sucessoFinal && (
-        <div style={{ background: 'rgba(56, 161, 105, 0.15)', border: '1px solid rgba(56, 161, 105, 0.3)', color: '#48bb78', padding: '14px', borderRadius: '8px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <MdCheckCircle size={22} />
-          <span style={{ fontWeight: 600 }}>{sucessoFinal}</span>
+        <div style={{ background: 'rgba(56, 161, 105, 0.15)', border: '1px solid rgba(56, 161, 105, 0.3)', color: '#48bb78', padding: '12px 14px', borderRadius: '8px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <MdCheckCircle size={20} />
+          <span style={{ fontWeight: 600, fontSize: '13px' }}>{sucessoFinal}</span>
         </div>
       )}
 
-      {/* Painel de Configuração do Lote */}
-      <div className="form-section-card" style={{ marginBottom: '20px' }}>
-        <div className="form-section-header">
-          <MdInventory2 size={18} color="var(--accent)" />
-          <h3 className="form-section-title">1. Configuração do Lote</h3>
-        </div>
-
-        <div className="form-row" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+      {/* Configuração Rápida do Lote */}
+      <div className="filterCard" style={{ marginBottom: '14px', padding: '12px 14px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label>Loja *</label>
-            <select value={loja} onChange={(e) => setLoja(e.target.value)}>
+            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Loja</label>
+            <select value={loja} onChange={(e) => setLoja(e.target.value)} style={{ fontSize: '14px', height: '36px' }}>
               {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>
 
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label>Categoria</label>
-            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
-              <option value={CATEGORY_IDS.DISCOS}>Discos de Vinil</option>
-              <option value={CATEGORY_IDS.CDS}>CDs</option>
-            </select>
-          </div>
-
-          <div className="form-group" style={{ marginBottom: 0 }}>
-            <label>Caixa Padrão</label>
+            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Caixa Padrão</label>
             <input 
               type="text" 
               list="caixas-lote-list" 
               value={caixaPadrao} 
               onChange={(e) => setCaixaPadrao(e.target.value)} 
-              placeholder="Ex: 15, 49, 50..."
+              placeholder="Ex: 15, 49..."
+              style={{ fontSize: '14px', height: '36px' }}
             />
             <datalist id="caixas-lote-list">
               {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label}</option>)}
@@ -478,29 +476,42 @@ export default function CadastroLoteFotos() {
           </div>
 
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label>Preço Padrão (Opcional)</label>
+            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Preço Padrão</label>
             <input 
               type="text" 
+              inputMode="numeric"
               value={precoPadrao} 
               onChange={(e) => setPrecoPadrao(e.target.value)} 
-              placeholder="Ex: 60"
+              placeholder="R$ (opcional)"
+              style={{ fontSize: '14px', height: '36px' }}
             />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Formato</label>
+            <select value={tipo} onChange={(e) => setTipo(e.target.value)} style={{ fontSize: '14px', height: '36px' }}>
+              <option value={CATEGORY_IDS.DISCOS}>Vinil</option>
+              <option value={CATEGORY_IDS.CDS}>CD</option>
+            </select>
           </div>
         </div>
       </div>
 
-      {/* Área de Upload de Fotos */}
+      {/* Área de Adição de Fotos */}
       <div 
         onClick={() => !processando && fileInputRef.current?.click()}
         style={{
-          border: '2px dashed var(--border)',
-          borderRadius: '12px',
-          padding: '32px 20px',
+          border: '1.5px dashed var(--border)',
+          borderRadius: '10px',
+          padding: '18px 14px',
           textAlign: 'center',
           cursor: processando ? 'wait' : 'pointer',
-          background: 'rgba(255, 255, 255, 0.02)',
-          transition: 'all 0.2s ease',
-          marginBottom: '24px'
+          background: 'rgba(255, 255, 255, 0.015)',
+          marginBottom: '16px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '6px'
         }}
       >
         <input 
@@ -512,28 +523,22 @@ export default function CadastroLoteFotos() {
           style={{ display: 'none' }}
           disabled={processando}
         />
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(255, 107, 0, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <FaCamera size={26} color="var(--accent)" />
-          </div>
-          <span style={{ fontSize: '16px', fontWeight: 600 }}>
-            {processando ? `Analisando foto ${progresso.atual} de ${progresso.total}...` : 'Clique para selecionar fotos ou tirar com a câmera'}
-          </span>
-          <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            Você pode escolher várias fotos de uma só vez. A IA e o Discogs farão o reconhecimento inicial.
-          </span>
-          {processando && (
-            <div style={{ width: '100%', maxWidth: '300px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden', marginTop: '8px' }}>
-              <div style={{ width: `${(progresso.atual / (progresso.total || 1)) * 100}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s ease' }}></div>
-            </div>
-          )}
+        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(197, 48, 48, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <FaCamera size={18} color="var(--accent)" />
         </div>
+        <div style={{ fontSize: '14px', fontWeight: 600 }}>
+          {processando ? `Processando foto ${progresso.atual} de ${progresso.total}...` : 'Adicionar fotos (câmera ou galeria)'}
+        </div>
+        {processando && (
+          <div style={{ width: '100%', maxWidth: '220px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
+            <div style={{ width: `${(progresso.atual / (progresso.total || 1)) * 100}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s ease' }}></div>
+          </div>
+        )}
       </div>
 
-      {/* Mesa de Comparação Anti-Alucinação */}
+      {/* Lista de Discos */}
       {itens.length > 0 && (
-        <div style={{ marginBottom: '40px' }}>
-          
+        <div>
           {/* Barra de Ações em Massa */}
           <div style={{
             display: 'flex',
@@ -542,33 +547,31 @@ export default function CadastroLoteFotos() {
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',
             borderRadius: '10px',
-            padding: '12px 16px',
-            marginBottom: '16px',
+            padding: '8px 12px',
+            marginBottom: '10px',
             flexWrap: 'wrap',
-            gap: '12px'
+            gap: '8px'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '14px', margin: 0 }}>
-                <input 
-                  type="checkbox" 
-                  checked={todosSelecionados} 
-                  onChange={toggleSelecionarTudo}
-                  style={{ width: '18px', height: '18px', accentColor: 'var(--accent)', cursor: 'pointer' }}
-                />
-                <FaCheckDouble size={14} color="var(--accent)" />
-                Selecionar Tudo ({totalSelecionados}/{itens.length})
-              </label>
-            </div>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', margin: 0, minHeight: '36px' }}>
+              <input 
+                type="checkbox" 
+                checked={todosSelecionados} 
+                onChange={toggleSelecionarTudo}
+                style={{ width: '18px', height: '18px', accentColor: 'var(--accent)', cursor: 'pointer' }}
+              />
+              <FaCheckDouble size={13} color="var(--accent)" />
+              Selecionar Tudo ({totalSelecionados}/{itens.length})
+            </label>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               <button 
                 type="button" 
                 className="btn btn-secondary" 
                 onClick={limparLote}
-                style={{ fontSize: '13px', padding: '6px 12px' }}
+                style={{ fontSize: '12px', padding: '6px 12px', minHeight: '34px' }}
                 disabled={salvando}
               >
-                Limpar Lote
+                Limpar
               </button>
 
               <button 
@@ -576,106 +579,49 @@ export default function CadastroLoteFotos() {
                 className="btn btn-primary" 
                 onClick={salvarAprovados}
                 disabled={salvando || totalSelecionados === 0}
-                style={{ fontSize: '14px', padding: '8px 18px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                style={{ fontSize: '13px', padding: '6px 14px', minHeight: '34px', display: 'flex', alignItems: 'center', gap: '6px' }}
               >
-                {salvando ? `Cadastrando (${progressoSalvar.atual}/${progressoSalvar.total})...` : (
+                {salvando ? `Salvando (${progressoSalvar.atual}/${progressoSalvar.total})...` : (
                   <>
-                    <FaCheck size={14} /> Cadastrar Selecionados ({totalSelecionados})
+                    <FaCheck size={12} /> Cadastrar ({totalSelecionados})
                   </>
                 )}
               </button>
             </div>
           </div>
 
-          {/* Grid de Cards de Comparação */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {/* Cards Mobile-First */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {itens.map((item, idx) => (
               <div 
                 key={item.id}
                 style={{
                   background: 'var(--bg-card)',
-                  border: item.selecionado ? '1px solid rgba(255, 107, 0, 0.4)' : '1px solid var(--border)',
+                  border: item.selecionado ? '1px solid rgba(197, 48, 48, 0.45)' : '1px solid var(--border)',
                   borderRadius: '10px',
-                  padding: '14px',
+                  padding: '12px',
                   display: 'flex',
-                  gap: '16px',
-                  alignItems: 'flex-start',
-                  flexWrap: 'wrap',
-                  position: 'relative',
-                  boxShadow: item.selecionado ? '0 0 10px rgba(255, 107, 0, 0.05)' : 'none'
+                  flexDirection: 'column',
+                  gap: '10px',
+                  position: 'relative'
                 }}
               >
-                {/* Checkbox de seleção */}
-                <div style={{ paddingTop: '4px' }}>
-                  <input 
-                    type="checkbox" 
-                    checked={item.selecionado} 
-                    onChange={() => toggleItem(item.id)}
-                    style={{ width: '20px', height: '20px', accentColor: 'var(--accent)', cursor: 'pointer' }}
-                  />
-                </div>
-
-                {/* Coluna 1: Foto Real Original Tirada */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', width: '100px', flexShrink: 0 }}>
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Foto Real</span>
-                  <div style={{ width: '100px', height: '100px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)', background: 'rgba(255,255,255,0.03)' }}>
-                    {item.fotoPreview ? (
-                      <img 
-                        src={item.fotoPreview} 
-                        alt={`Foto ${idx + 1}`}
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      />
-                    ) : null}
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
-                      <FaCamera size={26} color="var(--text-muted)" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Coluna 2: Capa Oficial Reconhecida (Discogs) */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', width: '100px', flexShrink: 0 }}>
-                  <span style={{ fontSize: '10px', fontWeight: 700, color: '#38a169', textTransform: 'uppercase' }}>Capa Discogs</span>
-                  <div style={{ width: '100px', height: '100px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(56, 161, 105, 0.3)', background: 'rgba(255,255,255,0.03)' }}>
-                    {item.capaUrl ? (
-                      <img 
-                        src={item.capaUrl} 
-                        alt="Capa Oficial"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                      />
-                    ) : null}
-                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
-                      <PiVinylRecord size={36} color="var(--text-muted)" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Coluna 3: Dados Identificados e Editáveis */}
-                <div style={{ flex: 1, minWidth: '260px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  
-                  {/* Badges de Confiança e Selo */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                    <span style={{
-                      fontSize: '11px',
-                      padding: '2px 7px',
-                      borderRadius: '4px',
-                      fontWeight: 600,
-                      background: item.confianca === 'alta' ? 'rgba(56, 161, 105, 0.15)' : item.confianca === 'media' ? 'rgba(234, 179, 8, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                      color: item.confianca === 'alta' ? '#48bb78' : item.confianca === 'media' ? '#eab308' : '#f87171',
-                      border: `1px solid ${item.confianca === 'alta' ? 'rgba(56, 161, 105, 0.3)' : item.confianca === 'media' ? 'rgba(234, 179, 8, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`
-                    }}>
-                      {item.confianca === 'alta' ? 'Confiança Alta' : item.confianca === 'media' ? 'Confiança Média' : 'Verificar / Baixa'}
+                {/* Linha 1: Seleção, Número, Selo, Ações */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input 
+                      type="checkbox" 
+                      checked={item.selecionado} 
+                      onChange={() => toggleItem(item.id)}
+                      style={{ width: '20px', height: '20px', accentColor: 'var(--accent)', cursor: 'pointer' }}
+                    />
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>
+                      #{idx + 1}
                     </span>
-
                     {item.selo && (
                       <span style={{
-                        fontSize: '11px',
-                        padding: '2px 7px',
+                        fontSize: '10px',
+                        padding: '2px 6px',
                         borderRadius: '4px',
                         fontWeight: 600,
                         background: 'rgba(167, 139, 250, 0.15)',
@@ -685,101 +631,137 @@ export default function CadastroLoteFotos() {
                         {item.selo.toUpperCase()}
                       </span>
                     )}
+                  </div>
 
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <button 
                       type="button" 
                       onClick={() => abrirPesquisaDiscogs(item)}
+                      className="btn btn-secondary"
                       style={{
-                        background: 'none',
-                        border: 'none',
-                        color: 'var(--accent)',
-                        fontSize: '12px',
-                        cursor: 'pointer',
+                        fontSize: '11px',
+                        padding: '4px 8px',
+                        minHeight: '28px',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px',
-                        marginLeft: 'auto'
+                        gap: '4px'
                       }}
                       title="Procurar outra edição no Discogs"
                     >
-                      <FaMagnifyingGlass size={11} /> Trocar Edição
+                      <FaMagnifyingGlass size={10} /> Trocar
                     </button>
-                  </div>
-
-                  {/* Campos do Disco */}
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
-                    <div>
-                      <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px', display: 'block' }}>Artista</label>
-                      <input 
-                        type="text" 
-                        value={item.artista} 
-                        onChange={(e) => atualizarItem(item.id, 'artista', e.target.value)}
-                        style={{ width: '100%', fontSize: '13px', padding: '6px 8px' }}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px', display: 'block' }}>Título *</label>
-                      <input 
-                        type="text" 
-                        value={item.titulo} 
-                        onChange={(e) => atualizarItem(item.id, 'titulo', e.target.value)}
-                        style={{ width: '100%', fontSize: '13px', padding: '6px 8px', fontWeight: 600 }}
-                      />
-                    </div>
-                    <div style={{ maxWidth: '90px' }}>
-                      <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px', display: 'block' }}>Ano</label>
-                      <input 
-                        type="text" 
-                        value={item.ano} 
-                        onChange={(e) => atualizarItem(item.id, 'ano', e.target.value)}
-                        style={{ width: '100%', fontSize: '13px', padding: '6px 8px' }}
-                      />
-                    </div>
-                    <div style={{ maxWidth: '100px' }}>
-                      <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px', display: 'block' }}>Preço R$</label>
-                      <input 
-                        type="text" 
-                        value={item.preco} 
-                        onChange={(e) => atualizarItem(item.id, 'preco', e.target.value)}
-                        placeholder="0"
-                        style={{ width: '100%', fontSize: '13px', padding: '6px 8px' }}
-                      />
-                    </div>
-                    <div style={{ maxWidth: '110px' }}>
-                      <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px', display: 'block' }}>Caixa</label>
-                      <input 
-                        type="text" 
-                        value={item.caixa} 
-                        onChange={(e) => atualizarItem(item.id, 'caixa', e.target.value)}
-                        placeholder={caixaPadrao || "Ex: 15"}
-                        style={{ width: '100%', fontSize: '13px', padding: '6px 8px' }}
-                      />
-                    </div>
+                    <button 
+                      type="button" 
+                      onClick={() => removerItem(item.id)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: '32px',
+                        minHeight: '32px'
+                      }}
+                      title="Remover"
+                    >
+                      <FaTrash size={12} />
+                    </button>
                   </div>
                 </div>
 
-                {/* Botão de Excluir do Lote */}
-                <button 
-                  type="button" 
-                  onClick={() => removerItem(item.id)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--text-muted)',
-                    cursor: 'pointer',
-                    padding: '6px'
-                  }}
-                  title="Remover este disco do lote"
-                >
-                  <FaTrash size={14} />
-                </button>
+                {/* Linha 2: Capas + Título & Artista */}
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                  {/* Capas lado a lado */}
+                  <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                    <div style={{ width: '56px', height: '56px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)', background: 'rgba(255,255,255,0.03)' }} title="Foto Real">
+                      {item.fotoPreview ? (
+                        <img 
+                          src={item.fotoPreview} 
+                          alt=""
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : null}
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
+                        <FaCamera size={18} color="var(--text-muted)" />
+                      </div>
+                    </div>
+
+                    <div style={{ width: '56px', height: '56px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)', background: 'rgba(255,255,255,0.03)' }} title="Capa Discogs">
+                      {item.capaUrl ? (
+                        <img 
+                          src={item.capaUrl} 
+                          alt=""
+                          onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      ) : null}
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
+                        <PiVinylRecord size={22} color="var(--text-muted)" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Campos Principais: Título e Artista (16px em mobile evita zoom indesejado) */}
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <input 
+                      type="text" 
+                      value={item.titulo} 
+                      onChange={(e) => atualizarItem(item.id, 'titulo', e.target.value)}
+                      placeholder="Título do álbum *"
+                      style={{ width: '100%', fontSize: '15px', fontWeight: 600, padding: '6px 8px', height: '36px' }}
+                    />
+                    <input 
+                      type="text" 
+                      value={item.artista} 
+                      onChange={(e) => atualizarItem(item.id, 'artista', e.target.value)}
+                      placeholder="Artista"
+                      style={{ width: '100%', fontSize: '14px', padding: '6px 8px', height: '34px' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Linha 3: Detalhes compactos (Ano, Preço, Caixa) */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                  <div>
+                    <input 
+                      type="text" 
+                      value={item.ano} 
+                      onChange={(e) => atualizarItem(item.id, 'ano', e.target.value)}
+                      placeholder="Ano"
+                      style={{ width: '100%', fontSize: '13px', padding: '6px 8px', height: '34px' }}
+                    />
+                  </div>
+                  <div>
+                    <input 
+                      type="text" 
+                      inputMode="numeric"
+                      value={item.preco} 
+                      onChange={(e) => atualizarItem(item.id, 'preco', e.target.value)}
+                      placeholder="Preço R$"
+                      style={{ width: '100%', fontSize: '13px', padding: '6px 8px', height: '34px' }}
+                    />
+                  </div>
+                  <div>
+                    <input 
+                      type="text" 
+                      value={item.caixa} 
+                      onChange={(e) => atualizarItem(item.id, 'caixa', e.target.value)}
+                      placeholder={caixaPadrao || "Caixa"}
+                      style={{ width: '100%', fontSize: '13px', padding: '6px 8px', height: '34px' }}
+                    />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Modal de Troca de Prensagem / Busca Manual no Discogs */}
+      {/* Modal de Busca Manual no Discogs */}
       {itemPesquisa && (
         <div style={{
           position: 'fixed',
@@ -787,46 +769,46 @@ export default function CadastroLoteFotos() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(0, 0, 0, 0.8)',
+          background: 'rgba(0, 0, 0, 0.85)',
           zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '16px'
+          padding: '12px'
         }}>
           <div style={{
             background: 'var(--bg-card)',
             border: '1px solid var(--border)',
             borderRadius: '12px',
-            maxWidth: '560px',
+            maxWidth: '520px',
             width: '100%',
-            maxHeight: '85vh',
+            maxHeight: 'calc(100vh - 32px)',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden'
           }}>
-            <div style={{ padding: '16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '16px' }}>Buscar Edição no Discogs</h3>
+            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600 }}>Buscar no Discogs</h3>
               <button 
                 type="button" 
                 onClick={() => setItemPesquisa(null)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '16px', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '18px', cursor: 'pointer', minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
                 ✕
               </button>
             </div>
 
-            <div style={{ padding: '16px' }}>
+            <div style={{ padding: '12px 16px' }}>
               <form onSubmit={executarPesquisaManual} style={{ display: 'flex', gap: '8px' }}>
                 <input 
                   type="text" 
                   value={queryPesquisa} 
                   onChange={(e) => setQueryPesquisa(e.target.value)} 
-                  placeholder="Nome do artista e álbum..."
-                  style={{ flex: 1 }}
+                  placeholder="Artista ou álbum..."
+                  style={{ flex: 1, fontSize: '15px', height: '40px' }}
                   autoFocus
                 />
-                <button type="submit" className="btn btn-primary" disabled={buscandoPesquisa}>
+                <button type="submit" className="btn btn-primary" disabled={buscandoPesquisa} style={{ height: '40px', padding: '0 16px' }}>
                   {buscandoPesquisa ? '...' : 'Buscar'}
                 </button>
               </form>
@@ -844,17 +826,18 @@ export default function CadastroLoteFotos() {
                         alignItems: 'center',
                         gap: '10px',
                         padding: '10px',
-                        background: 'rgba(255, 255, 255, 0.03)',
+                        background: 'rgba(255, 255, 255, 0.02)',
                         border: '1px solid var(--border)',
-                        borderRadius: '6px',
-                        cursor: 'pointer'
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        minHeight: '48px'
                       }}
                     >
                       {res.thumb ? (
-                        <img src={res.thumb} alt="" style={{ width: '42px', height: '42px', objectFit: 'cover', borderRadius: '4px' }} />
+                        <img src={res.thumb} alt="" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }} />
                       ) : (
-                        <div style={{ width: '42px', height: '42px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <PiVinylRecord size={20} color="var(--text-muted)" />
+                        <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <PiVinylRecord size={18} color="var(--text-muted)" />
                         </div>
                       )}
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -862,17 +845,15 @@ export default function CadastroLoteFotos() {
                           {res.title}
                         </div>
                         <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                          {res.year && `${res.year} • `}
-                          {res.country && `${res.country} • `}
-                          {res.format?.join(', ')}
+                          {[res.year, res.country, res.format?.join(', ')].filter(Boolean).join(' • ')}
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px 0', fontSize: '13px' }}>
-                  {buscandoPesquisa ? 'Buscando edições...' : 'Digite o nome do álbum e clique em Buscar.'}
+                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px 0', fontSize: '13px' }}>
+                  {buscandoPesquisa ? 'Buscando...' : 'Digite para buscar.'}
                 </div>
               )}
             </div>
