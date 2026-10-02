@@ -331,23 +331,30 @@ export default function AdicionarItem() {
 
       const itemInfo = await itemService.addItem(activeTab, insertData);
 
-      // 2. Registrar Movimentação
-      const movData = movimentacaoService.createMovementPayload(activeTab, itemInfo.id, 'entrada', 1, 'Cadastro inicial');
-      await movimentacaoService.registerMovement(movData);
+      // 2-4. Registrar Movimentação, Observação e Capa em paralelo (não sequencial)
+      const parallelTasks = [];
 
-      // 3. Registrar Observação se existir
+      // Movimentação (obrigatória)
+      const movData = movimentacaoService.createMovementPayload(activeTab, itemInfo.id, 'entrada', 1, 'Cadastro inicial');
+      parallelTasks.push(movimentacaoService.registerMovement(movData));
+
+      // Observação (opcional)
       if (form.observacao?.trim()) {
         const obsField = activeTab === 'discos' ? 'disco_id' : activeTab === 'dvds' ? 'dvd_id' : activeTab === 'cds' ? 'cd_id' : 'vhs_id';
-        try {
-          await movimentacaoService.registerInitialObservation({
+        parallelTasks.push(
+          movimentacaoService.registerInitialObservation({
             [obsField]: itemInfo.id,
             observacao: form.observacao.trim()
-          });
-        } catch (obsErr) {
-          console.warn('Aviso: item cadastrado com observação, mas não foi possível registrar na tabela observacoes_disco:', obsErr);
-        }
+          }).catch(obsErr => {
+            console.warn('Aviso: observação não registrada:', obsErr);
+          })
+        );
       }
 
+      // Aguarda apenas movimentação e observação (são rápidas, ~100ms)
+      await Promise.allSettled(parallelTasks);
+
+      // Cover: fire-and-forget (não bloqueia o usuário — a capa aparece depois)
       if (activeTab === CATEGORY_IDS.DISCOS || activeTab === CATEGORY_IDS.CDS) {
         const coverToSend = selectedCover?.cover || selectedCover?.thumb;
         const qKey = `${(insertData.artista || '').trim()} ${(insertData.titulo || '').trim()}`.toLowerCase();
@@ -360,21 +367,20 @@ export default function AdicionarItem() {
             sessionStorage.setItem(`cover_${itemInfo.id}`, coverToSend);
           } catch (_) {}
         }
-        try {
-          await fetch('/api/cover', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: itemInfo.id,
-              tipo: activeTab,
-              artista: insertData.artista || '',
-              titulo: insertData.titulo || '',
-              ano: insertData.ano || '',
-              cover: selectedCover?.cover || null,
-              thumb: selectedCover?.thumb || null,
-            })
-          });
-        } catch (_) {}
+        // Envia capa em background — não bloqueia o submit
+        fetch('/api/cover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: itemInfo.id,
+            tipo: activeTab,
+            artista: insertData.artista || '',
+            titulo: insertData.titulo || '',
+            ano: insertData.ano || '',
+            cover: selectedCover?.cover || null,
+            thumb: selectedCover?.thumb || null,
+          })
+        }).catch(() => {}); // Fire-and-forget
       }
       setSelectedCover(null);
 

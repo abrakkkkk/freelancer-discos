@@ -1,6 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 
+// Timeout para requests ao Discogs (evita travar a rota)
+const COVER_FETCH_TIMEOUT_MS = 6000;
+
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), COVER_FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 const PRIMARY_CACHE_FILE = path.resolve(process.cwd(), '.cache/covers_cache.json');
 const LEGACY_CACHE_FILE = path.resolve(process.cwd(), 'src/data/covers_cache.json');
 
@@ -80,7 +93,7 @@ async function searchDiscogsCover(rawQ, cleanAno, key, secret) {
   if (cleanAno) url += `&year=${encodeURIComponent(cleanAno)}`;
 
   try {
-    const res = await fetch(url, { headers });
+    const res = await fetchWithTimeout(url, { headers });
     if (res.ok) {
       const data = await res.json();
       if (data.results && data.results.length > 0) {
@@ -94,7 +107,7 @@ async function searchDiscogsCover(rawQ, cleanAno, key, secret) {
   if (cleanAno) {
     try {
       const fallbackUrl = `https://api.discogs.com/database/search?type=release&per_page=5&q=${encodeURIComponent(normQ)}`;
-      const fallbackRes = await fetch(fallbackUrl, { headers });
+      const fallbackRes = await fetchWithTimeout(fallbackUrl, { headers });
       if (fallbackRes.ok) {
         const fallbackData = await fallbackRes.json();
         if (fallbackData.results && fallbackData.results.length > 0) {
@@ -117,7 +130,7 @@ async function searchDiscogsCover(rawQ, cleanAno, key, secret) {
     if (cleanTitle && cleanTitle.length >= 3) {
       try {
         const titleUrl = `https://api.discogs.com/database/search?type=release&per_page=5&country=Brazil&q=${encodeURIComponent(cleanTitle)}`;
-        const titleRes = await fetch(titleUrl, { headers });
+        const titleRes = await fetchWithTimeout(titleUrl, { headers });
         if (titleRes.ok) {
           const titleData = await titleRes.json();
           const match = titleData.results?.find(r => r.title?.toLowerCase().includes('various') && (r.cover_image || r.thumb))

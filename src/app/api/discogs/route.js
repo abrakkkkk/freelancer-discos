@@ -175,9 +175,16 @@ export async function GET(request) {
       );
     }
 
-    const responses = await Promise.all(requests);
-    const generalResults = responses[0]?.results || [];
-    const catnoResponses = responses.slice(1);
+    const startTime = Date.now();
+    const responses = await Promise.allSettled(requests);
+    const elapsed = Date.now() - startTime;
+    if (elapsed > 3000) {
+      console.warn(`[Discogs] Busca demorou ${elapsed}ms para ${requests.length} requests`);
+    }
+
+    const generalResult = responses[0]?.status === 'fulfilled' ? responses[0].value : { results: [] };
+    const generalResults = generalResult?.results || [];
+    const catnoResponses = responses.slice(1).map(r => r.status === 'fulfilled' ? r.value : { results: [] });
 
     const map = new Map();
 
