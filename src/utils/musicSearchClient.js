@@ -6,11 +6,31 @@ import { fetchDiscogs } from '@/utils/discogsClient';
 const memoryCache = new Map();
 const MAX_MEM_ENTRIES = 200;
 
-function getCacheKey({ q, catno, barcode }) {
-  return `music_hybrid:${barcode || ''}|${catno || ''}|${q || ''}`;
+function getCacheKey({ q, catno, barcode, format = 'vinyl' }) {
+  return `music_hybrid:${barcode || ''}|${catno || ''}|${q || ''}|${format}`;
 }
 
-export function mergeMusicResults(discogsResults = [], mbResults = []) {
+export function sortResultsByFormat(results = [], targetFormat = 'vinyl') {
+  return [...results].sort((a, b) => {
+    const aFormats = Array.isArray(a.format) ? a.format : [a.format].filter(Boolean);
+    const bFormats = Array.isArray(b.format) ? b.format : [b.format].filter(Boolean);
+
+    const aIsTarget = targetFormat === 'vinyl'
+      ? aFormats.some(f => /vinyl|lp|12"|7"/i.test(f))
+      : aFormats.some(f => /\bcd\b/i.test(f));
+
+    const bIsTarget = targetFormat === 'vinyl'
+      ? bFormats.some(f => /vinyl|lp|12"|7"/i.test(f))
+      : bFormats.some(f => /\bcd\b/i.test(f));
+
+    if (aIsTarget && !bIsTarget) return -1;
+    if (!aIsTarget && bIsTarget) return 1;
+
+    return (b._score || 0) - (a._score || 0);
+  });
+}
+
+export function mergeMusicResults(discogsResults = [], mbResults = [], format = 'vinyl') {
   const map = new Map();
 
   // 1. Discogs primeiro (possui capas reais de vinil, país Brasil e scores de catálogo)
@@ -42,7 +62,7 @@ export function mergeMusicResults(discogsResults = [], mbResults = []) {
     }
   });
 
-  return Array.from(map.values());
+  return sortResultsByFormat(Array.from(map.values()), format);
 }
 
 /**
@@ -89,11 +109,12 @@ export function extractSeloPrensagem(result) {
   return '';
 }
 
-async function fetchMusicBrainz({ q, catno, barcode }, signal) {
+async function fetchMusicBrainz({ q, catno, barcode, format = 'vinyl' }, signal) {
   const params = new URLSearchParams();
   if (barcode) params.set('barcode', barcode);
   else if (catno) params.set('catno', catno);
   else if (q) params.set('q', q);
+  if (format) params.set('format', format);
 
   const url = `/api/musicbrainz?${params.toString()}`;
   try {
@@ -107,8 +128,8 @@ async function fetchMusicBrainz({ q, catno, barcode }, signal) {
   }
 }
 
-export async function searchMusicHybrid({ q, catno, barcode }, signal, onProgress = null) {
-  const cacheKey = getCacheKey({ q, catno, barcode });
+export async function searchMusicHybrid({ q, catno, barcode, format = 'vinyl' }, signal, onProgress = null) {
+  const cacheKey = getCacheKey({ q, catno, barcode, format });
 
   // 1. Nível 1: Memória da aplicação (0ms)
   if (memoryCache.has(cacheKey)) {
@@ -135,20 +156,20 @@ export async function searchMusicHybrid({ q, catno, barcode }, signal, onProgres
   let discogsResults = [];
   let deliveredEarly = false;
 
-  const mbPromise = fetchMusicBrainz({ q, catno, barcode }, signal).then(results => {
-    mbResults = results;
-    // Se o MusicBrainz responder antes e tiver resultados, entrega de imediato ao usuário
+  const mbPromise = fetchMusicBrainz({ q, catno, barcode, format }, signal).then(results => {
+    mbResults = sortResultsByFormat(results, format);
+    // Se o MusicBrainz responder antes e tiver resultados, entrega de imediato ao usuário ordenado por formato
     if (mbResults.length > 0 && !deliveredEarly && onProgress) {
       deliveredEarly = true;
       onProgress(mbResults, { isPartial: true, source: 'musicbrainz' });
     }
-    return results;
+    return mbResults;
   }).catch(err => {
     if (err.name === 'AbortError') throw err;
     return [];
   });
 
-  const discogsPromise = fetchDiscogs({ q, catno, barcode }, signal).then(data => {
+  const discogsPromise = fetchDiscogs({ q, catno, barcode, format }, signal).then(data => {
     discogsResults = data?.results || [];
     return discogsResults;
   }).catch(err => {
@@ -159,7 +180,7 @@ export async function searchMusicHybrid({ q, catno, barcode }, signal, onProgres
   // Aguarda ambas as fontes terminarem (ou a mais rápida se a outra falhar)
   await Promise.allSettled([mbPromise, discogsPromise]);
 
-  const merged = mergeMusicResults(discogsResults, mbResults);
+  const merged = mergeMusicResults(discogsResults, mbResults, format);
   const finalPayload = { results: merged };
 
   // Atualiza a tela com a fusão final completa

@@ -2,12 +2,12 @@
 const memoryCache = new Map();
 const MAX_MEM_ENTRIES = 150;
 
-function getCacheKey({ q, catno, barcode }) {
-  return `discogs:${barcode || ''}|${catno || ''}|${q || ''}`;
+function getCacheKey({ q, catno, barcode, format = 'vinyl' }) {
+  return `discogs:${barcode || ''}|${catno || ''}|${q || ''}|${format}`;
 }
 
-export async function fetchDiscogs({ q, catno, barcode }, signal) {
-  const cacheKey = getCacheKey({ q, catno, barcode });
+export async function fetchDiscogs({ q, catno, barcode, format = 'vinyl' }, signal) {
+  const cacheKey = getCacheKey({ q, catno, barcode, format });
 
   // 1. Nível 1: Memória da aplicação (0ms síncrono)
   if (memoryCache.has(cacheKey)) {
@@ -31,6 +31,7 @@ export async function fetchDiscogs({ q, catno, barcode }, signal) {
   if (barcode) params.set('barcode', barcode);
   else if (catno) params.set('catno', catno);
   else if (q) params.set('q', q);
+  if (format) params.set('format', format);
 
   const url = `/api/discogs?${params.toString()}`;
   const res = await fetch(url, { signal });

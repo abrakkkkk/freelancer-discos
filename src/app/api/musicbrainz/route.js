@@ -41,12 +41,13 @@ export async function GET(request) {
   const query = searchParams.get('q');
   const barcode = searchParams.get('barcode');
   const catno = searchParams.get('catno');
+  const formatParam = (searchParams.get('format') || 'vinyl').toLowerCase();
 
   if (!query && !barcode && !catno) {
     return Response.json({ error: 'Parâmetro "q", "catno" ou "barcode" é obrigatório' }, { status: 400 });
   }
 
-  const cacheKey = `mb:b:${barcode || ''}|c:${catno || ''}|q:${query || ''}`;
+  const cacheKey = `mb:b:${barcode || ''}|c:${catno || ''}|q:${query || ''}|f:${formatParam}`;
   const cached = getFromCache(cacheKey);
   if (cached) {
     return Response.json(cached, {
@@ -69,7 +70,7 @@ export async function GET(request) {
     luceneQuery = `"${cleanQ}" OR release:"${cleanQ}" OR artist:"${cleanQ}"`;
   }
 
-  const url = `https://musicbrainz.org/ws/2/release?query=${encodeURIComponent(luceneQuery)}&fmt=json&limit=15`;
+  const url = `https://musicbrainz.org/ws/2/release?query=${encodeURIComponent(luceneQuery)}&fmt=json&limit=25`;
   const headers = {
     'User-Agent': 'FreelancerDiscos/1.0 ( contatofreelancerdiscos@gmail.com )',
     'Accept': 'application/json'
@@ -103,8 +104,22 @@ export async function GET(request) {
       // Formato de mídia (Vinyl, CD, etc.)
       const media = r.media || [];
       const formats = media.map(m => m.format).filter(Boolean);
+      const isVinyl = formats.some(f => /vinyl|12"|7"|lp/i.test(f));
+      const isCD = formats.some(f => /\bcd\b/i.test(f));
 
       const country = r.country === 'BR' ? 'Brazil' : (r.country || '');
+
+      let score = Number(r.score || 0);
+      if (country === 'Brazil') {
+        score += 150;
+      }
+      if (formatParam === 'vinyl') {
+        if (isVinyl) score += 1000;
+        else if (isCD) score -= 400;
+      } else if (formatParam === 'cd') {
+        if (isCD) score += 1000;
+        else if (isVinyl) score -= 400;
+      }
 
       return {
         id: `mb-${r.id}`,
@@ -115,18 +130,14 @@ export async function GET(request) {
         catno: catnoStr,
         label: labelStr,
         country,
-        format: formats.length > 0 ? formats : ['Vinyl'],
+        format: formats.length > 0 ? formats : (isVinyl ? ['Vinyl'] : ['CD']),
         source: 'musicbrainz',
-        _score: Number(r.score || 0)
+        _score: score
       };
     });
 
-    // Prioriza edições brasileiras no topo
-    results.sort((a, b) => {
-      const aBr = a.country === 'Brazil' ? 100 : 0;
-      const bBr = b.country === 'Brazil' ? 100 : 0;
-      return (b._score + bBr) - (a._score + aBr);
-    });
+    // Ordena pelo score ponderado por formato e país
+    results.sort((a, b) => b._score - a._score);
 
     const payload = { results };
     setToCache(cacheKey, payload);

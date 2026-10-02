@@ -163,7 +163,7 @@ function EditarExcluirContent() {
       setShowDiscogsDropdown(false);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ barcode }, signal, (results) => {
+        const data = await searchMusicHybrid({ barcode, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
           if (results && results.length > 0) {
             if (results.length === 1) {
               handleSelectDiscogsResult(results[0]);
@@ -189,7 +189,7 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ barcode }, signal);
+        const data = await searchMusicHybrid({ barcode, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal);
         const first = data.results?.[0];
         let termoFinal = barcode;
         if (first && first.title) {
@@ -217,7 +217,7 @@ function EditarExcluirContent() {
       setShowDiscogsDropdown(false);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ catno: codigoTexto }, signal, (results) => {
+        const data = await searchMusicHybrid({ catno: codigoTexto, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
           if (results && results.length > 0) {
             if (results.length === 1) {
               handleSelectDiscogsResult(results[0]);
@@ -243,7 +243,7 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       const signal = abortPreviousDiscogs();
       try {
-        const data = await searchMusicHybrid({ catno: codigoTexto }, signal);
+        const data = await searchMusicHybrid({ catno: codigoTexto, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal);
         const first = data.results?.[0];
         let termoFinal = codigoTexto;
         if (first && first.title) {
@@ -332,7 +332,7 @@ function EditarExcluirContent() {
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const data = await searchMusicHybrid({ q: queryText }, signal, (results) => {
+      const data = await searchMusicHybrid({ q: queryText, format: tipo === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
         if (results && results.length > 0) {
           setDiscogsResults(results);
           setShowDiscogsDropdown(true);

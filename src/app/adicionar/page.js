@@ -130,7 +130,7 @@ export default function AdicionarItem() {
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const data = await searchMusicHybrid({ q: queryDiscogs }, signal, (results) => {
+      const data = await searchMusicHybrid({ q: queryDiscogs, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
         if (results && results.length > 0) {
           setDiscogsResults(results);
           setShowDiscogsDropdown(true);
@@ -183,7 +183,7 @@ export default function AdicionarItem() {
       setShowDiscogsDropdown(false);
 
       try {
-        const data = await searchMusicHybrid({ q: query }, signal, (results) => {
+        const data = await searchMusicHybrid({ q: query, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
           if (results && results.length > 0) {
             setDiscogsResults(results);
             setShowDiscogsDropdown(true);
@@ -219,7 +219,7 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const data = await searchMusicHybrid({ barcode }, signal, (results) => {
+      const data = await searchMusicHybrid({ barcode, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
         if (results && results.length > 0) {
           if (results.length === 1) {
             handleSelectDiscogsResult(results[0]);
@@ -253,7 +253,7 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const data = await searchMusicHybrid({ catno: codigoTexto }, signal, (results) => {
+      const data = await searchMusicHybrid({ catno: codigoTexto, format: activeTab === 'cds' ? 'cd' : 'vinyl' }, signal, (results) => {
         if (results && results.length > 0) {
           if (results.length === 1) {
             handleSelectDiscogsResult(results[0]);
