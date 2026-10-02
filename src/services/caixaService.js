@@ -6,9 +6,9 @@ const STORAGE_PREFIX = 'freelancer_caixas_';
 function formatAndSortCaixas(rawData, currentLoja = '') {
   const allCaixas = new Map();
 
-  // Caixas padrão para Loja 1 (Caixa 1 até Caixa 50)
+  // Caixas padrão para Loja 1 (Caixa 1 até Caixa 55, incluindo 49, 50 e 51)
   if (!currentLoja || currentLoja === 'Loja 1') {
-    for (let i = 1; i <= 50; i++) {
+    for (let i = 1; i <= 55; i++) {
       const valorCaixa = String(i);
       const key = `${valorCaixa}|Loja 1`;
       allCaixas.set(key, {

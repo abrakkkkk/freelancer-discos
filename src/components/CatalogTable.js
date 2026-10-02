@@ -37,6 +37,15 @@ export default function CatalogTable({
     return d.caixa;
   };
 
+  const getEdicaoTag = (d) => {
+    if (!d || !d.observacao) return null;
+    const caixaStr = String(d.caixa || '').trim();
+    const isCaixaNova = ['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(caixaStr);
+    if (!isCaixaNova) return null;
+    const match = d.observacao.match(/^\[([^\]]+)\]/);
+    return match ? match[1] : null;
+  };
+
   if (itens.length === 0) {
     return <div className="empty-state">Nenhum {itemName.slice(0, -1)} encontrado.</div>;
   }
@@ -89,6 +98,8 @@ export default function CatalogTable({
         </thead>
         <tbody>
           {itens.map((d) => {
+            const edicaoTag = getEdicaoTag(d);
+
             if (isAudioCard) {
               const isLoja1 = d.loja === 'Loja 1';
               return (
@@ -110,6 +121,26 @@ export default function CatalogTable({
                     <div className="disco-valores-row">
                       <span className="disco-valor-preco">R$ {Number(d.preco || 0).toFixed(2).replace('.', ',')}</span>
                       <span className="disco-valor-caixa">{getDisplayCaixa(d)}</span>
+                      {edicaoTag && (
+                        <span 
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 600,
+                            letterSpacing: '0.03em',
+                            textTransform: 'uppercase',
+                            color: '#c084fc',
+                            background: 'rgba(192, 132, 252, 0.12)',
+                            border: '1px solid rgba(192, 132, 252, 0.28)',
+                            padding: '1px 6px',
+                            borderRadius: '4px',
+                            whiteSpace: 'nowrap',
+                            lineHeight: 1.2
+                          }}
+                          title={`Edição: ${edicaoTag}`}
+                        >
+                          {edicaoTag}
+                        </span>
+                      )}
                       {d.ano && (
                         <span className="disco-valor-ano">{d.ano}</span>
                       )}
@@ -138,7 +169,31 @@ export default function CatalogTable({
                   </td>
 
                   {/* Células mantidas no DOM para compatibilidade desktop */}
-                  <td data-label="Local" className="desktop-only cell-desktop-col">{getDisplayCaixa(d)}</td>
+                  <td data-label="Local" className="desktop-only cell-desktop-col">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-start' }}>
+                      <span>{getDisplayCaixa(d)}</span>
+                      {edicaoTag && (
+                        <span 
+                          style={{
+                            fontSize: '10px',
+                            fontWeight: 600,
+                            letterSpacing: '0.03em',
+                            textTransform: 'uppercase',
+                            color: '#c084fc',
+                            background: 'rgba(192, 132, 252, 0.12)',
+                            border: '1px solid rgba(192, 132, 252, 0.28)',
+                            padding: '1px 5px',
+                            borderRadius: '4px',
+                            whiteSpace: 'nowrap',
+                            lineHeight: 1.2
+                          }}
+                          title={`Edição: ${edicaoTag}`}
+                        >
+                          {edicaoTag}
+                        </span>
+                      )}
+                    </div>
+                  </td>
                   <td data-label="Artista" className={`desktop-only cell-desktop-col ${!d.artista ? "empty-artist" : ""}`}>
                     {d.artista || <span className="text-empty">—</span>}
                   </td>

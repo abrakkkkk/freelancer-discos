@@ -17,7 +17,7 @@ import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
 import { cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
-import { fetchDiscogs } from '@/utils/discogsClient';
+import { searchMusicHybrid } from '@/utils/musicSearchClient';
 
 import { IoCamera } from "react-icons/io5";
 
@@ -66,6 +66,8 @@ export default function AdicionarItem() {
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
   const [discogsResults, setDiscogsResults] = useState([]);
   const [showDiscogsDropdown, setShowDiscogsDropdown] = useState(false);
+  const [seloPrensagem, setSeloPrensagem] = useState('');
+  const [anoPrensagem, setAnoPrensagem] = useState('');
 
   // AbortController para cancelar requests Discogs anteriores ao iniciar nova busca
   const discogsAbortRef = useRef(null);
@@ -97,6 +99,8 @@ export default function AdicionarItem() {
     setMensagem(null);
     setForm({ ...INITIAL_FORM, loja: activeStore || '', ativo: true });
     setSelectedCover(null);
+    setSeloPrensagem('');
+    setAnoPrensagem('');
     setMostrarSugestoesArtista(false);
     setMostrarSugestoesTitulo(false);
     setShowDiscogsDropdown(false);
@@ -126,17 +130,19 @@ export default function AdicionarItem() {
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const data = await fetchDiscogs({ q: queryDiscogs }, signal);
-      if (data.results && data.results.length > 0) {
-        setDiscogsResults(data.results);
-        setShowDiscogsDropdown(true);
-      } else {
-        setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado no Discogs.' });
+      const data = await searchMusicHybrid({ q: queryDiscogs }, signal, (results) => {
+        if (results && results.length > 0) {
+          setDiscogsResults(results);
+          setShowDiscogsDropdown(true);
+        }
+      });
+      if (!data.results || data.results.length === 0) {
+        setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado.' });
       }
     } catch (err) {
       if (err.name === 'AbortError') return; // Cancelado por nova busca, ignora
       console.error(err);
-      setMensagem({ tipo: 'error', texto: 'Erro ao buscar no Discogs.' });
+      setMensagem({ tipo: 'error', texto: 'Erro ao buscar dados do disco.' });
     } finally {
       setIsSearchingDiscogs(false);
     }
@@ -149,10 +155,9 @@ export default function AdicionarItem() {
   const handleCoverRecognized = async ({ artista, titulo, ano }) => {
     if (!artista && !titulo) return;
 
-    // Normaliza e formata o termo exato para busca eficiente no Discogs
+    // Normaliza e formata o termo exato para busca eficiente
     const query = formatDiscogsQuery(artista, titulo);
 
-    // Preenche preventivamente os dados no formulário caso o usuário não selecione nenhuma edição
     let normArtista = (artista || '').trim();
     if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(normArtista)) {
       normArtista = 'Various';
@@ -165,11 +170,10 @@ export default function AdicionarItem() {
       ano: ano || prev.ano,
     }));
 
-    // Mantém o termo formatado visível no input de busca do Discogs
     setQueryDiscogs(query);
     setMensagem({
       tipo: 'success',
-      texto: `Capa identificada: "${query}"${ano ? ` (${ano})` : ''}. Buscando prensagens no Discogs...`
+      texto: `Capa identificada: "${query}"${ano ? ` (${ano})` : ''}. Buscando prensagens...`
     });
 
     if (query) {
@@ -179,11 +183,13 @@ export default function AdicionarItem() {
       setShowDiscogsDropdown(false);
 
       try {
-        const data = await fetchDiscogs({ q: query }, signal);
+        const data = await searchMusicHybrid({ q: query }, signal, (results) => {
+          if (results && results.length > 0) {
+            setDiscogsResults(results);
+            setShowDiscogsDropdown(true);
+          }
+        });
         if (data.results && data.results.length > 0) {
-          setDiscogsResults(data.results);
-          // Abre o dropdown para o usuário visualizar e escolher com certeza a prensagem correta
-          setShowDiscogsDropdown(true);
           setMensagem({
             tipo: 'success',
             texto: `Capa identificada: "${query}". Selecione a prensagem correta abaixo ou confirme os dados.`
@@ -191,12 +197,12 @@ export default function AdicionarItem() {
         } else {
           setMensagem({
             tipo: 'success',
-            texto: `Capa identificada: "${query}". Nenhuma prensagem encontrada no Discogs; campos preenchidos.`
+            texto: `Capa identificada: "${query}". Nenhuma prensagem encontrada; campos preenchidos.`
           });
         }
       } catch (err) {
         if (err.name === 'AbortError') return;
-        console.error('Erro na busca Discogs pós-reconhecimento:', err);
+        console.error('Erro na busca pós-reconhecimento:', err);
       } finally {
         setIsSearchingDiscogs(false);
       }
@@ -213,23 +219,25 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const data = await fetchDiscogs({ barcode }, signal);
-      if (data.results && data.results.length > 0) {
-        if (data.results.length === 1) {
-          handleSelectDiscogsResult(data.results[0]);
-          setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${data.results[0].title}` });
-        } else {
-          setDiscogsResults(data.results);
-          setShowDiscogsDropdown(true);
-          setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${data.results.length} edições encontradas. Escolha uma abaixo.` });
+      const data = await searchMusicHybrid({ barcode }, signal, (results) => {
+        if (results && results.length > 0) {
+          if (results.length === 1) {
+            handleSelectDiscogsResult(results[0]);
+            setMensagem({ tipo: 'success', texto: `Código ${barcode} identificado: ${results[0].title}` });
+          } else {
+            setDiscogsResults(results);
+            setShowDiscogsDropdown(true);
+            setMensagem({ tipo: 'success', texto: `Código ${barcode}: ${results.length} edições encontradas. Escolha uma abaixo.` });
+          }
         }
-      } else {
-        setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado no Discogs para o código de barras "${barcode}".` });
+      });
+      if (!data.results || data.results.length === 0) {
+        setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado para o código de barras "${barcode}".` });
       }
     } catch (err) {
       if (err.name === 'AbortError') return;
       console.error(err);
-      setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de barras no Discogs.' });
+      setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de barras.' });
     } finally {
       setIsSearchingDiscogs(false);
     }
@@ -245,36 +253,40 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const data = await fetchDiscogs({ catno: codigoTexto }, signal);
-      if (data.results && data.results.length > 0) {
-        if (data.results.length === 1) {
-          handleSelectDiscogsResult(data.results[0]);
-          setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${data.results[0].title}` });
-        } else {
-          setDiscogsResults(data.results);
-          setShowDiscogsDropdown(true);
-          setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${data.results.length} edições encontradas. Escolha uma abaixo.` });
+      const data = await searchMusicHybrid({ catno: codigoTexto }, signal, (results) => {
+        if (results && results.length > 0) {
+          if (results.length === 1) {
+            handleSelectDiscogsResult(results[0]);
+            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}" identificado: ${results[0].title}` });
+          } else {
+            setDiscogsResults(results);
+            setShowDiscogsDropdown(true);
+            setMensagem({ tipo: 'success', texto: `Catálogo "${codigoTexto}": ${results.length} edições encontradas. Escolha uma abaixo.` });
+          }
         }
-      } else {
-        setMensagem({ tipo: 'error', texto: `Nenhum resultado encontrado no Discogs para o código "${codigoTexto}".` });
+      });
+      if (!data.results || data.results.length === 0) {
+        setMensagem({ tipo: 'error', texto: `Nenhum resultado encontrado para o código "${codigoTexto}".` });
       }
     } catch (err) {
       if (err.name === 'AbortError') return;
       console.error(err);
-      setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de catálogo no Discogs.' });
+      setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de catálogo.' });
     } finally {
       setIsSearchingDiscogs(false);
     }
   };
 
   const handleSelectDiscogsResult = (result) => {
-    const parts = result.title.split(' - ');
-    let artista = '';
-    let titulo = cleanDiscogsString(result.title);
+    let artista = result.artist || '';
+    let titulo = cleanDiscogsString(result.album || result.title);
     
-    if (parts.length > 1) {
-      artista = cleanDiscogsString(parts[0]);
-      titulo = cleanDiscogsString(parts.slice(1).join(' - '));
+    if (!artista) {
+      const parts = result.title.split(' - ');
+      if (parts.length > 1) {
+        artista = cleanDiscogsString(parts[0]);
+        titulo = cleanDiscogsString(parts.slice(1).join(' - '));
+      }
     }
 
     const year = result.year ? String(result.year) : '';
@@ -288,8 +300,8 @@ export default function AdicionarItem() {
 
     setForm(prev => ({
       ...prev,
-      artista,
-      titulo,
+      artista: artista || prev.artista,
+      titulo: titulo || prev.titulo,
       ano: year || prev.ano,
     }));
     
@@ -313,11 +325,19 @@ export default function AdicionarItem() {
       // 1. Inserir item
       const finalCaixa = form.caixa?.trim() ? normalizeCaixa(form.caixa.trim(), form.loja || activeStore) : null;
       const chosenCover = selectedCover?.cover || selectedCover?.thumb || null;
+
+      let finalObservacao = form.observacao?.trim() || null;
+      const isCaixaNova = ['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(String(form.caixa || '').trim());
+      if (isCaixaNova && (seloPrensagem.trim() || anoPrensagem.trim())) {
+        const tag = [seloPrensagem.trim(), anoPrensagem.trim()].filter(Boolean).join(' • ');
+        finalObservacao = tag ? `[${tag}] ${finalObservacao || ''}`.trim() : finalObservacao;
+      }
+
       const insertData = {
         titulo: form.titulo.trim(),
         preco: getUnmaskedPreco(),
         loja: form.loja || null,
-        observacao: form.observacao || null,
+        observacao: finalObservacao,
         caixa: finalCaixa,
         ano: form.ano?.trim() || null,
         ativo: form.ativo !== false,
@@ -393,6 +413,8 @@ export default function AdicionarItem() {
         texto: `"${form.titulo}" adicionado como ${tipoNome}${statusText}${localText}${lojaText}.` 
       });
       setForm({ ...INITIAL_FORM, caixa: finalCaixa || form.caixa, loja: form.loja, ativo: form.ativo !== false });
+      setSeloPrensagem('');
+      setAnoPrensagem('');
 
       setQueryDiscogs('');
       setDiscogsResults([]);
@@ -520,6 +542,11 @@ export default function AdicionarItem() {
                             {result.isExactMatch && (
                               <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
                                 MATCH EXATO
+                              </span>
+                            )}
+                            {result.source === 'musicbrainz' && (
+                              <span style={{ background: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.25)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
+                                MUSICBRAINZ
                               </span>
                             )}
                           </div>
@@ -679,6 +706,58 @@ export default function AdicionarItem() {
                     {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label} {!activeStore && c.loja ? `(${c.loja})` : ''}</option>)}
                   </datalist>
                 </>
+              )}
+
+              {['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(String(form.caixa || '').trim()) && (
+                <div style={{ marginTop: '12px', padding: '12px 14px', background: 'rgba(168, 85, 247, 0.05)', border: '1px solid rgba(168, 85, 247, 0.25)', borderRadius: '8px', width: '100%' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#c084fc' }}>
+                      Prensagem Nova / Edição Especial (Caixa {form.caixa})
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1 1 200px' }}>
+                      <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>Selo da Prensagem</label>
+                      <input 
+                        type="text" 
+                        value={seloPrensagem} 
+                        onChange={(e) => setSeloPrensagem(e.target.value)} 
+                        placeholder="Ex: Três Selos, Noize..."
+                        style={{ width: '100%' }}
+                      />
+                      <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
+                        {['Três Selos', 'Noize', 'Rocinante', 'Fatiado', 'Universal', 'Polysom'].map(s => (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => setSeloPrensagem(s)}
+                            style={{
+                              fontSize: '11px',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              background: seloPrensagem === s ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
+                              color: seloPrensagem === s ? '#fff' : 'var(--text-muted)',
+                              border: '1px solid var(--border)',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ width: '120px' }}>
+                      <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>Ano Prensagem</label>
+                      <input 
+                        type="text" 
+                        value={anoPrensagem} 
+                        onChange={(e) => setAnoPrensagem(e.target.value)} 
+                        placeholder="Ex: 2023"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>
