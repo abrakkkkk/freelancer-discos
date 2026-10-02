@@ -268,6 +268,32 @@ function EditarExcluirContent() {
     return parseInt(str, 10).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
   };
 
+  const searchDiscogsWithQuery = async (queryText, isAuto = false) => {
+    if (!queryText || !queryText.trim()) return;
+    const signal = abortPreviousDiscogs();
+    setIsSearchingDiscogs(true);
+    setDiscogsResults([]);
+    setShowDiscogsDropdown(false);
+    try {
+      const data = await fetchDiscogs({ q: queryText }, signal);
+      const results = data.results || [];
+      if (results.length > 0) {
+        setDiscogsResults(results);
+        setShowDiscogsDropdown(true);
+      } else if (!isAuto) {
+        setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado.' });
+      }
+    } catch (err) {
+      if (err.name === 'AbortError') return;
+      console.error(err);
+      if (!isAuto) {
+        setMensagem({ tipo: 'error', texto: 'Erro ao buscar dados do disco.' });
+      }
+    } finally {
+      setIsSearchingDiscogs(false);
+    }
+  };
+
   function abrirEdicao(item) {
     setItemEditando(item);
     setSelectedCover(null);
@@ -306,6 +332,22 @@ function EditarExcluirContent() {
     setMensagem(null);
     setTela('edicao');
     carregarObservacoes(item.id, item);
+
+    // Discos das Caixas 49, 50 e 51: preenche e abre a pesquisa do Discogs automaticamente na aba de edição
+    const caixaLimpa = String(item.caixa || '').toLowerCase().replace(/caixa|\s|b/gi, '');
+    const isCaixaPrensagem = ['49', '50', '51'].includes(caixaLimpa);
+
+    if (tipo === CATEGORY_IDS.DISCOS && isCaixaPrensagem) {
+      const query = formatDiscogsQuery(item.artista, item.titulo);
+      if (query.trim()) {
+        setQueryDiscogs(query);
+        searchDiscogsWithQuery(query, true);
+      }
+    } else {
+      setQueryDiscogs('');
+      setDiscogsResults([]);
+      setShowDiscogsDropdown(false);
+    }
   }
 
   const voltarParaBusca = () => {
@@ -320,30 +362,6 @@ function EditarExcluirContent() {
       setShowDiscogsDropdown(false);
       setDiscogsResults([]);
       setQueryDiscogs('');
-    }
-  };
-
-  const searchDiscogsWithQuery = async (queryText) => {
-    if (!queryText || !queryText.trim()) return;
-    const signal = abortPreviousDiscogs();
-    setIsSearchingDiscogs(true);
-    setDiscogsResults([]);
-    setShowDiscogsDropdown(false);
-    try {
-      const data = await fetchDiscogs({ q: queryText }, signal);
-      const results = data.results || [];
-      if (results.length > 0) {
-        setDiscogsResults(results);
-        setShowDiscogsDropdown(true);
-      } else {
-        setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado.' });
-      }
-    } catch (err) {
-      if (err.name === 'AbortError') return;
-      console.error(err);
-      setMensagem({ tipo: 'error', texto: 'Erro ao buscar dados do disco.' });
-    } finally {
-      setIsSearchingDiscogs(false);
     }
   };
 
@@ -428,7 +446,8 @@ function EditarExcluirContent() {
     };
     if (temArtista) updateData.artista = form.artista;
 
-    const isCaixaNova = ['49', '50', '51', 'Caixa 49', 'Caixa 50', 'Caixa 51'].includes(String(form.caixa || '').trim());
+    const caixaLimpa = String(form.caixa || '').toLowerCase().replace(/caixa|\s|b/gi, '');
+    const isCaixaNova = ['49', '50', '51'].includes(caixaLimpa);
     if (isCaixaNova) {
       const tag = [seloPrensagem.trim(), anoPrensagem.trim()].filter(Boolean).join(' • ');
       let existingObs = itemEditando?.observacao || '';
