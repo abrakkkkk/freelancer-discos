@@ -99,6 +99,12 @@ export default function CatalogTable({
         <tbody>
           {itens.map((d) => {
             const edicaoTag = getEdicaoTag(d);
+            const edicaoTemAno = Boolean(
+              edicaoTag && (
+                /\b(19\d{2}|20\d{2})\b/.test(edicaoTag) ||
+                (d.ano && edicaoTag.includes(String(d.ano).trim()))
+              )
+            );
 
             if (isAudioCard) {
               const isLoja1 = d.loja === 'Loja 1';
@@ -141,7 +147,7 @@ export default function CatalogTable({
                           {edicaoTag}
                         </span>
                       )}
-                      {d.ano && (
+                      {d.ano && !edicaoTemAno && (
                         <span className="disco-valor-ano">{d.ano}</span>
                       )}
                       {showLoja && d.loja && (
