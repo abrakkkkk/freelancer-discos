@@ -15,54 +15,71 @@ import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import AlertMessage from '@/components/AlertMessage';
 
 // Helper para redimensionar imagem no cliente via Canvas (evita uploads de 5MB do celular)
-// Helper resiliente para redimensionar imagem no cliente via Canvas (evita uploads pesados e nunca rejeita)
+// Helper resiliente para redimensionar imagem no cliente via Canvas (evita uploads pesados e vazamento de RAM)
 async function resizeImage(file, maxDimension = 800) {
   return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrlRaw = e.target.result;
-      const img = new Image();
-      img.onload = () => {
-        try {
-          let width = img.width;
-          let height = img.height;
+    let blobUrl = '';
+    try {
+      blobUrl = URL.createObjectURL(file);
+    } catch (_) {
+      blobUrl = '';
+    }
 
-          if (width > height) {
-            if (width > maxDimension) {
-              height = Math.round((height * maxDimension) / width);
-              width = maxDimension;
-            }
-          } else {
-            if (height > maxDimension) {
-              width = Math.round((width * maxDimension) / height);
-              height = maxDimension;
-            }
+    if (!blobUrl) {
+      return resolve({ dataUrl: null, previewUrl: '' });
+    }
+
+    const img = new Image();
+    img.onload = () => {
+      try {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxDimension) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
           }
-
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          resolve({
-            dataUrl,
-            originalPreview: dataUrlRaw
-          });
-        } catch (_) {
-          resolve({ dataUrl: dataUrlRaw, originalPreview: dataUrlRaw });
+        } else {
+          if (height > maxDimension) {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
         }
-      };
-      img.onerror = () => {
-        resolve({ dataUrl: dataUrlRaw, originalPreview: dataUrlRaw });
-      };
-      img.src = dataUrlRaw;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        // Libera memória do canvas imediatamente
+        canvas.width = 0;
+        canvas.height = 0;
+
+        resolve({
+          dataUrl,
+          previewUrl: blobUrl
+        });
+      } catch (err) {
+        console.warn('Erro no canvas resize:', err);
+        resolve({
+          dataUrl: null,
+          previewUrl: blobUrl
+        });
+      }
     };
-    reader.onerror = () => {
-      resolve({ dataUrl: null, originalPreview: null });
+
+    img.onerror = () => {
+      console.warn('Erro ao decodificar imagem para preview:', file.name);
+      resolve({
+        dataUrl: null,
+        previewUrl: blobUrl
+      });
     };
-    reader.readAsDataURL(file);
+
+    img.src = blobUrl;
   });
 }
 
@@ -99,7 +116,7 @@ export default function CadastroLoteFotos() {
     if (activeStore && !loja) setLoja(activeStore);
   }, [activeStore, loja]);
 
-  // Upload e processamento das fotos
+  // Upload e processamento das fotos com streaming visual e proteção anti-bloqueio
   const handleFilesSelected = async (e) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -113,29 +130,46 @@ export default function CadastroLoteFotos() {
       setProgresso({ atual: i + 1, total: files.length });
       const file = files[i];
 
-      try {
-        // 1. Redimensiona a foto (nunca trava)
-        const { dataUrl, originalPreview } = await resizeImage(file, 800);
-        const previewUrl = originalPreview || dataUrl || (typeof URL !== 'undefined' ? URL.createObjectURL(file) : '');
+      // Pacing inteligente entre fotos para evitar bloqueio por RPM
+      if (i > 0) {
+        await new Promise(r => setTimeout(r, 600));
+      }
 
-        // 2. Chama Gemini Vision
+      try {
+        // 1. Redimensiona a foto de forma leve com Blob Object URL (consome zero RAM extra)
+        const { dataUrl, previewUrl } = await resizeImage(file, 800);
+
+        // 2. Chama Gemini Vision com retentativa se der erro transitório/rate limit
         let geminiData = null;
         if (dataUrl) {
           try {
-            const res = await fetch('/api/recognize-cover', {
+            let res = await fetch('/api/recognize-cover', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ image: dataUrl })
             });
-            geminiData = await res.json();
+
+            // Se recebeu 429 ou erro temporário de rate limit, aguarda 1.5s e tenta mais uma vez
+            if (res.status === 429 || res.status === 502) {
+              await new Promise(r => setTimeout(r, 1500));
+              res = await fetch('/api/recognize-cover', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: dataUrl })
+              });
+            }
+
+            if (res.ok) {
+              geminiData = await res.json();
+            }
           } catch (err) {
             console.warn('Erro ao chamar recognize-cover:', err);
           }
         }
 
-        const artistaGemini = geminiData?.artista || '';
-        const tituloGemini = geminiData?.titulo || '';
-        const anoGemini = geminiData?.ano || '';
+        const artistaGemini = (geminiData?.artista || '').trim();
+        const tituloGemini = (geminiData?.titulo || '').trim();
+        const anoGemini = (geminiData?.ano || '').trim();
         const confianca = geminiData?.confianca || (artistaGemini || tituloGemini ? 'media' : 'baixa');
 
         // 3. Enriquecimento via Discogs se houver termos
@@ -155,13 +189,25 @@ export default function CadastroLoteFotos() {
           }
         }
 
-        const finalArtista = artistaGemini || discogsMatch?.artist || '';
+        // Extrai artista e título com inteligência se o Discogs tiver encontrado
+        let finalArtista = artistaGemini;
         let finalTitulo = tituloGemini;
-        if (!finalTitulo && discogsMatch?.title) {
-          const parts = discogsMatch.title.split(' - ');
-          finalTitulo = parts[1] || parts[0];
+
+        if (discogsMatch) {
+          if (!finalArtista && discogsMatch.artist) {
+            finalArtista = discogsMatch.artist;
+          }
+          if (!finalTitulo && discogsMatch.album) {
+            finalTitulo = cleanDiscogsString(discogsMatch.album);
+          }
+          if ((!finalArtista || !finalTitulo) && discogsMatch.title?.includes(' - ')) {
+            const parts = discogsMatch.title.split(' - ');
+            if (!finalArtista) finalArtista = cleanDiscogsString(parts[0]);
+            if (!finalTitulo) finalTitulo = cleanDiscogsString(parts.slice(1).join(' - '));
+          } else if (!finalTitulo && discogsMatch.title) {
+            finalTitulo = cleanDiscogsString(discogsMatch.title);
+          }
         }
-        if (!finalTitulo) finalTitulo = '';
 
         const finalAno = anoGemini || (discogsMatch?.year ? String(discogsMatch.year) : '');
         const finalCapa = discogsMatch?.thumb || discogsMatch?.cover_image || null;
@@ -178,17 +224,19 @@ export default function CadastroLoteFotos() {
           capaUrl: finalCapa,
           confianca,
           discogsResults: discogsMatch ? [discogsMatch] : [],
-          selecionado: true // SEMPRE selecionado por padrão para que o lote inteiro seja aproveitado!
+          selecionado: true // Sempre selecionado por padrão para edição em lote
         };
 
         // Adiciona PROGRESSIVAMENTE para que o usuário veja cada disco aparecer na hora
         setItens(prev => [...prev, novoItem]);
       } catch (err) {
         console.error(`Erro ao processar arquivo ${file.name}:`, err);
-        // Mesmo com erro inesperado, adiciona o card com a foto para não perder o disco
+        // Mesmo com erro inesperado, adiciona o card com a foto preservada para não perder o disco
+        let fallbackUrl = '';
+        try { fallbackUrl = URL.createObjectURL(file); } catch (_) {}
         setItens(prev => [...prev, {
           id: `item-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
-          fotoPreview: typeof URL !== 'undefined' ? URL.createObjectURL(file) : '',
+          fotoPreview: fallbackUrl,
           artista: '',
           titulo: '',
           ano: '',
@@ -207,6 +255,16 @@ export default function CadastroLoteFotos() {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  // Limpeza de lote liberando memória
+  const limparLote = () => {
+    itens.forEach(item => {
+      if (item.fotoPreview?.startsWith('blob:')) {
+        try { URL.revokeObjectURL(item.fotoPreview); } catch (_) {}
+      }
+    });
+    setItens([]);
+  };
+
   // Selecionar / Deselecionar tudo
   const todosSelecionados = itens.length > 0 && itens.every(item => item.selecionado);
   const toggleSelecionarTudo = () => {
@@ -223,7 +281,13 @@ export default function CadastroLoteFotos() {
   };
 
   const removerItem = (id) => {
-    setItens(prev => prev.filter(item => item.id !== id));
+    setItens(prev => {
+      const itemToRemove = prev.find(item => item.id === id);
+      if (itemToRemove?.fotoPreview?.startsWith('blob:')) {
+        try { URL.revokeObjectURL(itemToRemove.fotoPreview); } catch (_) {}
+      }
+      return prev.filter(item => item.id !== id);
+    });
   };
 
   // Busca manual no Discogs para ajustar um item específico
@@ -500,7 +564,7 @@ export default function CadastroLoteFotos() {
               <button 
                 type="button" 
                 className="btn btn-secondary" 
-                onClick={() => setItens([])}
+                onClick={limparLote}
                 style={{ fontSize: '13px', padding: '6px 12px' }}
                 disabled={salvando}
               >
@@ -554,27 +618,41 @@ export default function CadastroLoteFotos() {
                 {/* Coluna 1: Foto Real Original Tirada */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', width: '100px', flexShrink: 0 }}>
                   <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Foto Real</span>
-                  <img 
-                    src={item.fotoPreview} 
-                    alt={`Foto ${idx + 1}`}
-                    style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '6px', border: '1px solid var(--border)' }}
-                  />
+                  <div style={{ width: '100px', height: '100px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)', background: 'rgba(255,255,255,0.03)' }}>
+                    {item.fotoPreview ? (
+                      <img 
+                        src={item.fotoPreview} 
+                        alt={`Foto ${idx + 1}`}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    ) : null}
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
+                      <FaCamera size={26} color="var(--text-muted)" />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Coluna 2: Capa Oficial Reconhecida (Discogs) */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', width: '100px', flexShrink: 0 }}>
                   <span style={{ fontSize: '10px', fontWeight: 700, color: '#38a169', textTransform: 'uppercase' }}>Capa Discogs</span>
-                  {item.capaUrl ? (
-                    <img 
-                      src={item.capaUrl} 
-                      alt="Capa Oficial"
-                      style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '6px', border: '1px solid rgba(56, 161, 105, 0.3)' }}
-                    />
-                  ) : (
-                    <div style={{ width: '100px', height: '100px', borderRadius: '6px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: '100px', height: '100px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(56, 161, 105, 0.3)', background: 'rgba(255,255,255,0.03)' }}>
+                    {item.capaUrl ? (
+                      <img 
+                        src={item.capaUrl} 
+                        alt="Capa Oficial"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                      />
+                    ) : null}
+                    <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
                       <PiVinylRecord size={36} color="var(--text-muted)" />
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Coluna 3: Dados Identificados e Editáveis */}
