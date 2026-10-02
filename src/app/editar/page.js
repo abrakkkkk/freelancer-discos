@@ -20,7 +20,7 @@ import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { IoCamera } from "react-icons/io5";
 import { formatCaixa, cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
-import { searchMusicHybrid } from '@/utils/musicSearchClient';
+import { searchMusicHybrid, extractSeloPrensagem } from '@/utils/musicSearchClient';
 import AlbumCover, { setAlbumCoverCache, clearAlbumCoverCache } from '@/components/AlbumCover';
 import ConfirmModal from '@/components/ConfirmModal';
 import { useReposicao } from '@/contexts/ReposicaoContext';
@@ -394,6 +394,14 @@ function EditarExcluirContent() {
       });
     }
 
+    const detectedSelo = extractSeloPrensagem(result);
+    if (detectedSelo) {
+      setSeloPrensagem(detectedSelo);
+    }
+    if (year) {
+      setAnoPrensagem(year);
+    }
+
     setForm(prev => ({
       ...prev,
       artista: artista || prev.artista,
@@ -730,16 +738,23 @@ function EditarExcluirContent() {
                             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
                                 <span style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.title}</span>
-                                {result.isExactMatch && (
-                                  <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
-                                    MATCH EXATO
-                                  </span>
-                                )}
-                                {result.source === 'musicbrainz' && (
-                                  <span style={{ background: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.25)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap', flexShrink: 0 }}>
-                                    MUSICBRAINZ
-                                  </span>
-                                )}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                                  {result.isExactMatch && (
+                                    <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                      MATCH EXATO
+                                    </span>
+                                  )}
+                                  {extractSeloPrensagem(result) && (
+                                    <span style={{ background: 'rgba(167, 139, 250, 0.15)', color: '#c084fc', border: '1px solid rgba(167, 139, 250, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                      {extractSeloPrensagem(result).toUpperCase()}
+                                    </span>
+                                  )}
+                                  {result.source === 'musicbrainz' && (
+                                    <span style={{ background: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.25)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                      MUSICBRAINZ
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                               <span style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {result.year && `${result.year} • `}
