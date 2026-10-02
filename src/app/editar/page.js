@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { TbTools } from "react-icons/tb";
@@ -62,6 +62,17 @@ function EditarExcluirContent() {
   const [isSearchingDiscogs, setIsSearchingDiscogs] = useState(false);
   const [discogsResults, setDiscogsResults] = useState([]);
   const [showDiscogsDropdown, setShowDiscogsDropdown] = useState(false);
+
+  // AbortController para cancelar requests Discogs anteriores ao iniciar nova busca
+  const discogsAbortRef = useRef(null);
+
+  function abortPreviousDiscogs() {
+    if (discogsAbortRef.current) {
+      discogsAbortRef.current.abort();
+    }
+    discogsAbortRef.current = new AbortController();
+    return discogsAbortRef.current.signal;
+  }
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isOcrOpen, setIsOcrOpen] = useState(false);
@@ -147,8 +158,9 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       setDiscogsResults([]);
       setShowDiscogsDropdown(false);
+      const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`);
+        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`, { signal });
         const data = await res.json();
         if (data.results && data.results.length > 0) {
           if (data.results.length === 1) {
@@ -163,6 +175,7 @@ function EditarExcluirContent() {
           setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado no Discogs para o código "${barcode}".` });
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error(err);
       } finally {
         setIsSearchingDiscogs(false);
@@ -170,8 +183,9 @@ function EditarExcluirContent() {
     } else {
       // Busca no acervo: consulta Discogs para obter nome do álbum ou pesquisa pelo código
       setIsSearchingDiscogs(true);
+      const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`);
+        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`, { signal });
         const data = await res.json();
         const first = data.results?.[0];
         let termoFinal = barcode;
@@ -182,6 +196,7 @@ function EditarExcluirContent() {
         setTermo(termoFinal);
         buscar(termoFinal);
       } catch (e) {
+        if (e.name === 'AbortError') return;
         setTermo(barcode);
         buscar(barcode);
       } finally {
@@ -197,8 +212,9 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       setDiscogsResults([]);
       setShowDiscogsDropdown(false);
+      const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`);
+        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`, { signal });
         const data = await res.json();
         if (data.results && data.results.length > 0) {
           if (data.results.length === 1) {
@@ -213,6 +229,7 @@ function EditarExcluirContent() {
           setMensagem({ tipo: 'error', texto: `Nenhum resultado no Discogs para o código "${codigoTexto}".` });
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error(err);
       } finally {
         setIsSearchingDiscogs(false);
@@ -220,8 +237,9 @@ function EditarExcluirContent() {
     } else {
       // Busca no acervo: consulta Discogs para obter nome do álbum ou pesquisa pelo código
       setIsSearchingDiscogs(true);
+      const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`);
+        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`, { signal });
         const data = await res.json();
         const first = data.results?.[0];
         let termoFinal = codigoTexto;
@@ -232,6 +250,7 @@ function EditarExcluirContent() {
         setTermo(termoFinal);
         buscar(termoFinal);
       } catch (e) {
+        if (e.name === 'AbortError') return;
         setTermo(codigoTexto);
         buscar(codigoTexto);
       } finally {
@@ -280,11 +299,12 @@ function EditarExcluirContent() {
 
   const searchDiscogsWithQuery = async (queryText) => {
     if (!queryText || !queryText.trim()) return;
+    const signal = abortPreviousDiscogs();
     setIsSearchingDiscogs(true);
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryText)}`);
+      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryText)}`, { signal });
       const data = await res.json();
       if (data.results && data.results.length > 0) {
         setDiscogsResults(data.results);
@@ -293,6 +313,7 @@ function EditarExcluirContent() {
         setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado no Discogs.' });
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.error(err);
       setMensagem({ tipo: 'error', texto: 'Erro ao buscar no Discogs.' });
     } finally {

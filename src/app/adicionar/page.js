@@ -66,6 +66,18 @@ export default function AdicionarItem() {
   const [discogsResults, setDiscogsResults] = useState([]);
   const [showDiscogsDropdown, setShowDiscogsDropdown] = useState(false);
 
+  // AbortController para cancelar requests Discogs anteriores ao iniciar nova busca
+  const discogsAbortRef = useRef(null);
+  const searchDebounceRef = useRef(null);
+
+  function abortPreviousDiscogs() {
+    if (discogsAbortRef.current) {
+      discogsAbortRef.current.abort();
+    }
+    discogsAbortRef.current = new AbortController();
+    return discogsAbortRef.current.signal;
+  }
+
   const initialFormWithStore = { ...INITIAL_FORM, loja: activeStore || '' };
 
   const {
@@ -104,11 +116,16 @@ export default function AdicionarItem() {
   const searchDiscogs = async (e) => {
     if (e) e.preventDefault();
     if (!queryDiscogs.trim()) return;
+
+    // Debounce de 400ms para evitar disparos rápidos consecutivos
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+
+    const signal = abortPreviousDiscogs();
     setIsSearchingDiscogs(true);
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryDiscogs)}`);
+      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryDiscogs)}`, { signal });
       const data = await res.json();
       if (data.results && data.results.length > 0) {
         setDiscogsResults(data.results);
@@ -117,6 +134,7 @@ export default function AdicionarItem() {
         setMensagem({ tipo: 'error', texto: 'Nenhum resultado encontrado no Discogs.' });
       }
     } catch (err) {
+      if (err.name === 'AbortError') return; // Cancelado por nova busca, ignora
       console.error(err);
       setMensagem({ tipo: 'error', texto: 'Erro ao buscar no Discogs.' });
     } finally {
@@ -155,12 +173,13 @@ export default function AdicionarItem() {
     });
 
     if (query) {
+      const signal = abortPreviousDiscogs();
       setIsSearchingDiscogs(true);
       setDiscogsResults([]);
       setShowDiscogsDropdown(false);
 
       try {
-        const res = await fetch(`/api/discogs?q=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/discogs?q=${encodeURIComponent(query)}`, { signal });
         const data = await res.json();
         if (data.results && data.results.length > 0) {
           setDiscogsResults(data.results);
@@ -177,6 +196,7 @@ export default function AdicionarItem() {
           });
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error('Erro na busca Discogs pós-reconhecimento:', err);
       } finally {
         setIsSearchingDiscogs(false);
@@ -192,8 +212,9 @@ export default function AdicionarItem() {
     setShowDiscogsDropdown(false);
     setMensagem(null);
 
+    const signal = abortPreviousDiscogs();
     try {
-      const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`);
+      const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`, { signal });
       const data = await res.json();
       if (data.results && data.results.length > 0) {
         if (data.results.length === 1) {
@@ -208,6 +229,7 @@ export default function AdicionarItem() {
         setMensagem({ tipo: 'error', texto: `Nenhum disco encontrado no Discogs para o código de barras "${barcode}".` });
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.error(err);
       setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de barras no Discogs.' });
     } finally {
@@ -223,8 +245,9 @@ export default function AdicionarItem() {
     setShowDiscogsDropdown(false);
     setMensagem(null);
 
+    const signal = abortPreviousDiscogs();
     try {
-      const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`);
+      const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`, { signal });
       const data = await res.json();
       if (data.results && data.results.length > 0) {
         if (data.results.length === 1) {
@@ -239,6 +262,7 @@ export default function AdicionarItem() {
         setMensagem({ tipo: 'error', texto: `Nenhum resultado encontrado no Discogs para o código "${codigoTexto}".` });
       }
     } catch (err) {
+      if (err.name === 'AbortError') return;
       console.error(err);
       setMensagem({ tipo: 'error', texto: 'Erro ao buscar código de catálogo no Discogs.' });
     } finally {

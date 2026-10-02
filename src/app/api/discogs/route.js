@@ -62,6 +62,20 @@ function setToCache(key, data) {
   memoryCache.set(key, { timestamp: Date.now(), data });
 }
 
+// Timeout de 8 segundos para evitar requests pendurados ao Discogs
+const FETCH_TIMEOUT_MS = 8000;
+
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q');
@@ -97,7 +111,7 @@ export async function GET(request) {
     if (barcode) {
       const cleanBarcode = barcode.replace(/[^0-9A-Za-z]/g, '');
       const url = `https://api.discogs.com/database/search?type=release&per_page=15&barcode=${encodeURIComponent(cleanBarcode)}`;
-      const response = await fetch(url, { headers });
+      const response = await fetchWithTimeout(url, { headers });
       if (!response.ok) {
         return Response.json({ error: 'Failed to fetch from Discogs' }, { status: response.status });
       }
@@ -125,7 +139,7 @@ export async function GET(request) {
 
     // Busca geral por termo (q)
     requests.push(
-      fetch(`https://api.discogs.com/database/search?type=release&per_page=15&q=${encodeURIComponent(cleanQ)}`, { headers })
+      fetchWithTimeout(`https://api.discogs.com/database/search?type=release&per_page=15&q=${encodeURIComponent(cleanQ)}`, { headers })
         .then(r => r.ok ? r.json() : { results: [] })
         .catch(() => ({ results: [] }))
     );
@@ -135,7 +149,7 @@ export async function GET(request) {
       const titleOnly = cleanQ.replace(/^various\s+/i, '').trim();
       if (titleOnly.length >= 3) {
         requests.push(
-          fetch(`https://api.discogs.com/database/search?type=release&per_page=10&country=Brazil&q=${encodeURIComponent(titleOnly)}`, { headers })
+          fetchWithTimeout(`https://api.discogs.com/database/search?type=release&per_page=10&country=Brazil&q=${encodeURIComponent(titleOnly)}`, { headers })
             .then(r => r.ok ? r.json() : { results: [] })
             .catch(() => ({ results: [] }))
         );
@@ -143,24 +157,22 @@ export async function GET(request) {
     }
 
     if (isCatnoSearch) {
-      // Prioridade: Busca no catálogo brasileiro para as variações principais (até 2 variações)
-      const topVariations = variations.slice(0, 2);
+      // Usa apenas a primeira variação para reduzir requests paralelos (de 4 para 2)
+      const primaryVariation = variations[0];
 
-      for (const v of topVariations) {
-        // Busca direta com country=Brazil
-        requests.push(
-          fetch(`https://api.discogs.com/database/search?type=release&per_page=10&country=Brazil&catno=${encodeURIComponent(v)}`, { headers })
-            .then(r => r.ok ? r.json() : { results: [] })
-            .catch(() => ({ results: [] }))
-        );
+      // Busca direta com country=Brazil
+      requests.push(
+        fetchWithTimeout(`https://api.discogs.com/database/search?type=release&per_page=10&country=Brazil&catno=${encodeURIComponent(primaryVariation)}`, { headers })
+          .then(r => r.ok ? r.json() : { results: [] })
+          .catch(() => ({ results: [] }))
+      );
 
-        // Busca global pelo código de catálogo
-        requests.push(
-          fetch(`https://api.discogs.com/database/search?type=release&per_page=10&catno=${encodeURIComponent(v)}`, { headers })
-            .then(r => r.ok ? r.json() : { results: [] })
-            .catch(() => ({ results: [] }))
-        );
-      }
+      // Busca global pelo código de catálogo
+      requests.push(
+        fetchWithTimeout(`https://api.discogs.com/database/search?type=release&per_page=10&catno=${encodeURIComponent(primaryVariation)}`, { headers })
+          .then(r => r.ok ? r.json() : { results: [] })
+          .catch(() => ({ results: [] }))
+      );
     }
 
     const responses = await Promise.all(requests);
