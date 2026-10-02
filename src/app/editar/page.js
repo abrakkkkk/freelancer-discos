@@ -20,6 +20,7 @@ import { useUndo } from '@/contexts/UndoContext';
 import { useStore } from '@/contexts/StoreContext';
 import { IoCamera } from "react-icons/io5";
 import { formatCaixa, cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
+import { fetchDiscogs } from '@/utils/discogsClient';
 import AlbumCover, { setAlbumCoverCache, clearAlbumCoverCache } from '@/components/AlbumCover';
 import ConfirmModal from '@/components/ConfirmModal';
 import { useReposicao } from '@/contexts/ReposicaoContext';
@@ -160,8 +161,7 @@ function EditarExcluirContent() {
       setShowDiscogsDropdown(false);
       const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`, { signal });
-        const data = await res.json();
+        const data = await fetchDiscogs({ barcode }, signal);
         if (data.results && data.results.length > 0) {
           if (data.results.length === 1) {
             handleSelectDiscogsResult(data.results[0]);
@@ -185,8 +185,7 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`, { signal });
-        const data = await res.json();
+        const data = await fetchDiscogs({ barcode }, signal);
         const first = data.results?.[0];
         let termoFinal = barcode;
         if (first && first.title) {
@@ -214,8 +213,7 @@ function EditarExcluirContent() {
       setShowDiscogsDropdown(false);
       const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`, { signal });
-        const data = await res.json();
+        const data = await fetchDiscogs({ catno: codigoTexto }, signal);
         if (data.results && data.results.length > 0) {
           if (data.results.length === 1) {
             handleSelectDiscogsResult(data.results[0]);
@@ -239,8 +237,7 @@ function EditarExcluirContent() {
       setIsSearchingDiscogs(true);
       const signal = abortPreviousDiscogs();
       try {
-        const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`, { signal });
-        const data = await res.json();
+        const data = await fetchDiscogs({ catno: codigoTexto }, signal);
         const first = data.results?.[0];
         let termoFinal = codigoTexto;
         if (first && first.title) {
@@ -304,8 +301,7 @@ function EditarExcluirContent() {
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryText)}`, { signal });
-      const data = await res.json();
+      const data = await fetchDiscogs({ q: queryText }, signal);
       if (data.results && data.results.length > 0) {
         setDiscogsResults(data.results);
         setShowDiscogsDropdown(true);

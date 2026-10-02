@@ -17,6 +17,7 @@ import AlertMessage from '@/components/AlertMessage';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import { useStore } from '@/contexts/StoreContext';
 import { cleanDiscogsString, normalizeCaixa, formatDiscogsQuery } from '@/utils/stringUtils';
+import { fetchDiscogs } from '@/utils/discogsClient';
 
 import { IoCamera } from "react-icons/io5";
 
@@ -125,8 +126,7 @@ export default function AdicionarItem() {
     setDiscogsResults([]);
     setShowDiscogsDropdown(false);
     try {
-      const res = await fetch(`/api/discogs?q=${encodeURIComponent(queryDiscogs)}`, { signal });
-      const data = await res.json();
+      const data = await fetchDiscogs({ q: queryDiscogs }, signal);
       if (data.results && data.results.length > 0) {
         setDiscogsResults(data.results);
         setShowDiscogsDropdown(true);
@@ -179,8 +179,7 @@ export default function AdicionarItem() {
       setShowDiscogsDropdown(false);
 
       try {
-        const res = await fetch(`/api/discogs?q=${encodeURIComponent(query)}`, { signal });
-        const data = await res.json();
+        const data = await fetchDiscogs({ q: query }, signal);
         if (data.results && data.results.length > 0) {
           setDiscogsResults(data.results);
           // Abre o dropdown para o usuário visualizar e escolher com certeza a prensagem correta
@@ -214,8 +213,7 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const res = await fetch(`/api/discogs?barcode=${encodeURIComponent(barcode)}`, { signal });
-      const data = await res.json();
+      const data = await fetchDiscogs({ barcode }, signal);
       if (data.results && data.results.length > 0) {
         if (data.results.length === 1) {
           handleSelectDiscogsResult(data.results[0]);
@@ -247,8 +245,7 @@ export default function AdicionarItem() {
 
     const signal = abortPreviousDiscogs();
     try {
-      const res = await fetch(`/api/discogs?catno=${encodeURIComponent(codigoTexto)}`, { signal });
-      const data = await res.json();
+      const data = await fetchDiscogs({ catno: codigoTexto }, signal);
       if (data.results && data.results.length > 0) {
         if (data.results.length === 1) {
           handleSelectDiscogsResult(data.results[0]);
