@@ -29,8 +29,8 @@ function setToCache(key, data) {
   memoryCache.set(key, { timestamp: Date.now(), data });
 }
 
-// Timeout de 6 segundos para evitar requests pendurados ao Discogs
-const FETCH_TIMEOUT_MS = 6000;
+// Timeout de 12 segundos para acomodar picos de latência dos servidores do Discogs
+const FETCH_TIMEOUT_MS = 12000;
 
 async function fetchWithTimeout(url, options = {}) {
   const controller = new AbortController();
