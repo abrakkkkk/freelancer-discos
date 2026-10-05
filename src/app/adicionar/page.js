@@ -151,7 +151,7 @@ export default function AdicionarItem() {
   const [isOcrOpen, setIsOcrOpen] = useState(false);
   const [isCoverScannerOpen, setIsCoverScannerOpen] = useState(false);
 
-  const handleCoverRecognized = async ({ artista, titulo, ano }) => {
+  const handleCoverRecognized = async ({ artista, titulo, ano, preco }) => {
     if (!artista && !titulo) return;
 
     // Normaliza e formata o termo exato para busca eficiente
@@ -167,12 +167,13 @@ export default function AdicionarItem() {
       artista: normArtista || prev.artista,
       titulo: titulo || prev.titulo,
       ano: ano || prev.ano,
+      ...(preco ? { preco: String(preco) } : {})
     }));
 
     setQueryDiscogs(query);
     setMensagem({
       tipo: 'success',
-      texto: `Capa identificada: "${query}"${ano ? ` (${ano})` : ''}. Buscando prensagens...`
+      texto: `Capa identificada: "${query}"${ano ? ` (${ano})` : ''}${preco ? ` [R$ ${preco}]` : ''}. Buscando prensagens...`
     });
 
     if (query) {

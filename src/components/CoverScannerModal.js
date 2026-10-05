@@ -265,6 +265,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
           artista: data.artista,
           titulo: data.titulo,
           ano: data.ano,
+          preco: data.preco || '',
           confianca: data.confianca
         });
       }

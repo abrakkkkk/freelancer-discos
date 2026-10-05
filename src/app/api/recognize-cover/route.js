@@ -55,6 +55,28 @@ function setCachedResult(hash, result) {
   recognitionCache.set(hash, { result, timestamp: Date.now() });
 }
 
+function parsePrecoDetectado(raw) {
+  if (raw === null || raw === undefined) return '';
+  let str = String(raw).trim();
+  if (!str) return '';
+  // Remove menções de moeda (R$, RS, $, etc)
+  str = str.replace(/^(R\$\s*|RS\s*|\$\s*)/i, '').trim();
+  // Se terminar em ,00 ou .00 (ex: "50,00" ou "50.00"), remove centavos comuns
+  str = str.replace(/[,.]00$/, '').trim();
+  // Trata separador de milhar brasileiro: "1.200" -> "1200"
+  str = str.replace(/\.(\d{3})/g, '$1');
+  // Se contiver vírgula decimal com centavos (ex: "45,50"), normaliza vírgula para ponto
+  if (/^\d+,\d{1,2}$/.test(str)) {
+    str = str.replace(',', '.');
+  }
+  // Extrai valor numérico
+  const num = parseFloat(str.replace(/[^0-9.]/g, ''));
+  if (!isNaN(num) && num > 0) {
+    return Math.round(num).toString();
+  }
+  return '';
+}
+
 export async function POST(request) {
   try {
     const geminiKeys = getGeminiKeys();
@@ -94,10 +116,10 @@ export async function POST(request) {
       return Response.json(cached);
     }
 
-    // Prompt ultra-compacto (~70 tokens) — reduz latência e custo de tokens
-    const systemPrompt = `Identifique artista, título e ano da capa de disco (vinil/CD).
-REGRAS: 1. Use memória visual ou transcreva o texto exato da capa; NUNCA invente nomes. 2. Coletânea ou trilha sonora de novela/filme = artista "Various". 3. Se incerto, deixe artista/titulo vazios e confianca "baixa".
-JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
+    // Prompt ultra-compacto e objetivo — inclui identificação de preço manuscrito em etiqueta branca
+    const systemPrompt = `Identifique artista, título, ano e preço da capa de disco (vinil/CD).
+REGRAS: 1. Use memória visual ou transcreva o texto da capa; NUNCA invente nomes. Coletânea = "Various". 2. Procure por etiqueta/adesivo (geralmente branco) com preço escrito à mão ou impresso (ex: "50", "80", "R$ 40", "120,00"). Retorne apenas os números do valor em "preco" (ex: "50", "120"). Se não houver etiqueta de preço visível, deixe "". 3. Se incerto, deixe artista/titulo vazios e confianca "baixa".
+JSON: {"artista":"","titulo":"","ano":"","preco":"","confianca":"alta|media|baixa"}`;
 
     let candidateText = null;
     let lastError = null;
@@ -112,7 +134,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
       generationConfig: {
         responseMimeType: 'application/json',
         temperature: 0,
-        maxOutputTokens: 250
+        maxOutputTokens: 300
       }
     };
 
@@ -208,6 +230,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
       const artistaMatch = candidateText.match(/"artista"\s*:\s*"([^"]*)"/i);
       const tituloMatch = candidateText.match(/"titulo"\s*:\s*"([^"]*)"/i);
       const anoMatch = candidateText.match(/"ano"\s*:\s*"([^"]*)"/i);
+      const precoMatch = candidateText.match(/"preco"\s*:\s*"?([^",}]*)"?/i);
       const confiancaMatch = candidateText.match(/"confianca"\s*:\s*"([^"]*)"/i);
 
       if (artistaMatch || tituloMatch) {
@@ -215,6 +238,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
           artista: artistaMatch ? artistaMatch[1] : '',
           titulo: tituloMatch ? tituloMatch[1] : '',
           ano: anoMatch ? anoMatch[1] : '',
+          preco: precoMatch ? precoMatch[1] : '',
           confianca: confiancaMatch ? confiancaMatch[1] : 'media'
         };
       } else {
@@ -228,6 +252,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
     let artista = (parsed?.artista || '').trim();
     let titulo = (parsed?.titulo || '').trim();
     const ano = (parsed?.ano || '').trim();
+    const preco = parsePrecoDetectado(parsed?.preco);
     const confianca = parsed?.confianca || 'media';
 
     // Normalização estrita para Various
@@ -263,6 +288,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
       artista,
       titulo,
       ano,
+      preco,
       confianca
     };
 

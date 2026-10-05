@@ -362,7 +362,7 @@ function EditarExcluirContent() {
     }
   };
 
-  const handleCoverRecognized = ({ artista, titulo, ano, coverUrl }) => {
+  const handleCoverRecognized = ({ artista, titulo, ano, coverUrl, preco }) => {
     if (artista || titulo) {
       const query = formatDiscogsQuery(artista, titulo);
       setQueryDiscogs(query);
@@ -372,9 +372,15 @@ function EditarExcluirContent() {
           cover: coverUrl,
         });
       }
+      if (preco) {
+        setForm(prev => ({
+          ...prev,
+          preco: formatarMoeda(preco)
+        }));
+      }
       setMensagem({
         tipo: 'success',
-        texto: `Capa reconhecida: "${query}". Selecione a prensagem correta abaixo ou confirme os dados.`,
+        texto: `Capa reconhecida: "${query}"${preco ? ` [R$ ${formatarMoeda(preco)}]` : ''}. Selecione a prensagem correta abaixo ou confirme os dados.`,
       });
       searchDiscogsWithQuery(query);
     }
