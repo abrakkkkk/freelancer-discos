@@ -3,14 +3,17 @@
 
 import { createHash } from 'crypto';
 
-// Ordem por velocidade medida (benchmark real com billing ativo):
-// gemini-3.6-flash ~1.5s | gemini-3.5-flash ~1.9s | gemini-3.8-flash ~3.5s | gemini-flash-latest ~4s
+// Ordem por velocidade medida e confiabilidade de cota:
 const GEMINI_MODELS = [
+  'gemini-3.5-flash-lite',
+  'gemini-flash-lite-latest',
   'gemini-3.6-flash',
   'gemini-3.5-flash',
   'gemini-3.8-flash',
   'gemini-flash-latest'
 ];
+
+let keyRoundRobin = 0;
 
 function getGeminiKeys() {
   const raw = [
@@ -99,8 +102,6 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
     let candidateText = null;
     let lastError = null;
 
-    // Gemini sequencial primário (mais rápido e preciso) -> Groq fallback emergencial
-
     const geminiPayload = {
       contents: [{
         parts: [
@@ -111,14 +112,13 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
       generationConfig: {
         responseMimeType: 'application/json',
         temperature: 0,
-        maxOutputTokens: 250,
-        thinkingConfig: { thinkingBudget: 0 }
+        maxOutputTokens: 250
       }
     };
 
-    // Helper: tenta um modelo Gemini específico
+    // Helper: tenta um modelo Gemini específico com timeout seguro de 12s
     async function tryGeminiModel(model, apiKey) {
-      const timeoutMs = 5000;
+      const timeoutMs = 12000;
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
       const t0 = Date.now();
       const res = await fetch(url, {
@@ -144,101 +144,54 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
       return text;
     }
 
-    // Helper: tenta Gemini com fallback sequencial entre modelos (só dentro da corrida Gemini)
+    // Helper: tenta Gemini com rotação round-robin de chaves e fallback resiliente entre modelos
     async function tryGemini() {
-      for (const key of geminiKeys) {
+      const startIndex = keyRoundRobin++;
+      const orderedKeys = geminiKeys.map((_, i) => geminiKeys[(startIndex + i) % geminiKeys.length]);
+      let lastErr = null;
+
+      for (const key of orderedKeys) {
         for (const model of GEMINI_MODELS) {
           try {
             return await tryGeminiModel(model, key);
           } catch (err) {
-            // Se for 429 (rate limit), pula para próxima key
-            if (err.message.includes('429') || err.message.includes('RESOURCE_EXHAUSTED')) break;
-            // 404/400/503 = modelo indisponível, tenta próximo modelo
+            lastErr = err;
+            console.warn(`[Cover] Falha em ${model} (key ...${key.slice(-6)}): ${err.message}`);
+            // Continua para o próximo modelo ou próxima chave sem desistir abruptamente
             continue;
           }
         }
       }
-      throw new Error('Todos os modelos Gemini falharam');
+      throw lastErr || new Error('Todos os modelos e chaves Gemini falharam');
     }
 
-    // Helper: tenta Groq Vision
-    async function tryGroq() {
-      if (!groqKey) throw new Error('Groq não configurado');
-      const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${groqKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: 'qwen/qwen3.8-27b',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            {
-              role: 'user',
-              content: [
-                { type: 'text', text: 'Analise a imagem da capa do álbum musical e responda estritamente o JSON requisitado.' },
-                {
-                  type: 'image_url',
-                  image_url: { url: `data:${mimeType};base64,${base64Data}` }
-                }
-              ]
-            }
-          ],
-          response_format: { type: 'json_object' },
-          max_tokens: 150,
-          temperature: 0
-        }),
-        signal: AbortSignal.timeout(5000)
-      });
-
-      if (!groqRes.ok) {
-        const errData = await groqRes.json().catch(() => ({}));
-        throw new Error(errData?.error?.message || `Groq status ${groqRes.status}`);
-      }
-
-      const groqData = await groqRes.json();
-      const text = groqData.choices?.[0]?.message?.content?.trim();
-      if (!text) throw new Error('Groq retornou resposta vazia');
-      console.log('[Cover Recognition] Sucesso com Groq Vision');
-      return text;
-    }
-
-    // Gemini primeiro (mais preciso), Groq só como fallback de emergência (alucina títulos)
     if (geminiKeys.length > 0) {
       try {
         candidateText = await tryGemini();
       } catch (err) {
         lastError = err.message;
-        console.warn('[Cover] Gemini falhou, tentando Groq como fallback:', err.message);
-      }
-    }
-
-    // Fallback: Groq Vision (só se Gemini falhar completamente — menos preciso, alucina títulos)
-    if (!candidateText && groqKey) {
-      try {
-        candidateText = await tryGroq();
-      } catch (errGroq) {
-        lastError = [lastError, errGroq.message].filter(Boolean).join(' | ');
-        console.warn('[Cover] Groq fallback também falhou:', errGroq.message);
+        console.warn('[Cover] Gemini falhou em todas as tentativas:', err.message);
       }
     }
 
     if (!candidateText) {
-      console.error('Falha na análise visual (Groq e Gemini):', lastError);
+      console.error('Falha na análise visual:', lastError);
       const isQuota = typeof lastError === 'string' && (lastError.includes('quota') || lastError.includes('429') || lastError.includes('RESOURCE_EXHAUSTED') || lastError.includes('rate_limit'));
       const isTimeout = typeof lastError === 'string' && (lastError.includes('timeout') || lastError.includes('aborted'));
 
       let friendlyError = `Falha na análise da capa: ${lastError || 'Serviço indisponível'}`;
+      let statusCode = 502;
       if (isQuota) {
         friendlyError = 'Limite temporário de requisições da IA atingido. Aguarde alguns instantes e tente novamente.';
+        statusCode = 429;
       } else if (isTimeout) {
         friendlyError = 'O servidor demorou para responder. Verifique sua conexão e tente novamente.';
+        statusCode = 504;
       }
 
       return Response.json(
         { success: false, error: friendlyError },
-        { status: 502 }
+        { status: statusCode }
       );
     }
 

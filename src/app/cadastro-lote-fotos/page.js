@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { FaCamera, FaCheck, FaTrash, FaMagnifyingGlass, FaCheckDouble, FaExclamationTriangle } from "react-icons/fa6";
 import { MdInventory2, MdCheckCircle } from "react-icons/md";
 import { PiVinylRecord } from "react-icons/pi";
+import { IoRefresh } from "react-icons/io5";
 import { useCaixas } from '@/hooks/useCaixas';
 import { useStore } from '@/contexts/StoreContext';
 import { itemService } from '@/services/itemService';
@@ -29,8 +30,13 @@ async function resizeImage(file, maxDimension = 800) {
       return resolve({ dataUrl: null, previewUrl: '' });
     }
 
+    const timer = setTimeout(() => {
+      resolve({ dataUrl: null, previewUrl: blobUrl });
+    }, 8000);
+
     const img = new Image();
     img.onload = () => {
+      clearTimeout(timer);
       try {
         let width = img.width;
         let height = img.height;
@@ -72,6 +78,7 @@ async function resizeImage(file, maxDimension = 800) {
     };
 
     img.onerror = () => {
+      clearTimeout(timer);
       console.warn('Erro ao decodificar imagem para preview:', file.name);
       resolve({
         dataUrl: null,
@@ -98,6 +105,7 @@ export default function CadastroLoteFotos() {
   const [itens, setItens] = useState([]);
   const [processando, setProcessando] = useState(false);
   const [progresso, setProgresso] = useState({ atual: 0, total: 0 });
+  const [statusProgresso, setStatusProgresso] = useState('');
   const [salvando, setSalvando] = useState(false);
   const [progressoSalvar, setProgressoSalvar] = useState({ atual: 0, total: 0 });
   const [mensagem, setMensagem] = useState(null);
@@ -133,6 +141,149 @@ export default function CadastroLoteFotos() {
     return () => clearTimeout(timer);
   }, [mensagem]);
 
+  // Função resiliente para chamar o reconhecimento visual com backoff exponencial
+  const reconhecerFoto = async (dataUrl) => {
+    if (!dataUrl) return null;
+    const delays = [0, 2500, 5000];
+
+    for (let attempt = 0; attempt < delays.length; attempt++) {
+      if (delays[attempt] > 0) {
+        setStatusProgresso(`Aguardando cota da IA... (${delays[attempt] / 1000}s)`);
+        await new Promise(r => setTimeout(r, delays[attempt]));
+      }
+      try {
+        const res = await fetch('/api/recognize-cover', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: dataUrl })
+        });
+
+        if (res.status === 429 || res.status === 502 || res.status === 504) {
+          console.warn(`[Lote] Tentativa ${attempt + 1} retornou status ${res.status}.`);
+          continue;
+        }
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.success) {
+            return data;
+          }
+        }
+      } catch (err) {
+        console.warn(`[Lote] Erro de rede tentativa ${attempt + 1}:`, err);
+      }
+    }
+    return null;
+  };
+
+  // Helper de enriquecimento com Discogs
+  const enriquecerComDiscogs = async (artistaGemini, tituloGemini, anoGemini) => {
+    let discogsMatch = null;
+    let seloDetectado = '';
+    const termoBusca = [artistaGemini, tituloGemini].filter(Boolean).join(' ');
+
+    if (termoBusca.trim()) {
+      try {
+        const dData = await fetchDiscogs({ q: termoBusca });
+        if (dData?.results && dData.results.length > 0) {
+          discogsMatch = dData.results[0];
+          seloDetectado = extractSeloPrensagem(discogsMatch);
+        }
+      } catch (dErr) {
+        console.warn('Erro Discogs no lote:', dErr);
+      }
+    }
+
+    let finalArtista = artistaGemini;
+    let finalTitulo = tituloGemini;
+
+    if (discogsMatch) {
+      if (!finalArtista && discogsMatch.artist) {
+        finalArtista = discogsMatch.artist;
+      }
+      if (!finalTitulo && discogsMatch.album) {
+        finalTitulo = cleanDiscogsString(discogsMatch.album);
+      }
+      if ((!finalArtista || !finalTitulo) && discogsMatch.title?.includes(' - ')) {
+        const parts = discogsMatch.title.split(' - ');
+        if (!finalArtista) finalArtista = cleanDiscogsString(parts[0]);
+        if (!finalTitulo) finalTitulo = cleanDiscogsString(parts.slice(1).join(' - '));
+      } else if (!finalTitulo && discogsMatch.title) {
+        finalTitulo = cleanDiscogsString(discogsMatch.title);
+      }
+    }
+
+    const finalAno = anoGemini || (discogsMatch?.year ? String(discogsMatch.year) : '');
+    const finalCapa = discogsMatch?.thumb || discogsMatch?.cover_image || null;
+
+    return {
+      artista: finalArtista,
+      titulo: finalTitulo,
+      ano: finalAno,
+      selo: seloDetectado,
+      capaUrl: finalCapa,
+      discogsMatch
+    };
+  };
+
+  // Reprocessar um item individual não reconhecido
+  const reprocessarItem = async (itemId) => {
+    const item = itens.find(it => it.id === itemId);
+    if (!item || !item.dataUrl) return;
+
+    setItens(prev => prev.map(it => it.id === itemId ? { ...it, processandoItem: true } : it));
+
+    try {
+      const geminiData = await reconhecerFoto(item.dataUrl);
+      const artistaGemini = (geminiData?.artista || '').trim();
+      const tituloGemini = (geminiData?.titulo || '').trim();
+      const anoGemini = (geminiData?.ano || '').trim();
+      const confianca = geminiData?.confianca || (artistaGemini || tituloGemini ? 'media' : 'baixa');
+
+      const enriquecido = await enriquecerComDiscogs(artistaGemini, tituloGemini, anoGemini);
+      const temDados = Boolean(enriquecido.titulo || enriquecido.artista);
+
+      setItens(prev => prev.map(it => {
+        if (it.id !== itemId) return it;
+        return {
+          ...it,
+          artista: enriquecido.artista || it.artista,
+          titulo: enriquecido.titulo || it.titulo,
+          ano: enriquecido.ano || it.ano,
+          selo: enriquecido.selo || it.selo,
+          capaUrl: enriquecido.capaUrl || it.capaUrl,
+          confianca,
+          reconhecido: temDados,
+          selecionado: temDados ? true : it.selecionado,
+          processandoItem: false
+        };
+      }));
+    } catch (e) {
+      console.error('Erro ao reprocessar item:', e);
+      setItens(prev => prev.map(it => it.id === itemId ? { ...it, processandoItem: false } : it));
+    }
+  };
+
+  // Reprocessar todos os itens que continuam com título/artista vazios
+  const reprocessarVazios = async () => {
+    const vazios = itens.filter(it => !it.titulo?.trim() && !it.artista?.trim() && it.dataUrl);
+    if (vazios.length === 0) return;
+
+    setProcessando(true);
+    setProgresso({ atual: 0, total: vazios.length });
+
+    for (let i = 0; i < vazios.length; i++) {
+      const item = vazios[i];
+      setProgresso({ atual: i + 1, total: vazios.length });
+      setStatusProgresso(`Reprocessando foto ${i + 1} de ${vazios.length}...`);
+      if (i > 0) await new Promise(r => setTimeout(r, 1200));
+      await reprocessarItem(item.id);
+    }
+
+    setProcessando(false);
+    setStatusProgresso('');
+  };
+
   // Upload e processamento das fotos com streaming visual e proteção anti-bloqueio
   const handleFilesSelected = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -142,46 +293,37 @@ export default function CadastroLoteFotos() {
     setSucessoFinal(null);
     setProcessando(true);
     setProgresso({ atual: 0, total: files.length });
+    setStatusProgresso('');
+
+    let currentPacing = 1000;
+    let reconhecidosCount = 0;
 
     for (let i = 0; i < files.length; i++) {
       setProgresso({ atual: i + 1, total: files.length });
+      setStatusProgresso(`Analisando foto ${i + 1} de ${files.length} (${reconhecidosCount} identificados)...`);
       const file = files[i];
 
-      // Pacing inteligente entre fotos para evitar bloqueio por RPM
+      // Pacing inteligente e adaptativo entre fotos
       if (i > 0) {
-        await new Promise(r => setTimeout(r, 600));
+        await new Promise(r => setTimeout(r, currentPacing));
       }
 
       try {
-        // 1. Redimensiona a foto de forma leve com Blob Object URL (consome zero RAM extra)
+        // 1. Redimensiona a foto no cliente
         const { dataUrl, previewUrl } = await resizeImage(file, 800);
 
-        // 2. Chama Gemini Vision com retentativa se der erro transitório/rate limit
-        let geminiData = null;
-        if (dataUrl) {
-          try {
-            let res = await fetch('/api/recognize-cover', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ image: dataUrl })
-            });
+        // 2. Chama Gemini Vision com retentativas e backoff resiliente
+        const t0 = Date.now();
+        const geminiData = await reconhecerFoto(dataUrl);
+        const elapsed = Date.now() - t0;
 
-            // Se recebeu 429 ou erro temporário de rate limit, aguarda 1.5s e tenta mais uma vez
-            if (res.status === 429 || res.status === 502) {
-              await new Promise(r => setTimeout(r, 1500));
-              res = await fetch('/api/recognize-cover', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: dataUrl })
-              });
-            }
-
-            if (res.ok) {
-              geminiData = await res.json();
-            }
-          } catch (err) {
-            console.warn('Erro ao chamar recognize-cover:', err);
-          }
+        // Se geminiData veio nulo ou demorou muito, aumenta o intervalo para evitar 429
+        if (!geminiData) {
+          currentPacing = Math.min(currentPacing + 600, 2500);
+        } else if (elapsed > 4000) {
+          currentPacing = Math.min(currentPacing + 300, 2000);
+        } else {
+          currentPacing = Math.max(currentPacing - 200, 1000);
         }
 
         const artistaGemini = (geminiData?.artista || '').trim();
@@ -189,70 +331,37 @@ export default function CadastroLoteFotos() {
         const anoGemini = (geminiData?.ano || '').trim();
         const confianca = geminiData?.confianca || (artistaGemini || tituloGemini ? 'media' : 'baixa');
 
-        // 3. Enriquecimento via Discogs se houver termos
-        let discogsMatch = null;
-        let seloDetectado = '';
-        const termoBusca = [artistaGemini, tituloGemini].filter(Boolean).join(' ');
-
-        if (termoBusca.trim()) {
-          try {
-            const dData = await fetchDiscogs({ q: termoBusca });
-            if (dData?.results && dData.results.length > 0) {
-              discogsMatch = dData.results[0];
-              seloDetectado = extractSeloPrensagem(discogsMatch);
-            }
-          } catch (dErr) {
-            console.warn('Erro Discogs no lote:', dErr);
-          }
-        }
-
-        // Extrai artista e título com inteligência se o Discogs tiver encontrado
-        let finalArtista = artistaGemini;
-        let finalTitulo = tituloGemini;
-
-        if (discogsMatch) {
-          if (!finalArtista && discogsMatch.artist) {
-            finalArtista = discogsMatch.artist;
-          }
-          if (!finalTitulo && discogsMatch.album) {
-            finalTitulo = cleanDiscogsString(discogsMatch.album);
-          }
-          if ((!finalArtista || !finalTitulo) && discogsMatch.title?.includes(' - ')) {
-            const parts = discogsMatch.title.split(' - ');
-            if (!finalArtista) finalArtista = cleanDiscogsString(parts[0]);
-            if (!finalTitulo) finalTitulo = cleanDiscogsString(parts.slice(1).join(' - '));
-          } else if (!finalTitulo && discogsMatch.title) {
-            finalTitulo = cleanDiscogsString(discogsMatch.title);
-          }
-        }
-
-        const finalAno = anoGemini || (discogsMatch?.year ? String(discogsMatch.year) : '');
-        const finalCapa = discogsMatch?.thumb || discogsMatch?.cover_image || null;
+        // 3. Enriquecimento via Discogs
+        const enriquecido = await enriquecerComDiscogs(artistaGemini, tituloGemini, anoGemini);
+        const temDados = Boolean(enriquecido.titulo || enriquecido.artista);
+        if (temDados) reconhecidosCount++;
 
         const novoItem = {
           id: `item-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
+          dataUrl,
           fotoPreview: previewUrl,
-          artista: finalArtista,
-          titulo: finalTitulo,
-          ano: finalAno,
+          artista: enriquecido.artista,
+          titulo: enriquecido.titulo,
+          ano: enriquecido.ano,
           preco: precoPadrao || '',
           caixa: caixaPadrao || '',
-          selo: seloDetectado,
-          capaUrl: finalCapa,
+          selo: enriquecido.selo,
+          capaUrl: enriquecido.capaUrl,
           confianca,
-          discogsResults: discogsMatch ? [discogsMatch] : [],
-          selecionado: true // Sempre selecionado por padrão para edição em lote
+          reconhecido: temDados,
+          processandoItem: false,
+          discogsResults: enriquecido.discogsMatch ? [enriquecido.discogsMatch] : [],
+          selecionado: temDados // Apenas itens com dados são marcados inicialmente
         };
 
-        // Adiciona PROGRESSIVAMENTE para que o usuário veja cada disco aparecer na hora
         setItens(prev => [...prev, novoItem]);
       } catch (err) {
         console.error(`Erro ao processar arquivo ${file.name}:`, err);
-        // Mesmo com erro inesperado, adiciona o card com a foto preservada para não perder o disco
         let fallbackUrl = '';
         try { fallbackUrl = URL.createObjectURL(file); } catch (_) {}
         setItens(prev => [...prev, {
           id: `item-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
+          dataUrl: null,
           fotoPreview: fallbackUrl,
           artista: '',
           titulo: '',
@@ -262,13 +371,16 @@ export default function CadastroLoteFotos() {
           selo: '',
           capaUrl: null,
           confianca: 'baixa',
+          reconhecido: false,
+          processandoItem: false,
           discogsResults: [],
-          selecionado: true
+          selecionado: false
         }]);
       }
     }
 
     setProcessando(false);
+    setStatusProgresso('');
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -421,10 +533,16 @@ export default function CadastroLoteFotos() {
     setSalvando(false);
     // Remove os itens que foram salvos da lista atual
     setItens(prev => prev.filter(item => !idsSalvos.includes(item.id)));
-    setSucessoFinal(`${salvosCount} disco(s) cadastrado(s) com sucesso na ${loja}!`);
+    const restantes = itens.length - salvosCount;
+    setSucessoFinal(
+      restantes > 0 
+        ? `${salvosCount} disco(s) cadastrado(s) com sucesso na ${loja}! (${restantes} foto(s) pendente(s) continuam na lista).`
+        : `${salvosCount} disco(s) cadastrado(s) com sucesso na ${loja}!`
+    );
   };
 
   const totalSelecionados = itens.filter(i => i.selecionado).length;
+  const vaziosCount = itens.filter(i => !i.titulo?.trim() && !i.artista?.trim()).length;
 
   return (
     <div className="pageContainer" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: 'calc(var(--bottom-nav-height, 62px) + 32px)' }}>
@@ -526,10 +644,10 @@ export default function CadastroLoteFotos() {
           <FaCamera size={18} color="var(--accent)" />
         </div>
         <div style={{ fontSize: '14px', fontWeight: 600 }}>
-          {processando ? `Processando foto ${progresso.atual} de ${progresso.total}...` : 'Adicionar fotos (câmera ou galeria)'}
+          {processando ? (statusProgresso || `Processando foto ${progresso.atual} de ${progresso.total}...`) : 'Adicionar fotos (câmera ou galeria)'}
         </div>
         {processando && (
-          <div style={{ width: '100%', maxWidth: '220px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
+          <div style={{ width: '100%', maxWidth: '240px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
             <div style={{ width: `${(progresso.atual / (progresso.total || 1)) * 100}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s ease' }}></div>
           </div>
         )}
@@ -563,12 +681,26 @@ export default function CadastroLoteFotos() {
             </label>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+              {vaziosCount > 0 && (
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  onClick={reprocessarVazios}
+                  style={{ fontSize: '12px', padding: '6px 12px', minHeight: '34px', display: 'flex', alignItems: 'center', gap: '6px', borderColor: 'rgba(236, 201, 75, 0.4)', color: '#ecc94b' }}
+                  disabled={salvando || processando}
+                  title="Tentar reconhecer novamente fotos que ficaram vazias"
+                >
+                  <IoRefresh size={14} style={{ animation: processando ? 'spin 1s linear infinite' : 'none' }} />
+                  Tentar Vazios ({vaziosCount})
+                </button>
+              )}
+
               <button 
                 type="button" 
                 className="btn btn-secondary" 
                 onClick={limparLote}
                 style={{ fontSize: '12px', padding: '6px 12px', minHeight: '34px' }}
-                disabled={salvando}
+                disabled={salvando || processando}
               >
                 Limpar
               </button>
@@ -617,6 +749,19 @@ export default function CadastroLoteFotos() {
                     <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>
                       #{idx + 1}
                     </span>
+                    {(!item.titulo?.trim() && !item.artista?.trim()) && (
+                      <span style={{
+                        fontSize: '10px',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontWeight: 600,
+                        background: 'rgba(236, 201, 75, 0.15)',
+                        color: '#ecc94b',
+                        border: '1px solid rgba(236, 201, 75, 0.3)'
+                      }}>
+                        NÃO IDENTIFICADO
+                      </span>
+                    )}
                     {item.selo && (
                       <span style={{
                         fontSize: '10px',
@@ -633,6 +778,28 @@ export default function CadastroLoteFotos() {
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    {(!item.titulo?.trim() && !item.artista?.trim()) && (
+                      <button 
+                        type="button" 
+                        onClick={() => reprocessarItem(item.id)}
+                        disabled={item.processandoItem || processando || salvando}
+                        className="btn btn-secondary"
+                        style={{
+                          fontSize: '11px',
+                          padding: '4px 8px',
+                          minHeight: '28px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          borderColor: 'rgba(236, 201, 75, 0.4)',
+                          color: '#ecc94b'
+                        }}
+                        title="Tentar reconhecer foto novamente"
+                      >
+                        <IoRefresh size={12} style={{ animation: item.processandoItem ? 'spin 1s linear infinite' : 'none' }} />
+                        {item.processandoItem ? 'Lendo...' : 'Reconhecer'}
+                      </button>
+                    )}
                     <button 
                       type="button" 
                       onClick={() => abrirPesquisaDiscogs(item)}
