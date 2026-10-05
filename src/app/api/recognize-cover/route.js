@@ -13,15 +13,15 @@ const GEMINI_MODELS = [
   'gemini-flash-latest'
 ];
 
-let keyRoundRobin = 0;
-
 function getGeminiKeys() {
-  const raw = [
-    process.env.GEMINI_API_KEY,
-    process.env.GEMINI_API_KEY_SECONDARY,
-    process.env.GEMINI_API_KEY_BACKUP
-  ].filter(Boolean);
-  return [...new Set(raw.flatMap(k => k.split(',').map(s => s.trim()).filter(Boolean)))];
+  const primary = (process.env.GEMINI_API_KEY || '').trim();
+  const secondary = (process.env.GEMINI_API_KEY_SECONDARY || '').trim();
+  const backup = (process.env.GEMINI_API_KEY_BACKUP || '').trim();
+  const keys = [];
+  if (primary) keys.push(...primary.split(',').map(s => s.trim()).filter(Boolean));
+  if (secondary) keys.push(...secondary.split(',').map(s => s.trim()).filter(Boolean));
+  if (backup) keys.push(...backup.split(',').map(s => s.trim()).filter(Boolean));
+  return [...new Set(keys)];
 }
 
 // Cache em memória: evita chamadas repetidas à API para a mesma imagem
@@ -144,20 +144,23 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
       return text;
     }
 
-    // Helper: tenta Gemini com rotação round-robin de chaves e fallback resiliente entre modelos
+    // Helper: tenta Gemini priorizando a chave primária (paga) e usando secundárias apenas como fallback
     async function tryGemini() {
-      const startIndex = keyRoundRobin++;
-      const orderedKeys = geminiKeys.map((_, i) => geminiKeys[(startIndex + i) % geminiKeys.length]);
       let lastErr = null;
 
-      for (const key of orderedKeys) {
+      for (const key of geminiKeys) {
         for (const model of GEMINI_MODELS) {
           try {
             return await tryGeminiModel(model, key);
           } catch (err) {
             lastErr = err;
             console.warn(`[Cover] Falha em ${model} (key ...${key.slice(-6)}): ${err.message}`);
-            // Continua para o próximo modelo ou próxima chave sem desistir abruptamente
+            const msg = (err.message || '').toLowerCase();
+            // Se erro for 429 ou cota esgotada nesta chave, pula imediatamente para a próxima chave
+            if (msg.includes('429') || msg.includes('quota') || msg.includes('resource_exhausted')) {
+              console.warn(`[Cover] Cota esgotada na chave ...${key.slice(-6)}, alternando para próxima chave`);
+              break;
+            }
             continue;
           }
         }

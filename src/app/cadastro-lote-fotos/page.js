@@ -14,81 +14,7 @@ import { fetchDiscogs, extractSeloPrensagem } from '@/utils/discogsClient';
 import { normalizeCaixa, cleanDiscogsString } from '@/utils/stringUtils';
 import { CATEGORY_IDS, STORE_OPTIONS } from '@/constants/config';
 import AlertMessage from '@/components/AlertMessage';
-
-// Helper para redimensionar imagem no cliente via Canvas (evita uploads de 5MB do celular)
-// Helper resiliente para redimensionar imagem no cliente via Canvas (evita uploads pesados e vazamento de RAM)
-async function resizeImage(file, maxDimension = 800) {
-  return new Promise((resolve) => {
-    let blobUrl = '';
-    try {
-      blobUrl = URL.createObjectURL(file);
-    } catch (_) {
-      blobUrl = '';
-    }
-
-    if (!blobUrl) {
-      return resolve({ dataUrl: null, previewUrl: '' });
-    }
-
-    const timer = setTimeout(() => {
-      resolve({ dataUrl: null, previewUrl: blobUrl });
-    }, 8000);
-
-    const img = new Image();
-    img.onload = () => {
-      clearTimeout(timer);
-      try {
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > maxDimension) {
-            height = Math.round((height * maxDimension) / width);
-            width = maxDimension;
-          }
-        } else {
-          if (height > maxDimension) {
-            width = Math.round((width * maxDimension) / height);
-            height = maxDimension;
-          }
-        }
-
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-        // Libera memória do canvas imediatamente
-        canvas.width = 0;
-        canvas.height = 0;
-
-        resolve({
-          dataUrl,
-          previewUrl: blobUrl
-        });
-      } catch (err) {
-        console.warn('Erro no canvas resize:', err);
-        resolve({
-          dataUrl: null,
-          previewUrl: blobUrl
-        });
-      }
-    };
-
-    img.onerror = () => {
-      clearTimeout(timer);
-      console.warn('Erro ao decodificar imagem para preview:', file.name);
-      resolve({
-        dataUrl: null,
-        previewUrl: blobUrl
-      });
-    };
-
-    img.src = blobUrl;
-  });
-}
+import { prepararFoto } from '@/utils/imageUtils';
 
 export default function CadastroLoteFotos() {
   const { activeStore } = useStore();
@@ -229,12 +155,26 @@ export default function CadastroLoteFotos() {
   // Reprocessar um item individual não reconhecido
   const reprocessarItem = async (itemId) => {
     const item = itens.find(it => it.id === itemId);
-    if (!item || !item.dataUrl) return;
+    if (!item) return;
+
+    let dataUrl = item.dataUrl;
+    if (!dataUrl && item.file) {
+      try {
+        const prep = await prepararFoto(item.file, 800, 160);
+        dataUrl = prep.dataUrl;
+      } catch (e) {
+        console.error('Erro ao regerar dataUrl para reprocessar:', e);
+      }
+    }
+    if (!dataUrl) {
+      setMensagem({ tipo: 'error', texto: 'Não foi possível carregar a imagem para reprocessamento.' });
+      return;
+    }
 
     setItens(prev => prev.map(it => it.id === itemId ? { ...it, processandoItem: true } : it));
 
     try {
-      const geminiData = await reconhecerFoto(item.dataUrl);
+      const geminiData = await reconhecerFoto(dataUrl);
       const artistaGemini = (geminiData?.artista || '').trim();
       const tituloGemini = (geminiData?.titulo || '').trim();
       const anoGemini = (geminiData?.ano || '').trim();
@@ -247,6 +187,7 @@ export default function CadastroLoteFotos() {
         if (it.id !== itemId) return it;
         return {
           ...it,
+          dataUrl,
           artista: enriquecido.artista || it.artista,
           titulo: enriquecido.titulo || it.titulo,
           ano: enriquecido.ano || it.ano,
@@ -266,7 +207,7 @@ export default function CadastroLoteFotos() {
 
   // Reprocessar todos os itens que continuam com título/artista vazios
   const reprocessarVazios = async () => {
-    const vazios = itens.filter(it => !it.titulo?.trim() && !it.artista?.trim() && it.dataUrl);
+    const vazios = itens.filter(it => !it.titulo?.trim() && !it.artista?.trim() && (it.dataUrl || it.file));
     if (vazios.length === 0) return;
 
     setProcessando(true);
@@ -276,7 +217,7 @@ export default function CadastroLoteFotos() {
       const item = vazios[i];
       setProgresso({ atual: i + 1, total: vazios.length });
       setStatusProgresso(`Reprocessando foto ${i + 1} de ${vazios.length}...`);
-      if (i > 0) await new Promise(r => setTimeout(r, 1200));
+      if (i > 0) await new Promise(r => setTimeout(r, 1000));
       await reprocessarItem(item.id);
     }
 
@@ -309,21 +250,24 @@ export default function CadastroLoteFotos() {
       }
 
       try {
-        // 1. Redimensiona a foto no cliente
-        const { dataUrl, previewUrl } = await resizeImage(file, 800);
+        // 1. Redimensiona a foto de forma otimizada sem estourar a memória
+        const { dataUrl, thumbUrl, erro } = await prepararFoto(file, 800, 160);
+        if (erro || !dataUrl) {
+          throw new Error(erro || 'Falha ao processar miniatura da foto');
+        }
 
         // 2. Chama Gemini Vision com retentativas e backoff resiliente
         const t0 = Date.now();
         const geminiData = await reconhecerFoto(dataUrl);
         const elapsed = Date.now() - t0;
 
-        // Se geminiData veio nulo ou demorou muito, aumenta o intervalo para evitar 429
+        // Se geminiData veio nulo ou demorou muito, ajusta pacing
         if (!geminiData) {
           currentPacing = Math.min(currentPacing + 600, 2500);
         } else if (elapsed > 4000) {
           currentPacing = Math.min(currentPacing + 300, 2000);
         } else {
-          currentPacing = Math.max(currentPacing - 200, 1000);
+          currentPacing = Math.max(currentPacing - 200, 800);
         }
 
         const artistaGemini = (geminiData?.artista || '').trim();
@@ -338,8 +282,9 @@ export default function CadastroLoteFotos() {
 
         const novoItem = {
           id: `item-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
+          file,
           dataUrl,
-          fotoPreview: previewUrl,
+          fotoPreview: thumbUrl || dataUrl,
           artista: enriquecido.artista,
           titulo: enriquecido.titulo,
           ano: enriquecido.ano,
@@ -361,6 +306,7 @@ export default function CadastroLoteFotos() {
         try { fallbackUrl = URL.createObjectURL(file); } catch (_) {}
         setItens(prev => [...prev, {
           id: `item-${Date.now()}-${i}-${Math.random().toString(36).substr(2, 4)}`,
+          file,
           dataUrl: null,
           fotoPreview: fallbackUrl,
           artista: '',
