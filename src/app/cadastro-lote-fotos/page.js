@@ -178,7 +178,6 @@ export default function CadastroLoteFotos() {
       const artistaGemini = (geminiData?.artista || '').trim();
       const tituloGemini = (geminiData?.titulo || '').trim();
       const anoGemini = (geminiData?.ano || '').trim();
-      const precoGemini = geminiData?.preco ? String(geminiData.preco) : '';
       const confianca = geminiData?.confianca || (artistaGemini || tituloGemini ? 'media' : 'baixa');
 
       const enriquecido = await enriquecerComDiscogs(artistaGemini, tituloGemini, anoGemini);
@@ -192,7 +191,6 @@ export default function CadastroLoteFotos() {
           artista: enriquecido.artista || it.artista,
           titulo: enriquecido.titulo || it.titulo,
           ano: enriquecido.ano || it.ano,
-          preco: precoGemini || it.preco,
           selo: enriquecido.selo || it.selo,
           capaUrl: enriquecido.capaUrl || it.capaUrl,
           confianca,
@@ -275,7 +273,6 @@ export default function CadastroLoteFotos() {
         const artistaGemini = (geminiData?.artista || '').trim();
         const tituloGemini = (geminiData?.titulo || '').trim();
         const anoGemini = (geminiData?.ano || '').trim();
-        const precoGemini = geminiData?.preco ? String(geminiData.preco) : '';
         const confianca = geminiData?.confianca || (artistaGemini || tituloGemini ? 'media' : 'baixa');
 
         // 3. Enriquecimento via Discogs
@@ -291,7 +288,7 @@ export default function CadastroLoteFotos() {
           artista: enriquecido.artista,
           titulo: enriquecido.titulo,
           ano: enriquecido.ano,
-          preco: precoGemini || precoPadrao || '',
+          preco: precoPadrao || '',
           caixa: caixaPadrao || '',
           selo: enriquecido.selo,
           capaUrl: enriquecido.capaUrl,
