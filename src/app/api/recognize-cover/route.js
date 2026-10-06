@@ -218,6 +218,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
           confianca: confiancaMatch ? confiancaMatch[1] : 'media'
         };
       } else {
+        console.warn(`[Cover] Rejeitada (sem JSON/artista/titulo). Resposta bruta: ${String(candidateText).slice(0, 300)}`);
         return Response.json({
           success: false,
           error: 'Capa não reconhecida. Tente ajustar o enquadramento, melhorar a iluminação ou utilizar o OCR da lombada.'
@@ -252,6 +253,7 @@ JSON: {"artista":"","titulo":"","ano":"","confianca":"alta|media|baixa"}`;
     }
 
     if (!artista && !titulo) {
+      console.warn(`[Cover] Rejeitada (artista e titulo vazios). Confianca: ${confianca}. Resposta bruta: ${String(candidateText).slice(0, 300)}`);
       return Response.json({
         success: false,
         error: 'Capa não reconhecida. Tente ajustar o enquadramento, melhorar a iluminação ou utilizar o OCR da lombada.'
