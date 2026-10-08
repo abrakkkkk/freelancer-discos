@@ -13,8 +13,8 @@
   --font-body: var(--font-figtree), 'Figtree', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --bg-sidebar: #0d0d0f;
   --text-sidebar: #cdd6f4;
-  --accent: #c53030; /* Soft Red */
-  --accent-hover: #a32828;
+  --accent: #8b1e1e; /* Deep Red */
+  --accent-hover: #731717;
   --success: #a6e3a1;
   --danger: #f38ba8;
   --warning: #f9e2af;
@@ -669,9 +669,14 @@ tbody tr:last-child td {
 }
 
 .tab-btn.active {
-  background: var(--accent);
+  background: #8b1e1e;
   color: #ffffff;
-  border-color: var(--accent);
+  border-color: #a82424;
+}
+
+.tab-btn.active svg {
+  color: #ffffff;
+  fill: currentColor;
 }
 
 /* ========== FILTERS ========== */
@@ -2472,8 +2477,8 @@ tbody tr:last-child td {
   font-size: 13px;
   font-weight: 600;
   color: #ffffff;
-  background: #c53030;
-  border: 1px solid #dc2626;
+  background: #8b1e1e;
+  border: 1px solid #a82424;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -2487,8 +2492,8 @@ tbody tr:last-child td {
 
 .discogs-scanner-chip:hover,
 .discogs-scanner-chip:active {
-  background: #a82323;
-  border-color: #b91c1c;
+  background: #731717;
+  border-color: #8b1e1e;
   color: #ffffff;
 }
 
@@ -3242,11 +3247,22 @@ tbody tr:last-child td {
     margin-top: 10px !important;
   }
 
+  .tab-btn.active {
+    background: #8b1e1e !important;
+    color: #ffffff !important;
+    border-color: #a82424 !important;
+  }
+
+  .tab-btn.active svg {
+    color: #ffffff !important;
+    fill: currentColor !important;
+  }
+
   .discogs-scanner-chip {
     border-radius: 8px !important;
     font-weight: 600 !important;
-    background: #c53030 !important;
-    border: 1px solid #dc2626 !important;
+    background: #8b1e1e !important;
+    border: 1px solid #a82424 !important;
     color: #ffffff !important;
   }
 
@@ -3257,8 +3273,8 @@ tbody tr:last-child td {
 
   .discogs-scanner-chip:hover,
   .discogs-scanner-chip:active {
-    background: #a82323 !important;
-    border-color: #b91c1c !important;
+    background: #731717 !important;
+    border-color: #8b1e1e !important;
     color: #ffffff !important;
   }
 
