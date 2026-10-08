@@ -137,8 +137,7 @@ export default function CatalogTable({
                       )}
                       {showLoja && d.loja && (
                         <span 
-                          className="disco-valor-loja"
-                          style={{ color: getStoreColor(d.loja) }}
+                          className={`disco-valor-loja ${d.loja === 'Loja 1' ? 'loja-badge-1' : d.loja === 'Loja 2' ? 'loja-badge-2' : 'loja-badge-anexo'}`}
                         >
                           {d.loja}
                         </span>
@@ -155,19 +154,7 @@ export default function CatalogTable({
                       <span>{getDisplayCaixa(d)}</span>
                       {edicaoTag && (
                         <span 
-                          style={{
-                            fontSize: '10px',
-                            fontWeight: 600,
-                            letterSpacing: '0.03em',
-                            textTransform: 'uppercase',
-                            color: '#c084fc',
-                            background: 'rgba(192, 132, 252, 0.12)',
-                            border: '1px solid rgba(192, 132, 252, 0.28)',
-                            padding: '1px 5px',
-                            borderRadius: '4px',
-                            whiteSpace: 'nowrap',
-                            lineHeight: 1.2
-                          }}
+                          className="cell-desktop-edicao disco-edicao-tag"
                           title={`Edição: ${edicaoTag}`}
                         >
                           {edicaoTag}
@@ -190,7 +177,7 @@ export default function CatalogTable({
                   </td>
                   {showLoja && (
                     <td data-label="Loja" className="desktop-only cell-desktop-col">
-                      <span className="cell-desktop-loja" style={{ color: getStoreColor(d.loja), borderColor: `${getStoreColor(d.loja)}40` }}>
+                      <span className={`cell-desktop-loja ${d.loja === 'Loja 1' ? 'loja-badge-1' : d.loja === 'Loja 2' ? 'loja-badge-2' : 'loja-badge-anexo'}`}>
                         {d.loja}
                       </span>
                     </td>
@@ -246,7 +233,7 @@ export default function CatalogTable({
                 {showLoja && (
                   <td data-label="Loja">
                     {d.loja ? (
-                      <span className="cell-desktop-loja" style={{ color: getStoreColor(d.loja), borderColor: `${getStoreColor(d.loja)}40` }}>
+                      <span className={`cell-desktop-loja ${d.loja === 'Loja 1' ? 'loja-badge-1' : d.loja === 'Loja 2' ? 'loja-badge-2' : 'loja-badge-anexo'}`}>
                         {d.loja}
                       </span>
                     ) : (
