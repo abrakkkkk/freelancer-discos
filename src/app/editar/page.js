@@ -1121,36 +1121,59 @@ function EditarExcluirContent() {
         <CategoryTabs activeTab={tipo} onTabChange={(t) => { setTipo(t); setResultados([]); setMensagem(null); setItemEditando(null); setTela('busca'); }} />
         <AlertMessage message={mensagem} onClose={() => setMensagem(null)} />
 
-        <div className="filterCard" style={{ marginTop: '24px' }}>
-          <div className="filters" style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-            <div className="form-group" style={{ flex: 1, minWidth: '220px', margin: 0 }}>
-              <label>Buscar por {(tipo === CATEGORY_IDS.DVDS || tipo === CATEGORY_IDS.VHS) ? 'título' : 'artista ou título'}</label>
-              <input value={termo} onChange={(e) => setTermo(e.target.value)} placeholder="Ex: Beatles..." onKeyDown={(e) => e.key === 'Enter' && buscar()} />
+        <div className="filterCard" style={{ marginTop: '16px' }}>
+          <div className="form-group" style={{ width: '100%', marginBottom: '10px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <FaMagnifyingGlass /> Buscar por {(tipo === CATEGORY_IDS.DVDS || tipo === CATEGORY_IDS.VHS) ? 'título' : 'artista ou título'}
+            </label>
+            <div className="discogs-search-row">
+              <input 
+                value={termo} 
+                onChange={(e) => setTermo(e.target.value)} 
+                placeholder="Ex: Beatles..." 
+                onKeyDown={(e) => e.key === 'Enter' && buscar()} 
+              />
+              <button 
+                type="button" 
+                className="discogs-btn-buscar" 
+                onClick={() => buscar()}
+              >
+                <FaMagnifyingGlass size={13} /> Buscar
+              </button>
             </div>
-            <button type="button" className="btn btn-primary" onClick={() => buscar()}>Buscar</button>
-            <button 
-              type="button" 
-              onClick={() => { setScannerTarget('busca'); setIsScannerOpen(true); }}
-              className="btn btn-primary discogs-btn-escanear"
-              title="Escanear código de barras para localizar no estoque"
-            >
-              <FaBarcode size={14} /> Barras
-            </button>
-            <button 
-              type="button" 
-              onClick={() => { setScannerTarget('busca'); setIsOcrOpen(true); }}
-              className="btn btn-primary discogs-btn-ocr"
-              title="Ler código de catálogo com a câmera (OCR)"
-            >
-              <MdDocumentScanner size={16} /> OCR
-            </button>
+            <div className="discogs-scanners-row">
+              <button 
+                type="button" 
+                onClick={() => { setScannerTarget('busca'); setIsScannerOpen(true); }}
+                className="discogs-scanner-chip"
+                title="Escanear código de barras para localizar no estoque"
+              >
+                <FaBarcode size={14} /> Barras
+              </button>
+              <button 
+                type="button" 
+                onClick={() => { setScannerTarget('busca'); setIsOcrOpen(true); }}
+                className="discogs-scanner-chip"
+                title="Ler código de catálogo com a câmera (OCR)"
+              >
+                <MdDocumentScanner size={16} /> OCR
+              </button>
+            </div>
           </div>
 
-        <div style={{ marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <input type="checkbox" id="mostrarInativos" checked={mostrarInativos} onChange={(e) => setMostrarInativos(e.target.checked)} style={{ width: 'auto' }} />
-          <label htmlFor="mostrarInativos" style={{ fontSize: '13px' }}>Incluir inativos na busca</label>
+          <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input 
+              type="checkbox" 
+              id="mostrarInativos" 
+              checked={mostrarInativos} 
+              onChange={(e) => setMostrarInativos(e.target.checked)} 
+              style={{ width: 'auto', accentColor: 'var(--accent)' }} 
+            />
+            <label htmlFor="mostrarInativos" style={{ fontSize: '13px', cursor: 'pointer', color: 'var(--text)' }}>
+              Incluir inativos na busca
+            </label>
+          </div>
         </div>
-      </div>
 
       {resultados.length > 0 && (
         <div className="table-responsive">
