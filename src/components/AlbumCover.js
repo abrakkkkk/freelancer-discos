@@ -9,6 +9,10 @@ export function setAlbumCoverCache(id, qKey, url) {
   if (id) memoryCoverCache.set(String(id), url);
   if (qKey) memoryCoverCache.set(qKey.toLowerCase(), url);
   if (id && qKey) memoryCoverCache.set(`${id}_${qKey.toLowerCase()}`, url);
+  try {
+    if (id) localStorage.setItem(`c_${id}`, url || '');
+    if (qKey) localStorage.setItem(`c_${qKey.toLowerCase()}`, url || '');
+  } catch (_) {}
 }
 
 export function clearAlbumCoverCache(id) {
@@ -19,6 +23,10 @@ export function clearAlbumCoverCache(id) {
       memoryCoverCache.delete(key);
     }
   }
+  try {
+    localStorage.removeItem(`c_${idStr}`);
+    sessionStorage.removeItem(`cover_${idStr}`);
+  } catch (_) {}
 }
 
 export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUrl = null, tipo = 'discos' }) {
@@ -56,12 +64,13 @@ export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUr
       return;
     }
 
-    // 2. SessionStorage
+    // 2. Storage Local (localStorage e sessionStorage)
     try {
-      const stored = sessionStorage.getItem(`cover_${cacheKey}`);
-      if (stored) {
-        memoryCoverCache.set(cacheKey, stored);
-        setCoverUrl(stored);
+      const stored = sessionStorage.getItem(`cover_${cacheKey}`) || localStorage.getItem(`c_${cacheKey}`);
+      if (stored !== null) {
+        const val = stored === '__none__' ? null : stored;
+        memoryCoverCache.set(cacheKey, val);
+        setCoverUrl(val);
         setLoading(false);
         return;
       }
@@ -90,12 +99,12 @@ export default function AlbumCover({ artista, titulo, ano, id, size = 80, capaUr
           setLoading(false);
         }
 
-        if (img) {
-          memoryCoverCache.set(cacheKey, img);
-          try {
-            sessionStorage.setItem(`cover_${cacheKey}`, img);
-          } catch (e) {}
-        }
+        memoryCoverCache.set(cacheKey, img);
+        try {
+          const storeVal = img || '__none__';
+          sessionStorage.setItem(`cover_${cacheKey}`, storeVal);
+          if (img) localStorage.setItem(`c_${cacheKey}`, img);
+        } catch (e) {}
       } catch (err) {
         if (isMounted) {
           setLoading(false);

@@ -76,14 +76,20 @@ export async function POST(request) {
       );
     }
 
-    // Extrai mime-type e base64 limpo caso venha em formato Data URL
+    // Extrai mime-type e base64 limpo sem regex pesado sobre string grande
     let mimeType = 'image/jpeg';
     let base64Data = image;
 
-    const matches = image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-    if (matches) {
-      mimeType = matches[1];
-      base64Data = matches[2];
+    if (image.startsWith('data:')) {
+      const commaIdx = image.indexOf(',');
+      if (commaIdx !== -1) {
+        const header = image.substring(5, commaIdx);
+        const semiIdx = header.indexOf(';');
+        if (semiIdx !== -1) {
+          mimeType = header.substring(0, semiIdx) || 'image/jpeg';
+        }
+        base64Data = image.substring(commaIdx + 1);
+      }
     }
 
     // Cache hit: retorna resultado anterior instantaneamente (0ms, 0 custo)

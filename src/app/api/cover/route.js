@@ -169,7 +169,7 @@ export async function GET(request) {
         if (isSameQuery) {
           return Response.json(cachedByScopedId, {
             headers: {
-              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Cache-Control': 'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400',
               'X-Cache': 'HIT-ID',
             },
           });
@@ -185,7 +185,7 @@ export async function GET(request) {
         if (isSameQuery) {
           return Response.json(cachedById, {
             headers: {
-              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Cache-Control': 'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400',
               'X-Cache': 'HIT-RAW-ID',
             },
           });
@@ -201,7 +201,7 @@ export async function GET(request) {
         if (rawId && (!tipo || tipo === 'discos')) setToCache(rawId, { ...cachedByQ, q: qKey });
         return Response.json(cachedByQ, {
           headers: {
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Cache-Control': 'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400',
             'X-Cache': 'HIT-Q',
           },
         });
@@ -210,14 +210,22 @@ export async function GET(request) {
   }
 
   if (!q && !id) {
-    return Response.json({ cover: null, thumb: null });
+    return Response.json({ cover: null, thumb: null }, {
+      headers: {
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+      },
+    });
   }
 
   const key = process.env.DISCOGS_KEY;
   const secret = process.env.DISCOGS_SECRET;
 
   if (!key || !secret) {
-    return Response.json({ cover: null, thumb: null });
+    return Response.json({ cover: null, thumb: null }, {
+      headers: {
+        'Cache-Control': 'no-store',
+      },
+    });
   }
 
   try {
@@ -232,15 +240,23 @@ export async function GET(request) {
       if (qKey) setToCache(qKey, payload);
     }
 
+    const cacheControlHeader = (cover || thumb)
+      ? 'public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400'
+      : 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=3600';
+
     return Response.json(payload, {
       headers: {
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Cache-Control': refresh ? 'no-cache, no-store' : cacheControlHeader,
         'X-Cache': 'MISS',
       },
     });
   } catch (err) {
     console.error('Discogs cover fetch error:', err);
-    return Response.json({ cover: null, thumb: null });
+    return Response.json({ cover: null, thumb: null }, {
+      headers: {
+        'Cache-Control': 'public, max-age=300, s-maxage=600',
+      },
+    });
   }
 }
 

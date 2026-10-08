@@ -77,11 +77,11 @@ function encode(source, width, height, quality) {
  * @returns {{ dataUrl: string|null, thumbUrl: string, erro: string|null }}
  *  dataUrl: JPEG ~800px para a IA | thumbUrl: miniatura ~160px para a lista | erro: motivo legível
  */
-export async function prepararFoto(file, maxDimension = 800, thumbDimension = 160) {
+export async function prepararFoto(file, maxDimension = 560, thumbDimension = 160) {
   let decoded = null;
   try {
     decoded = await decodeScaled(file, maxDimension);
-    const dataUrl = encode(decoded.source, decoded.width, decoded.height, 0.82);
+    const dataUrl = encode(decoded.source, decoded.width, decoded.height, 0.75);
     if (!isValidDataUrl(dataUrl)) {
       return { dataUrl: null, thumbUrl: '', erro: 'foto gerou imagem vazia (memória do navegador)' };
     }

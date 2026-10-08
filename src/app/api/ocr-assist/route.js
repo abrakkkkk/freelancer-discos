@@ -39,10 +39,16 @@ export async function POST(request) {
     let mimeType = 'image/jpeg';
     let base64Data = image;
 
-    const matches = image.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+);base64,(.+)$/);
-    if (matches) {
-      mimeType = matches[1];
-      base64Data = matches[2];
+    if (image.startsWith('data:')) {
+      const commaIdx = image.indexOf(',');
+      if (commaIdx !== -1) {
+        const header = image.substring(5, commaIdx);
+        const semiIdx = header.indexOf(';');
+        if (semiIdx !== -1) {
+          mimeType = header.substring(0, semiIdx) || 'image/jpeg';
+        }
+        base64Data = image.substring(commaIdx + 1);
+      }
     }
 
     const systemPrompt = `Você é um perito fonográfico e catalogador de discos de vinil e CDs brasileiros e internacionais.

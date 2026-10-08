@@ -213,8 +213,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     const sx = (srcW - sSize) / 2;
     const sy = (srcH - sSize) / 2;
 
-    // Resolução ideal para Gemini Vision (800x800 quadrado): cabe perfeitamente em 1 tile de visão, pesando ~80KB em vez de 3MB
-    const targetSize = Math.min(sSize, 800);
+    // Resolução otimizada para visão computacional (560x560): rápida, consome pouco CPU e reduz cota
+    const targetSize = Math.min(sSize, 560);
 
     const canvas = document.createElement('canvas');
     canvas.width = targetSize;
@@ -225,10 +225,10 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     ctx.imageSmoothingQuality = 'high';
     ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, targetSize, targetSize);
 
-    // Exporta em JPEG otimizado (0.82) para envio ultrarrápido (<100ms de upload)
+    // Exporta em JPEG otimizado (0.75) para upload ultraleve e menor uso de CPU
     let base64 = '';
     try {
-      base64 = canvas.toDataURL('image/jpeg', 0.82);
+      base64 = canvas.toDataURL('image/jpeg', 0.75);
     } catch (_) {
       base64 = canvas.toDataURL('image/png');
     }
