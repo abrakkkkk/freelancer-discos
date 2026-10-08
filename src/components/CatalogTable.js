@@ -126,19 +126,7 @@ export default function CatalogTable({
                       <span className="disco-valor-caixa">{getDisplayCaixa(d)}</span>
                       {edicaoTag && (
                         <span 
-                          style={{
-                            fontSize: '10px',
-                            fontWeight: 600,
-                            letterSpacing: '0.03em',
-                            textTransform: 'uppercase',
-                            color: '#c084fc',
-                            background: 'rgba(192, 132, 252, 0.12)',
-                            border: '1px solid rgba(192, 132, 252, 0.28)',
-                            padding: '1px 6px',
-                            borderRadius: '4px',
-                            whiteSpace: 'nowrap',
-                            lineHeight: 1.2
-                          }}
+                          className="disco-edicao-tag"
                           title={`Edição: ${edicaoTag}`}
                         >
                           {edicaoTag}
@@ -150,17 +138,7 @@ export default function CatalogTable({
                       {showLoja && d.loja && (
                         <span 
                           className="disco-valor-loja"
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            color: getStoreColor(d.loja),
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            border: `1px solid ${getStoreColor(d.loja)}40`,
-                            padding: '2px 7px',
-                            borderRadius: '6px',
-                            whiteSpace: 'nowrap',
-                            lineHeight: 1.2
-                          }}
+                          style={{ color: getStoreColor(d.loja) }}
                         >
                           {d.loja}
                         </span>

@@ -9,6 +9,8 @@
   --sidebar-width: 255px;
   --mobile-header-height: 58px;
   --bottom-nav-height: 62px;
+  --font-title: var(--font-outfit), 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: var(--font-figtree), 'Figtree', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --bg-sidebar: #0d0d0f;
   --text-sidebar: #cdd6f4;
   --accent: #c53030; /* Soft Red */
@@ -25,15 +27,15 @@
   --bg: #09090b;
   --text: #e4e4e7;
   --text-muted: #a1a1aa;
-  --border: #27272a;
-  --bg-card: #18181b;
-  --bg-card-alt: #131316;
+  --border: #232328;
+  --bg-card: #151518;
+  --bg-card-alt: #121215;
   --bg-header: #141416;
   --text-header: #ffffff;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
   --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
   --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
-  --nav-bg: rgba(18, 18, 20, 0.94);
+  --nav-bg: #111114;
 }
 
 html {
@@ -42,11 +44,22 @@ html {
 
 html, body {
   min-height: 100%;
-  font-family: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.page-title,
+.titleGroup h1,
+.mobile-header-title,
+.topHeader h1,
+.disco-titulo,
+.disco-valor-preco,
+.tab-btn {
+  font-family: var(--font-title);
 }
 
 a {
@@ -631,9 +644,10 @@ tbody tr:last-child td {
 }
 
 .tab-btn {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #16161a;
+  border: 1px solid #232328;
   color: var(--text-muted);
+  font-family: var(--font-title);
   font-size: 13px;
   font-weight: 600;
   padding: 6px 14px;
@@ -644,13 +658,13 @@ tbody tr:last-child td {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 32px;
+  min-height: 34px;
   -webkit-tap-highlight-color: transparent;
 }
 
 .tab-btn:hover {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255, 255, 255, 0.4);
+  background: #1f1f25;
+  border-color: #2e2e36;
   color: var(--text);
 }
 
@@ -2956,6 +2970,219 @@ tbody tr:last-child td {
   .mov-row-item {
     padding: 11px 4px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* ==========================================================================
+   Refinamento Visual Mobile-First: Formas Sólidas, Opacas e Harmoniosas
+   ========================================================================== */
+@media (max-width: 768px) {
+  /* Container e Remoção de Aninhamento Pesado */
+  .mainCard {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .tabsRow {
+    margin-bottom: 14px !important;
+    padding-bottom: 0 !important;
+    border-bottom: none !important;
+  }
+
+  .filterCard {
+    background: #141417 !important;
+    border: 1px solid #222227 !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    margin-bottom: 14px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .filtersRow {
+    gap: 12px !important;
+  }
+
+  .filterGroup label {
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    color: #94949e !important;
+    font-family: var(--font-body) !important;
+  }
+
+  .filterGroup select,
+  .searchInputWithLeftIcon {
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    color: #f4f4f5 !important;
+    border-radius: 8px !important;
+    font-family: var(--font-body) !important;
+  }
+
+  .filterGroup select:focus,
+  .searchInputWithLeftIcon:focus {
+    border-color: var(--accent) !important;
+  }
+
+  .catalog-camera-btn {
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    color: #e4e4e7 !important;
+    border-radius: 8px !important;
+  }
+
+  .tableHeader {
+    color: #71717a !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    font-family: var(--font-body) !important;
+    padding: 2px 4px 8px 4px !important;
+  }
+
+  /* Cards de Disco Sólidos e Opacos */
+  tr.card-disco,
+  tr.card-disco-loja1,
+  tr.card-disco-loja2 {
+    background: #151518 !important;
+    border: 1px solid #232328 !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    gap: 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+    margin-bottom: 10px !important;
+  }
+
+  .disco-titulo {
+    font-family: var(--font-title) !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #f4f4f6 !important;
+    letter-spacing: -0.015em !important;
+    line-height: 1.25 !important;
+  }
+
+  .disco-artista {
+    font-family: var(--font-body) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #a1a1aa !important;
+    margin-top: 1px !important;
+  }
+
+  .disco-valores-row {
+    gap: 6px 8px !important;
+    margin-top: 5px !important;
+  }
+
+  .disco-valor-preco {
+    font-family: var(--font-title) !important;
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    color: #10b981 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  /* Metadados Sólidos e Harmoniosos (sem aspecto translúcido e sem linhas pesadas) */
+  .disco-valor-caixa {
+    background: #202025 !important;
+    border: 1px solid #2a2a32 !important;
+    color: #e4e4e7 !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 2px 7px !important;
+  }
+
+  .disco-valor-ano {
+    background: #202025 !important;
+    border: 1px solid #2a2a32 !important;
+    color: #a1a1aa !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 2px 6px !important;
+  }
+
+  .disco-edicao-tag {
+    background: #221a2c !important;
+    border: 1px solid #362447 !important;
+    color: #c084fc !important;
+    border-radius: 6px !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    padding: 2px 7px !important;
+    letter-spacing: 0.02em !important;
+    text-transform: uppercase !important;
+    line-height: 1.2 !important;
+  }
+
+  .disco-valor-loja {
+    background: #202025 !important;
+    border: 1px solid #2a2a32 !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 2px 7px !important;
+    line-height: 1.2 !important;
+  }
+
+  .disco-valor-status.status-ativo {
+    background: #14281e !important;
+    border: 1px solid #1e4230 !important;
+    color: #4ade80 !important;
+    border-radius: 6px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 2px 7px !important;
+  }
+
+  .disco-valor-status.status-inativo {
+    background: #282013 !important;
+    border: 1px solid #44341b !important;
+    color: #fbbf24 !important;
+    border-radius: 6px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    padding: 2px 7px !important;
+  }
+
+  /* Botões de Ação Sólidos e Ergonômicos */
+  tr.card-disco .iconBtn,
+  tr.card-disco-loja1 .iconBtn,
+  tr.card-disco-loja2 .iconBtn {
+    min-width: 36px !important;
+    min-height: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    background: #202025 !important;
+    border: 1px solid #2b2b34 !important;
+    color: #e4e4e7 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  tr.card-disco .iconBtn.delete,
+  tr.card-disco-loja1 .iconBtn.delete,
+  tr.card-disco-loja2 .iconBtn.delete {
+    background: #271416 !important;
+    border: 1px solid #421c21 !important;
+    color: #f87171 !important;
+  }
+
+  /* Barra de Navegação Inferior Sólida e Discreta */
+  .bottom-nav {
+    background: #111114 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-top: 1px solid #202026 !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .bottom-nav-item.active .bottom-nav-icon-wrapper {
+    background: #261617 !important;
+    border: 1px solid #3d1c1e !important;
+    color: #ef4444 !important;
   }
 }
 

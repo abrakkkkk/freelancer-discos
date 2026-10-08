@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google';
+import { Outfit, Figtree } from 'next/font/google';
 import Sidebar from '@/components/Sidebar';
 import BottomNav from '@/components/BottomNav';
 import MobileHeader from '@/components/MobileHeader';
@@ -8,9 +8,16 @@ import { ReposicaoProvider } from '@/contexts/ReposicaoContext';
 import UndoToast from '@/components/UndoToast';
 import './globals.css';
 
-const inter = Inter({
+const outfit = Outfit({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-outfit',
+  display: 'swap',
+});
+
+const figtree = Figtree({
+  subsets: ['latin'],
+  variable: '--font-figtree',
+  display: 'swap',
 });
 
 export const metadata = {
@@ -27,7 +34,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" className={inter.variable} data-theme="dark">
+    <html lang="pt-BR" className={`${outfit.variable} ${figtree.variable}`} data-theme="dark">
       <body>
         <UndoProvider>
           <StoreProvider>
