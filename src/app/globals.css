@@ -759,18 +759,122 @@ tbody tr:last-child td {
   display: none;
 }
 
-/* ========== BULK ACTIONS ========== */
+/* ========== LOTE & BULK ACTIONS ========== */
+.lote-chips-block {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid #282830;
+  border-radius: 12px;
+  background: #151518;
+}
+
+.lote-chips-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.lote-chips-count {
+  font-family: var(--font-title), var(--font-outfit), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f4f4f5;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lote-chips-clear {
+  background: none;
+  border: none;
+  color: #a1a1aa;
+  cursor: pointer;
+  font-size: 12px;
+  text-decoration: underline;
+  transition: color 0.15s;
+}
+
+.lote-chips-clear:hover {
+  color: #ffffff;
+}
+
+.lote-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lote-chip-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-family: var(--font-title), var(--font-outfit), sans-serif;
+  background: #8b1e1e;
+  border: 1px solid #a82424;
+  color: #ffffff;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.lote-chip-remove {
+  background: none;
+  border: none;
+  color: #ffffff;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.lote-chip-remove:hover {
+  opacity: 1;
+}
+
+.lote-select-all-btn {
+  background: #18181c !important;
+  border: 1px solid #282830 !important;
+  color: #f4f4f5 !important;
+  font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  padding: 6px 14px !important;
+  border-radius: 8px !important;
+  min-height: auto !important;
+  transition: background 0.15s ease, border-color 0.15s ease !important;
+}
+
+.lote-select-all-btn:hover {
+  background: #222228 !important;
+  border-color: #363640 !important;
+}
+
+tr.lote-card {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+tr.lote-card.lote-card-selected {
+  background-color: #251416 !important;
+}
+
 .bulk-actions-panel {
   position: fixed;
   bottom: 32px;
   left: calc(var(--sidebar-width) + 32px);
   right: 32px;
-  background: var(--bg-card);
-  border: 1px solid var(--accent);
+  background: #141417;
+  border: 1px solid #282830;
+  border-top: 3px solid #8b1e1e;
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   z-index: 50;
-  padding: 16px 20px;
+  padding: 14px 20px;
   animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -780,6 +884,51 @@ tbody tr:last-child td {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 14px;
+}
+
+.bulk-actions-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.bulk-close-btn {
+  background: #202026;
+  border: 1px solid #2e2e38;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.bulk-close-btn:hover {
+  background: #2a2a34;
+}
+
+.bulk-info-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.bulk-count {
+  font-family: var(--font-title), var(--font-outfit), sans-serif;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.bulk-sub {
+  font-size: 11.5px;
+  color: #a1a1aa;
 }
 
 .bulk-actions-tools {
@@ -792,27 +941,119 @@ tbody tr:last-child td {
 .bulk-move-group {
   display: flex;
   align-items: center;
-  border: 1px solid var(--border);
+  border: 1px solid #282830;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background: var(--bg-card);
+  background: #1a1a20;
 }
 
 .bulk-input {
-  width: 80px;
+  width: 90px;
   padding: 8px 10px;
   border: none;
   background: transparent;
-  color: var(--text);
+  color: #ffffff;
   outline: none;
   font-size: 13.5px;
 }
 
-.bulk-move-group .btn {
-  border-radius: 0;
+.bulk-select-caixa {
+  border-left: 1px solid #282830;
+  background: #1a1a20;
+}
+
+.bulk-apply-btn {
+  border-radius: 0 !important;
+  border: none !important;
+  border-left: 1px solid #a82424 !important;
+  box-shadow: none !important;
+  background: #8b1e1e !important;
+  color: #ffffff !important;
+  font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+  font-weight: 600 !important;
+}
+
+.bulk-desktop-divider {
+  width: 1px;
+  height: 28px;
+  background: #282830;
+  margin: 0 4px;
+}
+
+.bulk-custom-caixa-input {
+  display: flex;
+  align-items: center;
+  border-left: 1px solid #282830;
+  flex: 1;
+}
+
+.bulk-custom-caixa-btn {
+  background: none;
   border: none;
-  border-left: 1px solid var(--border);
-  box-shadow: none;
+  color: #f87171;
+  font-size: 11px;
+  padding: 0 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.lote-action-btn-secondary {
+  background: #1e1e24 !important;
+  border: 1px solid #2e2e38 !important;
+  color: #f4f4f5 !important;
+  font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+  transition: background 0.15s !important;
+}
+
+.lote-action-btn-secondary:hover {
+  background: #282832 !important;
+}
+
+.lote-action-btn-danger {
+  background: #241416 !important;
+  border: 1px solid #521c21 !important;
+  color: #f87171 !important;
+  font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+  transition: background 0.15s, border-color 0.15s !important;
+}
+
+.lote-action-btn-danger:hover {
+  background: #34181b !important;
+  border-color: #6a242a !important;
+}
+
+.lote-action-btn-danger-confirm {
+  background: #8b1e1e !important;
+  border: 1px solid #a82424 !important;
+  color: #ffffff !important;
+  font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+  font-weight: 700 !important;
+  font-size: 12.5px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+}
+
+.lote-action-btn-danger-all {
+  background: #4a1518 !important;
+  border: 1px solid #6b1f24 !important;
+  color: #fca5a5 !important;
+  font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+  font-weight: 600 !important;
+  font-size: 12.5px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
 }
 
 @keyframes slideUp {
@@ -1730,60 +1971,127 @@ tbody tr:last-child td {
 
   /* Painel flutuante de lote no celular */
   .bulk-actions-panel {
-    left: 8px;
-    right: 8px;
-    bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 12px) + 8px);
-    padding: 10px 12px;
-    border-radius: var(--radius-md);
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 12px) + 10px) !important;
+    padding: 12px 14px !important;
+    border-radius: 14px !important;
+    background: #141417 !important;
+    border: 1px solid #232328 !important;
+    border-top: 3px solid #8b1e1e !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
   }
 
   .bulk-actions-content {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .bulk-actions-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .bulk-mobile-actions {
+    margin-left: auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
   }
 
   .bulk-actions-tools {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
-    width: 100%;
-    padding-bottom: 2px;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+    padding-bottom: 2px !important;
   }
 
   .bulk-move-group {
-    width: 100%;
-    display: flex;
+    width: 100% !important;
+    display: flex !important;
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
   }
 
   .bulk-move-group .bulk-input {
-    flex: 1;
+    flex: 1 !important;
     width: 100% !important;
-    min-height: 36px;
-    font-size: 13px;
-    padding: 0 8px;
+    min-height: 38px !important;
+    font-size: 13px !important;
+    padding: 0 10px !important;
+    background: transparent !important;
+    color: #ffffff !important;
+    border: none !important;
   }
 
-  .bulk-move-group .btn {
-    flex-shrink: 0;
-    min-height: 36px;
-    padding: 0 12px !important;
-    font-size: 13px;
+  .bulk-move-group .bulk-select-caixa {
+    border-left: 1px solid #282832 !important;
+    background: #1a1a20 !important;
   }
 
-  .bulk-actions-tools .btn {
-    flex-shrink: 0;
-    min-height: 36px;
-    font-size: 12.5px;
-    padding: 4px 10px !important;
+  .bulk-move-group .bulk-apply-btn {
+    flex-shrink: 0 !important;
+    min-height: 38px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
   }
 
-  /* Make header elements more compact */
-  .bulk-actions-info .btn {
-    min-height: 32px !important;
-    padding: 4px 8px !important;
-    font-size: 12px !important;
+  /* Card de Lote no Mobile */
+  tr.lote-card {
+    background: #151518 !important;
+    border: 1px solid #232328 !important;
+    border-radius: 12px !important;
+    padding: 12px 14px !important;
+    margin-bottom: 10px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+    position: relative !important;
+  }
+
+  tr.lote-card.lote-card-selected {
+    background: #251416 !important;
+    border-color: #632228 !important;
+  }
+
+  tr.lote-card td[data-label="Título"] {
+    font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    letter-spacing: -0.2px !important;
+    padding-right: 36px !important;
+    margin-bottom: 2px !important;
+  }
+
+  tr.lote-card td[data-label="Artista"] {
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #a1a1aa !important;
+    border-bottom: 1px solid #232328 !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 4px !important;
+    padding-right: 36px !important;
+  }
+
+  tr.lote-card td[data-label="Selecionar"] {
+    position: absolute !important;
+    top: 12px !important;
+    right: 12px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  tr.lote-card td[data-label="Selecionar"] input[type="checkbox"] {
+    width: 20px !important;
+    height: 20px !important;
+    accent-color: #8b1e1e !important;
+    cursor: pointer !important;
   }
 
   /* Tela de ediÃ§Ã£o no celular */

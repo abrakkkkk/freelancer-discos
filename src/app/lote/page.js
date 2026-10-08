@@ -306,16 +306,16 @@ export default function AcoesEmLote() {
   const isVideo = activeTab === CATEGORY_IDS.DVDS || activeTab === CATEGORY_IDS.VHS;
 
   const selecionadosChipsBlock = selecionadosData.length > 0 ? (
-    <div style={{ marginBottom: '16px', padding: '12px 16px', border: '1px solid var(--accent)', borderRadius: '8px', background: 'rgba(197, 48, 48, 0.05)' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent)' }}>{selecionadosData.length} selecionado(s)</span>
-        <button onClick={limparSelecao} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '12px', textDecoration: 'underline' }}>Limpar tudo</button>
+    <div className="lote-chips-block">
+      <div className="lote-chips-header">
+        <span className="lote-chips-count">{selecionadosData.length} selecionado(s)</span>
+        <button onClick={limparSelecao} className="lote-chips-clear">Limpar tudo</button>
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+      <div className="lote-chips-list">
         {selecionadosData.map(d => (
-          <span key={d.id} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '999px', fontSize: '12px', background: 'var(--accent)', color: '#fff', fontWeight: 500, lineHeight: 1.4 }}>
-            {!isVideo && d.artista ? `${d.artista} — ` : ''}{d.titulo}
-            <button onClick={() => toggleSelecionar(d.id)} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '0', fontSize: '14px', lineHeight: 1, fontWeight: 700, opacity: 0.8 }} title="Remover da seleção">×</button>
+          <span key={d.id} className="lote-chip-item">
+            <span className="lote-chip-text">{!isVideo && d.artista ? `${d.artista} — ` : ''}{d.titulo}</span>
+            <button onClick={() => toggleSelecionar(d.id)} className="lote-chip-remove" title="Remover da seleção">×</button>
           </span>
         ))}
       </div>
@@ -379,7 +379,7 @@ export default function AcoesEmLote() {
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>
               {busca || caixaSelecionada ? `${itens.filter(d => !selecionados.includes(d.id)).length} resultado(s)` : null}
             </p>
-            <button className="btn btn-secondary" onClick={toggleSelecionarTodos} style={{ padding: '6px 12px', fontSize: '13px', minHeight: 'auto' }}>
+            <button className="btn lote-select-all-btn" onClick={toggleSelecionarTodos}>
               {(itens.length > 0 && itens.every(d => selecionados.includes(d.id))) ? 'Desmarcar Todos' : 'Selecionar Todos'}
             </button>
           </div>
@@ -388,7 +388,7 @@ export default function AcoesEmLote() {
               <thead>
                 <tr>
                   <th style={{ width: '40px', textAlign: 'center' }}>
-                    <input type="checkbox" checked={itens.length > 0 && itens.every(d => selecionados.includes(d.id))} onChange={toggleSelecionarTodos} style={{ cursor: 'pointer', width: '16px', height: '16px' }} />
+                    <input type="checkbox" checked={itens.length > 0 && itens.every(d => selecionados.includes(d.id))} onChange={toggleSelecionarTodos} style={{ cursor: 'pointer', width: '18px', height: '18px', accentColor: 'var(--accent)' }} />
                   </th>
                   <th>Localização</th>
                   {!isVideo && <th>Artista</th>}
@@ -400,8 +400,21 @@ export default function AcoesEmLote() {
               </thead>
               <tbody>
                 {itens.map((d) => (
-                  <tr key={d.id} onClick={() => toggleSelecionar(d.id)} style={{ backgroundColor: selecionados.includes(d.id) ? 'rgba(197, 48, 48, 0.08)' : 'transparent', opacity: d.ativo === false ? 0.6 : 1, cursor: 'pointer' }}>
-                    <td data-label="Selecionar" style={{ textAlign: 'center' }}><input type="checkbox" checked={selecionados.includes(d.id)} onChange={() => {}} onClick={(e) => { e.stopPropagation(); toggleSelecionar(d.id); }} style={{ cursor: 'pointer', width: '18px', height: '18px', margin: 0 }} /></td>
+                  <tr 
+                    key={d.id} 
+                    onClick={() => toggleSelecionar(d.id)} 
+                    className={`lote-card ${selecionados.includes(d.id) ? 'lote-card-selected' : ''}`}
+                    style={{ opacity: d.ativo === false ? 0.6 : 1, cursor: 'pointer' }}
+                  >
+                    <td data-label="Selecionar" style={{ textAlign: 'center' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={selecionados.includes(d.id)} 
+                        onChange={() => {}} 
+                        onClick={(e) => { e.stopPropagation(); toggleSelecionar(d.id); }} 
+                        style={{ cursor: 'pointer', width: '20px', height: '20px', margin: 0, accentColor: 'var(--accent)' }} 
+                      />
+                    </td>
                     <td data-label="Local">{formatCaixa(d.caixa, d.loja)}</td>
                     {!isVideo && <td data-label="Artista" className={!d.artista ? "empty-artist" : ""}>{d.artista}</td>}
                     <td data-label="Título">{d.titulo}</td>
@@ -419,37 +432,36 @@ export default function AcoesEmLote() {
       )}
 
       {selecionados.length > 0 && (
-        <div className="bulk-actions-panel" style={{ boxShadow: '0 -4px 20px rgba(0,0,0,0.4)', border: '1px solid var(--border)', borderTopColor: 'var(--accent)', borderTopWidth: '3px' }}>
-          <div className="bulk-actions-content" style={{ flexWrap: 'nowrap', gap: '20px' }}>
-            <div className="bulk-actions-info" style={{ display: 'flex', alignItems: 'center', gap: '12px', whiteSpace: 'nowrap' }}>
-              <button onClick={limparSelecao} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text)', cursor: 'pointer', transition: 'background 0.2s' }} title="Cancelar seleção" onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'} onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}>✕</button>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#fff' }}>{selecionados.length} selecionados</span>
-                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Ações em lote</span>
+        <div className="bulk-actions-panel">
+          <div className="bulk-actions-content">
+            <div className="bulk-actions-info">
+              <button onClick={limparSelecao} className="bulk-close-btn" title="Cancelar seleção">✕</button>
+              <div className="bulk-info-text">
+                <span className="bulk-count">{selecionados.length} selecionados</span>
+                <span className="bulk-sub">Ações em lote</span>
               </div>
-              <div className="hide-on-desktop" style={{ marginLeft: 'auto', gap: '6px' }}>
-                <button className="btn btn-secondary" style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} onClick={inativarSelecionados} disabled={loading}>Inativar</button>
+              <div className="hide-on-desktop bulk-mobile-actions">
+                <button className="btn lote-action-btn-secondary" onClick={inativarSelecionados} disabled={loading}>Inativar</button>
                 {confirmarExclusao ? (
-                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                    <button className="btn btn-danger" style={{ whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} onClick={excluirSelecionados} disabled={loading}>OK</button>
-                    <button className="btn btn-secondary" style={{ whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} onClick={() => setConfirmarExclusao(false)}>✕</button>
+                  <div className="lote-confirm-del-group">
+                    <button className="btn lote-action-btn-danger-confirm" onClick={excluirSelecionados} disabled={loading}>OK</button>
+                    <button className="btn lote-action-btn-secondary" onClick={() => setConfirmarExclusao(false)}>✕</button>
                   </div>
                 ) : (
-                  <button className="btn btn-danger" style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap', fontSize: '13px', padding: '6px 12px', minHeight: 'auto' }} onClick={() => setConfirmarExclusao(true)} disabled={loading}>Excluir</button>
+                  <button className="btn lote-action-btn-danger" onClick={() => setConfirmarExclusao(true)} disabled={loading}>Excluir</button>
                 )}
               </div>
             </div>
-            <div className="bulk-actions-tools" style={{ flexWrap: 'wrap', paddingBottom: '4px', gap: '12px' }}>
-              <div className="bulk-move-group" style={{ borderColor: 'var(--accent)', background: 'rgba(255,255,255,0.03)', flexWrap: 'nowrap' }}>
-                <select className="bulk-input" style={{ width: '105px', color: '#fff' }} value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
-                  <option value="" style={{ color: '#000' }}>Loja...</option>
+            <div className="bulk-actions-tools">
+              <div className="bulk-move-group">
+                <select className="bulk-input bulk-select-store" value={lojaDestino} onChange={(e) => setLojaDestino(e.target.value)}>
+                  <option value="" style={{ color: '#888' }}>Loja...</option>
                   {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ color: opt.color, fontWeight: '500' }}>{opt.label}</option>)}
                 </select>
 
                 {!customCaixaLote ? (
                   <select
-                    className="bulk-input"
-                    style={{ width: '135px', color: '#fff', borderLeft: '1px solid rgba(255,255,255,0.1)', background: 'var(--bg-card)' }}
+                    className="bulk-input bulk-select-caixa"
                     value={novaLocalizacao}
                     onChange={(e) => {
                       if (e.target.value === '__custom__') {
@@ -469,7 +481,7 @@ export default function AcoesEmLote() {
                     <option value="__custom__" style={{ color: 'var(--accent)', fontWeight: 600 }}>+ Digitar...</option>
                   </select>
                 ) : (
-                  <div style={{ display: 'flex', alignItems: 'center', borderLeft: '1px solid rgba(255,255,255,0.1)', flex: 1 }}>
+                  <div className="bulk-custom-caixa-input">
                     <input
                       type="text"
                       placeholder="Ex: 5b, 19b..."
@@ -480,13 +492,12 @@ export default function AcoesEmLote() {
                         if (norm !== e.target.value) setNovaLocalizacao(norm);
                       }}
                       className="bulk-input"
-                      style={{ width: '95px', color: '#fff' }}
                       autoFocus
                     />
                     <button
                       type="button"
                       onClick={() => setCustomCaixaLote(false)}
-                      style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: '11px', padding: '0 6px', cursor: 'pointer', whiteSpace: 'nowrap' }}
+                      className="bulk-custom-caixa-btn"
                       title="Voltar para seleção por lista"
                     >
                       Lista
@@ -494,13 +505,13 @@ export default function AcoesEmLote() {
                   </div>
                 )}
 
-                <button className="btn btn-primary" style={{ borderLeft: '1px solid var(--accent)', padding: '0 16px', minHeight: '44px' }} onClick={aplicarMudancas} disabled={loading}>Aplicar</button>
+                <button className="btn btn-primary bulk-apply-btn" onClick={aplicarMudancas} disabled={loading}>Aplicar</button>
               </div>
-              <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
+
+              <div className="hide-on-mobile bulk-desktop-divider"></div>
               <button 
                 type="button"
-                className="btn btn-secondary" 
-                style={{ background: 'rgba(255,255,255,0.05)', whiteSpace: 'nowrap', minHeight: '44px' }} 
+                className="btn btn-secondary hide-on-mobile lote-action-btn-secondary" 
                 onClick={inativarSelecionados} 
                 disabled={loading}
               >
@@ -508,8 +519,7 @@ export default function AcoesEmLote() {
               </button>
               <button 
                 type="button"
-                className="btn btn-danger" 
-                style={{ background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', whiteSpace: 'nowrap', minHeight: '44px' }} 
+                className="btn btn-danger hide-on-mobile lote-action-btn-danger" 
                 onClick={() => setConfirmarExclusao(true)} 
                 disabled={loading}
               >
@@ -518,11 +528,10 @@ export default function AcoesEmLote() {
 
               {caixaSelecionada && (
                 <>
-                  <div style={{ width: '1px', height: '32px', background: 'var(--border)', margin: '0 4px' }}></div>
+                  <div className="bulk-desktop-divider"></div>
                   <button 
                     type="button"
-                    className="btn btn-danger" 
-                    style={{ background: 'var(--danger)', color: '#fff', whiteSpace: 'nowrap', minHeight: '44px' }} 
+                    className="btn btn-danger lote-action-btn-danger-all" 
                     onClick={() => setConfirmarExclusaoNaoSelecionados(true)} 
                     disabled={loading}
                   >
@@ -533,7 +542,7 @@ export default function AcoesEmLote() {
             </div>
           </div>
         </div>
-        )}
+      )}
 
         <ConfirmModal
           isOpen={confirmarExclusao}
