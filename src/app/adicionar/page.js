@@ -713,9 +713,9 @@ export default function AdicionarItem() {
               )}
 
               {activeTab === CATEGORY_IDS.DISCOS && (
-                <div style={{ marginTop: '12px', padding: '12px 14px', background: 'rgba(168, 85, 247, 0.05)', border: '1px solid rgba(168, 85, 247, 0.25)', borderRadius: '8px', width: '100%' }}>
+                <div className="adicionar-prensagem-box" style={{ marginTop: '12px', padding: '12px 14px', borderRadius: '8px', width: '100%' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#c084fc' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#c084fc', fontFamily: 'var(--font-title)' }}>
                       Prensagem / Edição
                     </span>
                   </div>
@@ -735,15 +735,7 @@ export default function AdicionarItem() {
                             key={s}
                             type="button"
                             onClick={() => setSeloPrensagem(s)}
-                            style={{
-                              fontSize: '11px',
-                              padding: '2px 8px',
-                              borderRadius: '4px',
-                              background: seloPrensagem === s ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-                              color: seloPrensagem === s ? '#fff' : 'var(--text-muted)',
-                              border: '1px solid var(--border)',
-                              cursor: 'pointer'
-                            }}
+                            className={`adicionar-selo-btn ${seloPrensagem === s ? 'active' : ''}`}
                           >
                             {s}
                           </button>

@@ -2553,11 +2553,12 @@ tbody tr:last-child td {
 
 /* ========== SEÇÕES DO FORMULÁRIO DE CADASTRO ========== */
 .form-section-card {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: var(--radius-md, 10px);
+  background: #141417;
+  border: 1px solid #222227;
+  border-radius: var(--radius-md, 12px);
   padding: 18px 20px;
   margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .form-section-header {
@@ -2566,15 +2567,16 @@ tbody tr:last-child td {
   gap: 8px;
   margin-bottom: 16px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid #1f1f24;
 }
 
 .form-section-title {
-  font-size: 12.5px;
+  font-family: var(--font-title);
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted, #a1a1aa);
+  letter-spacing: 0.04em;
+  color: #e4e4e7;
   margin: 0;
 }
 
@@ -2582,6 +2584,7 @@ tbody tr:last-child td {
   .form-section-card {
     padding: 14px 12px;
     margin-bottom: 16px;
+    border-radius: 12px;
   }
 }
 
@@ -3183,6 +3186,100 @@ tbody tr:last-child td {
     background: #261617 !important;
     border: 1px solid #3d1c1e !important;
     color: #ef4444 !important;
+  }
+
+  /* Formulário de Adicionar e Editar no Mobile */
+  .form-container-desktop {
+    margin-top: 14px !important;
+  }
+
+  .form-group label {
+    font-family: var(--font-body) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #94949e !important;
+    margin-bottom: 6px !important;
+  }
+
+  .form-group input:not([type="checkbox"]),
+  .form-group select,
+  .form-group textarea {
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    color: #f4f4f5 !important;
+    border-radius: 8px !important;
+    font-family: var(--font-body) !important;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--accent) !important;
+  }
+
+  .discogs-search-row input {
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    color: #f4f4f5 !important;
+    border-radius: 8px !important;
+  }
+
+  .discogs-btn-buscar {
+    background: #202026 !important;
+    border: 1px solid #2b2b34 !important;
+    color: #e4e4e7 !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+  }
+
+  .discogs-scanners-row {
+    gap: 8px !important;
+    margin-top: 10px !important;
+  }
+
+  .discogs-scanner-chip {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+  }
+
+  .discogs-scanner-chip:nth-child(1) {
+    background: #251618 !important;
+    border: 1px solid #451d22 !important;
+    color: #f87171 !important;
+  }
+
+  .discogs-scanner-chip:nth-child(2) {
+    background: #1e1b29 !important;
+    border: 1px solid #36294a !important;
+    color: #c084fc !important;
+  }
+
+  .discogs-scanner-chip:nth-child(3) {
+    background: #16241c !important;
+    border: 1px solid #234230 !important;
+    color: #4ade80 !important;
+  }
+
+  .adicionar-prensagem-box {
+    background: #181420 !important;
+    border: 1px solid #2e2040 !important;
+    border-radius: 10px !important;
+  }
+
+  .adicionar-selo-btn {
+    background: #201b2a !important;
+    border: 1px solid #302640 !important;
+    color: #d4d4d8 !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    font-size: 11px !important;
+    cursor: pointer;
+  }
+
+  .adicionar-selo-btn.active {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #ffffff !important;
   }
 }
 
