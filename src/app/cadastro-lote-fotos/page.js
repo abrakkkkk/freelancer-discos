@@ -494,12 +494,12 @@ export default function CadastroLoteFotos() {
     <div className="pageContainer" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: 'calc(var(--bottom-nav-height, 62px) + 32px)' }}>
       
       {/* Top Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', width: '100%' }}>
+      <div className="lote-fotos-top-header">
         <div className="titleGroup" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <FaCamera size={22} color="var(--accent)" />
           <h1 className="page-title" style={{ margin: 0, fontSize: '20px', letterSpacing: '-0.025em' }}>Cadastro por Fotos</h1>
         </div>
-        <Link href="/" className="btn btn-secondary" style={{ fontSize: '12px', padding: '5px 12px', minHeight: '32px', display: 'inline-flex', alignItems: 'center' }}>
+        <Link href="/" className="btn lote-fotos-back-btn">
           Voltar
         </Link>
       </div>
@@ -507,31 +507,30 @@ export default function CadastroLoteFotos() {
       {mensagem && <AlertMessage tipo={mensagem.tipo} texto={mensagem.texto} onClose={() => setMensagem(null)} />}
       
       {sucessoFinal && (
-        <div style={{ background: 'rgba(56, 161, 105, 0.15)', border: '1px solid rgba(56, 161, 105, 0.3)', color: '#48bb78', padding: '12px 14px', borderRadius: '8px', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div className="lote-fotos-success-alert">
           <MdCheckCircle size={20} />
           <span style={{ fontWeight: 600, fontSize: '13px' }}>{sucessoFinal}</span>
         </div>
       )}
 
       {/* Configuração Rápida do Lote */}
-      <div className="filterCard" style={{ marginBottom: '14px', padding: '12px 14px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
+      <div className="lote-fotos-config-card">
+        <div className="lote-fotos-config-grid">
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Loja</label>
-            <select value={loja} onChange={(e) => setLoja(e.target.value)} style={{ fontSize: '14px', height: '36px' }}>
+            <label>Loja</label>
+            <select value={loja} onChange={(e) => setLoja(e.target.value)}>
               {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>
 
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Caixa Padrão</label>
+            <label>Caixa Padrão</label>
             <input 
               type="text" 
               list="caixas-lote-list" 
               value={caixaPadrao} 
               onChange={(e) => setCaixaPadrao(e.target.value)} 
               placeholder="Ex: 15, 49..."
-              style={{ fontSize: '14px', height: '36px' }}
             />
             <datalist id="caixas-lote-list">
               {caixas.map(c => <option key={`${c.caixa}-${c.loja}`} value={c.caixa}>{c.label}</option>)}
@@ -539,20 +538,19 @@ export default function CadastroLoteFotos() {
           </div>
 
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Preço Padrão</label>
+            <label>Preço Padrão</label>
             <input 
               type="text" 
               inputMode="numeric"
               value={precoPadrao} 
               onChange={(e) => setPrecoPadrao(e.target.value)} 
               placeholder="R$ (opcional)"
-              style={{ fontSize: '14px', height: '36px' }}
             />
           </div>
 
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '3px' }}>Formato</label>
-            <select value={tipo} onChange={(e) => setTipo(e.target.value)} style={{ fontSize: '14px', height: '36px' }}>
+            <label>Formato</label>
+            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
               <option value={CATEGORY_IDS.DISCOS}>Vinil</option>
               <option value={CATEGORY_IDS.CDS}>CD</option>
             </select>
@@ -563,19 +561,7 @@ export default function CadastroLoteFotos() {
       {/* Área de Adição de Fotos */}
       <div 
         onClick={() => !processando && fileInputRef.current?.click()}
-        style={{
-          border: '1.5px dashed var(--border)',
-          borderRadius: '10px',
-          padding: '18px 14px',
-          textAlign: 'center',
-          cursor: processando ? 'wait' : 'pointer',
-          background: 'rgba(255, 255, 255, 0.015)',
-          marginBottom: '16px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '6px'
-        }}
+        className={`lote-fotos-dropzone ${processando ? 'is-processing' : ''}`}
       >
         <input 
           ref={fileInputRef} 
@@ -586,15 +572,15 @@ export default function CadastroLoteFotos() {
           style={{ display: 'none' }}
           disabled={processando}
         />
-        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(197, 48, 48, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <FaCamera size={18} color="var(--accent)" />
+        <div className="lote-fotos-dropzone-icon">
+          <FaCamera size={18} color="#ffffff" />
         </div>
-        <div style={{ fontSize: '14px', fontWeight: 600 }}>
+        <div className="lote-fotos-dropzone-text">
           {processando ? (statusProgresso || `Processando foto ${progresso.atual} de ${progresso.total}...`) : 'Adicionar fotos (câmera ou galeria)'}
         </div>
         {processando && (
-          <div style={{ width: '100%', maxWidth: '240px', height: '4px', background: 'rgba(255,255,255,0.1)', borderRadius: '2px', overflow: 'hidden', marginTop: '4px' }}>
-            <div style={{ width: `${(progresso.atual / (progresso.total || 1)) * 100}%`, height: '100%', background: 'var(--accent)', transition: 'width 0.3s ease' }}></div>
+          <div className="lote-fotos-progress-track">
+            <div className="lote-fotos-progress-bar" style={{ width: `${(progresso.atual / (progresso.total || 1)) * 100}%` }}></div>
           </div>
         )}
       </div>
@@ -603,19 +589,8 @@ export default function CadastroLoteFotos() {
       {itens.length > 0 && (
         <div>
           {/* Barra de Ações em Massa */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            borderRadius: '10px',
-            padding: '8px 12px',
-            marginBottom: '10px',
-            flexWrap: 'wrap',
-            gap: '8px'
-          }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: 600, fontSize: '13px', margin: 0, minHeight: '36px' }}>
+          <div className="lote-fotos-actions-bar">
+            <label className="lote-fotos-select-all-label">
               <input 
                 type="checkbox" 
                 checked={todosSelecionados} 
@@ -626,13 +601,12 @@ export default function CadastroLoteFotos() {
               Selecionar Tudo ({totalSelecionados}/{itens.length})
             </label>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+            <div className="lote-fotos-actions-tools">
               {vaziosCount > 0 && (
                 <button 
                   type="button" 
-                  className="btn btn-secondary" 
+                  className="btn lote-fotos-btn-vazios" 
                   onClick={reprocessarVazios}
-                  style={{ fontSize: '12px', padding: '6px 12px', minHeight: '34px', display: 'flex', alignItems: 'center', gap: '6px', borderColor: 'rgba(236, 201, 75, 0.4)', color: '#ecc94b' }}
                   disabled={salvando || processando}
                   title="Tentar reconhecer novamente fotos que ficaram vazias"
                 >
@@ -643,9 +617,8 @@ export default function CadastroLoteFotos() {
 
               <button 
                 type="button" 
-                className="btn btn-secondary" 
+                className="btn lote-fotos-btn-secondary" 
                 onClick={limparLote}
-                style={{ fontSize: '12px', padding: '6px 12px', minHeight: '34px' }}
                 disabled={salvando || processando}
               >
                 Limpar
@@ -653,10 +626,9 @@ export default function CadastroLoteFotos() {
 
               <button 
                 type="button" 
-                className="btn btn-primary" 
+                className="btn btn-primary lote-fotos-btn-submit" 
                 onClick={salvarAprovados}
                 disabled={salvando || totalSelecionados === 0}
-                style={{ fontSize: '13px', padding: '6px 14px', minHeight: '34px', display: 'flex', alignItems: 'center', gap: '6px' }}
               >
                 {salvando ? `Salvando (${progressoSalvar.atual}/${progressoSalvar.total})...` : (
                   <>
@@ -668,78 +640,43 @@ export default function CadastroLoteFotos() {
           </div>
 
           {/* Cards Mobile-First */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div className="lote-fotos-list">
             {itens.map((item, idx) => (
               <div 
                 key={item.id}
-                style={{
-                  background: 'var(--bg-card)',
-                  border: item.selecionado ? '1px solid rgba(197, 48, 48, 0.45)' : '1px solid var(--border)',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px',
-                  position: 'relative'
-                }}
+                className={`lote-fotos-card ${item.selecionado ? 'selected' : ''}`}
               >
                 {/* Linha 1: Seleção, Número, Selo, Ações */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div className="lote-fotos-card-header">
+                  <div className="lote-fotos-card-header-left">
                     <input 
                       type="checkbox" 
                       checked={item.selecionado} 
                       onChange={() => toggleItem(item.id)}
                       style={{ width: '20px', height: '20px', accentColor: 'var(--accent)', cursor: 'pointer' }}
                     />
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>
+                    <span className="lote-fotos-card-idx">
                       #{idx + 1}
                     </span>
                     {(!item.titulo?.trim() && !item.artista?.trim()) && (
-                      <span style={{
-                        fontSize: '10px',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontWeight: 600,
-                        background: 'rgba(236, 201, 75, 0.15)',
-                        color: '#ecc94b',
-                        border: '1px solid rgba(236, 201, 75, 0.3)'
-                      }}>
+                      <span className="lote-fotos-badge-empty">
                         NÃO IDENTIFICADO
                       </span>
                     )}
                     {item.selo && (
-                      <span style={{
-                        fontSize: '10px',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontWeight: 600,
-                        background: 'rgba(167, 139, 250, 0.15)',
-                        color: '#c084fc',
-                        border: '1px solid rgba(167, 139, 250, 0.3)'
-                      }}>
+                      <span className="lote-fotos-badge-selo">
                         {item.selo.toUpperCase()}
                       </span>
                     )}
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <div className="lote-fotos-card-header-actions">
                     {(!item.titulo?.trim() && !item.artista?.trim()) && (
                       <button 
                         type="button" 
                         onClick={() => reprocessarItem(item.id)}
                         disabled={item.processandoItem || processando || salvando}
-                        className="btn btn-secondary"
-                        style={{
-                          fontSize: '11px',
-                          padding: '4px 8px',
-                          minHeight: '28px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          borderColor: 'rgba(236, 201, 75, 0.4)',
-                          color: '#ecc94b'
-                        }}
+                        className="btn lote-fotos-item-btn-retry"
                         title="Tentar reconhecer foto novamente"
                       >
                         <IoRefresh size={12} style={{ animation: item.processandoItem ? 'spin 1s linear infinite' : 'none' }} />
@@ -749,15 +686,7 @@ export default function CadastroLoteFotos() {
                     <button 
                       type="button" 
                       onClick={() => abrirPesquisaDiscogs(item)}
-                      className="btn btn-secondary"
-                      style={{
-                        fontSize: '11px',
-                        padding: '4px 8px',
-                        minHeight: '28px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px'
-                      }}
+                      className="btn lote-fotos-item-btn"
                       title="Procurar outra edição no Discogs"
                     >
                       <FaMagnifyingGlass size={10} /> Trocar
@@ -765,18 +694,7 @@ export default function CadastroLoteFotos() {
                     <button 
                       type="button" 
                       onClick={() => removerItem(item.id)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: '32px',
-                        minHeight: '32px'
-                      }}
+                      className="lote-fotos-item-btn-remove"
                       title="Remover"
                     >
                       <FaTrash size={12} />
@@ -785,10 +703,10 @@ export default function CadastroLoteFotos() {
                 </div>
 
                 {/* Linha 2: Capas + Título & Artista */}
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                <div className="lote-fotos-card-body">
                   {/* Capas lado a lado */}
-                  <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                    <div style={{ width: '56px', height: '56px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)', background: 'rgba(255,255,255,0.03)' }} title="Foto Real">
+                  <div className="lote-fotos-covers-wrap">
+                    <div className="lote-fotos-cover-thumb" title="Foto Real">
                       {item.fotoPreview ? (
                         <img 
                           src={item.fotoPreview} 
@@ -797,12 +715,12 @@ export default function CadastroLoteFotos() {
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : null}
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
+                      <div className="lote-fotos-cover-placeholder">
                         <FaCamera size={18} color="var(--text-muted)" />
                       </div>
                     </div>
 
-                    <div style={{ width: '56px', height: '56px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)', background: 'rgba(255,255,255,0.03)' }} title="Capa Discogs">
+                    <div className="lote-fotos-cover-thumb" title="Capa Discogs">
                       {item.capaUrl ? (
                         <img 
                           src={item.capaUrl} 
@@ -811,40 +729,40 @@ export default function CadastroLoteFotos() {
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                         />
                       ) : null}
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: -1 }}>
+                      <div className="lote-fotos-cover-placeholder">
                         <PiVinylRecord size={22} color="var(--text-muted)" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Campos Principais: Título e Artista (16px em mobile evita zoom indesejado) */}
-                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {/* Campos Principais: Título e Artista */}
+                  <div className="lote-fotos-fields-main">
                     <input 
                       type="text" 
                       value={item.titulo} 
                       onChange={(e) => atualizarItem(item.id, 'titulo', e.target.value)}
                       placeholder="Título do álbum *"
-                      style={{ width: '100%', fontSize: '15px', fontWeight: 600, padding: '6px 8px', height: '36px' }}
+                      className="lote-fotos-input-titulo"
                     />
                     <input 
                       type="text" 
                       value={item.artista} 
                       onChange={(e) => atualizarItem(item.id, 'artista', e.target.value)}
                       placeholder="Artista"
-                      style={{ width: '100%', fontSize: '14px', padding: '6px 8px', height: '34px' }}
+                      className="lote-fotos-input-artista"
                     />
                   </div>
                 </div>
 
                 {/* Linha 3: Detalhes compactos (Ano, Preço, Caixa) */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+                <div className="lote-fotos-card-grid-details">
                   <div>
                     <input 
                       type="text" 
                       value={item.ano} 
                       onChange={(e) => atualizarItem(item.id, 'ano', e.target.value)}
                       placeholder="Ano"
-                      style={{ width: '100%', fontSize: '13px', padding: '6px 8px', height: '34px' }}
+                      className="lote-fotos-input-detail"
                     />
                   </div>
                   <div>
@@ -854,7 +772,7 @@ export default function CadastroLoteFotos() {
                       value={item.preco} 
                       onChange={(e) => atualizarItem(item.id, 'preco', e.target.value)}
                       placeholder="Preço R$"
-                      style={{ width: '100%', fontSize: '13px', padding: '6px 8px', height: '34px' }}
+                      className="lote-fotos-input-detail"
                     />
                   </div>
                   <div>
@@ -863,7 +781,7 @@ export default function CadastroLoteFotos() {
                       value={item.caixa} 
                       onChange={(e) => atualizarItem(item.id, 'caixa', e.target.value)}
                       placeholder={caixaPadrao || "Caixa"}
-                      style={{ width: '100%', fontSize: '13px', padding: '6px 8px', height: '34px' }}
+                      className="lote-fotos-input-detail"
                     />
                   </div>
                 </div>
@@ -875,88 +793,56 @@ export default function CadastroLoteFotos() {
 
       {/* Modal de Busca Manual no Discogs */}
       {itemPesquisa && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0, 0, 0, 0.85)',
-          zIndex: 9999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '12px'
-        }}>
-          <div style={{
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            borderRadius: '12px',
-            maxWidth: '520px',
-            width: '100%',
-            maxHeight: 'calc(100vh - 32px)',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden'
-          }}>
-            <div style={{ padding: '14px 16px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 600 }}>Buscar no Discogs</h3>
+        <div className="lote-fotos-modal-overlay">
+          <div className="lote-fotos-modal-content">
+            <div className="lote-fotos-modal-header">
+              <h3 className="lote-fotos-modal-title">Buscar no Discogs</h3>
               <button 
                 type="button" 
                 onClick={() => setItemPesquisa(null)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '18px', cursor: 'pointer', minWidth: '44px', minHeight: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                className="lote-fotos-modal-close"
               >
                 ✕
               </button>
             </div>
 
-            <div style={{ padding: '12px 16px' }}>
-              <form onSubmit={executarPesquisaManual} style={{ display: 'flex', gap: '8px' }}>
+            <div className="lote-fotos-modal-search-wrap">
+              <form onSubmit={executarPesquisaManual} className="lote-fotos-modal-search-form">
                 <input 
                   type="text" 
                   value={queryPesquisa} 
                   onChange={(e) => setQueryPesquisa(e.target.value)} 
                   placeholder="Artista ou álbum..."
-                  style={{ flex: 1, fontSize: '15px', height: '40px' }}
+                  className="lote-fotos-modal-input"
                   autoFocus
                 />
-                <button type="submit" className="btn btn-primary" disabled={buscandoPesquisa} style={{ height: '40px', padding: '0 16px' }}>
+                <button type="submit" className="btn btn-primary lote-fotos-modal-submit" disabled={buscandoPesquisa}>
                   {buscandoPesquisa ? '...' : 'Buscar'}
                 </button>
               </form>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px' }}>
+            <div className="lote-fotos-modal-results">
               {resultadosPesquisa.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="lote-fotos-modal-results-list">
                   {resultadosPesquisa.map(res => (
                     <div 
                       key={res.id} 
                       onClick={() => aplicarResultadoPesquisa(res)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        padding: '10px',
-                        background: 'rgba(255, 255, 255, 0.02)',
-                        border: '1px solid var(--border)',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        minHeight: '48px'
-                      }}
+                      className="lote-fotos-modal-result-item"
                     >
                       {res.thumb ? (
-                        <img src={res.thumb} alt="" style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px', flexShrink: 0 }} />
+                        <img src={res.thumb} alt="" className="lote-fotos-result-thumb" />
                       ) : (
-                        <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <div className="lote-fotos-result-thumb-placeholder">
                           <PiVinylRecord size={18} color="var(--text-muted)" />
                         </div>
                       )}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 600, fontSize: '13px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div className="lote-fotos-result-info">
+                        <div className="lote-fotos-result-title">
                           {res.title}
                         </div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        <div className="lote-fotos-result-meta">
                           {[res.year, res.country, res.format?.join(', ')].filter(Boolean).join(' • ')}
                         </div>
                       </div>
@@ -964,7 +850,7 @@ export default function CadastroLoteFotos() {
                   ))}
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px 0', fontSize: '13px' }}>
+                <div className="lote-fotos-modal-empty">
                   {buscandoPesquisa ? 'Buscando...' : 'Digite para buscar.'}
                 </div>
               )}
