@@ -2472,18 +2472,23 @@ tbody tr:last-child td {
   font-size: 13px;
   font-weight: 600;
   color: #ffffff;
-  background: #7f1d1d;
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: #c53030;
+  border: 1px solid #dc2626;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
 }
 
+.discogs-scanner-chip svg {
+  color: #ffffff;
+  fill: currentColor;
+}
+
 .discogs-scanner-chip:hover,
 .discogs-scanner-chip:active {
-  background: #991b1b;
-  border-color: rgba(239, 68, 68, 0.65);
+  background: #a82323;
+  border-color: #b91c1c;
   color: #ffffff;
 }
 
@@ -3240,16 +3245,21 @@ tbody tr:last-child td {
   .discogs-scanner-chip {
     border-radius: 8px !important;
     font-weight: 600 !important;
-    background: #251618 !important;
-    border: 1px solid #451d22 !important;
-    color: #f87171 !important;
+    background: #c53030 !important;
+    border: 1px solid #dc2626 !important;
+    color: #ffffff !important;
+  }
+
+  .discogs-scanner-chip svg {
+    color: #ffffff !important;
+    fill: currentColor !important;
   }
 
   .discogs-scanner-chip:hover,
   .discogs-scanner-chip:active {
-    background: #361a1d !important;
-    border-color: #5c2027 !important;
-    color: #fca5a5 !important;
+    background: #a82323 !important;
+    border-color: #b91c1c !important;
+    color: #ffffff !important;
   }
 
   .adicionar-prensagem-box {
