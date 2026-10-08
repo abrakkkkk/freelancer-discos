@@ -717,7 +717,7 @@ function EditarExcluirContent() {
                     </div>
                     {showDiscogsDropdown && discogsResults.length > 0 && (
                       <ul className="sugestoes-dropdown" style={{ top: '100%', left: 0, right: 0, maxHeight: '300px', overflowY: 'auto' }}>
-                        <li style={{ background: 'var(--bg-card)', padding: '8px', fontSize: '12px', borderBottom: '1px solid var(--border)', textAlign: 'right' }}>
+                        <li className="sugestoes-header" style={{ background: 'var(--bg-card)', padding: '8px', fontSize: '12px', borderBottom: '1px solid var(--border)', textAlign: 'right' }}>
                           <button type="button" onClick={() => setShowDiscogsDropdown(false)} style={{ color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>Fechar (X)</button>
                         </li>
                         {discogsResults.map((result) => (
@@ -748,21 +748,21 @@ function EditarExcluirContent() {
                             )}
                             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '2px' }}>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                                <span style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.title}</span>
+                                <span className="sugestoes-title" style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{result.title}</span>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
                                   {result.isExactMatch && (
-                                    <span style={{ background: 'rgba(56, 161, 105, 0.15)', color: '#48bb78', border: '1px solid rgba(56, 161, 105, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                    <span className="badge-match-discogs">
                                       MATCH EXATO
                                     </span>
                                   )}
                                   {extractSeloPrensagem(result) && (
-                                    <span style={{ background: 'rgba(167, 139, 250, 0.15)', color: '#c084fc', border: '1px solid rgba(167, 139, 250, 0.3)', fontSize: '10px', padding: '1px 6px', borderRadius: '4px', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                                    <span className="badge-selo-discogs">
                                       {extractSeloPrensagem(result).toUpperCase()}
                                     </span>
                                   )}
                                 </div>
                               </div>
-                              <span style={{ fontSize: '12px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                              <span className="sugestoes-meta" style={{ fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {result.year && `${result.year} • `}
                                 {result.catno && `${result.catno} • `}
                                 {result.country && `${result.country} • `}
@@ -932,16 +932,7 @@ function EditarExcluirContent() {
                   marginBottom: '16px'
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                    <span style={{
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      letterSpacing: '0.04em',
-                      textTransform: 'uppercase',
-                      color: '#a78bfa',
-                      background: 'rgba(124, 58, 237, 0.2)',
-                      padding: '2px 6px',
-                      borderRadius: '4px'
-                    }}>
+                    <span className="badge-selo-discogs">
                       Edição / Prensagem
                     </span>
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
