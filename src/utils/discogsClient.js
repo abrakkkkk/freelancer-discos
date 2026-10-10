@@ -1,3 +1,5 @@
+import { cleanDiscogsString } from '@/utils/stringUtils';
+
 // Cliente com cache em dois níveis (Memória + sessionStorage) para buscas Discogs
 const memoryCache = new Map();
 const MAX_MEM_ENTRIES = 150;
@@ -101,4 +103,34 @@ export function extractSeloPrensagem(result) {
   }
 
   return '';
+}
+
+/**
+ * Normaliza um item retornado pelo Discogs para o formato do sistema
+ */
+export function parseDiscogsItem(result) {
+  if (!result) return null;
+  let artista = result.artist || '';
+  let titulo = cleanDiscogsString(result.album || result.title);
+
+  if (!artista) {
+    const parts = (result.title || '').split(' - ');
+    if (parts.length > 1) {
+      artista = cleanDiscogsString(parts[0]);
+      titulo = cleanDiscogsString(parts.slice(1).join(' - '));
+    }
+  }
+
+  const year = result.year ? String(result.year) : '';
+  const detectedSelo = extractSeloPrensagem(result);
+
+  return {
+    artista,
+    titulo,
+    ano: year,
+    seloPrensagem: detectedSelo,
+    anoPrensagem: year,
+    cover: result.cover_image || result.thumb || null,
+    thumb: result.thumb || null,
+  };
 }
