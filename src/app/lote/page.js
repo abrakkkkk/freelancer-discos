@@ -331,34 +331,11 @@ export default function AcoesEmLote() {
   };
 
   /**
-   * Helper compartilhado para soft delete com registro de saída em lote
-   */
-  const excluirLoteComMovimentacao = async (itensParaExcluir, motivoDescricao) => {
-    const ids = itensParaExcluir.map((item) => item.id);
-    await itemService.bulkUpdate(activeTab, ids, { deletado: true });
-
-    // REGRA 1.2: Apenas itens ATIVOS geram movimentação de saída ('saida')
-    const itensAtivos = itensParaExcluir.filter((item) => item.ativo !== false);
-    if (itensAtivos.length > 0) {
-      const movimentacoesSaida = itensAtivos.map((item) =>
-        movimentacaoService.createMovementPayload(
-          activeTab,
-          item.id,
-          'saida',
-          item.quantidade || 1,
-          motivoDescricao
-        )
-      );
-      await supabase.from('movimentacoes').insert(movimentacoesSaida);
-    }
-  };
-
-  /**
    * Exclui itens marcados pelo usuário
    */
   const excluirSelecionados = async () => {
     handleBulkAction(
-      () => excluirLoteComMovimentacao(selecionadosData, 'Saída (Exclusão em lote)'),
+      () => itemService.bulkDeleteWithMovement(activeTab, selecionadosData, 'Saída (Exclusão em lote)'),
       (quantidade) => `${quantidade} item(ns) excluído(s).`,
       selecionadosData
     ).then(() => setConfirmarExclusao(false));
@@ -372,7 +349,7 @@ export default function AcoesEmLote() {
     if (itensNaoSelecionados.length === 0) return;
 
     handleBulkAction(
-      () => excluirLoteComMovimentacao(itensNaoSelecionados, 'Saída (Exclusão não selecionados)'),
+      () => itemService.bulkDeleteWithMovement(activeTab, itensNaoSelecionados, 'Saída (Exclusão não selecionados)'),
       (quantidade) => `${quantidade} item(ns) não selecionados excluídos.`,
       itensNaoSelecionados
     ).then(() => setConfirmarExclusaoNaoSelecionados(false));

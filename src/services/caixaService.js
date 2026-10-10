@@ -1,31 +1,35 @@
 import { supabase } from '@/lib/supabase';
 
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutos
+const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutos de retenção em cache
 const STORAGE_PREFIX = 'freelancer_caixas_';
+const TOTAL_PADRAO_CAIXAS_LOJA_1 = 55;
+const TOTAL_PADRAO_CAIXAS_LOJA_2 = 20;
 
-function formatAndSortCaixas(rawData, currentLoja = '') {
-  const allCaixas = new Map();
+/**
+ * Formata, popula caixas obrigatórias de cada loja e ordena alfanumericamente
+ */
+function formatAndSortCaixas(dadosBrutos = [], lojaAtiva = '') {
+  const mapaCaixas = new Map();
 
-  // Caixas padrão para Loja 1 (Caixa 1 até Caixa 55, incluindo 49, 50 e 51)
-  if (!currentLoja || currentLoja === 'Loja 1') {
-    for (let i = 1; i <= 55; i++) {
-      const valorCaixa = String(i);
-      const key = `${valorCaixa}|Loja 1`;
-      allCaixas.set(key, {
+  // Caixas padrão para Loja 1 (Caixa 1 até Caixa 55)
+  if (!lojaAtiva || lojaAtiva === 'Loja 1') {
+    for (let numero = 1; numero <= TOTAL_PADRAO_CAIXAS_LOJA_1; numero++) {
+      const valorCaixa = String(numero);
+      const chave = `${valorCaixa}|Loja 1`;
+      mapaCaixas.set(chave, {
         caixa: valorCaixa,
         loja: 'Loja 1',
-        label: `Caixa ${i}`,
+        label: `Caixa ${numero}`,
       });
     }
   }
 
-  // Caixas padrão para Loja 2 (Caixa 1B até Caixa 20B)
-  // Garante que todas as caixas (inclusive vazias/faltantes) estejam sempre disponíveis
-  if (!currentLoja || currentLoja === 'Loja 2') {
-    for (let i = 1; i <= 20; i++) {
-      const nomeCaixa = `Caixa ${i}B`;
-      const key = `${nomeCaixa}|Loja 2`;
-      allCaixas.set(key, {
+  // Caixas padrão para Loja 2 (Caixa 1B até Caixa 20B com sufixo B obrigatório)
+  if (!lojaAtiva || lojaAtiva === 'Loja 2') {
+    for (let numero = 1; numero <= TOTAL_PADRAO_CAIXAS_LOJA_2; numero++) {
+      const nomeCaixa = `Caixa ${numero}B`;
+      const chave = `${nomeCaixa}|Loja 2`;
+      mapaCaixas.set(chave, {
         caixa: nomeCaixa,
         loja: 'Loja 2',
         label: nomeCaixa,
@@ -33,167 +37,183 @@ function formatAndSortCaixas(rawData, currentLoja = '') {
     }
   }
 
-  rawData.forEach((d) => {
-    if (d && d.caixa) {
-      const key = `${d.caixa}|${d.loja || ''}`;
-      if (!allCaixas.has(key)) {
-        const isNumeric = !isNaN(Number(d.caixa)) && String(d.caixa).trim() !== '';
-        const label = d.loja === 'Loja 1' && isNumeric ? `Caixa ${d.caixa}` : d.caixa;
+  // Incorpora caixas registradas no banco que ainda não estão no mapa
+  dadosBrutos.forEach((item) => {
+    if (item && item.caixa) {
+      const chave = `${item.caixa}|${item.loja || ''}`;
+      if (!mapaCaixas.has(chave)) {
+        const isNumeroPuro = !isNaN(Number(item.caixa)) && String(item.caixa).trim() !== '';
+        const rotuloFormatado =
+          item.loja === 'Loja 1' && isNumeroPuro ? `Caixa ${item.caixa}` : item.caixa;
 
-        allCaixas.set(key, {
-          caixa: d.caixa,
-          loja: d.loja || '',
-          label: label,
+        mapaCaixas.set(chave, {
+          caixa: item.caixa,
+          loja: item.loja || '',
+          label: rotuloFormatado,
         });
       }
     }
   });
 
-  return Array.from(allCaixas.values()).sort((a, b) => {
-    const numA = Number(a.caixa);
-    const numB = Number(b.caixa);
-    if (!isNaN(numA) && !isNaN(numB)) {
-      if (numA === numB) return a.loja.localeCompare(b.loja);
-      return numA - numB;
+  // Ordenação inteligente: numéricos primeiro, depois alfanuméricos com natural sort
+  return Array.from(mapaCaixas.values()).sort((a, b) => {
+    const valorNumericoA = Number(a.caixa);
+    const valorNumericoB = Number(b.caixa);
+
+    if (!isNaN(valorNumericoA) && !isNaN(valorNumericoB)) {
+      if (valorNumericoA === valorNumericoB) {
+        return a.loja.localeCompare(b.loja);
+      }
+      return valorNumericoA - valorNumericoB;
     }
-    const compCaixa = String(a.caixa).localeCompare(String(b.caixa), undefined, { numeric: true });
-    if (compCaixa === 0) return a.loja.localeCompare(b.loja);
-    return compCaixa;
+
+    const comparacaoTexto = String(a.caixa).localeCompare(String(b.caixa), undefined, {
+      numeric: true,
+    });
+    if (comparacaoTexto === 0) {
+      return a.loja.localeCompare(b.loja);
+    }
+    return comparacaoTexto;
   });
 }
 
-function getFromSession(key) {
+function obterDoSessionStorage(chave) {
   if (typeof window === 'undefined') return null;
   try {
-    const raw = sessionStorage.getItem(STORAGE_PREFIX + key);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (Date.now() - parsed.timestamp < CACHE_TTL) {
-      return parsed.data;
+    const conteudoBruto = sessionStorage.getItem(STORAGE_PREFIX + chave);
+    if (!conteudoBruto) return null;
+    const itemArmazenado = JSON.parse(conteudoBruto);
+    if (Date.now() - itemArmazenado.timestamp < CACHE_TTL_MS) {
+      return itemArmazenado.data;
     }
-  } catch (e) {}
+  } catch {
+    // sessionStorage indisponível ou corrompido
+  }
   return null;
 }
 
-function saveToSession(key, data) {
+function salvarNoSessionStorage(chave, dados) {
   if (typeof window === 'undefined') return;
   try {
     sessionStorage.setItem(
-      STORAGE_PREFIX + key,
-      JSON.stringify({ timestamp: Date.now(), data })
+      STORAGE_PREFIX + chave,
+      JSON.stringify({ timestamp: Date.now(), data: dados })
     );
-  } catch (e) {}
+  } catch {
+    // quota de storage excedida ou indisponível
+  }
 }
 
 export const caixaService = {
-  _cacheMap: new Map(),
+  _cacheEmMemoria: new Map(),
 
   /**
-   * Retorna caixas padrão imediatamente de forma síncrona para evitar telas vazias
+   * Retorna caixas padrão imediatamente de forma síncrona para renderização instantânea
    */
   getDefaultCaixas(loja = '') {
     return formatAndSortCaixas([], loja);
   },
 
   /**
-   * Fetches distinct locations (caixas/localizações), optionally filtered by store.
-   * Utilizes RPC when available for ~15ms response times, and falls back to
-   * optimized parallel pagination with multi-layer caching (Memory + SessionStorage).
+   * Busca caixas e localizações com estratégia de cache em 2 camadas (Memória + SessionStorage)
+   * e fallback otimizado via RPC ou paginação paralela no banco
    */
   async getCaixas(loja = '') {
-    const cacheKey = loja || 'ALL';
+    const chaveCache = loja || 'TODAS';
 
-    // 1. Memória RAM (0ms)
-    const memCached = this._cacheMap.get(cacheKey);
-    if (memCached && Date.now() - memCached.timestamp < CACHE_TTL) {
-      return memCached.data;
+    // 1. Memória RAM da sessão (0ms)
+    const cacheMemoria = this._cacheEmMemoria.get(chaveCache);
+    if (cacheMemoria && Date.now() - cacheMemoria.timestamp < CACHE_TTL_MS) {
+      return cacheMemoria.data;
     }
 
-    // 2. SessionStorage do Navegador (0ms - persiste entre trocas de páginas)
-    const sessionCached = getFromSession(cacheKey);
-    if (sessionCached) {
-      this._cacheMap.set(cacheKey, { timestamp: Date.now(), data: sessionCached });
-      return sessionCached;
+    // 2. SessionStorage do navegador (0ms, persiste entre navegação de rotas)
+    const cacheSessao = obterDoSessionStorage(chaveCache);
+    if (cacheSessao) {
+      this._cacheEmMemoria.set(chaveCache, { timestamp: Date.now(), data: cacheSessao });
+      return cacheSessao;
     }
 
-    // 3. Tentar via RPC no Supabase (se configurado no banco, executa em ~15ms)
+    // 3. Consulta via RPC otimizada no Supabase (~15ms)
     try {
-      const { data: rpcData, error: rpcError } = await supabase.rpc('get_distinct_caixas', {
+      const { data: dadosRpc, error: erroRpc } = await supabase.rpc('get_distinct_caixas', {
         p_loja: loja || null,
       });
 
-      if (!rpcError && rpcData && Array.isArray(rpcData)) {
-        const sortedCaixas = formatAndSortCaixas(rpcData, loja);
-        this._cacheMap.set(cacheKey, { timestamp: Date.now(), data: sortedCaixas });
-        saveToSession(cacheKey, sortedCaixas);
-        return sortedCaixas;
+      if (!erroRpc && Array.isArray(dadosRpc)) {
+        const caixasFormatadas = formatAndSortCaixas(dadosRpc, loja);
+        this._cacheEmMemoria.set(chaveCache, { timestamp: Date.now(), data: caixasFormatadas });
+        salvarNoSessionStorage(chaveCache, caixasFormatadas);
+        return caixasFormatadas;
       }
-    } catch (e) {
-      // Se a RPC não existir ainda, cai para o fallback seguro
+    } catch {
+      // RPC não disponível; segue para o fallback de varredura
     }
 
-    // 4. Fallback: Varredura paginada paralela nas tabelas
-    const tables = ['discos', 'dvds', 'cds', 'vhs'];
-    const step = 1000;
+    // 4. Fallback: Varredura paginada paralela em todas as tabelas de mídia
+    const tabelas = ['discos', 'dvds', 'cds', 'vhs'];
+    const tamanhoBloco = 1000;
 
-    const tablePromises = tables.map(async (table) => {
-      let countQuery = supabase
-        .from(table)
+    const promessasTabelas = tabelas.map(async (nomeTabela) => {
+      let queryContagem = supabase
+        .from(nomeTabela)
         .select('caixa', { count: 'exact', head: true })
         .eq('deletado', false)
         .not('caixa', 'is', null);
 
       if (loja) {
-        countQuery = countQuery.eq('loja', loja);
+        queryContagem = queryContagem.eq('loja', loja);
       }
 
-      const { count, error } = await countQuery;
-      if (error || !count) return [];
+      const { count: totalRegistros, error: erroContagem } = await queryContagem;
+      if (erroContagem || !totalRegistros) return [];
 
-      const pagePromises = [];
-      for (let from = 0; from < count; from += step) {
-        let query = supabase
-          .from(table)
+      const promessasPaginas = [];
+      for (let offset = 0; offset < totalRegistros; offset += tamanhoBloco) {
+        let queryPagina = supabase
+          .from(nomeTabela)
           .select('caixa, loja')
           .eq('deletado', false)
           .not('caixa', 'is', null)
-          .range(from, from + step - 1);
+          .range(offset, offset + tamanhoBloco - 1);
 
         if (loja) {
-          query = query.eq('loja', loja);
+          queryPagina = queryPagina.eq('loja', loja);
         }
-        pagePromises.push(query);
+        promessasPaginas.push(queryPagina);
       }
 
-      const pages = await Promise.all(pagePromises);
-      return pages.flatMap((p) => p.data || []);
+      const paginasCarregadas = await Promise.all(promessasPaginas);
+      return paginasCarregadas.flatMap((resposta) => resposta.data || []);
     });
 
-    const results = await Promise.all(tablePromises);
-    const sortedCaixas = formatAndSortCaixas(results.flat(), loja);
+    const resultadosTabelas = await Promise.all(promessasTabelas);
+    const caixasOrdenadas = formatAndSortCaixas(resultadosTabelas.flat(), loja);
 
-    // Salvar nos 2 níveis de cache
-    this._cacheMap.set(cacheKey, { timestamp: Date.now(), data: sortedCaixas });
-    saveToSession(cacheKey, sortedCaixas);
+    // Grava nos dois níveis de cache
+    this._cacheEmMemoria.set(chaveCache, { timestamp: Date.now(), data: caixasOrdenadas });
+    salvarNoSessionStorage(chaveCache, caixasOrdenadas);
 
-    return sortedCaixas;
+    return caixasOrdenadas;
   },
 
   /**
-   * Invalida o cache quando novas caixas ou lojas são criadas/modificadas
+   * Invalida caches de memória e sessionStorage quando ocorrem mutações de localização
    */
   invalidateCache() {
-    if (this._cacheMap) {
-      this._cacheMap.clear();
+    if (this._cacheEmMemoria) {
+      this._cacheEmMemoria.clear();
     }
     if (typeof window !== 'undefined') {
       try {
-        Object.keys(sessionStorage).forEach((k) => {
-          if (k.startsWith(STORAGE_PREFIX)) {
-            sessionStorage.removeItem(k);
+        Object.keys(sessionStorage).forEach((chave) => {
+          if (chave.startsWith(STORAGE_PREFIX)) {
+            sessionStorage.removeItem(chave);
           }
         });
-      } catch (e) {}
+      } catch {
+        // Ignora erros ao limpar storage
+      }
     }
   },
 };

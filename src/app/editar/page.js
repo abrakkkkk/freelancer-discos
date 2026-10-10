@@ -528,12 +528,9 @@ function EditarExcluirContent() {
       const itemParaExcluir = resultados.find(d => d.id === id) || itemEditando;
       const snapshotAntes = JSON.parse(JSON.stringify(itemParaExcluir));
       const isAtivo = itemParaExcluir?.ativo !== false;
-      
-      await itemService.deleteItem(tipo, id);
-      
+      await itemService.deleteItemWithMovement(tipo, itemParaExcluir, 'Saída (Excluído via Edição)');
+
       if (isAtivo) {
-        const movData = movimentacaoService.createMovementPayload(tipo, id, 'saida', itemParaExcluir?.quantidade || 1, 'Saída (Excluído via Edição)');
-        await movimentacaoService.registerMovement(movData);
         setMensagem({ tipo: 'success', texto: `Saída do ${tipoNome} registrada.` });
 
         // REGRA 1.3: Fluxo de reposição automática para itens ativos

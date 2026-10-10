@@ -143,25 +143,8 @@ export default function CatalogoClone() {
     const ids = itensSelecionados.map(i => i.id);
 
     try {
-      // 1. Soft delete dos itens em lote no banco
-      await itemService.bulkUpdate(category, ids, { deletado: true });
-
-      // 2. Registrar movimentação de saída para itens que eram ativos
-      const activeItens = itensSelecionados.filter(i => i.ativo !== false);
-      for (const item of activeItens) {
-        try {
-          const movData = movimentacaoService.createMovementPayload(
-            category,
-            item.id,
-            'saida',
-            item.quantidade || 1,
-            'Saída (Baixa via Catálogo)'
-          );
-          await movimentacaoService.registerMovement(movData);
-        } catch (movErr) {
-          console.warn('Erro ao registrar movimentação de baixa:', item.id, movErr);
-        }
-      }
+      // 1. Soft delete e registro de saída encapsulados no itemService
+      await itemService.bulkDeleteWithMovement(category, itensSelecionados, 'Saída (Baixa via Catálogo)');
 
       // 3. Registrar Undo para todos os itens
       registerUndo(category, itensSelecionados, () => {
@@ -224,13 +207,7 @@ export default function CatalogoClone() {
       const itemToDelete = catalog.itens.find(i => i.id === id);
       const isAtivo = itemToDelete?.ativo !== false;
 
-      await itemService.deleteItem(catalog.activeTab, id);
-      
-      // Se for ativo, registra movimentação de saída. Se for inativo, só exclui sem movimentação de saída!
-      if (isAtivo) {
-        const movData = movimentacaoService.createMovementPayload(catalog.activeTab, id, 'saida', itemToDelete?.quantidade || 1, 'Saída (Excluído via Catálogo)');
-        await movimentacaoService.registerMovement(movData);
-      }
+      await itemService.deleteItemWithMovement(catalog.activeTab, itemToDelete, 'Saída (Excluído via Catálogo)');
 
       catalog.setItens(catalog.itens.filter(i => i.id !== id));
       catalog.setTotal(catalog.total - 1);

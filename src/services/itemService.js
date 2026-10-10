@@ -1,133 +1,210 @@
 import { supabase } from '@/lib/supabase';
 import { removeAcentos, extractSearchTokens, calculateItemRelevance } from '@/utils/stringUtils';
 import { caixaService } from '@/services/caixaService';
+import { movimentacaoService } from '@/services/movimentacaoService';
+
+/**
+ * Aplica filtros de caixa na query Supabase suportando variações de Loja 1 e Loja 2
+ */
+function aplicarFiltroCaixaNaQuery(query, filtroCaixa) {
+  if (!filtroCaixa) return query;
+
+  const matchSufixoB = filtroCaixa.match(/^(?:caixa|c)?\s*(\d+)\s*b$/i);
+  const matchNumeroPuro = filtroCaixa.match(/^(?:caixa|c)?\s*(\d+)$/i);
+
+  if (matchSufixoB) {
+    const numero = matchSufixoB[1];
+    return query.in('caixa', [`Caixa ${numero}B`, `Caixa ${numero}b`, `${numero}B`, `${numero}b`]);
+  }
+
+  if (matchNumeroPuro) {
+    const numero = matchNumeroPuro[1];
+    return query.in('caixa', [numero, `Caixa ${numero}`, `Caixa ${numero}B`]);
+  }
+
+  return query.eq('caixa', filtroCaixa);
+}
+
+/**
+ * Busca itens com correspondência aproximada (usada tanto por duplicatas quanto reposições)
+ */
+async function buscarItensSemelhantes(category, { titulo, artista, excludeId = null, apenasInativos = false, limite = 10 }) {
+  if (!titulo || titulo.trim().length < 2) return [];
+
+  const isVideo = category === 'dvds' || category === 'vhs';
+  const tituloLimpo = titulo.trim();
+  const tituloSemAcento = removeAcentos(tituloLimpo);
+  const { effectiveWords: palavrasTitulo } = extractSearchTokens(tituloLimpo);
+
+  let colunas = 'id, titulo, preco, loja, caixa, ativo, ano';
+  if (!isVideo) colunas += ', artista';
+
+  let query = supabase.from(category).select(colunas).eq('deletado', false);
+
+  if (apenasInativos) {
+    query = query.eq('ativo', false);
+  }
+
+  if (excludeId) {
+    query = query.neq('id', excludeId);
+  }
+
+  // Pré-filtro SQL com curingas nas vogais
+  palavrasTitulo.slice(0, 3).forEach((palavra) => {
+    if (palavra.length >= 2) {
+      const palavraComCuringa = palavra.replace(/[aeiou]/g, '_');
+      query = query.ilike('titulo', `%${palavraComCuringa}%`);
+    }
+  });
+
+  let palavrasArtista = [];
+  if (!isVideo && artista && artista.trim().length >= 2) {
+    palavrasArtista = extractSearchTokens(artista).effectiveWords;
+    palavrasArtista.slice(0, 2).forEach((palavra) => {
+      if (palavra.length >= 2) {
+        const palavraComCuringa = palavra.replace(/[aeiou]/g, '_');
+        query = query.ilike('artista', `%${palavraComCuringa}%`);
+      }
+    });
+  }
+
+  const { data: dadosItens, error } = await query.limit(limite);
+  if (error || !dadosItens) return [];
+
+  // Filtro refinado em memória
+  return dadosItens.filter((item) => {
+    const itemTitulo = removeAcentos(item.titulo || '');
+    const matchTitulo =
+      palavrasTitulo.length > 0
+        ? palavrasTitulo.every((palavra) => itemTitulo.includes(palavra))
+        : itemTitulo.includes(tituloSemAcento) || tituloSemAcento.includes(itemTitulo);
+
+    if (isVideo) return matchTitulo;
+
+    if (artista && artista.trim().length >= 2) {
+      const itemArtista = removeAcentos(item.artista || '');
+      const matchArtista =
+        palavrasArtista.length > 0
+          ? palavrasArtista.every((palavra) => itemArtista.includes(palavra))
+          : true;
+      return matchTitulo && matchArtista;
+    }
+
+    return matchTitulo;
+  });
+}
 
 export const itemService = {
   /**
-   * Fetches items based on category and filters
+   * Busca itens do catálogo com suporte a paginação, filtros, ordenação e pesquisa fonética
    */
-  async fetchItems(category, { 
-    pagina = 1, 
-    itensPorPagina = 50, 
-    filtroCaixa = '', 
-    filtroLoja = '', 
-    busca = '', 
-    mostrarAtivos = true, 
-    mostrarInativos = false, 
-    ordenarColuna = null, 
-    ordenarDirecao = null 
+  async fetchItems(category, {
+    pagina = 1,
+    itensPorPagina = 50,
+    filtroCaixa = '',
+    filtroLoja = '',
+    busca = '',
+    mostrarAtivos = true,
+    mostrarInativos = false,
+    ordenarColuna = null,
+    ordenarDirecao = null,
   } = {}) {
-    
-    // Determine columns based on category
     const isVideo = category === 'dvds' || category === 'vhs';
-    
-    let columns = 'id, titulo, preco, ativo, loja, observacao, caixa, ano, capa_url';
-    if (!isVideo) columns += ', artista';
 
-    let query = supabase.from(category).select(columns, { count: 'exact' }).eq('deletado', false);
+    let colunas = 'id, titulo, preco, ativo, loja, observacao, caixa, ano, capa_url';
+    if (!isVideo) colunas += ', artista';
 
-    // Apply active/inactive filters
+    let query = supabase.from(category).select(colunas, { count: 'exact' }).eq('deletado', false);
+
+    // Filtros de status (Ativo / Inativo)
     if (mostrarAtivos && !mostrarInativos) query = query.eq('ativo', true);
     else if (!mostrarAtivos && mostrarInativos) query = query.eq('ativo', false);
     else if (!mostrarAtivos && !mostrarInativos) return { data: [], count: 0 };
 
-    // Apply other filters
-    if (filtroCaixa) {
-      const matchB = filtroCaixa.match(/^(?:caixa|c)?\s*(\d+)\s*b$/i);
-      const matchNum = filtroCaixa.match(/^(?:caixa|c)?\s*(\d+)$/i);
-      if (matchB) {
-        const num = matchB[1];
-        query = query.in('caixa', [`Caixa ${num}B`, `Caixa ${num}b`, `${num}B`, `${num}b`]);
-      } else if (matchNum) {
-        const num = matchNum[1];
-        query = query.in('caixa', [num, `Caixa ${num}`, `Caixa ${num}B`]);
-      } else {
-        query = query.eq('caixa', filtroCaixa);
-      }
-    }
+    // Filtros de caixa e loja
+    query = aplicarFiltroCaixaNaQuery(query, filtroCaixa);
     if (filtroLoja) query = query.eq('loja', filtroLoja);
-    
-    // Apply sorting BEFORE JS filtering
+
+    // Ordenação
     if (ordenarColuna && ordenarDirecao) {
-      const ascending = ordenarDirecao === 'asc';
-      query = query.order(ordenarColuna, { ascending, nullsFirst: ascending });
+      const crescente = ordenarDirecao === 'asc';
+      query = query.order(ordenarColuna, { ascending: crescente, nullsFirst: crescente });
     } else {
       if (category === 'discos') query = query.order('caixa');
       if (!isVideo) query = query.order('artista');
       query = query.order('titulo');
     }
 
-    // Se houver busca, aplicamos um pré-filtro no BD usando tokens inteligentes (descartando stop words e ruídos).
-    // Isso evita o problema de stop words como 'The' ou hífens '-' ocultarem discos como 'Jacksons - Victory'.
-    let searchTokens = null;
+    // Pré-filtro SQL no banco para busca
+    let tokensBusca = null;
     if (busca) {
-      searchTokens = extractSearchTokens(busca);
-      const { effectiveWords } = searchTokens;
+      tokensBusca = extractSearchTokens(busca);
+      const { effectiveWords } = tokensBusca;
 
-      effectiveWords.forEach(word => {
-        // Substitui vogais por curinga do SQL '_' que representa exatamente 1 caractere
-        const wildcardWord = word.replace(/[aeiou]/g, '_');
+      effectiveWords.forEach((palavra) => {
+        const palavraComCuringa = palavra.replace(/[aeiou]/g, '_');
         if (isVideo) {
-          query = query.ilike('titulo', `%${wildcardWord}%`);
+          query = query.ilike('titulo', `%${palavraComCuringa}%`);
         } else {
-          query = query.or(`titulo.ilike.%${wildcardWord}%,artista.ilike.%${wildcardWord}%,caixa.ilike.%${wildcardWord}%`);
+          query = query.or(
+            `titulo.ilike.%${palavraComCuringa}%,artista.ilike.%${palavraComCuringa}%,caixa.ilike.%${palavraComCuringa}%`
+          );
         }
       });
-      query = query.limit(5000); // Mantemos limite alto para cobrir falsos positivos
+      query = query.limit(5000);
     } else {
-      // Apply pagination here ONLY IF NO BUSCA
       query = query.range((pagina - 1) * itensPorPagina, pagina * itensPorPagina - 1);
     }
 
-    const { data, count, error } = await query;
+    const { data: dadosBrutos, count, error } = await query;
     if (error) throw error;
-    
-    let filteredData = data || [];
-    
-    // JS Filtering para busca insensível a acentos e resiliente a stop words
-    if (busca && searchTokens) {
-      const { allWords, effectiveWords } = searchTokens;
-      filteredData = filteredData.filter(item => {
-        const itemTitulo = removeAcentos(item.titulo || '');
-        const itemArtista = removeAcentos(item.artista || '');
-        const itemCaixa = removeAcentos(item.caixa || '');
-        const itemCaixaSemEspaco = itemCaixa.replace(/\s+/g, '');
-        
-        return effectiveWords.every(word => {
-          const wordSemEspaco = word.replace(/\s+/g, '');
+
+    let itensFiltrados = dadosBrutos || [];
+
+    // Refinamento em memória sem acentos e ordenação por relevância
+    if (busca && tokensBusca) {
+      const { allWords, effectiveWords } = tokensBusca;
+
+      itensFiltrados = itensFiltrados.filter((item) => {
+        const tituloSemAcento = removeAcentos(item.titulo || '');
+        const artistaSemAcento = removeAcentos(item.artista || '');
+        const caixaSemAcento = removeAcentos(item.caixa || '');
+        const caixaSemEspaco = caixaSemAcento.replace(/\s+/g, '');
+
+        return effectiveWords.every((palavra) => {
+          const palavraSemEspaco = palavra.replace(/\s+/g, '');
           if (isVideo) {
-            return itemTitulo.includes(word);
-          } else {
-            return itemTitulo.includes(word) || 
-                   itemArtista.includes(word) || 
-                   itemCaixa.includes(word) ||
-                   (wordSemEspaco && itemCaixaSemEspaco.includes(wordSemEspaco));
+            return tituloSemAcento.includes(palavra);
           }
+          return (
+            tituloSemAcento.includes(palavra) ||
+            artistaSemAcento.includes(palavra) ||
+            caixaSemAcento.includes(palavra) ||
+            (palavraSemEspaco && caixaSemEspaco.includes(palavraSemEspaco))
+          );
         });
       });
 
-      // Se a ordenação não foi fixada manualmente pelo usuário, ordena por relevância inteligente
       if (!ordenarColuna) {
-        filteredData.sort((a, b) => {
-          const scoreA = calculateItemRelevance(a, allWords, effectiveWords, isVideo);
-          const scoreB = calculateItemRelevance(b, allWords, effectiveWords, isVideo);
-          return scoreB - scoreA;
+        itensFiltrados.sort((itemA, itemB) => {
+          const pontuacaoA = calculateItemRelevance(itemA, allWords, effectiveWords, isVideo);
+          const pontuacaoB = calculateItemRelevance(itemB, allWords, effectiveWords, isVideo);
+          return pontuacaoB - pontuacaoA;
         });
       }
     }
 
-    // Apply pagination if JS filtering was used
-    let paginatedData = filteredData;
+    let itensPaginados = itensFiltrados;
     if (busca) {
-       const startIndex = (pagina - 1) * itensPorPagina;
-       paginatedData = filteredData.slice(startIndex, startIndex + itensPorPagina);
+      const indiceInicio = (pagina - 1) * itensPorPagina;
+      itensPaginados = itensFiltrados.slice(indiceInicio, indiceInicio + itensPorPagina);
     }
-    
-    return { data: paginatedData, count: busca ? filteredData.length : count };
+
+    return { data: itensPaginados, count: busca ? itensFiltrados.length : count };
   },
 
   /**
-   * Fetches a single item by id
+   * Busca um único item pelo ID
    */
   async getItemById(category, id) {
     const { data, error } = await supabase.from(category).select('*').eq('id', id).single();
@@ -136,12 +213,11 @@ export const itemService = {
   },
 
   /**
-   * Adds a new item
+   * Adiciona um novo item e invalida cache de caixas se aplicável
    */
   async addItem(category, insertData) {
     const { data, error } = await supabase.from(category).insert(insertData).select('id').single();
     if (error) throw error;
-    // Invalida o cache de caixas apenas se uma caixa foi cadastrada
     if (insertData.caixa) {
       caixaService.invalidateCache();
     }
@@ -149,34 +225,36 @@ export const itemService = {
   },
 
   /**
-   * Updates an existing item
+   * Atualiza dados de um item existente
    */
   async updateItem(category, id, updateData) {
     const { error } = await supabase.from(category).update(updateData).eq('id', id);
     if (error) throw error;
-    // Invalida o cache apenas se a caixa ou loja foi alterada
-    if (updateData.caixa !== undefined || updateData.loja !== undefined) {
-      caixaService.invalidateCache();
-    }
-  },
-
-  async bulkUpdate(category, ids, updateData) {
-    if (!ids || ids.length === 0) return;
-    
-    // Divide os IDs em pedaços (chunks) menores para evitar erro de URL muito longa no PostgREST
-    const chunkSize = 30;
-    for (let i = 0; i < ids.length; i += chunkSize) {
-      const chunk = ids.slice(i, i + chunkSize);
-      const { error } = await supabase.from(category).update(updateData).in('id', chunk);
-      if (error) throw error;
-    }
     if (updateData.caixa !== undefined || updateData.loja !== undefined) {
       caixaService.invalidateCache();
     }
   },
 
   /**
-   * Soft deletes an item
+   * Atualização em lote com particionamento em blocos para evitar URL overflow
+   */
+  async bulkUpdate(category, ids, updateData) {
+    if (!ids || ids.length === 0) return;
+
+    const tamanhoBloco = 30;
+    for (let i = 0; i < ids.length; i += tamanhoBloco) {
+      const bloco = ids.slice(i, i + tamanhoBloco);
+      const { error } = await supabase.from(category).update(updateData).in('id', bloco);
+      if (error) throw error;
+    }
+
+    if (updateData.caixa !== undefined || updateData.loja !== undefined) {
+      caixaService.invalidateCache();
+    }
+  },
+
+  /**
+   * Soft delete padrão de um item
    */
   async deleteItem(category, id) {
     const { error } = await supabase.from(category).update({ deletado: true }).eq('id', id);
@@ -184,96 +262,78 @@ export const itemService = {
   },
 
   /**
-   * Verifica se já existem itens similares cadastrados (duplicatas no estoque)
+   * Exclusão com registro automático de saída conforme Regra 1.2 (ativo gera saída, inativo não)
    */
-  async checkDuplicates(category, { titulo, artista }) {
-    if (!titulo || titulo.trim().length < 2) return [];
+  async deleteItemWithMovement(category, item, motivo = 'Saída (Excluído)') {
+    await this.deleteItem(category, item.id);
 
-    const isVideo = category === 'dvds' || category === 'vhs';
-    const tituloClean = titulo.trim();
-    const tituloSemAcento = removeAcentos(tituloClean);
-
-    const { effectiveWords: tituloWords } = extractSearchTokens(tituloClean);
-
-    let columns = 'id, titulo, preco, loja, caixa, ativo, ano';
-    if (!isVideo) columns += ', artista';
-
-    let query = supabase
-      .from(category)
-      .select(columns)
-      .eq('deletado', false);
-
-    const words = tituloWords.slice(0, 3);
-    words.forEach(word => {
-      if (word.length >= 2) {
-        const wildcardWord = word.replace(/[aeiou]/g, '_');
-        query = query.ilike('titulo', `%${wildcardWord}%`);
-      }
-    });
-
-    let artistaWords = [];
-    if (!isVideo && artista && artista.trim().length >= 2) {
-      artistaWords = extractSearchTokens(artista).effectiveWords;
-      artistaWords.slice(0, 2).forEach(w => {
-        if (w.length >= 2) {
-          const wildcard = w.replace(/[aeiou]/g, '_');
-          query = query.ilike('artista', `%${wildcard}%`);
-        }
-      });
+    if (item.ativo !== false) {
+      const payloadMovimentacao = movimentacaoService.createMovementPayload(
+        category,
+        item.id,
+        'saida',
+        item.quantidade || 1,
+        motivo
+      );
+      await movimentacaoService.registerMovement(payloadMovimentacao);
     }
-
-    query = query.limit(15);
-
-    const { data, error } = await query;
-    if (error || !data) return [];
-
-    const filtered = data.filter(item => {
-      const itemTitulo = removeAcentos(item.titulo || '');
-      const itemArtista = removeAcentos(item.artista || '');
-
-      const matchTitulo = tituloWords.length > 0
-        ? tituloWords.every(w => itemTitulo.includes(w))
-        : (itemTitulo.includes(tituloSemAcento) || tituloSemAcento.includes(itemTitulo));
-      if (isVideo) return matchTitulo;
-
-      if (artista && artista.trim().length >= 2) {
-        const matchArtista = artistaWords.length > 0
-          ? artistaWords.every(w => itemArtista.includes(w))
-          : true;
-        return matchTitulo && matchArtista;
-      }
-
-      return matchTitulo;
-    });
-
-    return filtered.slice(0, 5);
   },
 
   /**
-   * Search suggestions for autocomplete
+   * Exclusão em lote com registro de saída para os itens que eram ativos
+   */
+  async bulkDeleteWithMovement(category, itens, motivo = 'Saída em Lote') {
+    if (!itens || itens.length === 0) return;
+
+    const ids = itens.map((i) => i.id);
+    await this.bulkUpdate(category, ids, { deletado: true });
+
+    const itensAtivos = itens.filter((i) => i.ativo !== false);
+    if (itensAtivos.length > 0) {
+      const movimentacoes = itensAtivos.map((i) =>
+        movimentacaoService.createMovementPayload(category, i.id, 'saida', i.quantidade || 1, motivo)
+      );
+      await movimentacaoService.registerBatchMovements(movimentacoes);
+    }
+  },
+
+  /**
+   * Identifica potenciais duplicatas cadastradas no estoque
+   */
+  async checkDuplicates(category, { titulo, artista }) {
+    const semelhantes = await buscarItensSemelhantes(category, {
+      titulo,
+      artista,
+      apenasInativos: false,
+      limite: 15,
+    });
+    return semelhantes.slice(0, 5);
+  },
+
+  /**
+   * Busca sugestões de autocompletar para artistas ou títulos
    */
   async searchSuggestions(category, campo, valor) {
     if (!valor || valor.trim().length < 2) return [];
     const buscaTratada = removeAcentos(valor).trim();
 
     if (campo === 'artista') {
-      // Fetch 500 latest artist entries and filter client side
       const { data, error } = await supabase
         .from(category)
         .select('artista')
         .order('id', { ascending: false })
         .limit(1000);
-      
+
       if (error) throw error;
-      
-      const filtered = data.filter(d => removeAcentos(d.artista).includes(buscaTratada));
-      return [...new Set(filtered.map(d => d.artista).filter(Boolean))].slice(0, 20);
-    } 
-    
+
+      const filtrados = data.filter((item) => removeAcentos(item.artista).includes(buscaTratada));
+      return [...new Set(filtrados.map((item) => item.artista).filter(Boolean))].slice(0, 20);
+    }
+
     if (campo === 'titulo') {
       const isVideo = category === 'dvds' || category === 'vhs';
       const colunas = isVideo ? 'titulo, preco, loja' : 'artista, titulo, preco, loja';
-      
+
       const { data, error } = await supabase
         .from(category)
         .select(colunas)
@@ -281,94 +341,45 @@ export const itemService = {
         .limit(1000);
 
       if (error) throw error;
-      
-      const filtered = data.filter(d => removeAcentos(d.titulo).includes(buscaTratada));
-      
-      const unicas = [];
-      const seen = new Set();
-      for (const d of filtered) {
-        if (unicas.length >= 30) break;
-        const key = isVideo ? d.titulo : `${d.artista}-${d.titulo}`;
-        if (!seen.has(key)) {
-          seen.add(key);
-          unicas.push(d);
+
+      const filtrados = data.filter((item) => removeAcentos(item.titulo).includes(buscaTratada));
+      const sugestoesUnicas = [];
+      const titulosVistos = new Set();
+
+      for (const item of filtrados) {
+        if (sugestoesUnicas.length >= 30) break;
+        const chave = isVideo ? item.titulo : `${item.artista}-${item.titulo}`;
+        if (!titulosVistos.has(chave)) {
+          titulosVistos.add(chave);
+          sugestoesUnicas.push(item);
         }
       }
-      return unicas;
+      return sugestoesUnicas;
     }
+
     return [];
   },
 
   /**
-   * Busca cópias inativas (Estoque Superior) para reposição
+   * Busca cópias inativas (Estoque Superior) para reposição automática
    */
   async findReplacements(category, { titulo, artista, excludeId = null }) {
-    if (!titulo || titulo.trim().length < 2) return [];
-
-    const isVideo = category === 'dvds' || category === 'vhs';
-    const tituloClean = titulo.trim();
-    const tituloSemAcento = removeAcentos(tituloClean);
-    const { effectiveWords: tituloWords } = extractSearchTokens(tituloClean);
-
-    let columns = 'id, titulo, preco, loja, caixa, ativo, ano';
-    if (!isVideo) columns += ', artista';
-
-    let query = supabase
-      .from(category)
-      .select(columns)
-      .eq('deletado', false)
-      .eq('ativo', false);
-
-    if (excludeId) {
-      query = query.neq('id', excludeId);
-    }
-
-    const words = tituloWords.slice(0, 3);
-    words.forEach(word => {
-      if (word.length >= 2) {
-        const wildcardWord = word.replace(/[aeiou]/g, '_');
-        query = query.ilike('titulo', `%${wildcardWord}%`);
-      }
-    });
-
-    let artistaWords = [];
-    if (!isVideo && artista && artista.trim().length >= 2) {
-      artistaWords = extractSearchTokens(artista).effectiveWords;
-      artistaWords.slice(0, 2).forEach(w => {
-        if (w.length >= 2) {
-          const wildcard = w.replace(/[aeiou]/g, '_');
-          query = query.ilike('artista', `%${wildcard}%`);
-        }
-      });
-    }
-
-    const { data, error } = await query.limit(10);
-    if (error || !data) return [];
-
-    return data.filter(item => {
-      const itemTitulo = removeAcentos(item.titulo || '');
-      const matchTitulo = tituloWords.length > 0
-        ? tituloWords.every(w => itemTitulo.includes(w))
-        : (itemTitulo.includes(tituloSemAcento) || tituloSemAcento.includes(itemTitulo));
-
-      if (!isVideo && artista) {
-        const itemArtista = removeAcentos(item.artista || '');
-        const matchArtista = artistaWords.length > 0
-          ? artistaWords.every(w => itemArtista.includes(w))
-          : true;
-        return matchTitulo && matchArtista;
-      }
-      return matchTitulo;
+    return buscarItensSemelhantes(category, {
+      titulo,
+      artista,
+      excludeId,
+      apenasInativos: true,
+      limite: 10,
     });
   },
 
   /**
-   * Efetiva a reposição: ativa o disco reserva do Estoque Superior e move para a caixa de destino
+   * Promove disco reserva do Estoque Superior (Inativo) para o chão de loja (Ativo)
    */
   async promoteReplacement(category, replacementId, targetCaixa, targetLoja) {
     const updateData = { ativo: true };
     if (targetCaixa) updateData.caixa = targetCaixa;
     if (targetLoja) updateData.loja = targetLoja;
     await this.updateItem(category, replacementId, updateData);
-  }
+  },
 };
