@@ -4404,6 +4404,226 @@ tr.lote-card.lote-card-selected {
   }
 }
 
+/* ==========================================================================
+   Seleção Múltipla no Catálogo (Mobile-First & Desktop)
+   ========================================================================== */
+
+/* Linha / Card Selecionado */
+tr.card-disco.catalog-row-selected,
+tr.card-disco-loja1.catalog-row-selected,
+tr.card-disco-loja2.catalog-row-selected {
+  border-color: var(--accent, #c53030) !important;
+  background: rgba(197, 48, 48, 0.12) !important;
+  box-shadow: 0 0 0 1px var(--accent, #c53030), 0 4px 14px rgba(197, 48, 48, 0.25) !important;
+}
+
+tr.catalog-row.catalog-row-selected {
+  background: rgba(197, 48, 48, 0.1) !important;
+}
+
+.styledTable tbody tr.catalog-row.catalog-row-selected {
+  background: rgba(197, 48, 48, 0.12) !important;
+}
+
+/* Badge de Check sobre a Capa no Mobile/Desktop */
+.catalog-cover-wrapper {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.catalog-cover-check-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent, #c53030);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  z-index: 3;
+  animation: catalogCheckPop 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes catalogCheckPop {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Barra Flutuante Inferior de Ações em Lote (Dock) */
+.catalog-bulk-dock {
+  position: fixed;
+  bottom: 24px;
+  left: calc(var(--sidebar-width, 240px) + 24px);
+  right: 24px;
+  max-width: 760px;
+  margin: 0 auto;
+  background: #141417;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 3px solid var(--accent, #c53030);
+  border-radius: 14px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65);
+  z-index: 99;
+  padding: 12px 18px;
+  animation: slideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.catalog-bulk-dock-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.catalog-bulk-dock-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.catalog-bulk-dock-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.catalog-bulk-dock-close-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.catalog-bulk-dock-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-bulk-dock-count {
+  font-family: var(--font-title), var(--font-outfit), sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.catalog-bulk-dock-sub {
+  font-size: 12.5px;
+  color: var(--text-muted, #a1a1aa);
+  font-weight: 500;
+}
+
+.catalog-bulk-dock-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.catalog-bulk-dock-clear-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--text-muted, #a1a1aa);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  transition: all 0.15s;
+}
+
+.catalog-bulk-dock-clear-btn:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+}
+
+.catalog-bulk-dock-confirm-btn {
+  background: var(--accent, #c53030);
+  border: none;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(197, 48, 48, 0.35);
+  transition: all 0.15s;
+}
+
+.catalog-bulk-dock-confirm-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.catalog-bulk-dock-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Mobile Overrides para a Barra Flutuante */
+@media (max-width: 768px) {
+  .catalog-bulk-dock {
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(var(--bottom-nav-height, 62px) + env(safe-area-inset-bottom, 12px) + 10px) !important;
+    padding: 10px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .catalog-bulk-dock-content {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .catalog-bulk-dock-info {
+    gap: 10px !important;
+  }
+
+  .catalog-bulk-dock-count {
+    font-size: 13.5px !important;
+  }
+
+  .catalog-bulk-dock-sub {
+    font-size: 11.5px !important;
+  }
+
+  .catalog-bulk-dock-actions {
+    gap: 6px !important;
+  }
+
+  .catalog-bulk-dock-clear-btn {
+    padding: 6px 10px !important;
+    font-size: 12.5px !important;
+    min-height: 38px !important;
+  }
+
+  .catalog-bulk-dock-confirm-btn {
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    min-height: 38px !important;
+  }
+}
+
+
 
 
 

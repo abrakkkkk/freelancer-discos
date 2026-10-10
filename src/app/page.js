@@ -35,6 +35,9 @@ export default function CatalogoClone() {
   const [reposicaoData, setReposicaoData] = useState(null);
   const [isRepondo, setIsRepondo] = useState(false);
   const [isCoverScannerOpen, setIsCoverScannerOpen] = useState(false);
+  const [itensSelecionados, setItensSelecionados] = useState([]);
+  const [isBaixandoLote, setIsBaixandoLote] = useState(false);
+  const [showConfirmBaixaLote, setShowConfirmBaixaLote] = useState(false);
 
   const { registerUndo } = useUndo();
   const { adicionarTarefa, removerTarefa } = useReposicao();
@@ -66,9 +69,10 @@ export default function CatalogoClone() {
     return () => clearTimeout(timer);
   }, [feedbackMsg]);
 
-  // Limpa avisos residuais ao trocar de aba de categoria
+  // Limpa avisos residuais e seleção ao trocar de aba de categoria
   useEffect(() => {
     setFeedbackMsg(null);
+    setItensSelecionados([]);
   }, [catalog.activeTab]);
 
   // Sync global store filter with catalog
@@ -97,6 +101,110 @@ export default function CatalogoClone() {
       setFeedbackMsg({ tipo: 'error', texto: 'Erro ao exportar planilha: ' + (err.message || 'Tente novamente.') });
     } finally {
       setExportando(false);
+    }
+  };
+
+  const toggleSelecionar = (item) => {
+    setItensSelecionados(prev => {
+      const exists = prev.some(i => i.id === item.id);
+      if (exists) {
+        return prev.filter(i => i.id !== item.id);
+      }
+      return [...prev, item];
+    });
+  };
+
+  const toggleSelectAllPage = (pageItems) => {
+    if (!pageItems || pageItems.length === 0) return;
+    const allInPage = pageItems.every(i => itensSelecionados.some(s => s.id === i.id));
+    if (allInPage) {
+      const pageIds = new Set(pageItems.map(i => i.id));
+      setItensSelecionados(prev => prev.filter(i => !pageIds.has(i.id)));
+    } else {
+      setItensSelecionados(prev => {
+        const existingIds = new Set(prev.map(i => i.id));
+        const newItems = pageItems.filter(i => !existingIds.has(i.id));
+        return [...prev, ...newItems];
+      });
+    }
+  };
+
+  const limparSelecao = () => {
+    setItensSelecionados([]);
+  };
+
+  const confirmarBaixaLote = async () => {
+    if (itensSelecionados.length === 0 || isBaixandoLote) return;
+    setIsBaixandoLote(true);
+    setFeedbackMsg(null);
+
+    const totalItens = itensSelecionados.length;
+    const category = catalog.activeTab;
+    const ids = itensSelecionados.map(i => i.id);
+
+    try {
+      // 1. Soft delete dos itens em lote no banco
+      await itemService.bulkUpdate(category, ids, { deletado: true });
+
+      // 2. Registrar movimentação de saída para itens que eram ativos
+      const activeItens = itensSelecionados.filter(i => i.ativo !== false);
+      for (const item of activeItens) {
+        try {
+          const movData = movimentacaoService.createMovementPayload(
+            category,
+            item.id,
+            'saida',
+            item.quantidade || 1,
+            'Saída (Baixa via Catálogo)'
+          );
+          await movimentacaoService.registerMovement(movData);
+        } catch (movErr) {
+          console.warn('Erro ao registrar movimentação de baixa:', item.id, movErr);
+        }
+      }
+
+      // 3. Registrar Undo para todos os itens
+      registerUndo(category, itensSelecionados, () => {
+        catalog.refresh();
+      });
+
+      // 4. Buscar reposições para os itens ativos que saíram
+      for (const item of activeItens) {
+        try {
+          const replacements = await itemService.findReplacements(category, {
+            titulo: item.titulo,
+            artista: item.artista,
+            excludeId: item.id,
+          });
+          if (replacements && replacements.length > 0) {
+            adicionarTarefa({
+              itemSaida: item,
+              reserva: replacements[0],
+              totalReservas: replacements.length,
+              categoria: category,
+            });
+          }
+        } catch (repErr) {
+          console.warn('Erro ao checar reposição para item:', item.id, repErr);
+        }
+      }
+
+      setFeedbackMsg({
+        tipo: 'success',
+        texto: `Baixa registrada com sucesso para ${totalItens} ${totalItens === 1 ? 'disco' : 'discos'}!`
+      });
+
+      setItensSelecionados([]);
+      setShowConfirmBaixaLote(false);
+      catalog.refresh();
+    } catch (error) {
+      console.error('Erro na baixa em lote:', error);
+      setFeedbackMsg({
+        tipo: 'error',
+        texto: `Erro ao dar baixa nos discos: ${error.message || 'Falha na operação.'}`
+      });
+    } finally {
+      setIsBaixandoLote(false);
     }
   };
 
@@ -424,6 +532,9 @@ export default function CatalogoClone() {
               onDelete={solicitarExclusao}
               showLoja={!activeStore}
               localLabel={localLabel}
+              selectedIds={itensSelecionados.map(i => i.id)}
+              onToggleSelect={toggleSelecionar}
+              onToggleSelectAll={toggleSelectAllPage}
             />
 
             {renderPagination()}
@@ -466,6 +577,93 @@ export default function CatalogoClone() {
         onClose={() => setIsCoverScannerOpen(false)}
         onRecognized={handleCoverRecognized}
         title="Buscar Disco por Capa"
+      />
+
+      {itensSelecionados.length > 0 && (
+        <div className="catalog-bulk-dock" role="toolbar" aria-label="Ações para discos selecionados">
+          <div className="catalog-bulk-dock-content">
+            <div className="catalog-bulk-dock-info">
+              <button 
+                onClick={limparSelecao} 
+                className="catalog-bulk-dock-close-btn" 
+                title="Limpar seleção"
+                aria-label="Limpar seleção"
+              >
+                <IoClose size={18} />
+              </button>
+              <div className="catalog-bulk-dock-text">
+                <span className="catalog-bulk-dock-count">
+                  {itensSelecionados.length} {itensSelecionados.length === 1 ? 'disco selecionado' : 'discos selecionados'}
+                </span>
+                <span className="catalog-bulk-dock-sub">
+                  Total: R$ {itensSelecionados.reduce((acc, i) => acc + (Number(i.preco) || 0), 0).toFixed(2).replace('.', ',')}
+                </span>
+              </div>
+            </div>
+            <div className="catalog-bulk-dock-actions">
+              <button 
+                className="catalog-bulk-dock-clear-btn" 
+                onClick={limparSelecao}
+                type="button"
+              >
+                Limpar
+              </button>
+              <button 
+                className="catalog-bulk-dock-confirm-btn" 
+                onClick={() => setShowConfirmBaixaLote(true)}
+                disabled={isBaixandoLote}
+                type="button"
+              >
+                Dar Baixa ({itensSelecionados.length})
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <ConfirmModal
+        isOpen={showConfirmBaixaLote}
+        title={`Dar Baixa em ${itensSelecionados.length} ${itensSelecionados.length === 1 ? 'Disco' : 'Discos'}`}
+        message={
+          <div>
+            <p style={{ margin: '0 0 12px 0', fontSize: '14px', lineHeight: 1.5 }}>
+              Tem certeza que deseja registrar a baixa e saída de{' '}
+              <strong style={{ color: 'var(--text, #fff)' }}>{itensSelecionados.length} {itensSelecionados.length === 1 ? 'disco selecionado' : 'discos selecionados'}</strong>?
+            </p>
+            <div style={{
+              maxHeight: '160px',
+              overflowY: 'auto',
+              background: 'rgba(0, 0, 0, 0.3)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '6px',
+              marginBottom: '10px'
+            }}>
+              {itensSelecionados.map((item, idx) => (
+                <div key={item.id} style={{ fontSize: '13px', color: 'var(--text, #fff)', display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {idx + 1}. {item.artista ? `${item.artista} - ` : ''}<strong>{item.titulo}</strong>
+                  </span>
+                  <span style={{ color: 'var(--text-muted, #a1a1aa)', flexShrink: 0 }}>
+                    {item.caixa ? `Caixa ${item.caixa}` : ''}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <span style={{ display: 'block', fontSize: '12.5px', color: 'var(--text-muted, #a1a1aa)' }}>
+              Os itens serão retirados do estoque ativo e a saída será registrada. Você poderá desfazer a ação imediatamente no alerta de confirmação.
+            </span>
+          </div>
+        }
+        confirmText={isBaixandoLote ? "Dando baixa..." : `Dar Baixa (${itensSelecionados.length})`}
+        cancelText="Cancelar"
+        variant="danger"
+        isSubmitting={isBaixandoLote}
+        onClose={() => setShowConfirmBaixaLote(false)}
+        onConfirm={confirmarBaixaLote}
       />
     </div>
   );
