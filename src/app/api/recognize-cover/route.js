@@ -135,7 +135,10 @@ export async function POST(request) {
 REGRAS:
 1. Use memória visual ou transcreva o texto exato da capa; NUNCA invente nomes.
 2. Coletânea ou trilha sonora de novela/filme = artista "Various".
-3. ETIQUETA DE PREÇO: Procure por uma etiqueta adesiva padrão branca (colada na capa ou no plástico) com preço escrito à mão. Se encontrar, extraia apenas o valor numérico em reais no campo "preco" (ex: "50", "120", "35"). Não confunda com números de catálogo ou preços antigos impressos na arte gráfica da capa. Se não houver etiqueta com preço escrito à mão legível, deixe "preco": "".
+3. ETIQUETA DE PREÇO: Procure por uma etiqueta adesiva padrão branca (colada na capa ou no plástico) com preço escrito à mão.
+- Não existem valores quebrados ou centavos.
+- Os preços SEMPRE terminam em 0 ou 5 (raramente em 5; na grande maioria das vezes terminam em 0, por exemplo: 120, 50, 40, 20, e raramente 45). Use esse padrão para desambiguar a caligrafia manuscrita.
+- Extraia apenas o número inteiro no campo "preco" (ex: "120", "50", "40", "20", "45"). Não confunda com números de catálogo ou preços gráficos da capa. Se não houver etiqueta legível, deixe "preco": "".
 4. Se incerto sobre a capa, deixe artista/titulo vazios e confianca "baixa".
 JSON: {"artista":"","titulo":"","ano":"","preco":"","confianca":"alta|media|baixa"}`;
 
