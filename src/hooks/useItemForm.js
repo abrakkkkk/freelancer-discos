@@ -5,6 +5,16 @@ import { itemService } from '@/services/itemService';
 import { normalizeCaixa } from '@/utils/stringUtils';
 
 /**
+ * Formata valor numérico para padrão de moeda do estoque (ex: 50 -> "50", 1200 -> "1.200")
+ */
+export const formatarPreco = (valorTexto) => {
+  const apenasDigitos = String(valorTexto || '').replace(/\D/g, '');
+  if (!apenasDigitos) return '';
+  const valorInteiro = parseInt(apenasDigitos, 10).toString();
+  return valorInteiro.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+};
+
+/**
  * Hook reutilizável para gerenciar o estado, validações e sugestões de formulários de itens
  */
 export function useItemForm(estadoInicial, categoria) {
@@ -24,13 +34,6 @@ export function useItemForm(estadoInicial, categoria) {
       }
     };
   }, []);
-
-  const formatarPreco = (valorTexto) => {
-    const apenasDigitos = String(valorTexto || '').replace(/\D/g, '');
-    if (!apenasDigitos) return '';
-    const valorInteiro = parseInt(apenasDigitos, 10).toString();
-    return valorInteiro.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-  };
 
   const handleChange = (evento) => {
     const { name, value } = evento.target;
@@ -123,5 +126,6 @@ export function useItemForm(estadoInicial, categoria) {
     setMostrarSugestoesTitulo,
     selectSuggestion,
     getUnmaskedPreco,
+    formatarPreco,
   };
 }

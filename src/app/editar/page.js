@@ -285,7 +285,7 @@ function EditarExcluirContent() {
     }
   };
 
-  const handleCoverRecognized = ({ artista, titulo, ano, coverUrl }) => {
+  const handleCoverRecognized = ({ artista, titulo, ano, preco, coverUrl }) => {
     if (artista || titulo) {
       const termoBusca = formatDiscogsQuery(artista, titulo);
       setQueryDiscogs(termoBusca);
@@ -295,9 +295,16 @@ function EditarExcluirContent() {
           cover: coverUrl,
         });
       }
+      const precoFormatado = preco ? formatarMoeda(preco) : '';
+      if (precoFormatado) {
+        setForm((prev) => ({
+          ...prev,
+          preco: precoFormatado,
+        }));
+      }
       setMensagem({
         tipo: 'success',
-        texto: `Capa reconhecida: "${termoBusca}". Selecione a prensagem correta abaixo ou confirme os dados.`,
+        texto: `Capa reconhecida: "${termoBusca}"${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Selecione a prensagem correta abaixo ou confirme os dados.`,
       });
       searchByQuery(termoBusca);
     }

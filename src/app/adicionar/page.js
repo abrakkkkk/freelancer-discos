@@ -89,6 +89,7 @@ export default function AdicionarItem() {
     setMostrarSugestoesTitulo,
     selectSuggestion,
     getUnmaskedPreco,
+    formatarPreco,
   } = useItemForm(formularioInicialComLoja, activeTab);
 
   const {
@@ -159,8 +160,8 @@ export default function AdicionarItem() {
     setQueryDiscogs('');
   };
 
-  const handleCoverRecognized = async ({ artista, titulo, ano }) => {
-    if (!artista && !titulo) return;
+  const handleCoverRecognized = async ({ artista, titulo, ano, preco }) => {
+    if (!artista && !titulo && !preco) return;
 
     let artistaNormalizado = (artista || '').trim();
     if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(artistaNormalizado)) {
@@ -168,18 +169,20 @@ export default function AdicionarItem() {
     }
 
     const termoBusca = formatDiscogsQuery(artistaNormalizado, titulo);
+    const precoFormatado = preco ? formatarPreco(preco) : '';
 
     setForm((prev) => ({
       ...prev,
       artista: artistaNormalizado || prev.artista,
       titulo: titulo || prev.titulo,
       ano: ano || prev.ano,
+      ...(precoFormatado ? { preco: precoFormatado } : {}),
     }));
 
     setQueryDiscogs(termoBusca);
     setMensagem({
       tipo: 'success',
-      texto: `Capa identificada: "${termoBusca}"${ano ? ` (${ano})` : ''}. Buscando prensagens...`,
+      texto: `Capa identificada: "${termoBusca}"${ano ? ` (${ano})` : ''}${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Buscando prensagens...`,
     });
 
     if (termoBusca) {
@@ -187,13 +190,13 @@ export default function AdicionarItem() {
         onResults: () => {
           setMensagem({
             tipo: 'success',
-            texto: `Capa identificada: "${termoBusca}". Selecione a prensagem correta abaixo ou confirme os dados.`,
+            texto: `Capa identificada: "${termoBusca}"${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Selecione a prensagem correta abaixo ou confirme os dados.`,
           });
         },
         onError: () => {
           setMensagem({
             tipo: 'success',
-            texto: `Capa identificada: "${termoBusca}". Nenhuma prensagem encontrada; campos preenchidos.`,
+            texto: `Capa identificada: "${termoBusca}"${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Nenhuma prensagem encontrada; campos preenchidos.`,
           });
         },
       });
