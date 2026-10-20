@@ -1886,7 +1886,7 @@ tr.lote-card.lote-card-selected {
   /* Células refinadas para o Desktop */
   .cell-desktop-preco {
     font-weight: 700;
-    color: #10b981;
+    color: #d4d4d8;
     font-size: 14px;
     white-space: nowrap;
   }
@@ -2479,7 +2479,7 @@ tr.lote-card.lote-card-selected {
   .disco-valor-preco {
     font-size: 15px !important;
     font-weight: 800 !important;
-    color: #10b981 !important;
+    color: #d4d4d8 !important;
     text-align: left !important;
     line-height: 1 !important;
     letter-spacing: -0.2px !important;
