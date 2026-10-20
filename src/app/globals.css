@@ -1887,7 +1887,7 @@ tr.lote-card.lote-card-selected {
   .cell-desktop-preco {
     font-weight: 700;
     color: #d4d4d8;
-    font-size: 14px;
+    font-size: 15.5px;
     white-space: nowrap;
   }
 
@@ -2477,7 +2477,7 @@ tr.lote-card.lote-card-selected {
   }
 
   .disco-valor-preco {
-    font-size: 15px !important;
+    font-size: 17.5px !important;
     font-weight: 800 !important;
     color: #d4d4d8 !important;
     text-align: left !important;
@@ -4112,7 +4112,7 @@ tr.lote-card.lote-card-selected {
 
   .disco-valor-preco {
     font-family: var(--font-title) !important;
-    font-size: 16px !important;
+    font-size: 17.5px !important;
     font-weight: 800 !important;
     color: #d4d4d8 !important;
     letter-spacing: -0.02em !important;
