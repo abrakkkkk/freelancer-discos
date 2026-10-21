@@ -1886,8 +1886,8 @@ tr.lote-card.lote-card-selected {
   /* Células refinadas para o Desktop */
   .cell-desktop-preco {
     font-weight: 700;
-    color: #d4d4d8;
-    font-size: 15.5px;
+    color: #ffffff;
+    font-size: 16.5px;
     white-space: nowrap;
   }
 
@@ -2436,9 +2436,9 @@ tr.lote-card.lote-card-selected {
   }
 
   .disco-titulo {
-    font-size: 14px !important;
+    font-size: 13.5px !important;
     font-weight: 700 !important;
-    color: #f4f4f5 !important;
+    color: #e5e5e5 !important;
     line-height: 1.22 !important;
     word-break: break-word !important;
     display: -webkit-box !important;
@@ -2477,9 +2477,9 @@ tr.lote-card.lote-card-selected {
   }
 
   .disco-valor-preco {
-    font-size: 17.5px !important;
+    font-size: 19px !important;
     font-weight: 800 !important;
-    color: #d4d4d8 !important;
+    color: #ffffff !important;
     text-align: left !important;
     line-height: 1 !important;
     letter-spacing: -0.2px !important;
@@ -4090,9 +4090,9 @@ tr.lote-card.lote-card-selected {
 
   .disco-titulo {
     font-family: var(--font-title) !important;
-    font-size: 15px !important;
+    font-size: 14px !important;
     font-weight: 700 !important;
-    color: #f4f4f6 !important;
+    color: #e5e5e5 !important;
     letter-spacing: -0.015em !important;
     line-height: 1.25 !important;
   }
@@ -4112,9 +4112,9 @@ tr.lote-card.lote-card-selected {
 
   .disco-valor-preco {
     font-family: var(--font-title) !important;
-    font-size: 17.5px !important;
+    font-size: 19px !important;
     font-weight: 800 !important;
-    color: #d4d4d8 !important;
+    color: #ffffff !important;
     letter-spacing: -0.02em !important;
   }
 
