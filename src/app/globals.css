@@ -4928,6 +4928,10 @@ tr.catalog-row.catalog-row-selected {
 }
 
 @media (min-width: 1200px) {
+  .catalog-camera-btn {
+    display: none !important;
+  }
+
   .catalog-filters-card {
     padding: 12px 14px !important;
     margin-bottom: 16px !important;
