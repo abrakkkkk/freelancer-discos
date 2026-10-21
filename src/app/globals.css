@@ -3619,7 +3619,7 @@ tr.lote-card.lote-card-selected {
 
 @media (min-width: 769px) {
   .form-submit-row {
-    justify-content: flex-start;
+    justify-content: flex-end;
   }
 
   .submit-item-btn {
