@@ -4925,7 +4925,7 @@ tr.catalog-row.catalog-row-selected {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: #111113;
+  background: #09090b;
 }
 
 .auth-loading {
@@ -5116,7 +5116,6 @@ tr.catalog-row.catalog-row-selected {
     overflow-y: auto;
     overscroll-behavior-y: contain;
     padding: max(12px, env(safe-area-inset-top)) 24px max(12px, env(safe-area-inset-bottom));
-    background: #09090b;
   }
 
   .login-panel {
