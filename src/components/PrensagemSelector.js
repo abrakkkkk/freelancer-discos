@@ -34,7 +34,6 @@ export default function PrensagemSelector({
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
           marginBottom: '8px',
         }}
       >
