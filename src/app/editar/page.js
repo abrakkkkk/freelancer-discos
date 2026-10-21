@@ -810,10 +810,8 @@ function EditarExcluirContent() {
               )}
             </div>
 
-              {/* Coluna Direita: Estoque & Observações */}
-              <div className="form-right-column">
-                {/* Bloco 2: Estoque & Localização */}
-                <div className="form-section-card">
+              {/* Bloco 2: Estoque & Localização */}
+              <div className="form-section-card">
               <div className="form-section-header">
                 <MdInventory2 size={18} color="var(--accent)" />
                 <h3 className="form-section-title">Estoque & Localização</h3>
@@ -931,18 +929,18 @@ function EditarExcluirContent() {
               </div>
             </div>
 
-                {/* Bloco 3: Observações */}
-                <ItemObservacoesSection
-                  tipoNome={tipoNome}
-                  observacoes={observacoes}
-                  novaObservacao={novaObservacao}
-                  onNovaObservacaoChange={setNovaObservacao}
-                  onAdicionarObservacao={adicionarObservacao}
-                  onExcluirObservacao={excluirObservacao}
-                  loading={loadingObs}
-                />
-              </div>
             </div>
+
+            {/* Bloco 3: Observações em Largura Total */}
+            <ItemObservacoesSection
+              tipoNome={tipoNome}
+              observacoes={observacoes}
+              novaObservacao={novaObservacao}
+              onNovaObservacaoChange={setNovaObservacao}
+              onAdicionarObservacao={adicionarObservacao}
+              onExcluirObservacao={excluirObservacao}
+              loading={loadingObs}
+            />
 
             {/* Ações de Edição */}
             <div className="edit-actions">
