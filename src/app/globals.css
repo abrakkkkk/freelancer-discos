@@ -4927,6 +4927,61 @@ tr.catalog-row.catalog-row-selected {
   outline-offset: 2px;
 }
 
+@media (min-width: 1200px) {
+  .catalog-filters-card {
+    padding: 12px 14px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .catalog-filters-card .filtersRow {
+    display: grid;
+    grid-template-columns: minmax(280px, 1.8fr) minmax(150px, 0.9fr) minmax(140px, 0.85fr) max-content;
+    align-items: end;
+    gap: 12px;
+  }
+
+  .catalog-filters-card .filtersRow-store-selected {
+    grid-template-columns: minmax(300px, 2fr) minmax(180px, 1fr) max-content;
+  }
+
+  .catalog-filters-card .filterGroup {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .catalog-filters-card .filterGroup:first-child {
+    flex: 1 1 auto !important;
+  }
+
+  .catalog-filters-card .filterGroup select {
+    height: 42px;
+    overflow: hidden;
+    padding: 8px 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .catalog-filters-card .filterGroup:last-child > div {
+    height: 42px !important;
+    gap: 6px !important;
+  }
+
+  .catalog-filters-card .filterGroup:last-child > div > label {
+    height: 34px;
+    padding: 0 9px;
+    border: 1px solid #303036;
+    border-radius: 8px;
+    background: #1a1a1e;
+    white-space: nowrap;
+  }
+
+  .catalog-filters-card .filterGroup:last-child > div > label > input {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+  }
+}
+
 @media (max-width: 480px) {
   .login-panel {
     padding: 28px 22px;

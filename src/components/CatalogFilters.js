@@ -30,8 +30,8 @@ export default function CatalogFilters({
     : 'Ex: Beatles, Abbey Road, Roberto Carlos...';
 
   return (
-    <div className="filterCard">
-      <div className="filtersRow">
+    <div className="filterCard catalog-filters-card">
+      <div className={`filtersRow${activeStore ? ' filtersRow-store-selected' : ''}`}>
         <div className="filterGroup" style={{ flex: '1 1 100%' }}>
           <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
           <div className="search-bar-row">
