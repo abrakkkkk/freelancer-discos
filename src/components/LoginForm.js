@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PiVinylRecord } from 'react-icons/pi';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 
 function safeReturnPath() {
@@ -69,9 +69,15 @@ export default function LoginForm() {
   return (
     <main className="login-screen">
       <section className="login-panel" aria-labelledby="login-title">
-        <div className="login-mark" aria-hidden="true"><PiVinylRecord /></div>
-        <h1 id="login-title">Freelancer Discos</h1>
-        <p className="login-subtitle">Acesse o sistema de estoque</p>
+        <Image
+          className="login-logo"
+          src="/logo-desktop.jpg"
+          alt="Freelancer Discos"
+          width={912}
+          height={549}
+          priority
+        />
+        <h1 id="login-title">Estoque</h1>
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
@@ -101,7 +107,7 @@ export default function LoginForm() {
           </div>
           {error && <p className="login-error" role="alert">{error}</p>}
           <button className="btn btn-primary login-submit" type="submit" disabled={loading}>
-            {loading ? 'Entrando…' : 'Entrar no estoque'}
+            Entrar
           </button>
         </form>
       </section>

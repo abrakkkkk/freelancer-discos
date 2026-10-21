@@ -4881,31 +4881,21 @@ tr.catalog-row.catalog-row-selected {
   box-shadow: var(--shadow-md);
 }
 
-.login-mark {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  margin: 0 auto 20px;
-  border: 1px solid #a82424;
-  border-radius: 50%;
-  background: #8b1e1e;
-  color: #fff;
-  font-size: 30px;
+.login-logo {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  margin: 0 auto 22px;
+  border-radius: 4px;
 }
 
 .login-panel h1 {
+  margin: 0 0 26px;
   color: #fafafa;
   text-align: center;
   font-size: 25px;
   letter-spacing: -0.025em;
-}
-
-.login-subtitle {
-  margin: 6px 0 28px;
-  color: var(--text-muted);
-  text-align: center;
-  font-size: 14px;
 }
 
 .login-form .form-group {
