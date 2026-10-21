@@ -51,7 +51,7 @@ export default function SuccessModal({ isOpen, message, onClose }) {
           gap: '16px',
           transform: isOpen ? 'scale(1) translateY(0)' : 'scale(0.9) translateY(20px)',
           opacity: isOpen ? 1 : 0,
-          transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          transition: 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease-out',
           maxWidth: '400px',
           textAlign: 'center',
         }}

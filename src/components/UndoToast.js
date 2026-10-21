@@ -46,7 +46,7 @@ export default function UndoToast() {
         alignItems: 'center',
         gap: '16px',
         zIndex: 9999,
-        transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        transition: 'transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease-out',
         width: 'max-content',
         maxWidth: '90vw'
       }}

@@ -871,7 +871,6 @@ tr.lote-card.lote-card-selected {
   right: 32px;
   background: #141417;
   border: 1px solid #282830;
-  border-top: 3px solid #8b1e1e;
   border-radius: var(--radius-md);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   z-index: 50;
@@ -1719,7 +1718,6 @@ tr.lote-card.lote-card-selected {
 .summary-box {
   background: var(--bg-card);
   border: 1px solid var(--border);
-  border-left: 4px solid var(--accent);
   padding: 16px;
   border-radius: var(--radius-sm);
   margin-bottom: 16px;
@@ -2596,7 +2594,6 @@ tr.lote-card.lote-card-selected {
     border-radius: 14px !important;
     background: #141417 !important;
     border: 1px solid #232328 !important;
-    border-top: 3px solid #8b1e1e !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
   }
 
@@ -4585,7 +4582,7 @@ tr.catalog-row.catalog-row-selected {
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
   z-index: 3;
-  animation: catalogCheckPop 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: catalogCheckPop 0.18s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes catalogCheckPop {
@@ -4603,7 +4600,6 @@ tr.catalog-row.catalog-row-selected {
   margin: 0 auto;
   background: #141417;
   border: 1px solid rgba(255, 255, 255, 0.16);
-  border-top: 3px solid var(--accent, #c53030);
   border-radius: 14px;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65);
   z-index: 99;
