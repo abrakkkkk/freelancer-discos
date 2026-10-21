@@ -4768,3 +4768,76 @@ tr.catalog-row.catalog-row-selected {
 
 
 
+
+/* Container de coluna direita para telas de edição */
+.form-right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-right-column > .form-section-card {
+  margin-bottom: 0 !important;
+}
+
+/* ========== AÇÕES DO FORMULÁRIO DE EDIÇÃO ========== */
+.edit-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-save-item {
+  width: 100%;
+  min-height: 46px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  touch-action: manipulation;
+}
+
+.btn-delete-item {
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(243, 139, 168, 0.4);
+  color: var(--danger);
+  min-height: 40px;
+  font-size: 13px;
+  border-radius: 10px;
+}
+
+@media (min-width: 769px) {
+  .edit-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .btn-save-item {
+    width: auto !important;
+    min-height: 38px !important;
+    height: 38px !important;
+    padding: 0 24px !important;
+    font-size: 13.5px !important;
+    border-radius: 8px !important;
+  }
+
+  .btn-delete-item {
+    width: auto !important;
+    min-height: 38px !important;
+    height: 38px !important;
+    padding: 0 16px !important;
+    font-size: 13px !important;
+    border-radius: 8px !important;
+    border: 1px solid #3f3f46 !important;
+    color: #ef4444 !important;
+  }
+
+  .btn-delete-item:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: #ef4444 !important;
+  }
+}

@@ -52,7 +52,9 @@ export function useDiscogsSearch() {
 
       if (results.length > 0) {
         setDiscogsResults(results);
-        setShowDiscogsDropdown(true);
+        if (!isAuto) {
+          setShowDiscogsDropdown(true);
+        }
         if (onResults) onResults(results);
       } else {
         if (!isAuto && onError) {

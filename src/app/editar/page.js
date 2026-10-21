@@ -661,7 +661,8 @@ function EditarExcluirContent() {
 
         <div className="mainCard">
           <div className="form-container-desktop" style={{ marginTop: '16px' }}>
-            {/* Bloco 1: Identificação da Obra */}
+            <div className="form-two-columns">
+              {/* Bloco 1: Identificação da Obra */}
             <div className="form-section-card">
               <div className="form-section-header">
                 <PiMusicNotesSimple size={18} color="var(--accent)" />
@@ -798,10 +799,21 @@ function EditarExcluirContent() {
                   />
                 </div>
               </div>
+
+              {tipo === CATEGORY_IDS.DISCOS && (
+                <PrensagemSelector
+                  selo={seloPrensagem}
+                  onSeloChange={setSeloPrensagem}
+                  anoPrensagem={anoPrensagem}
+                  onAnoPrensagemChange={setAnoPrensagem}
+                />
+              )}
             </div>
 
-            {/* Bloco 2: Estoque & Localização */}
-            <div className="form-section-card">
+              {/* Coluna Direita: Estoque & Observações */}
+              <div className="form-right-column">
+                {/* Bloco 2: Estoque & Localização */}
+                <div className="form-section-card">
               <div className="form-section-header">
                 <MdInventory2 size={18} color="var(--accent)" />
                 <h3 className="form-section-title">Estoque & Localização</h3>
@@ -897,15 +909,6 @@ function EditarExcluirContent() {
                 </div>
               </div>
 
-              {tipo === CATEGORY_IDS.DISCOS && (
-                <PrensagemSelector
-                  selo={seloPrensagem}
-                  onSeloChange={setSeloPrensagem}
-                  anoPrensagem={anoPrensagem}
-                  onAnoPrensagemChange={setAnoPrensagem}
-                />
-              )}
-
               <div className="form-row">
                 <div className="form-group">
                   <label>Preço (R$)</label>
@@ -928,46 +931,36 @@ function EditarExcluirContent() {
               </div>
             </div>
 
+                {/* Bloco 3: Observações */}
+                <ItemObservacoesSection
+                  tipoNome={tipoNome}
+                  observacoes={observacoes}
+                  novaObservacao={novaObservacao}
+                  onNovaObservacaoChange={setNovaObservacao}
+                  onAdicionarObservacao={adicionarObservacao}
+                  onExcluirObservacao={excluirObservacao}
+                  loading={loadingObs}
+                />
+              </div>
+            </div>
+
             {/* Ações de Edição */}
-            <div
-              className="edit-actions"
-              style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}
-            >
+            <div className="edit-actions">
               <button
                 type="button"
-                className="btn btn-primary"
-                style={{ width: '100%', minHeight: '46px', fontSize: '15px', fontWeight: 600 }}
-                onClick={salvar}
-              >
-                Salvar Alterações
-              </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                style={{
-                  width: '100%',
-                  background: 'transparent',
-                  border: '1px solid rgba(243, 139, 168, 0.4)',
-                  color: 'var(--danger)',
-                  minHeight: '40px',
-                  fontSize: '13px',
-                }}
+                className="btn btn-danger btn-delete-item"
                 onClick={() => setConfirmarExclusao(itemEditando.id)}
               >
                 Excluir este item
               </button>
+              <button
+                type="button"
+                className="btn btn-primary btn-save-item"
+                onClick={salvar}
+              >
+                Salvar Alterações
+              </button>
             </div>
-
-            {/* Bloco 3: Observações */}
-            <ItemObservacoesSection
-              tipoNome={tipoNome}
-              observacoes={observacoes}
-              novaObservacao={novaObservacao}
-              onNovaObservacaoChange={setNovaObservacao}
-              onAdicionarObservacao={adicionarObservacao}
-              onExcluirObservacao={excluirObservacao}
-              loading={loadingObs}
-            />
           </div>
         </div>
 
@@ -1109,8 +1102,8 @@ function EditarExcluirContent() {
                   <th>Localização</th>
                   {temArtista && <th>Artista</th>}
                   <th>Título</th>
-                  <th>Loja</th>
-                  <th>Preço</th>
+                  <th style={{ whiteSpace: 'nowrap' }}>Loja</th>
+                  <th style={{ whiteSpace: 'nowrap' }}>Preço</th>
                   <th>Status</th>
                   <th style={{ width: '80px' }}>Ação</th>
                 </tr>
@@ -1123,8 +1116,16 @@ function EditarExcluirContent() {
                       <td data-label="Local">{formatCaixa(item.caixa, item.loja)}</td>
                       {temArtista && <td data-label="Artista">{item.artista}</td>}
                       <td data-label="Título">{item.titulo}</td>
-                      <td data-label="Loja">{item.loja || '—'}</td>
-                      <td data-label="Preço">R$ {Number(item.preco || 0).toFixed(2).replace('.', ',')}</td>
+                      <td data-label="Loja" style={{ whiteSpace: 'nowrap' }}>
+                        {item.loja ? (
+                          <span className={`loja-badge ${item.loja === 'Loja 1' ? 'loja-badge-1' : item.loja === 'Loja 2' ? 'loja-badge-2' : ''}`}>
+                            {item.loja}
+                          </span>
+                        ) : '—'}
+                      </td>
+                      <td data-label="Preço" style={{ whiteSpace: 'nowrap', color: 'var(--price, #6EE7B7)', fontWeight: 600 }}>
+                        R$ {Number(item.preco || 0).toFixed(2).replace('.', ',')}
+                      </td>
                       <td data-label="Status">
                         <span className={`badge ${item.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
                           {item.ativo !== false ? 'Ativo' : 'Inativo'}
