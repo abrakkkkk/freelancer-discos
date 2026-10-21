@@ -521,15 +521,19 @@ export default function AcoesEmLote() {
                         {!isVideo && <td data-label="Artista" className={!item.artista ? "empty-artist" : ""}>{item.artista}</td>}
                         <td data-label="Título">{item.titulo}</td>
                         {!activeStore && (
-                          <td data-label="Loja">
+                          <td data-label="Loja" className="cell-desktop-col">
                             {item.loja ? (
-                              <span style={{ fontWeight: 600, color: getStoreColor(item.loja) }}>{item.loja}</span>
+                              <span className={`cell-desktop-loja ${item.loja === 'Loja 1' ? 'loja-badge-1' : item.loja === 'Loja 2' ? 'loja-badge-2' : 'loja-badge-anexo'}`} style={{ whiteSpace: 'nowrap' }}>
+                                {item.loja}
+                              </span>
                             ) : (
                               <span className="text-empty">—</span>
                             )}
                           </td>
                         )}
-                        <td data-label="Preço">R$ {Number(item.preco || 0).toFixed(2).replace('.', ',')}</td>
+                        <td data-label="Preço" className="cell-desktop-preco" style={{ whiteSpace: 'nowrap' }}>
+                          {item.preco ? `R$ ${Number(item.preco).toFixed(2).replace('.', ',')}` : <span className="text-empty">—</span>}
+                        </td>
                         <td data-label="Status">
                           <span className={`badge ${item.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
                             {item.ativo !== false ? 'Ativo' : 'Inativo'}
