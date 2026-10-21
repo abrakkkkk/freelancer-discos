@@ -9,6 +9,7 @@ export default function ReposicaoBell({ compact = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loadingId, setLoadingId] = useState(null);
   const [feedback, setFeedback] = useState(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 12 });
   const containerRef = useRef(null);
 
   // Fecha dropdown ao clicar fora
@@ -35,6 +36,32 @@ export default function ReposicaoBell({ compact = false }) {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
       window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const updateDropdownPosition = () => {
+      const anchor = containerRef.current?.getBoundingClientRect();
+      if (!anchor) return;
+
+      const viewportWidth = window.innerWidth;
+      const panelWidth = Math.min(340, viewportWidth - 24);
+      const isMobile = viewportWidth <= 768;
+      const left = isMobile
+        ? (viewportWidth - panelWidth) / 2
+        : Math.min(Math.max(12, anchor.left + anchor.width / 2 - panelWidth / 2), viewportWidth - panelWidth - 12);
+
+      setDropdownPosition({ top: anchor.bottom + 8, left });
+    };
+
+    updateDropdownPosition();
+    window.addEventListener('resize', updateDropdownPosition);
+    window.addEventListener('scroll', updateDropdownPosition, true);
+    return () => {
+      window.removeEventListener('resize', updateDropdownPosition);
+      window.removeEventListener('scroll', updateDropdownPosition, true);
     };
   }, [isOpen]);
 
@@ -122,11 +149,11 @@ export default function ReposicaoBell({ compact = false }) {
       {isOpen && (
         <div
           style={{
-            position: 'absolute',
-            top: 'calc(100% + 8px)',
-            right: 0,
-            width: '340px',
-            maxWidth: 'calc(100vw - 24px)',
+            position: 'fixed',
+            top: dropdownPosition.top,
+            left: dropdownPosition.left,
+            width: 'min(340px, calc(100vw - 24px))',
+            boxSizing: 'border-box',
             background: 'var(--bg-card, #18181b)',
             border: '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '12px',
