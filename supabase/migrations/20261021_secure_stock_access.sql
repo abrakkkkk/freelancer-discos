@@ -49,18 +49,25 @@ alter default privileges for role postgres in schema public
 alter default privileges for role postgres in schema public
   grant usage, select on sequences to authenticated;
 
-create policy estoque_authenticated_all on public.cds
-  for all to authenticated using (true) with check (true);
-create policy estoque_authenticated_all on public.discos
-  for all to authenticated using (true) with check (true);
-create policy estoque_authenticated_all on public.dvds
-  for all to authenticated using (true) with check (true);
-create policy estoque_authenticated_all on public.movimentacoes
-  for all to authenticated using (true) with check (true);
-create policy estoque_authenticated_all on public.observacoes_disco
-  for all to authenticated using (true) with check (true);
-create policy estoque_authenticated_all on public.vhs
-  for all to authenticated using (true) with check (true);
+-- Restrict all stock access to the single owner account.
+create policy estoque_owner_only on public.cds
+  for all to authenticated using (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid)
+  with check (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid);
+create policy estoque_owner_only on public.discos
+  for all to authenticated using (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid)
+  with check (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid);
+create policy estoque_owner_only on public.dvds
+  for all to authenticated using (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid)
+  with check (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid);
+create policy estoque_owner_only on public.movimentacoes
+  for all to authenticated using (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid)
+  with check (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid);
+create policy estoque_owner_only on public.observacoes_disco
+  for all to authenticated using (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid)
+  with check (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid);
+create policy estoque_owner_only on public.vhs
+  for all to authenticated using (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid)
+  with check (auth.uid() = 'ca73f36d-5a03-48e2-89af-a1e8c4832560'::uuid);
 
 alter function public.get_distinct_caixas(text) security invoker;
 alter function public.get_distinct_caixas(text) set search_path = pg_catalog, public;
