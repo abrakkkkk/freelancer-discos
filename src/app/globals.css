@@ -4927,11 +4927,13 @@ tr.catalog-row.catalog-row-selected {
   outline-offset: 2px;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 769px) {
   .catalog-camera-btn {
     display: none !important;
   }
+}
 
+@media (min-width: 1200px) {
   .catalog-filters-card {
     padding: 12px 14px !important;
     margin-bottom: 16px !important;
