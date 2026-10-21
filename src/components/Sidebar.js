@@ -8,7 +8,6 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { MdLayers, MdHistory } from "react-icons/md";
 import { useStore } from '@/contexts/StoreContext';
 import { STORE_OPTIONS } from '@/constants/config';
-import ReposicaoBell from '@/components/ReposicaoBell';
 import LogoutButton from '@/components/LogoutButton';
 
 const links = [
@@ -58,11 +57,6 @@ export default function Sidebar() {
           <option value="" style={{ background: '#1c1c21', color: '#fff' }}>Todas as Lojas</option>
           {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value} style={{ background: '#1c1c21', color: '#fff' }}>{opt.label}</option>)}
         </select>
-      </div>
-
-      <div style={{ margin: '0 12px 24px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', padding: '8px 12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
-        <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Reposições</span>
-        <ReposicaoBell compact />
       </div>
 
       <nav>

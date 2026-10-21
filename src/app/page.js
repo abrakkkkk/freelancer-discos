@@ -21,6 +21,7 @@ import CatalogPagination from '@/components/CatalogPagination';
 import CatalogBulkDock from '@/components/CatalogBulkDock';
 import ConfirmModal from '@/components/ConfirmModal';
 import ReposicaoModal from '@/components/ReposicaoModal';
+import ReposicaoBell from '@/components/ReposicaoBell';
 import AlertMessage from '@/components/AlertMessage';
 
 const CoverScannerModal = dynamic(() => import('@/components/CoverScannerModal'), { ssr: false });
@@ -367,6 +368,10 @@ export default function CatalogoClone() {
         </div>
 
         <div className="headerActions hide-on-mobile">
+          <div className="desktop-reposicao-control">
+            <span>Reposições</span>
+            <ReposicaoBell compact />
+          </div>
           <button
             onClick={exportarEstoque}
             disabled={exportando}
