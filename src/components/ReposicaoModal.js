@@ -160,7 +160,7 @@ export default function ReposicaoModal({
               {reserva?.loja ? ` (${reserva.loja})` : ''}
             </span>
             {reserva?.preco && (
-              <span style={{ fontWeight: 700, color: '#d4d4d8' }}>
+              <span style={{ fontWeight: 700, color: '#34D399' }}>
                 R$ {Number(reserva.preco).toFixed(2).replace('.', ',')}
               </span>
             )}

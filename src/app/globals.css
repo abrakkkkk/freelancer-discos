@@ -1886,7 +1886,7 @@ tr.lote-card.lote-card-selected {
   /* Células refinadas para o Desktop */
   .cell-desktop-preco {
     font-weight: 700;
-    color: #ffffff;
+    color: #34D399;
     font-size: 16.5px;
     white-space: nowrap;
   }
@@ -2479,7 +2479,7 @@ tr.lote-card.lote-card-selected {
   .disco-valor-preco {
     font-size: 19px !important;
     font-weight: 800 !important;
-    color: #ffffff !important;
+    color: #34D399 !important;
     text-align: left !important;
     line-height: 1 !important;
     letter-spacing: -0.2px !important;
@@ -4113,7 +4113,7 @@ tr.lote-card.lote-card-selected {
     font-family: var(--font-title) !important;
     font-size: 19px !important;
     font-weight: 800 !important;
-    color: #ffffff !important;
+    color: #34D399 !important;
     letter-spacing: -0.02em !important;
   }
 
