@@ -3441,6 +3441,12 @@ tr.lote-card.lote-card-selected {
   margin-top: 8px;
 }
 
+@media (min-width: 769px) {
+  .discogs-scanners-row {
+    display: none !important;
+  }
+}
+
 .discogs-scanner-chip {
   flex: 1;
   min-width: 0;
