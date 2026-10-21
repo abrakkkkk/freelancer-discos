@@ -4810,7 +4810,7 @@ tr.catalog-row.catalog-row-selected {
   display: grid;
   place-items: center;
   padding: 24px;
-  background: var(--bg);
+  background: #29292d;
 }
 
 .auth-loading {
@@ -4876,7 +4876,7 @@ tr.catalog-row.catalog-row-selected {
   width: min(100%, 390px);
   padding: 36px;
   background: var(--bg-card);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
 }
@@ -4884,18 +4884,20 @@ tr.catalog-row.catalog-row-selected {
 .login-logo {
   display: block;
   width: 100%;
-  max-width: 260px;
+  max-width: 185px;
   height: auto;
-  margin: 0 auto 22px;
-  border-radius: 4px;
+  margin: 0 auto 18px;
 }
 
 .login-panel h1 {
   margin: 0 0 26px;
   color: #fafafa;
+  font-family: var(--font-body);
   text-align: center;
   font-size: 25px;
-  letter-spacing: -0.025em;
+  font-weight: 650;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
 }
 
 .login-form .form-group {

@@ -71,10 +71,10 @@ export default function LoginForm() {
       <section className="login-panel" aria-labelledby="login-title">
         <Image
           className="login-logo"
-          src="/logo-desktop.jpg"
+          src="/logo-login.png"
           alt="Freelancer Discos"
           width={912}
-          height={549}
+          height={548}
           priority
         />
         <h1 id="login-title">Estoque</h1>
