@@ -40,9 +40,24 @@ export default function PrensagemSelector({
         <span className="badge-selo-discogs">Prensagem / Edição</span>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 200px' }}>
-          <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
+      <div
+        style={{
+          display: 'flex',
+          gap: '12px',
+          flexWrap: 'wrap',
+          alignItems: 'flex-end',
+        }}
+      >
+        <div style={{ flex: '1 1 220px', minWidth: '0' }}>
+          <label
+            style={{
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+              marginBottom: '4px',
+              display: 'block',
+              fontWeight: '600',
+            }}
+          >
             Selo da Prensagem
           </label>
           <input
@@ -50,7 +65,12 @@ export default function PrensagemSelector({
             value={selo || ''}
             onChange={(e) => onSeloChange(e.target.value)}
             placeholder="Ex: Três Selos, Noize..."
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              minHeight: '36px',
+              padding: '8px 10px',
+              borderRadius: '6px',
+            }}
           />
           <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
             {SELOS_PREDEFINIDOS.map((s) => (
@@ -76,8 +96,16 @@ export default function PrensagemSelector({
           </div>
         </div>
 
-        <div style={{ width: '120px' }}>
-          <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
+        <div style={{ width: '120px', flexShrink: 0 }}>
+          <label
+            style={{
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+              marginBottom: '4px',
+              display: 'block',
+              fontWeight: '600',
+            }}
+          >
             Ano Prensagem
           </label>
           <input
@@ -85,7 +113,12 @@ export default function PrensagemSelector({
             value={anoPrensagem || ''}
             onChange={(e) => onAnoPrensagemChange(e.target.value)}
             placeholder="Ex: 2023"
-            style={{ width: '100%' }}
+            style={{
+              width: '100%',
+              minHeight: '36px',
+              padding: '8px 10px',
+              borderRadius: '6px',
+            }}
           />
         </div>
       </div>
