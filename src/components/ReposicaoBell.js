@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { MdNotificationsNone, MdNotifications, MdCheckCircle, MdClose } from 'react-icons/md';
 import { useReposicao } from '@/contexts/ReposicaoContext';
 
-export default function ReposicaoBell() {
+export default function ReposicaoBell({ compact = false }) {
   const { tarefas, totalPendentes, removerTarefa, executarReposicao, limparTodas } = useReposicao();
   const [isOpen, setIsOpen] = useState(false);
   const [loadingId, setLoadingId] = useState(null);
@@ -73,9 +73,9 @@ export default function ReposicaoBell() {
           position: 'relative',
           background: totalPendentes > 0 ? 'rgba(245, 158, 11, 0.12)' : 'rgba(255, 255, 255, 0.05)',
           border: totalPendentes > 0 ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid var(--border, rgba(255, 255, 255, 0.1))',
-          borderRadius: '8px',
-          width: '38px',
-          height: '38px',
+          borderRadius: compact ? '6px' : '8px',
+          width: compact ? '26px' : '38px',
+          height: compact ? '26px' : '38px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -87,24 +87,24 @@ export default function ReposicaoBell() {
         }}
       >
         {totalPendentes > 0 ? (
-          <MdNotifications size={21} />
+          <MdNotifications size={compact ? 15 : 21} />
         ) : (
-          <MdNotificationsNone size={21} />
+          <MdNotificationsNone size={compact ? 15 : 21} />
         )}
 
         {totalPendentes > 0 && (
           <span
             style={{
               position: 'absolute',
-              top: '-4px',
-              right: '-4px',
+              top: compact ? '-3px' : '-4px',
+              right: compact ? '-3px' : '-4px',
               background: '#f59e0b',
               color: '#000000',
-              fontSize: '11px',
+              fontSize: compact ? '9.5px' : '11px',
               fontWeight: 800,
-              minWidth: '18px',
-              height: '18px',
-              padding: '0 4px',
+              minWidth: compact ? '15px' : '18px',
+              height: compact ? '15px' : '18px',
+              padding: '0 3px',
               borderRadius: '9px',
               display: 'flex',
               alignItems: 'center',

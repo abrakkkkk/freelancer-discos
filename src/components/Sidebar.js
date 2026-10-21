@@ -61,7 +61,7 @@ export default function Sidebar() {
 
       <div style={{ margin: '0 12px 24px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '10px', padding: '8px 12px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
         <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Reposições</span>
-        <ReposicaoBell />
+        <ReposicaoBell compact />
       </div>
 
       <nav>
