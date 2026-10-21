@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useStore } from '@/contexts/StoreContext';
 import { STORE_OPTIONS } from '@/constants/config';
 import ReposicaoBell from '@/components/ReposicaoBell';
+import LogoutButton from '@/components/LogoutButton';
 
 import { usePathname } from 'next/navigation';
 
@@ -64,6 +65,7 @@ export default function MobileHeader() {
           {STORE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
         </select>
         <ReposicaoBell />
+        <LogoutButton compact />
       </div>
     </header>
   );

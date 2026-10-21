@@ -4803,6 +4803,144 @@ tr.catalog-row.catalog-row-selected {
   border-radius: 10px;
 }
 
+/* ========== LOGIN ========== */
+.login-screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.auth-loading {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--text-muted);
+  background: var(--bg);
+  font-size: 14px;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 11px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: transparent;
+  color: #a1a1aa;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.logout-button:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+}
+
+.logout-button:focus-visible {
+  outline: 2px solid #e76b6b;
+  outline-offset: 2px;
+}
+
+.logout-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.logout-button svg {
+  font-size: 18px;
+  flex: 0 0 auto;
+}
+
+.logout-button-compact {
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin: 0;
+  padding: 0;
+  border-radius: 8px;
+}
+
+.login-panel {
+  width: min(100%, 390px);
+  padding: 36px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.login-mark {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 20px;
+  border: 1px solid #a82424;
+  border-radius: 50%;
+  background: #8b1e1e;
+  color: #fff;
+  font-size: 30px;
+}
+
+.login-panel h1 {
+  color: #fafafa;
+  text-align: center;
+  font-size: 25px;
+  letter-spacing: -0.025em;
+}
+
+.login-subtitle {
+  margin: 6px 0 28px;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 14px;
+}
+
+.login-form .form-group {
+  margin-bottom: 18px;
+}
+
+.login-form input {
+  min-height: 46px !important;
+}
+
+.login-submit {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.login-error {
+  margin: 0 0 16px;
+  color: var(--danger);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.login-form :focus-visible {
+  outline: 2px solid #e76b6b;
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .login-panel {
+    padding: 28px 22px;
+  }
+}
+
 @media (min-width: 769px) {
   .edit-actions {
     flex-direction: row;

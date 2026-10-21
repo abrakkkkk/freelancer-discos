@@ -1,11 +1,5 @@
 import { Outfit, Figtree } from 'next/font/google';
-import Sidebar from '@/components/Sidebar';
-import BottomNav from '@/components/BottomNav';
-import MobileHeader from '@/components/MobileHeader';
-import { UndoProvider } from '@/contexts/UndoContext';
-import { StoreProvider } from '@/contexts/StoreContext';
-import { ReposicaoProvider } from '@/contexts/ReposicaoContext';
-import UndoToast from '@/components/UndoToast';
+import AppShell from '@/components/AppShell';
 import './globals.css';
 
 const outfit = Outfit({
@@ -36,23 +30,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="pt-BR" className={`${outfit.variable} ${figtree.variable}`} data-theme="dark">
       <body>
-        <UndoProvider>
-          <StoreProvider>
-            <ReposicaoProvider>
-              <div className="app-layout">
-                <Sidebar />
-                <div className="main-wrapper">
-                  <MobileHeader />
-                  <main className="main-content">
-                    {children}
-                  </main>
-                </div>
-                <BottomNav />
-                <UndoToast />
-              </div>
-            </ReposicaoProvider>
-          </StoreProvider>
-        </UndoProvider>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

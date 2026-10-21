@@ -1,41 +1,26 @@
 import { NextResponse } from 'next/server';
+import { isValidSessionToken, SESSION_COOKIE } from '@/lib/auth-session';
+
+const PUBLIC_PATHS = new Set(['/login', '/api/auth/session', '/api/auth/logout']);
 
 export function proxy(req) {
-  const basicAuth = req.headers.get('authorization');
+  const { pathname } = req.nextUrl;
+  if (PUBLIC_PATHS.has(pathname)) return NextResponse.next();
 
-  const adminUser = process.env.BASIC_AUTH_USER;
-  const adminPass = process.env.BASIC_AUTH_PASSWORD;
+  const token = req.cookies.get(SESSION_COOKIE)?.value;
+  if (isValidSessionToken(token)) return NextResponse.next();
 
-  // Se não houver configuração de senha, permite o acesso (ex: ambiente de desenvolvimento local sem .env)
-  if (!adminUser || !adminPass) {
-    return NextResponse.next();
+  if (pathname.startsWith('/api/')) {
+    return Response.json({ error: 'Não autenticado.' }, { status: 401 });
   }
 
-  if (basicAuth) {
-    const authValue = basicAuth.split(' ')[1];
-    const [user, pwd] = atob(authValue).split(':');
-
-    if (user === adminUser && pwd === adminPass) {
-      return NextResponse.next();
-    }
-  }
-
-  return new NextResponse('Acesso Restrito', {
-    status: 401,
-    headers: {
-      'WWW-Authenticate': 'Basic realm="Área Segura da Loja"',
-    },
-  });
+  const loginUrl = new URL('/login', req.url);
+  loginUrl.searchParams.set('next', `${pathname}${req.nextUrl.search}`);
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
   matcher: [
-    /*
-     * Aplica o proxy em todas as rotas, exceto:
-     * - _next/static (arquivos estáticos)
-     * - _next/image (arquivos de imagem otimizada)
-     * - favicon.ico e imagens estáticas públicas (.jpg, .png, .svg, etc.)
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

@@ -9,6 +9,7 @@ import { MdLayers, MdHistory } from "react-icons/md";
 import { useStore } from '@/contexts/StoreContext';
 import { STORE_OPTIONS } from '@/constants/config';
 import ReposicaoBell from '@/components/ReposicaoBell';
+import LogoutButton from '@/components/LogoutButton';
 
 const links = [
   { href: '/', label: 'Catálogo', icon: <PiVinylRecord size={18} /> },
@@ -77,6 +78,7 @@ export default function Sidebar() {
           </Link>
         ))}
       </nav>
+      <LogoutButton />
     </aside>
   );
 }
