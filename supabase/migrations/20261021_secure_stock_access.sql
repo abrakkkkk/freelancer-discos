@@ -42,7 +42,12 @@ grant select, insert, update, delete on table
   public.vhs
 to authenticated;
 
+revoke all on all sequences in schema public from anon, public;
 grant usage, select on all sequences in schema public to authenticated;
+alter default privileges for role postgres in schema public
+  revoke all on sequences from anon, public;
+alter default privileges for role postgres in schema public
+  grant usage, select on sequences to authenticated;
 
 create policy estoque_authenticated_all on public.cds
   for all to authenticated using (true) with check (true);
