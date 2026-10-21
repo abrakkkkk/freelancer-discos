@@ -3206,6 +3206,17 @@ tr.lote-card.lote-card-selected {
   gap: 4px;
 }
 
+.paginationDesktopControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.paginationMobileControls {
+  display: none;
+}
+
 .pageBtn {
   display: flex;
   align-items: center;
@@ -3244,9 +3255,49 @@ tr.lote-card.lote-card-selected {
 @media (max-width: 768px) {
   .paginationRow {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap !important;
     justify-content: center;
-    gap: 8px;
+    gap: 0 !important;
+    padding: 16px 0 !important;
+  }
+
+  .paginationDesktopControls {
+    display: none;
+  }
+
+  .paginationMobileControls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: min(100%, 360px);
+    margin: 0 auto;
+  }
+
+  .paginationMobileButton {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card-alt);
+    color: var(--text);
+    font-size: 18px;
+  }
+
+  .paginationMobileButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .paginationMobileStatus {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .paginationMobileStatus strong {
+    color: var(--text);
+    font-weight: 700;
   }
 }
 

@@ -46,80 +46,76 @@ export default function CatalogPagination({ pagina, totalPaginas, onPageChange }
         flexWrap: 'wrap',
       }}
     >
-      <button
-        className="pageBtn"
-        disabled={pagina === 1}
-        onClick={handlePaginaAnterior}
-        style={{
-          width: '36px',
-          height: '36px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 0,
-        }}
-        title="Página anterior"
-        aria-label="Página anterior"
-      >
-        &lt;
-      </button>
-
-      {numerosPagina.map((numero) => (
+      <div className="paginationDesktopControls">
         <button
-          key={numero}
-          className={`pageBtn ${pagina === numero ? 'active' : ''}`}
-          onClick={() => onPageChange(numero)}
-          style={{
-            width: '36px',
-            height: '36px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 0,
-          }}
-          aria-current={pagina === numero ? 'page' : undefined}
+          className="pageBtn"
+          disabled={pagina === 1}
+          onClick={handlePaginaAnterior}
+          style={{ width: '36px', height: '36px', padding: 0 }}
+          title="Página anterior"
+          aria-label="Página anterior"
         >
-          {numero}
+          &lt;
         </button>
-      ))}
 
-      {totalPaginas > 5 && pagina < totalPaginas - 2 && (
-        <>
-          <span style={{ padding: '0 4px', color: 'var(--text-muted)' }}>...</span>
+        {numerosPagina.map((numero) => (
           <button
-            className={`pageBtn ${pagina === totalPaginas ? 'active' : ''}`}
-            onClick={() => onPageChange(totalPaginas)}
-            style={{
-              width: '36px',
-              height: '36px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 0,
-            }}
+            key={numero}
+            className={`pageBtn ${pagina === numero ? 'active' : ''}`}
+            onClick={() => onPageChange(numero)}
+            style={{ width: '36px', height: '36px', padding: 0 }}
+            aria-current={pagina === numero ? 'page' : undefined}
           >
-            {totalPaginas}
+            {numero}
           </button>
-        </>
-      )}
+        ))}
 
-      <button
-        className="pageBtn"
-        disabled={pagina === totalPaginas}
-        onClick={handleProximaPagina}
-        style={{
-          width: '36px',
-          height: '36px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 0,
-        }}
-        title="Próxima página"
-        aria-label="Próxima página"
-      >
-        &gt;
-      </button>
+        {totalPaginas > 5 && pagina < totalPaginas - 2 && (
+          <>
+            <span style={{ padding: '0 4px', color: 'var(--text-muted)' }}>...</span>
+            <button
+              className={`pageBtn ${pagina === totalPaginas ? 'active' : ''}`}
+              onClick={() => onPageChange(totalPaginas)}
+              style={{ width: '36px', height: '36px', padding: 0 }}
+            >
+              {totalPaginas}
+            </button>
+          </>
+        )}
+
+        <button
+          className="pageBtn"
+          disabled={pagina === totalPaginas}
+          onClick={handleProximaPagina}
+          style={{ width: '36px', height: '36px', padding: 0 }}
+          title="Próxima página"
+          aria-label="Próxima página"
+        >
+          &gt;
+        </button>
+      </div>
+
+      <div className="paginationMobileControls">
+        <button
+          className="pageBtn paginationMobileButton"
+          disabled={pagina === 1}
+          onClick={handlePaginaAnterior}
+          aria-label="Página anterior"
+        >
+          &lt;
+        </button>
+        <span className="paginationMobileStatus" aria-current="page">
+          Página <strong>{pagina}</strong> de {totalPaginas}
+        </span>
+        <button
+          className="pageBtn paginationMobileButton"
+          disabled={pagina === totalPaginas}
+          onClick={handleProximaPagina}
+          aria-label="Próxima página"
+        >
+          &gt;
+        </button>
+      </div>
     </nav>
   );
 }
