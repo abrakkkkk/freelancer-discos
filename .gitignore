@@ -43,7 +43,6 @@ next-env.d.ts
 
 *.traineddata
 
-
 # audit screenshots
 public/audit_screenshots/
 
@@ -51,3 +50,13 @@ public/audit_screenshots/
 /site-loja
 /vitrine
 
+# AI agents & skills
+.agents/
+AGENTS.md
+CLAUDE.md
+
+# Scripts, docs & loose files
+scripts/
+docs/
+/*.html
+/*.sql
