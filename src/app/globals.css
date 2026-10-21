@@ -3606,12 +3606,12 @@ tr.lote-card.lote-card-selected {
 /* ========== BOTÃO DE SUBMISSÃO DO FORMULÁRIO ========== */
 .form-submit-row {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   margin-top: 20px;
 }
 
 .submit-item-btn {
-  width: 100%;
+  width: 90%;
   max-width: 380px;
   min-height: 48px;
   font-size: 15px;
