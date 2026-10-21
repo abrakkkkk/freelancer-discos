@@ -630,16 +630,17 @@ export default function AdicionarItem() {
                   </>
                 )}
 
-                {activeTab === CATEGORY_IDS.DISCOS && (
-                  <PrensagemSelector
-                    selo={seloPrensagem}
-                    onSeloChange={setSeloPrensagem}
-                    anoPrensagem={anoPrensagem}
-                    onAnoPrensagemChange={setAnoPrensagem}
-                  />
-                )}
               </div>
             </div>
+
+            {activeTab === CATEGORY_IDS.DISCOS && (
+              <PrensagemSelector
+                selo={seloPrensagem}
+                onSeloChange={setSeloPrensagem}
+                anoPrensagem={anoPrensagem}
+                onAnoPrensagemChange={setAnoPrensagem}
+              />
+            )}
 
             <div className="form-row">
               <div className="form-group">
@@ -675,20 +676,10 @@ export default function AdicionarItem() {
             </div>
           </div>
 
-          <div style={{ marginTop: '20px' }}>
+          <div className="form-submit-row" style={{ marginTop: '20px' }}>
             <button
               type="submit"
-              className="btn btn-primary"
-              style={{
-                width: '100%',
-                maxWidth: '380px',
-                minHeight: '48px',
-                fontSize: '15px',
-                fontWeight: 600,
-                borderRadius: '10px',
-                touchAction: 'manipulation',
-                opacity: isSubmitting ? 0.7 : 1,
-              }}
+              className="btn btn-primary submit-item-btn"
               disabled={isSubmitting}
             >
               {isSubmitting

@@ -3575,6 +3575,39 @@ tr.lote-card.lote-card-selected {
   }
 }
 
+/* ========== BOTÃO DE SUBMISSÃO DO FORMULÁRIO ========== */
+.form-submit-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 20px;
+}
+
+.submit-item-btn {
+  width: 100%;
+  max-width: 380px;
+  min-height: 48px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  touch-action: manipulation;
+}
+
+@media (min-width: 769px) {
+  .form-submit-row {
+    justify-content: flex-start;
+  }
+
+  .submit-item-btn {
+    width: auto !important;
+    max-width: none !important;
+    min-height: 38px !important;
+    height: 38px !important;
+    padding: 0 24px !important;
+    font-size: 13.5px !important;
+    border-radius: 8px !important;
+  }
+}
+
 /* ========== OCR TARGET FRAME ========== */
 .ocr-target-frame {
   position: absolute;
@@ -4323,6 +4356,7 @@ tr.lote-card.lote-card-selected {
     background: #181420 !important;
     border: 1px solid #2e2040 !important;
     border-radius: 10px !important;
+    margin-bottom: 14px !important;
   }
 
   .adicionar-selo-btn {
