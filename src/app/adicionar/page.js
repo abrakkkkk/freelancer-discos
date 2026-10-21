@@ -49,6 +49,7 @@ export default function AdicionarItem() {
   const [selectedCover, setSelectedCover] = useState(null);
   const [seloPrensagem, setSeloPrensagem] = useState('');
   const [anoPrensagem, setAnoPrensagem] = useState('');
+  const [prensagemResetKey, setPrensagemResetKey] = useState(0);
 
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isOcrOpen, setIsOcrOpen] = useState(false);
@@ -112,6 +113,7 @@ export default function AdicionarItem() {
   const suportaDiscogs = activeTab === CATEGORY_IDS.DISCOS || activeTab === CATEGORY_IDS.CDS;
 
   const handleTabChange = (novaTab) => {
+    setPrensagemResetKey((key) => key + 1);
     setActiveTab(novaTab);
     setMensagem(null);
     setForm({ ...FORMULARIO_INICIAL, loja: activeStore || '', ativo: true });
@@ -367,6 +369,7 @@ export default function AdicionarItem() {
       });
       setSeloPrensagem('');
       setAnoPrensagem('');
+      setPrensagemResetKey((key) => key + 1);
       resetDiscogs();
 
       setTimeout(() => {
@@ -438,12 +441,13 @@ export default function AdicionarItem() {
                   className="form-group"
                   style={{ position: 'relative', zIndex: mostrarSugestoesArtista ? 60 : 1 }}
                 >
-                  <label>Artista</label>
+                  <label>Artista *</label>
                   <input
                     ref={artistaInputRef}
                     name="artista"
                     value={form.artista}
                     onChange={handleChange}
+                    aria-required="true"
                     onFocus={() => {
                       if (sugestoesArtista.length > 0) setMostrarSugestoesArtista(true);
                     }}
@@ -496,6 +500,7 @@ export default function AdicionarItem() {
                   name="titulo"
                   value={form.titulo}
                   onChange={handleChange}
+                  aria-required="true"
                   onFocus={() => {
                     if (sugestoesTitulo.length > 0) setMostrarSugestoesTitulo(true);
                   }}
@@ -524,7 +529,7 @@ export default function AdicionarItem() {
 
             <div className="form-row">
               <div className="form-group" style={{ maxWidth: '200px' }}>
-                <label>Ano</label>
+                <label>Ano (Opcional)</label>
                 <input
                   name="ano"
                   type="text"
@@ -537,10 +542,12 @@ export default function AdicionarItem() {
 
             {activeTab === CATEGORY_IDS.DISCOS && (
               <PrensagemSelector
+                key={prensagemResetKey}
                 selo={seloPrensagem}
                 onSeloChange={setSeloPrensagem}
                 anoPrensagem={anoPrensagem}
                 onAnoPrensagemChange={setAnoPrensagem}
+                collapsible
               />
             )}
           </div>
@@ -555,7 +562,12 @@ export default function AdicionarItem() {
             <div className="form-row">
               <div className="form-group">
                 <label>Loja {form.ativo !== false ? '*' : '(Opcional)'}</label>
-                <select name="loja" value={form.loja} onChange={handleChange}>
+                <select
+                  name="loja"
+                  value={form.loja}
+                  onChange={handleChange}
+                  aria-required={form.ativo !== false}
+                >
                   <option value="">Selecione uma loja</option>
                   {STORE_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
@@ -578,7 +590,7 @@ export default function AdicionarItem() {
                     {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS
                       ? 'Caixa'
                       : 'Localização'}{' '}
-                    {activeTab === CATEGORY_IDS.DISCOS ? '' : '(Opcional)'}
+                    (Opcional)
                   </label>
                   {(form.loja === 'Loja 1' || form.loja === 'Loja 2') && activeTab === CATEGORY_IDS.DISCOS && (
                     <button
@@ -645,7 +657,7 @@ export default function AdicionarItem() {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Preço (R$)</label>
+                <label>Preço (R$) (Opcional)</label>
                 <input name="preco" type="text" value={form.preco} onChange={handleChange} />
               </div>
               <div

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { IoChevronDown } from 'react-icons/io5';
 
 const SELOS_PREDEFINIDOS = [
   'Três Selos',
@@ -19,13 +20,11 @@ export default function PrensagemSelector({
   onSeloChange,
   anoPrensagem,
   onAnoPrensagemChange,
+  collapsible = false,
 }) {
-  return (
-    <div className="adicionar-prensagem-box">
-      <div className="prensagem-header">
-        <span className="prensagem-title">Prensagem / Edição</span>
-      </div>
-
+  const temDadosPreenchidos = Boolean(selo?.trim() || anoPrensagem?.trim());
+  const camposPrensagem = (
+    <>
       <div className="prensagem-fields-grid">
         <div className="form-group prensagem-field-selo">
           <label>Selo da Prensagem</label>
@@ -60,6 +59,33 @@ export default function PrensagemSelector({
           </button>
         ))}
       </div>
+    </>
+  );
+
+  if (collapsible) {
+    return (
+      <details
+        className={`adicionar-prensagem-box prensagem-collapsible${temDadosPreenchidos ? ' has-data' : ''}`}
+      >
+        <summary className="prensagem-header">
+          <span className="prensagem-title">Prensagem / Edição</span>
+          <span className="prensagem-optional-label">Opcional</span>
+          <IoChevronDown className="prensagem-disclosure-icon" aria-hidden="true" />
+          {temDadosPreenchidos && (
+            <span className="prensagem-filled-indicator">Dados preenchidos</span>
+          )}
+        </summary>
+        {camposPrensagem}
+      </details>
+    );
+  }
+
+  return (
+    <div className="adicionar-prensagem-box">
+      <div className="prensagem-header">
+        <span className="prensagem-title">Prensagem / Edição</span>
+      </div>
+      {camposPrensagem}
     </div>
   );
 }
