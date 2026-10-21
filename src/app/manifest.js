@@ -9,9 +9,14 @@ export default function manifest() {
     theme_color: '#09090b',
     icons: [
       {
-        src: '/icon.jpg',
-        sizes: '1080x1080',
-        type: 'image/jpeg',
+        src: '/icon-192.png',
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
+        src: '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
       },
     ],
   };
