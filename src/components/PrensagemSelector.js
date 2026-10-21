@@ -39,9 +39,6 @@ export default function PrensagemSelector({
         }}
       >
         <span className="badge-selo-discogs">Prensagem / Edição</span>
-        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          Identificação do selo e ano da edição
-        </span>
       </div>
 
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
