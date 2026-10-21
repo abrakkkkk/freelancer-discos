@@ -4936,6 +4936,12 @@ tr.catalog-row.catalog-row-selected {
   border-radius: 8px;
 }
 
+@media (min-width: 769px) {
+  .sidebar {
+    padding-top: clamp(56px, 8vh, 88px);
+  }
+}
+
 .login-panel {
   width: min(100%, 390px);
   padding: 36px;
