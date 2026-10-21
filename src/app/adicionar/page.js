@@ -534,6 +534,15 @@ export default function AdicionarItem() {
                 />
               </div>
             </div>
+
+            {activeTab === CATEGORY_IDS.DISCOS && (
+              <PrensagemSelector
+                selo={seloPrensagem}
+                onSeloChange={setSeloPrensagem}
+                anoPrensagem={anoPrensagem}
+                onAnoPrensagemChange={setAnoPrensagem}
+              />
+            )}
           </div>
 
           {/* Bloco 2: Estoque & Localização */}
@@ -634,15 +643,6 @@ export default function AdicionarItem() {
               </div>
             </div>
 
-            {activeTab === CATEGORY_IDS.DISCOS && (
-              <PrensagemSelector
-                selo={seloPrensagem}
-                onSeloChange={setSeloPrensagem}
-                anoPrensagem={anoPrensagem}
-                onAnoPrensagemChange={setAnoPrensagem}
-              />
-            )}
-
             <div className="form-row">
               <div className="form-group">
                 <label>Preço (R$)</label>
@@ -670,7 +670,7 @@ export default function AdicionarItem() {
                 name="observacao"
                 value={form.observacao}
                 onChange={handleChange}
-                rows="2"
+                rows="3"
                 style={{ width: '100%', resize: 'vertical' }}
                 placeholder="Qualquer detalhe adicional sobre o item..."
               ></textarea>
