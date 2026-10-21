@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { isValidSessionToken, SESSION_COOKIE } from '@/lib/auth-session';
 
-const PUBLIC_PATHS = new Set(['/login', '/api/auth/session', '/api/auth/logout']);
+const PUBLIC_PATHS = new Set([
+  '/login',
+  '/manifest.webmanifest',
+  '/api/auth/session',
+  '/api/auth/logout',
+]);
 
 export function proxy(req) {
   const { pathname } = req.nextUrl;
