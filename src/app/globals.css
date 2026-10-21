@@ -5121,6 +5121,7 @@ tr.catalog-row.catalog-row-selected {
   .login-panel {
     width: calc(100% - 8px);
     padding: 24px 20px;
+    border-color: transparent;
   }
 
   .login-logo {
