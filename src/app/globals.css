@@ -5021,6 +5021,16 @@ tr.catalog-row.catalog-row-selected {
   letter-spacing: -0.045em;
 }
 
+.login-panel h1::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 2px;
+  margin: 10px auto 0;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
 .login-form .form-group {
   margin-bottom: 18px;
 }
