@@ -398,7 +398,8 @@ export default function AdicionarItem() {
         <AlertMessage message={mensagem} onClose={() => setMensagem(null)} />
 
         <form onSubmit={handleSubmit} className="form-container-desktop" style={{ marginTop: '24px' }}>
-          {/* Bloco 1: Identificação da Obra */}
+          <div className="form-two-columns">
+            {/* Bloco 1: Identificação da Obra */}
           <div className="form-section-card">
             <div className="form-section-header">
               <PiMusicNotesSimple size={18} color="var(--accent)" />
@@ -675,6 +676,7 @@ export default function AdicionarItem() {
               ></textarea>
             </div>
           </div>
+        </div>
 
           <div className="form-submit-row" style={{ marginTop: '20px' }}>
             <button

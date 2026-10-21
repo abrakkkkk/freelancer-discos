@@ -21,73 +21,44 @@ export default function PrensagemSelector({
   onAnoPrensagemChange,
 }) {
   return (
-    <div
-      className="adicionar-prensagem-box"
-      style={{
-        marginTop: '12px',
-        padding: '12px 14px',
-        borderRadius: '8px',
-        width: '100%',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          marginBottom: '8px',
-        }}
-      >
-        <span className="badge-selo-discogs">Prensagem / Edição</span>
+    <div className="adicionar-prensagem-box">
+      <div className="prensagem-header">
+        <span className="prensagem-title">Prensagem / Edição</span>
       </div>
 
-      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 200px' }}>
-          <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
-            Selo da Prensagem
-          </label>
+      <div className="prensagem-fields-grid">
+        <div className="form-group prensagem-field-selo">
+          <label>Selo da Prensagem</label>
           <input
             type="text"
             value={selo || ''}
             onChange={(e) => onSeloChange(e.target.value)}
             placeholder="Ex: Três Selos, Noize..."
-            style={{ width: '100%' }}
           />
-          <div style={{ display: 'flex', gap: '6px', marginTop: '6px', flexWrap: 'wrap' }}>
-            {SELOS_PREDEFINIDOS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => onSeloChange(s)}
-                className={`adicionar-selo-btn ${selo === s ? 'active' : ''}`}
-                style={{
-                  fontSize: '11px',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  minHeight: '28px',
-                  cursor: 'pointer',
-                  border: '1px solid var(--border)',
-                  background: selo === s ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
-                  color: selo === s ? '#fff' : 'var(--text-muted)',
-                }}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
         </div>
 
-        <div style={{ width: '120px' }}>
-          <label style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block' }}>
-            Ano Prensagem
-          </label>
+        <div className="form-group prensagem-field-ano">
+          <label>Ano Prensagem</label>
           <input
             type="text"
             value={anoPrensagem || ''}
             onChange={(e) => onAnoPrensagemChange(e.target.value)}
             placeholder="Ex: 2023"
-            style={{ width: '100%' }}
           />
         </div>
+      </div>
+
+      <div className="prensagem-chips-row">
+        {SELOS_PREDEFINIDOS.map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => onSeloChange(s)}
+            className={`adicionar-selo-btn ${selo === s ? 'active' : ''}`}
+          >
+            {s}
+          </button>
+        ))}
       </div>
     </div>
   );
