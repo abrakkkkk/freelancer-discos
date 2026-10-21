@@ -23,8 +23,10 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <div className="logo_free" style={{ textAlign: 'center', marginBottom: '14px', padding: '0 8px' }}>
-        <Image src="/logo-desktop.jpg" alt="Freelancer Discos" width={140} height={84} style={{ width: '130px', height: 'auto', borderRadius: '4px', margin: '0 auto', display: 'block' }} unoptimized={true} priority />
+      <div className="logo_free" style={{ textAlign: 'center', marginBottom: '14px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ transform: 'translateX(12px)' }}>
+          <Image src="/logo-desktop.jpg" alt="Freelancer Discos" width={130} height={78} style={{ width: '130px', height: 'auto', display: 'block' }} unoptimized={true} priority />
+        </div>
       </div>
       <div className="sidebar-title">Estoque Geral</div>
 

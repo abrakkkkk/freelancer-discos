@@ -11,7 +11,7 @@
   --bottom-nav-height: 62px;
   --font-title: var(--font-outfit), 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: var(--font-figtree), 'Figtree', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --bg-sidebar: #0d0d0f;
+  --bg-sidebar: #09090b;
   --text-sidebar: #cdd6f4;
   --accent: #8b1e1e; /* Deep Red */
   --accent-hover: #731717;
