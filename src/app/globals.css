@@ -5110,8 +5110,30 @@ tr.catalog-row.catalog-row-selected {
 }
 
 @media (max-width: 480px) {
+  .login-screen {
+    height: 100svh;
+    min-height: 100svh;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    padding: max(12px, env(safe-area-inset-top)) 24px max(12px, env(safe-area-inset-bottom));
+  }
+
   .login-panel {
-    padding: 28px 22px;
+    width: calc(100% - 8px);
+    padding: 24px 20px;
+  }
+
+  .login-logo {
+    max-width: 170px;
+    margin-bottom: 16px;
+  }
+
+  .login-panel h1 {
+    margin-bottom: 20px;
+  }
+
+  .login-form .form-group {
+    margin-bottom: 14px;
   }
 }
 
