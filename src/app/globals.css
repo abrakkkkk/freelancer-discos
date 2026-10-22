@@ -5239,6 +5239,57 @@ tr.catalog-row.catalog-row-selected {
   }
 }
 
+@media (max-width: 768px) {
+  .login-screen {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior-y: none;
+  }
+
+  .login-panel {
+    min-height: 0;
+  }
+
+  .login-restricted {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 768px) and (max-height: 720px) {
+  .login-screen {
+    padding-top: max(12px, env(safe-area-inset-top));
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  .login-panel {
+    gap: clamp(18px, 4vh, 28px);
+    transform: none;
+  }
+
+  .login-logo {
+    width: 180px;
+  }
+
+  .login-panel h1 {
+    font-size: 20px;
+  }
+
+  .login-form {
+    gap: 14px;
+  }
+
+  .login-form .login-input-wrap input {
+    height: 48px;
+    min-height: 48px !important;
+  }
+
+  .login-submit {
+    height: 50px;
+    min-height: 50px;
+  }
+}
+
 @media (min-width: 1200px) {
   .catalog-filters-card {
     padding: 12px 14px !important;
