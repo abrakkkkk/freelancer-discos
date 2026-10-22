@@ -4221,31 +4221,51 @@ tr.lote-card.lote-card-selected {
     background: #151518 !important;
     border: 1px solid #232328 !important;
     border-radius: 10px !important;
-    padding: 12px 14px !important;
-    margin-bottom: 12px !important;
+    padding: 10px 12px !important;
+    margin-bottom: 10px !important;
+    gap: 8px !important;
+  }
+
+  .mov-search-clean {
+    height: 38px !important;
+    padding: 0 10px !important;
+  }
+
+  .mov-search-clean input {
+    font-size: 13px !important;
   }
 
   .mov-controls-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 8px;
+    gap: 6px;
   }
 
   .mov-tabs-clean {
     width: 100%;
+    height: 34px !important;
+    padding: 2px !important;
   }
 
   .mov-tab-btn {
     flex: 1;
     text-align: center;
+    height: 28px !important;
+    padding: 0 8px !important;
+    font-size: 11.5px !important;
   }
 
   .mov-selects-group {
     width: 100%;
+    gap: 6px !important;
   }
 
-  .mov-selects-group select {
+  .mov-selects-group select,
+  .mov-select-clean {
     flex: 1;
+    height: 36px !important;
+    font-size: 12px !important;
+    padding: 0 24px 0 10px !important;
   }
 
   .mov-table-desktop {
@@ -4286,33 +4306,81 @@ tr.lote-card.lote-card-selected {
     border-bottom: none !important;
   }
 
-  .filterCard {
+  .filterCard,
+  .lote-filters-card,
+  .catalog-filters-card {
     background: #141417 !important;
     border: 1px solid #222227 !important;
-    border-radius: 12px !important;
-    padding: 12px !important;
-    margin-bottom: 14px !important;
+    border-radius: 10px !important;
+    padding: 10px 12px !important;
+    margin-top: 8px !important;
+    margin-bottom: 10px !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
   }
 
   .filtersRow {
-    gap: 12px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .filterGroup {
+    min-width: 0 !important;
+    gap: 4px !important;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    flex: none !important;
+  }
+
+  .filterGroup:first-child {
+    grid-column: 1 / -1 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .filtersRow-store-selected .filterGroup:nth-child(2) {
+    grid-column: 1 / -1 !important;
+  }
+
+  .catalog-filters-card .filterGroup:last-child {
+    grid-column: 1 / -1 !important;
   }
 
   .filterGroup label {
-    font-size: 11.5px !important;
+    font-size: 10.5px !important;
     font-weight: 600 !important;
-    color: #94949e !important;
+    color: #8e8e98 !important;
     font-family: var(--font-body) !important;
+    line-height: 1.2 !important;
   }
 
   .filterGroup select,
   .searchInputWithLeftIcon {
+    height: 38px !important;
+    min-height: 38px !important;
     background: #1a1a20 !important;
     border: 1px solid #282832 !important;
     color: #f4f4f5 !important;
     border-radius: 8px !important;
     font-family: var(--font-body) !important;
+    font-size: 13px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .filterGroup select {
+    padding-left: 10px !important;
+    padding-right: 26px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .searchInputWithLeftIcon {
+    padding-left: 34px !important;
+    padding-right: 32px !important;
+  }
+
+  .searchIconLeft {
+    left: 10px !important;
   }
 
   .filterGroup select:focus,
@@ -4321,33 +4389,14 @@ tr.lote-card.lote-card-selected {
   }
 
   .catalog-camera-btn {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
     background: #1a1a20 !important;
     border: 1px solid #282832 !important;
     color: #e4e4e7 !important;
     border-radius: 8px !important;
-  }
-
-  .lote-filters-card {
-    background: #141417 !important;
-    border: 1px solid #222227 !important;
-    border-radius: 12px !important;
-    padding: 12px !important;
-    margin-top: 14px !important;
-    margin-bottom: 14px !important;
-  }
-
-  .lote-filters-card .filtersRow {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-  }
-
-  .lote-filters-card .filterGroup {
-    width: 100% !important;
-    flex: none !important;
-    min-width: 0 !important;
-    gap: 6px !important;
-    margin-bottom: 0 !important;
   }
 
   .tableHeader {
