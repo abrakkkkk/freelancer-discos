@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
@@ -81,4 +79,5 @@ docs/
 **/.impeccable/live/*.png
 **/.agent/**/bin/
 # impeccable-ignore-end
+/.impeccable/critique/
 
