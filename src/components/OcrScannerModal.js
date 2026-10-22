@@ -348,6 +348,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
     setTextoDetectado('');
 
     let codigoEncontrado = '';
+    let imagemParaIa = imageSource;
 
     try {
       // 1. OCR Nativo do Dispositivo (Android Chrome Shape Detection API / ML Kit)
@@ -377,28 +378,11 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
         }
       }
 
-      // 2. Fallback Rápido para iOS Safari e Nuvem (/api/ocr-assist com Gemini Flash-Lite)
-      // Tempo estimado: ~600ms a 800ms
-      if (!codigoEncontrado && typeof imageSource === 'string' && typeof navigator !== 'undefined' && navigator.onLine !== false) {
-        try {
-          const resp = await fetch('/api/ocr-assist', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: imageSource })
-          });
-          const data = await resp.json();
-          if (data?.success && data.codigo) {
-            codigoEncontrado = data.codigo.trim();
-          }
-        } catch (errIa) {
-          console.warn('Falha no leitor assistido de OCR:', errIa);
-        }
-      }
-
-      // 3. Se ainda não encontrou e autoRotate estiver ativo, rotaciona 90° (lombadas verticais)
+      // 2. Tenta a leitura local também com a lombada girada antes de chamar a IA.
       if (!codigoEncontrado && autoRotate && typeof imageSource === 'string') {
         try {
           const rotacionada = await rotacionarDataUrl90(imageSource);
+          imagemParaIa = rotacionada;
           setFotoPreview(rotacionada);
 
           // Tenta primeiro o TextDetector nativo na imagem rotacionada
@@ -420,24 +404,29 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
             } catch (_) {}
           }
 
-          // Se ainda não achou, fallback para a API na rotacionada
-          if (!codigoEncontrado && typeof navigator !== 'undefined' && navigator.onLine !== false) {
-            const resp = await fetch('/api/ocr-assist', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ image: rotacionada })
-            });
-            const data = await resp.json();
-            if (data?.success && data.codigo) {
-              codigoEncontrado = data.codigo.trim();
-            }
-          }
         } catch (e) {
           console.warn('Tentativa de rotação 90°:', e);
         }
       }
 
-      // 4. Fallback Offline de Segurança (Tesseract.js apenas se offline ou como último recurso)
+      // Uma única chamada remota por captura; usa a imagem girada quando a lombada é vertical.
+      if (!codigoEncontrado && typeof imagemParaIa === 'string' && typeof navigator !== 'undefined' && navigator.onLine !== false) {
+        try {
+          const resp = await fetch('/api/ocr-assist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: imagemParaIa })
+          });
+          const data = await resp.json();
+          if (data?.success && data.codigo) {
+            codigoEncontrado = data.codigo.trim();
+          }
+        } catch (errIa) {
+          console.warn('Falha no leitor assistido de OCR:', errIa);
+        }
+      }
+
+      // 3. Fallback local (Tesseract.js) quando a leitura nativa ou remota não encontra código.
       if (!codigoEncontrado) {
         try {
           let worker = workerRef.current;
@@ -448,7 +437,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
             workerRef.current = worker;
           }
 
-          const ret = await worker.recognize(imageSource);
+          const ret = await worker.recognize(imagemParaIa);
           codigoEncontrado = extrairCodigoCatalogo(ret?.data?.text || '');
         } catch (errTesseract) {
           console.warn('Fallback Tesseract offline não concluiu:', errTesseract);
@@ -705,7 +694,7 @@ export default function OcrScannerModal({ isOpen, onClose, onScan }) {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <IoSparkles color="var(--accent)" size={16} />
                       <span style={{ fontSize: '13px', fontWeight: 700, color: textoDetectado ? 'var(--text-header)' : '#f6ad55' }}>
-                        {textoDetectado ? 'Código detectado:' : 'Nenhum código reconhecido com certeza:'}
+                        {textoDetectado ? 'Código detectado — confira antes de buscar:' : 'Nenhum código reconhecido com certeza:'}
                       </span>
                     </div>
                   </div>

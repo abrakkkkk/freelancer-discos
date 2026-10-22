@@ -194,7 +194,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   };
 
   // Redimensiona mantendo ALTA RESOLUÇÃO (Full HD até 1920x1920) e máxima nitidez visual
-  const recortarEComprimir = (origem) => {
+  const recortarEComprimir = (origem, manterQuadroCompleto = modoAmplo) => {
     let srcW = 1920;
     let srcH = 1080;
 
@@ -209,21 +209,26 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
       srcH = origem.height;
     }
 
-    const sSize = Math.min(srcW, srcH);
-    const sx = (srcW - sSize) / 2;
-    const sy = (srcH - sSize) / 2;
+    const cropSize = Math.min(srcW, srcH);
+    const cropX = manterQuadroCompleto ? 0 : (srcW - cropSize) / 2;
+    const cropY = manterQuadroCompleto ? 0 : (srcH - cropSize) / 2;
+    const cropW = manterQuadroCompleto ? srcW : cropSize;
+    const cropH = manterQuadroCompleto ? srcH : cropSize;
 
-    // Resolução otimizada para visão computacional (560x560): rápida, consome pouco CPU e reduz cota
-    const targetSize = Math.min(sSize, 560);
+    // Mantém o quadro amplo inteiro, ou conserva o recorte quadrado tradicional.
+    const maxDimension = manterQuadroCompleto ? 1024 : 560;
+    const scale = Math.min(1, maxDimension / Math.max(cropW, cropH));
+    const targetWidth = Math.max(1, Math.round(cropW * scale));
+    const targetHeight = Math.max(1, Math.round(cropH * scale));
 
     const canvas = document.createElement('canvas');
-    canvas.width = targetSize;
-    canvas.height = targetSize;
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(origem, sx, sy, sSize, sSize, 0, 0, targetSize, targetSize);
+    ctx.drawImage(origem, cropX, cropY, cropW, cropH, 0, 0, targetWidth, targetHeight);
 
     // Exporta em JPEG otimizado (0.75) para upload ultraleve e menor uso de CPU
     let base64 = '';

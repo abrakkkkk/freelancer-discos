@@ -11,8 +11,29 @@ function isValidRetailBarcode(code) {
   if (!code) return false;
   const clean = String(code).trim();
 
-  // EAN-13 (13 dígitos), UPC-A (12 dígitos), EAN-8 (8 dígitos)
-  if (/^\d{8}$|^\d{12}$|^\d{13}$/.test(clean)) {
+  // UPC-E tem 8 dígitos, mas usa expansão própria antes do cálculo UPC-A.
+  if (/^\d{8}$/.test(clean)) {
+    const digits = clean.split('').map(Number);
+    const [numberSystem, ...rest] = digits;
+    if (numberSystem > 1) return false;
+    const checkDigit = rest.pop();
+    const [d1, d2, d3, d4, d5, d6] = rest;
+    let upcAData;
+
+    if (d6 <= 2) upcAData = [numberSystem, d1, d2, d6, 0, 0, 0, 0, d3, d4, d5];
+    else if (d6 === 3) upcAData = [numberSystem, d1, d2, d3, 0, 0, 0, 0, 0, d4, d5];
+    else if (d6 === 4) upcAData = [numberSystem, d1, d2, d3, d4, 0, 0, 0, 0, 0, d5];
+    else upcAData = [numberSystem, d1, d2, d3, d4, d5, 0, 0, 0, 0, d6];
+
+    const sum = upcAData.reduce((total, digit, index) => total + digit * (index % 2 === 0 ? 3 : 1), 0);
+    const upcCheckDigit = (10 - (sum % 10)) % 10;
+    const ean8Sum = digits.slice(0, 7).reduce((total, digit, index) => total + digit * (index % 2 === 0 ? 3 : 1), 0);
+    const ean8CheckDigit = (10 - (ean8Sum % 10)) % 10;
+    return checkDigit === upcCheckDigit || digits[7] === ean8CheckDigit;
+  }
+
+  // EAN-13 (13 dígitos), UPC-A (12 dígitos)
+  if (/^\d{12}$|^\d{13}$/.test(clean)) {
     const digits = clean.split('').map(Number);
     const check = digits.pop();
     let sum = 0;
@@ -506,7 +527,12 @@ export default function BarcodeScannerModal({ isOpen, onClose, onScan }) {
             onSubmit={(e) => {
               e.preventDefault();
               if (manualCode.trim()) {
-                handleDetected(manualCode.trim());
+                const clean = manualCode.trim();
+                if (!isValidRetailBarcode(clean)) {
+                  setErroCamera('Código inválido. Confira os dígitos e tente novamente.');
+                  return;
+                }
+                handleDetected(clean);
               }
             }} 
             style={{ display: 'flex', gap: '8px', width: '100%' }}
