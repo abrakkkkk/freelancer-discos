@@ -4327,6 +4327,29 @@ tr.lote-card.lote-card-selected {
     border-radius: 8px !important;
   }
 
+  .lote-filters-card {
+    background: #141417 !important;
+    border: 1px solid #222227 !important;
+    border-radius: 12px !important;
+    padding: 12px !important;
+    margin-top: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .lote-filters-card .filtersRow {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .lote-filters-card .filterGroup {
+    width: 100% !important;
+    flex: none !important;
+    min-width: 0 !important;
+    gap: 6px !important;
+    margin-bottom: 0 !important;
+  }
+
   .tableHeader {
     color: #71717a !important;
     font-size: 12px !important;
@@ -5377,5 +5400,164 @@ tr.catalog-row.catalog-row-selected {
   .btn-delete-item:hover {
     background: rgba(239, 68, 68, 0.1) !important;
     border-color: #ef4444 !important;
+  }
+
+  /* Bloco de Busca e Filtros Desktop - Alteração em Lote */
+  .lote-filters-card {
+    padding: 12px 14px !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+    background: #141417 !important;
+    border: 1px solid #222227 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .lote-filters-card .filtersRow {
+    display: grid !important;
+    grid-template-columns: minmax(280px, 2fr) minmax(170px, 1fr) minmax(150px, 1fr) !important;
+    align-items: end !important;
+    gap: 12px !important;
+  }
+
+  .lote-filters-card .filtersRow-store-selected {
+    grid-template-columns: minmax(320px, 2.5fr) minmax(200px, 1fr) !important;
+  }
+
+  .lote-filters-card .filterGroup {
+    min-width: 0 !important;
+    gap: 6px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .lote-filters-card .filterGroup:first-child {
+    flex: 1 1 auto !important;
+  }
+
+  .lote-filters-card .filterGroup label {
+    font-size: 11.5px !important;
+    font-weight: 600 !important;
+    color: #94949e !important;
+    font-family: var(--font-body) !important;
+  }
+
+  .lote-filters-card .filterGroup select {
+    height: 42px !important;
+    overflow: hidden !important;
+    padding: 8px 12px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    color: #f4f4f5 !important;
+    border-radius: 8px !important;
+    font-family: var(--font-body) !important;
+    font-size: 13.5px !important;
+  }
+
+  .lote-filters-card .filterGroup select:focus {
+    border-color: var(--accent) !important;
+  }
+
+  .lote-filters-card .searchInputWithLeftIcon {
+    height: 42px !important;
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    color: #f4f4f5 !important;
+    border-radius: 8px !important;
+    font-size: 13.5px !important;
+  }
+
+  .lote-filters-card .searchInputWithLeftIcon:focus {
+    border-color: var(--accent) !important;
+  }
+
+  /* Bloco de Busca e Filtros Desktop - Histórico de Movimentações */
+  .mov-page .mov-filter-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+    padding: 12px 16px !important;
+    background: #151518 !important;
+  }
+
+  .mov-page .mov-search-clean {
+    flex: 1 1 280px !important;
+    max-width: 460px !important;
+    height: 42px !important;
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    border-radius: 8px !important;
+    padding: 0 8px 0 12px !important;
+    position: relative !important;
+  }
+
+  .mov-page .mov-search-clean:focus-within {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(197, 48, 48, 0.25) !important;
+  }
+
+  .mov-page .mov-search-clean input {
+    height: 100% !important;
+    font-size: 13.5px !important;
+    padding-left: 8px !important;
+    padding-right: 28px !important;
+  }
+
+  .mov-page .mov-search-clean .search-clear-btn {
+    position: absolute !important;
+    right: 6px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+
+  .mov-page .mov-controls-row {
+    flex: 0 0 auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .mov-page .mov-tabs-clean {
+    height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    padding: 3px !important;
+    background: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    border-radius: 8px !important;
+  }
+
+  .mov-page .mov-tab-btn {
+    height: 34px !important;
+    padding: 0 14px !important;
+    font-size: 12.5px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .mov-page .mov-selects-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .mov-page .mov-select-clean {
+    height: 42px !important;
+    padding: 0 32px 0 12px !important;
+    background-color: #1a1a20 !important;
+    border: 1px solid #282832 !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+    white-space: nowrap !important;
+  }
+
+  .mov-page .mov-select-clean:focus {
+    border-color: var(--accent) !important;
   }
 }

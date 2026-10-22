@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { FiSearch } from 'react-icons/fi';
+import { IoClose } from 'react-icons/io5';
 import { STORE_OPTIONS } from '@/constants/config';
 
 const OPCOES_TIPO = [
@@ -46,16 +47,11 @@ export default function MovimentacoesFilters({
           <button
             type="button"
             onClick={() => onBuscaChange('')}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
-              cursor: 'pointer',
-              fontSize: '16px',
-            }}
+            className="search-clear-btn"
             title="Limpar busca"
+            aria-label="Limpar busca"
           >
-            ×
+            <IoClose size={16} />
           </button>
         )}
       </div>

@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { MdLayers } from "react-icons/md";
+import { FiSearch } from 'react-icons/fi';
+import { IoClose } from 'react-icons/io5';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
 import { movimentacaoService } from '@/services/movimentacaoService';
@@ -400,19 +402,36 @@ export default function AcoesEmLote() {
       <div className="mainCard">
         <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
-        <div className="filterCard" style={{ marginTop: '24px' }}>
-          <div className="filters">
-            <div className="form-group" style={{ flex: '1 1 100%' }}>
+        <div className="filterCard catalog-filters-card lote-filters-card">
+          <div className={`filtersRow${activeStore ? ' filtersRow-store-selected' : ''}`}>
+            <div className="filterGroup" style={{ flex: '1 1 100%' }}>
               <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
-              <input
-                type="text"
-                placeholder="Ex: Beatles..."
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-              />
+              <div className="search-bar-row">
+                <div className="searchInputWrapper">
+                  <FiSearch size={18} className="searchIconLeft" />
+                  <input
+                    type="text"
+                    className="searchInputWithLeftIcon"
+                    placeholder="Ex: Beatles..."
+                    value={busca}
+                    onChange={(e) => setBusca(e.target.value)}
+                  />
+                  {busca && (
+                    <button
+                      type="button"
+                      onClick={() => setBusca('')}
+                      className="search-clear-btn"
+                      title="Limpar busca"
+                      aria-label="Limpar busca"
+                    >
+                      <IoClose size={16} />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <div className="form-group" style={{ flex: 1 }}>
+            <div className="filterGroup">
               <label>Filtrar por Localização</label>
               <select value={caixaSelecionada} onChange={(e) => setCaixaSelecionada(e.target.value)}>
                 <option value="">Todas</option>
@@ -429,7 +448,7 @@ export default function AcoesEmLote() {
             </div>
 
             {!activeStore && (
-              <div className="form-group" style={{ flex: 1 }}>
+              <div className="filterGroup">
                 <label>Filtrar por loja</label>
                 <select value={filtroLoja} onChange={(e) => setFiltroLoja(e.target.value)}>
                   <option value="">Todas</option>
