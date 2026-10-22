@@ -97,7 +97,7 @@ export default function CatalogFilters({
           </div>
         )}
 
-        <div className="filterGroup" style={{ flex: '0 0 auto' }}>
+        <div className="filterGroup filterGroup-exibicao" style={{ flex: '0 0 auto' }}>
           <label>Exibição</label>
           <div style={{ display: 'flex', gap: '16px', alignItems: 'center', height: '100%' }}>
             <label

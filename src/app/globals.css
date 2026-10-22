@@ -4341,7 +4341,7 @@ tr.lote-card.lote-card-selected {
     grid-column: 1 / -1 !important;
   }
 
-  .catalog-filters-card .filterGroup:last-child {
+  .filterGroup-exibicao {
     grid-column: 1 / -1 !important;
   }
 

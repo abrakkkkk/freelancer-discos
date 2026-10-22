@@ -402,9 +402,9 @@ export default function AcoesEmLote() {
       <div className="mainCard">
         <CategoryTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
-        <div className="filterCard catalog-filters-card lote-filters-card">
+        <div className="filterCard lote-filters-card">
           <div className={`filtersRow${activeStore ? ' filtersRow-store-selected' : ''}`}>
-            <div className="filterGroup" style={{ flex: '1 1 100%' }}>
+            <div className="filterGroup">
               <label>Buscar por {isVideo ? 'título' : 'artista ou título'}</label>
               <div className="search-bar-row">
                 <div className="searchInputWrapper">
