@@ -286,9 +286,10 @@ function EditarExcluirContent() {
     }
   };
 
-  const handleCoverRecognized = ({ artista, titulo, ano, preco, coverUrl }) => {
+  const handleCoverRecognized = ({ artista, titulo, ano, preco, coverUrl, confianca }) => {
     if (artista || titulo) {
       const termoBusca = formatDiscogsQuery(artista, titulo);
+      const baixaConfianca = String(confianca || '').toLowerCase() === 'baixa';
       setQueryDiscogs(termoBusca);
       if (coverUrl) {
         setSelectedCover({
@@ -304,10 +305,12 @@ function EditarExcluirContent() {
         }));
       }
       setMensagem({
-        tipo: 'success',
-        texto: `Capa reconhecida: "${termoBusca}"${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Selecione a prensagem correta abaixo ou confirme os dados.`,
+        tipo: baixaConfianca ? 'error' : 'success',
+        texto: baixaConfianca
+          ? 'A identificação da capa ficou incerta. Revise a busca antes de escolher uma prensagem.'
+          : `Capa reconhecida: "${termoBusca}"${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Selecione a prensagem correta abaixo ou confirme os dados.`,
       });
-      searchByQuery(termoBusca);
+      if (!baixaConfianca) searchByQuery(termoBusca);
     }
   };
 

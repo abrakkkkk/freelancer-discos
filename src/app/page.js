@@ -72,8 +72,9 @@ export default function CatalogoClone() {
   }, [activeStore]);
 
   // Reconhecimento de capa pelo scanner
-  const handleCoverRecognized = ({ artista, titulo }) => {
+  const handleCoverRecognized = ({ artista, titulo, confianca }) => {
     if (!artista && !titulo) return;
+    const baixaConfianca = String(confianca || '').toLowerCase() === 'baixa';
 
     let queryBusca = '';
     const isVarious = !artista || /^(various|v[aá]rios(\s+artistas)?|trilha\s+sonora)$/i.test(artista);
@@ -87,8 +88,10 @@ export default function CatalogoClone() {
     catalog.setBusca(queryBusca);
     catalog.setPagina(1);
     setFeedbackMsg({
-      tipo: 'success',
-      texto: `Capa identificada: "${[artista, titulo].filter(Boolean).join(' - ')}". Exibindo resultados do estoque.`,
+      tipo: baixaConfianca ? 'error' : 'success',
+      texto: baixaConfianca
+        ? 'A identificação da capa ficou incerta. Revise os resultados do estoque antes de usar os dados.'
+        : `Capa identificada: "${[artista, titulo].filter(Boolean).join(' - ')}". Exibindo resultados do estoque.`,
     });
   };
 

@@ -59,29 +59,28 @@ function extrairPrecoValido(valor) {
   let str = String(valor).trim();
   if (!str) return '';
 
-  // Remove "R$", "$", espaços
-  str = str.replace(/r?\$|\s/gi, '');
-  // Remove sufixos comuns de preços manuscritos como ",-", ",=", ",00", ".00"
-  str = str.replace(/[,.](00|-|=)$/, '');
+  // Remove moeda, espaços e sufixos manuscritos como ",-" e ",=".
+  str = str.replace(/r?\$|\s/gi, '').replace(/[,.](?:-|=)$/, '');
 
-  // Se tiver vírgula ou ponto decimal para centavos (ex: "35,50" ou "35.50")
-  if (/^\d+[,.]\d{1,2}$/.test(str)) {
-    const floatVal = parseFloat(str.replace(',', '.'));
-    if (!isNaN(floatVal) && floatVal > 0 && floatVal < 100000) {
-      return Math.round(floatVal).toString();
-    }
-  }
+  // Decimais zerados representam valor inteiro; centavos diferentes de zero são ambíguos.
+  const zeroDecimals = str.match(/^((?:\d{1,3}(?:[.,]\d{3})+|\d+))[,.]0{1,2}$/);
+  if (zeroDecimals) str = zeroDecimals[1];
 
-  // Preço puro inteiro ou com pontos de milhar (ex: "50", "150", "1.200")
-  const digitos = str.replace(/\D/g, '');
-  if (digitos) {
-    const num = parseInt(digitos, 10);
-    if (num > 0 && num < 100000) {
-      return num.toString();
-    }
-  }
+  // Aceita inteiros ou agrupamento de milhares consistente (ex: "1.200").
+  const isInteger = /^\d+$/.test(str);
+  const isGroupedThousands = /^\d{1,3}(?:[.,]\d{3})+$/.test(str);
+  if (!isInteger && !isGroupedThousands) return '';
 
-  return '';
+  const num = Number(str.replace(/[.,]/g, ''));
+  if (!Number.isSafeInteger(num) || num <= 0 || num >= 100000 || num % 5 !== 0) return '';
+  return String(num);
+}
+
+function normalizarConfianca(valor) {
+  const confianca = String(valor || '').trim().toLowerCase();
+  if (['alta', 'high'].includes(confianca)) return 'alta';
+  if (['media', 'média', 'medium'].includes(confianca)) return 'media';
+  return 'baixa';
 }
 
 export async function POST(request) {
@@ -120,7 +119,7 @@ REGRAS:
 3. ETIQUETA DE PREÇO: Procure por uma etiqueta adesiva padrão branca (colada na capa ou no plástico) com preço escrito à mão.
 - Não existem valores quebrados ou centavos.
 - Os preços SEMPRE terminam em 0 ou 5 (raramente em 5; na grande maioria das vezes terminam em 0, por exemplo: 120, 50, 40, 20, e raramente 45). Use esse padrão para desambiguar a caligrafia manuscrita.
-- Extraia apenas o número inteiro no campo "preco" (ex: "120", "50", "40", "20", "45"). Não confunda com números de catálogo ou preços gráficos da capa. Se não houver etiqueta legível, deixe "preco": "".
+- Retorne apenas um preço inteiro divisível por 5 no campo "preco" (ex: "120", "50", "40", "20", "45"). Se não conseguir ler um valor que termine em 0 ou 5, deixe "preco": ""; nunca arredonde nem complete dígitos. Não confunda com números de catálogo ou preços gráficos da capa.
 4. Se incerto sobre a capa, deixe artista/titulo vazios e confianca "baixa".
 JSON: {"artista":"","titulo":"","ano":"","preco":"","confianca":"alta|media|baixa"}`;
 
@@ -257,7 +256,7 @@ JSON: {"artista":"","titulo":"","ano":"","preco":"","confianca":"alta|media|baix
     let titulo = (parsed?.titulo || '').trim();
     const ano = (parsed?.ano || '').trim();
     const preco = extrairPrecoValido(parsed?.preco);
-    const confianca = parsed?.confianca || 'media';
+    const confianca = normalizarConfianca(parsed?.confianca);
 
     // Normalização estrita para Various
     const isVarious = /^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?|soundtrack|ost)$/i.test(artista);

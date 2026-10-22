@@ -33,6 +33,8 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
   const audioCtxRef = useRef(null);
+  const recognitionRequestRef = useRef(null);
+  const pendingImageRef = useRef(null);
 
   // Som suave de confirmação ao reconhecer
   const playBeep = () => {
@@ -241,15 +243,40 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     return { base64 };
   };
 
+  const fecharScanner = () => {
+    recognitionRequestRef.current?.abort();
+    recognitionRequestRef.current = null;
+    liberarImagemPendente(pendingImageRef.current, true);
+    onClose();
+  };
+
+  const liberarImagemPendente = (pending, clearSource = false) => {
+    if (!pending) return;
+    pending.image.onload = null;
+    pending.image.onerror = null;
+    if (clearSource) pending.image.src = '';
+    URL.revokeObjectURL(pending.url);
+    if (pendingImageRef.current === pending) pendingImageRef.current = null;
+  };
+
   const enviarParaReconhecimento = async (base64Image) => {
     setProcessando(true);
     setErro(null);
+    const controller = new AbortController();
+    recognitionRequestRef.current?.abort();
+    recognitionRequestRef.current = controller;
+    let timedOut = false;
+    const timeoutId = window.setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, 45_000);
 
     try {
       const res = await fetch('/api/recognize-cover', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: base64Image })
+        body: JSON.stringify({ image: base64Image }),
+        signal: controller.signal,
       });
 
       let data = null;
@@ -274,10 +301,16 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
           confianca: data.confianca
         });
       }
-      onClose();
+      fecharScanner();
     } catch (err) {
-      setErro(err.message || 'Falha ao identificar a capa. Tente novamente.');
+      if (timedOut) {
+        setErro('O reconhecimento demorou mais do que o esperado. Tente novamente.');
+      } else if (err?.name !== 'AbortError') {
+        setErro(err.message || 'Falha ao identificar a capa. Tente novamente.');
+      }
     } finally {
+      window.clearTimeout(timeoutId);
+      if (recognitionRequestRef.current === controller) recognitionRequestRef.current = null;
       setProcessando(false);
     }
   };
@@ -297,21 +330,43 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
   };
 
   const handleFileUpload = (e) => {
-    const file = e.target.files?.[0];
+    const input = e.currentTarget;
+    const file = input.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
+    input.value = '';
+    setErro(null);
+    if (file.type && !file.type.startsWith('image/')) {
+      setErro('Escolha um arquivo de imagem compatível.');
+      return;
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      setErro('A imagem excede 20 MB. Escolha uma versão menor.');
+      return;
+    }
+
+    setProcessando(true);
+    const imageUrl = URL.createObjectURL(file);
+    const img = new Image();
+    const pendingImage = { url: imageUrl, image: img };
+    pendingImageRef.current = pendingImage;
+    img.onload = () => {
+      liberarImagemPendente(pendingImage);
+      try {
         const { base64 } = recortarEComprimir(img);
         setFotoPreview(base64);
-        enviarParaReconhecimento(base64);
-      };
-      img.src = event.target.result;
+        void enviarParaReconhecimento(base64);
+      } catch (err) {
+        setProcessando(false);
+        setErro('Não foi possível preparar essa imagem. Tente outro arquivo ou tire uma foto.');
+      }
     };
-    reader.readAsDataURL(file);
-    e.target.value = '';
+    img.onerror = () => {
+      liberarImagemPendente(pendingImage);
+      setProcessando(false);
+      setErro('O navegador não conseguiu abrir essa imagem. Use JPEG, PNG ou WebP.');
+    };
+    img.src = imageUrl;
   };
 
   const tentarNovamente = () => {
@@ -333,6 +388,12 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  useEffect(() => () => {
+    recognitionRequestRef.current?.abort();
+    recognitionRequestRef.current = null;
+    liberarImagemPendente(pendingImageRef.current, true);
+  }, []);
+
   if (!isOpen) return null;
 
   return (
@@ -349,7 +410,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
         justifyContent: 'center',
         padding: '12px'
       }}
-      onClick={onClose}
+      onClick={fecharScanner}
     >
       <div
         style={{
@@ -384,7 +445,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
           </div>
           <button
             type="button"
-            onClick={onClose}
+            onClick={fecharScanner}
             style={{
               background: 'transparent',
               border: 'none',
@@ -685,6 +746,7 @@ export default function CoverScannerModal({ isOpen, onClose, onRecognized, onCov
         {/* Mensagem de Erro (se houver) */}
         {erro && (
           <div
+            role="alert"
             style={{
               padding: '10px 16px',
               backgroundColor: 'rgba(229, 62, 62, 0.12)',

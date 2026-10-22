@@ -162,8 +162,9 @@ export default function AdicionarItem() {
     setQueryDiscogs('');
   };
 
-  const handleCoverRecognized = async ({ artista, titulo, ano, preco }) => {
+  const handleCoverRecognized = async ({ artista, titulo, ano, preco, confianca }) => {
     if (!artista && !titulo && !preco) return;
+    const baixaConfianca = String(confianca || '').toLowerCase() === 'baixa';
 
     let artistaNormalizado = (artista || '').trim();
     if (/^(v[aá]rios(\s+artistas)?|various(\s+artists)?|trilha\s+sonora(\s+original)?)$/i.test(artistaNormalizado)) {
@@ -183,11 +184,13 @@ export default function AdicionarItem() {
 
     setQueryDiscogs(termoBusca);
     setMensagem({
-      tipo: 'success',
-      texto: `Capa identificada: "${termoBusca}"${ano ? ` (${ano})` : ''}${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Buscando prensagens...`,
+      tipo: baixaConfianca ? 'error' : 'success',
+      texto: baixaConfianca
+        ? `A identificação da capa ficou incerta. Revise artista e título antes de buscar.${precoFormatado ? ` Preço reconhecido: R$ ${precoFormatado}.` : ''}`
+        : `Capa identificada: "${termoBusca}"${ano ? ` (${ano})` : ''}${precoFormatado ? ` • Preço: R$ ${precoFormatado}` : ''}. Buscando prensagens...`,
     });
 
-    if (termoBusca) {
+    if (termoBusca && !baixaConfianca) {
       await searchByQuery(termoBusca, {
         onResults: () => {
           setMensagem({
