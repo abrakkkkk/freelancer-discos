@@ -81,3 +81,10 @@ docs/
 # impeccable-ignore-end
 /.impeccable/critique/
 
+# AI Agent & local rules
+/.agent/
+/GEMINI.md
+
+# Audit and security docs
+/SECURITY_AUDIT.md
+/MANUAL_SEGURANCA_SUPABASE_VERCEL.md
