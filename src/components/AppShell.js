@@ -29,21 +29,40 @@ export default function AppShell({ children }) {
     let active = true;
 
     const validateSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      let { data: { session } } = await supabase.auth.getSession();
       if (!active) return;
       if (!session) {
         await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
-        window.location.replace(`/login?next=${encodeURIComponent(`${pathname}${window.location.search}`)}`);
+        if (active) {
+          window.location.replace(`/login?next=${encodeURIComponent(`${pathname}${window.location.search}`)}`);
+        }
         return;
       }
 
-      const response = await establishProxySession(session.access_token).catch(() => null);
+      if (session.expires_at && session.expires_at * 1000 - Date.now() < 60 * 1000) {
+        const { data: refreshed } = await supabase.auth.refreshSession().catch(() => ({ data: {} }));
+        if (refreshed?.session) session = refreshed.session;
+      }
+
+      let response = await establishProxySession(session.access_token).catch(() => null);
       if (!active) return;
-      if (!response?.ok) {
-        await supabase.auth.signOut();
+
+      if (response?.status === 401) {
+        const { data: refreshed } = await supabase.auth.refreshSession().catch(() => ({ data: {} }));
+        if (refreshed?.session) {
+          session = refreshed.session;
+          response = await establishProxySession(session.access_token).catch(() => null);
+        }
+      }
+
+      if (!active) return;
+
+      if (response?.status === 401) {
+        await supabase.auth.signOut().catch(() => {});
         window.location.replace('/login');
         return;
       }
+
       setAuthStatus('ready');
     };
 

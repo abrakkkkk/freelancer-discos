@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
 export const SESSION_COOKIE = 'fd_session';
-export const SESSION_MAX_AGE = 60 * 20;
+export const SESSION_MAX_AGE = 60 * 60 * 24 * 30; // 30 dias em segundos
 
 function getSigningSecret() {
   return process.env.AUTH_SESSION_SECRET || '';

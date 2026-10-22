@@ -26,15 +26,33 @@ export default function LoginForm() {
 
   useEffect(() => {
     let active = true;
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!active || !session) return;
+    const restoreSession = async () => {
       try {
-        const response = await establishProxySession(session.access_token);
-        if (response.ok && active) window.location.replace(safeReturnPath());
+        let { data: { session } } = await supabase.auth.getSession();
+        if (!active || !session) return;
+
+        if (session.expires_at && session.expires_at * 1000 - Date.now() < 60 * 1000) {
+          const { data: refreshed } = await supabase.auth.refreshSession().catch(() => ({ data: {} }));
+          if (refreshed?.session) session = refreshed.session;
+        }
+
+        let response = await establishProxySession(session.access_token).catch(() => null);
+        if (response?.status === 401) {
+          const { data: refreshed } = await supabase.auth.refreshSession().catch(() => ({ data: {} }));
+          if (refreshed?.session) {
+            response = await establishProxySession(refreshed.session.access_token).catch(() => null);
+          }
+        }
+
+        if (response?.ok && active) {
+          window.location.replace(safeReturnPath());
+        }
       } catch {
         if (active) setError('Não foi possível validar sua sessão. Verifique a conexão e tente novamente.');
       }
-    });
+    };
+
+    void restoreSession();
     return () => { active = false; };
   }, []);
 
