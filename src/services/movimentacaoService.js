@@ -60,6 +60,38 @@ export const movimentacaoService = {
     if (error) throw error;
   },
 
+  async addObservation(category, itemId, observation) {
+    const foreignKeyByCategory = {
+      discos: 'disco_id',
+      cds: 'cd_id',
+      dvds: 'dvd_id',
+      vhs: 'vhs_id',
+    };
+    const foreignKey = foreignKeyByCategory[category];
+    if (!foreignKey) throw new Error('Categoria de estoque inválida.');
+
+    const { data, error } = await supabase.rpc('stock_write_transaction', {
+      p_action: 'add_observation',
+      p_category: category,
+      p_item_id: itemId,
+      p_payload: { observacao: observation },
+      p_observation: { [foreignKey]: itemId, observacao: observation },
+    });
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteObservation(category, itemId, observationId) {
+    const { data, error } = await supabase.rpc('stock_write_transaction', {
+      p_action: 'delete_observation',
+      p_category: category,
+      p_item_id: itemId,
+      p_ids: [observationId],
+    });
+    if (error) throw error;
+    return data;
+  },
+
   /**
    * Busca histórico de movimentações com paginação automática e filtros de período, tipo e loja
    */

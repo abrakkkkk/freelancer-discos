@@ -18,6 +18,8 @@ export default function Movimentacoes() {
   const [filtroLoja, setFiltroLoja] = useState('');
   const [busca, setBusca] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  const [reloadCount, setReloadCount] = useState(0);
   const [pagina, setPagina] = useState(1);
   const { activeStore } = useStore();
 
@@ -36,6 +38,7 @@ export default function Movimentacoes() {
     let ativo = true;
     const carregarHistorico = async () => {
       setLoading(true);
+      setLoadError(null);
       try {
         const dados = await movimentacaoService.fetchMovimentacoes(
           filtroPeriodo,
@@ -44,11 +47,13 @@ export default function Movimentacoes() {
         );
         if (ativo) {
           setMovimentacoes(dados || []);
+          setLoadError(null);
         }
       } catch (erro) {
         console.error('Erro ao buscar histórico de movimentações:', erro);
         if (ativo) {
           setMovimentacoes([]);
+          setLoadError('Não foi possível carregar o histórico. Verifique a conexão e tente novamente.');
         }
       } finally {
         if (ativo) {
@@ -62,7 +67,7 @@ export default function Movimentacoes() {
     return () => {
       ativo = false;
     };
-  }, [filtroTipoMov, filtroPeriodo, filtroLoja]);
+  }, [filtroTipoMov, filtroPeriodo, filtroLoja, reloadCount]);
 
   // Contadores semânticos para o cabeçalho
   const { totalEntradas, totalSaidas } = useMemo(() => {
@@ -140,21 +145,32 @@ export default function Movimentacoes() {
           activeStore={activeStore}
         />
 
-        {/* Listagem (feed mobile e tabela desktop) */}
-        <MovimentacoesList
-          itens={itensPaginados}
-          loading={loading}
-          totalItens={totalItens}
-          temFiltrosAtivos={temFiltrosAtivos}
-          activeStore={activeStore}
-        />
+        {loadError ? (
+          <div className="alert alert-error" role="alert" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <span>{loadError}</span>
+            <button type="button" className="btn btn-secondary" onClick={() => setReloadCount((count) => count + 1)}>
+              Tentar novamente
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Listagem (feed mobile e tabela desktop) */}
+            <MovimentacoesList
+              itens={itensPaginados}
+              loading={loading}
+              totalItens={totalItens}
+              temFiltrosAtivos={temFiltrosAtivos}
+              activeStore={activeStore}
+            />
 
-        {/* Paginação Reutilizável */}
-        <CatalogPagination
-          pagina={pagina}
-          totalPaginas={totalPaginas}
-          onPageChange={setPagina}
-        />
+            {/* Paginação Reutilizável */}
+            <CatalogPagination
+              pagina={pagina}
+              totalPaginas={totalPaginas}
+              onPageChange={setPagina}
+            />
+          </>
+        )}
       </div>
     </div>
   );

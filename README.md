@@ -26,6 +26,8 @@ Para autenticação, configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE
 
 As migrações do banco ficam em `supabase/migrations/` e devem ser aplicadas ao projeto Supabase correspondente.
 
+Antes de publicar esta versão em outro projeto Supabase, aplique `20261022_atomic_stock_operations.sql`. Cadastro, baixa, reposição, alterações em lote, observações e desfazer dependem das funções transacionais criadas por essa migration. No projeto de produção atual, ela foi aplicada pelo SQL Editor em 22/10/2026; a execução manual não aparece no histórico de migrations do painel.
+
 ## Estrutura
 
 - `src/app/`: páginas e rotas de API.

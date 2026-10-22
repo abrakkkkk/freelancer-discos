@@ -2,6 +2,7 @@
 // Suporta tanto Next.js App Router quanto execucao standalone via Response nativo
 
 import { createHash } from 'crypto';
+import { readAiImage } from '@/lib/ai-image';
 
 // Ordem por velocidade medida e confiabilidade de cota:
 const GEMINI_MODELS = [
@@ -31,9 +32,7 @@ const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 horas
 const CACHE_MAX_ENTRIES = 500;
 
 function getImageHash(base64Data) {
-  // Hash rápido: usa os primeiros 2048 chars + tamanho total (suficiente para distinguir imagens)
-  const sample = base64Data.substring(0, 2048) + ':' + base64Data.length;
-  return createHash('sha256').update(sample).digest('hex').substring(0, 16);
+  return createHash('sha256').update(base64Data).digest('hex');
 }
 
 function getCachedResult(hash) {
@@ -96,31 +95,14 @@ export async function POST(request) {
       );
     }
 
-    const body = await request.json();
-    const { image } = body;
-
-    if (!image || typeof image !== 'string') {
+    const parsedImage = await readAiImage(request);
+    if (!parsedImage.ok) {
       return Response.json(
-        { success: false, error: 'Nenhuma imagem foi fornecida para análise.' },
-        { status: 400 }
+        { success: false, error: parsedImage.error },
+        { status: parsedImage.status }
       );
     }
-
-    // Extrai mime-type e base64 limpo sem regex pesado sobre string grande
-    let mimeType = 'image/jpeg';
-    let base64Data = image;
-
-    if (image.startsWith('data:')) {
-      const commaIdx = image.indexOf(',');
-      if (commaIdx !== -1) {
-        const header = image.substring(5, commaIdx);
-        const semiIdx = header.indexOf(';');
-        if (semiIdx !== -1) {
-          mimeType = header.substring(0, semiIdx) || 'image/jpeg';
-        }
-        base64Data = image.substring(commaIdx + 1);
-      }
-    }
+    const { mimeType, base64Data } = parsedImage;
 
     // Cache hit: retorna resultado anterior instantaneamente (0ms, 0 custo)
     const imageHash = getImageHash(base64Data);

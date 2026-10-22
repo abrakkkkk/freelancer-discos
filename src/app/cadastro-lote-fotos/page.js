@@ -384,16 +384,14 @@ export default function CadastroLoteFotos() {
           capa_url: item.capaUrl || null,
         };
 
-        const itemCriado = await itemService.addItem(tipo, payloadItem);
-
         const payloadMovimentacao = movimentacaoService.createMovementPayload(
           tipo,
-          itemCriado.id,
+          null,
           'entrada',
           1,
           'Cadastro em lote por fotos'
         );
-        await movimentacaoService.registerMovement(payloadMovimentacao);
+        await itemService.addItem(tipo, payloadItem, payloadMovimentacao);
 
         salvosCount++;
         idsSalvos.push(item.id);

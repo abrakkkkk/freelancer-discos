@@ -15,11 +15,12 @@ export function UndoProvider({ children }) {
    * @param {Array} previousItemsArray - Array com os dados antigos dos itens antes da alteração
    * @param {Function} onUndoSuccess - Callback chamado quando o desfazer for concluído com sucesso
    */
-  const registerUndo = useCallback((tab, previousItemsArray, onUndoSuccess = null) => {
+  const registerUndo = useCallback((tab, previousItemsArray, onUndoSuccess = null, undoMovements = []) => {
     // Clona os dados para evitar referências mutáveis
     setUndoState({
       tab,
       itens: JSON.parse(JSON.stringify(previousItemsArray)),
+      undoMovements: JSON.parse(JSON.stringify(undoMovements)),
       onUndoSuccess
     });
   }, []);
@@ -32,28 +33,34 @@ export function UndoProvider({ children }) {
     if (!undoState || isUndoing) return;
     setIsUndoing(true);
     try {
-      const promises = undoState.itens.map(item => {
-        const updateData = {
-          titulo: item.titulo,
-          preco: item.preco,
-          ativo: item.ativo,
-          deletado: item.deletado ?? false,
-          quantidade: item.quantidade,
-          loja: item.loja,
-          caixa: item.caixa,
-          artista: item.artista
-        };
-        // Remove undefined properties that might not exist in some items (like artista for DVDs)
-        Object.keys(updateData).forEach(key => updateData[key] === undefined && delete updateData[key]);
-        
-        return supabase.from(undoState.tab).update(updateData).eq('id', item.id);
+      const movementById = new Map(
+        (undoState.undoMovements || []).map((movement) => [String(movement.itemId), movement.payload])
+      );
+      const operations = undoState.itens.map((item) => {
+        const patch = Object.fromEntries(
+          Object.entries(item).filter(([key, value]) =>
+            !['id', 'created_at', 'criado_em', 'updated_at', 'atualizado_em'].includes(key) && value !== undefined
+          )
+        );
+        if (!Object.prototype.hasOwnProperty.call(patch, 'deletado')) patch.deletado = false;
+
+        const operation = { id: item.id, patch };
+        const movement = movementById.get(String(item.id));
+        if (movement) operation.movement = movement;
+        return operation;
       });
-      
-      await Promise.all(promises);
+
+      const { data, error } = await supabase.rpc('stock_write_transaction', {
+        p_action: 'restore',
+        p_category: undoState.tab,
+        p_operations: operations,
+      });
+      if (error) throw error;
+      if (data?.count !== operations.length) throw new Error('Nem todos os itens puderam ser restaurados.');
       
       if (undoState.onUndoSuccess) {
         try {
-          undoState.onUndoSuccess();
+          await undoState.onUndoSuccess();
         } catch (e) {
           // Closure pode referenciar componente desmontado se o usuário navegou; ignorar
           console.warn("Callback de undo falhou (componente pode ter sido desmontado):", e);

@@ -171,9 +171,21 @@ export default function CatalogoClone() {
       catalog.setTotal(catalog.total - 1);
 
       if (itemToDelete) {
+        const undoMovements = isAtivo
+          ? [{
+              itemId: id,
+              payload: movimentacaoService.createMovementPayload(
+                catalog.activeTab,
+                id,
+                'entrada',
+                itemToDelete.quantidade || 1,
+                'Estorno de saída (desfazer exclusão)',
+              ),
+            }]
+          : [];
         registerUndo(catalog.activeTab, [itemToDelete], () => {
           catalog.refresh();
-        });
+        }, undoMovements);
       }
       setItemParaExcluir(null);
 
@@ -239,9 +251,21 @@ export default function CatalogoClone() {
         'Saída (Baixa via Catálogo)'
       );
 
+      const undoMovements = itensSelecionados
+        .filter((item) => item.ativo !== false)
+        .map((item) => ({
+          itemId: item.id,
+          payload: movimentacaoService.createMovementPayload(
+            category,
+            item.id,
+            'entrada',
+            item.quantidade || 1,
+            'Estorno de saída (desfazer baixa em lote)',
+          ),
+        }));
       registerUndo(category, itensSelecionados, () => {
         catalog.refresh();
-      });
+      }, undoMovements);
 
       // Checa reposições automáticas dos ativos
       const itensAtivos = itensSelecionados.filter((item) => item.ativo !== false);
@@ -290,13 +314,6 @@ export default function CatalogoClone() {
     setIsRepondo(true);
     try {
       const { itemSaida, reserva } = reposicaoData;
-      await itemService.promoteReplacement(
-        catalog.activeTab,
-        reserva.id,
-        itemSaida.caixa,
-        itemSaida.loja
-      );
-
       const destinoLocal = itemSaida.caixa ? `Caixa ${itemSaida.caixa}` : 'estoque ativo';
       const payloadMovimentacao = movimentacaoService.createMovementPayload(
         catalog.activeTab,
@@ -305,7 +322,13 @@ export default function CatalogoClone() {
         1,
         `Ativação de cópia reserva para ${destinoLocal}`
       );
-      await movimentacaoService.registerMovement(payloadMovimentacao);
+      await itemService.promoteReplacement(
+        catalog.activeTab,
+        reserva.id,
+        itemSaida.caixa,
+        itemSaida.loja,
+        payloadMovimentacao,
+      );
 
       setFeedbackMsg({
         tipo: 'success',
@@ -427,7 +450,14 @@ export default function CatalogoClone() {
 
         <AlertMessage message={feedbackMsg} onClose={() => setFeedbackMsg(null)} />
 
-        {catalog.loading ? (
+        {catalog.error ? (
+          <div className="alert alert-error" role="alert" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <span>{catalog.error}</span>
+            <button type="button" className="btn btn-secondary" onClick={catalog.refresh}>
+              Tentar novamente
+            </button>
+          </div>
+        ) : catalog.loading ? (
           <p style={{ color: 'var(--text-muted)' }}>Carregando...</p>
         ) : (
           <>

@@ -266,16 +266,15 @@ export default function AcoesEmLote() {
   /**
    * Executor padronizado de ações em lote com suporte a Undo e reload
    */
-  const handleBulkAction = async (executarAcao, gerarMensagemSucesso, itensAfetados) => {
+  const handleBulkAction = async (executarAcao, gerarMensagemSucesso, itensAfetados, undoMovements = []) => {
     setLoading(true);
     try {
+      await executarAcao();
       if (itensAfetados && itensAfetados.length > 0) {
         registerUndo(activeTab, itensAfetados, () => {
           carregarItens();
-        });
+        }, undoMovements);
       }
-
-      await executarAcao();
       const mensagemSucesso = gerarMensagemSucesso(itensAfetados ? itensAfetados.length : selecionados.length);
       setMensagem({ tipo: 'success', texto: mensagemSucesso });
 
@@ -339,7 +338,19 @@ export default function AcoesEmLote() {
     handleBulkAction(
       () => itemService.bulkDeleteWithMovement(activeTab, selecionadosData, 'Saída (Exclusão em lote)'),
       (quantidade) => `${quantidade} item(ns) excluído(s).`,
+      selecionadosData,
       selecionadosData
+        .filter((item) => item.ativo !== false)
+        .map((item) => ({
+          itemId: item.id,
+          payload: movimentacaoService.createMovementPayload(
+            activeTab,
+            item.id,
+            'entrada',
+            item.quantidade || 1,
+            'Estorno de saída (desfazer exclusão em lote)',
+          ),
+        })),
     ).then(() => setConfirmarExclusao(false));
   };
 
@@ -353,7 +364,19 @@ export default function AcoesEmLote() {
     handleBulkAction(
       () => itemService.bulkDeleteWithMovement(activeTab, itensNaoSelecionados, 'Saída (Exclusão não selecionados)'),
       (quantidade) => `${quantidade} item(ns) não selecionados excluídos.`,
+      itensNaoSelecionados,
       itensNaoSelecionados
+        .filter((item) => item.ativo !== false)
+        .map((item) => ({
+          itemId: item.id,
+          payload: movimentacaoService.createMovementPayload(
+            activeTab,
+            item.id,
+            'entrada',
+            item.quantidade || 1,
+            'Estorno de saída (desfazer exclusão em lote)',
+          ),
+        })),
     ).then(() => setConfirmarExclusaoNaoSelecionados(false));
   };
 

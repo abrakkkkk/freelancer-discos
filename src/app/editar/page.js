@@ -11,6 +11,7 @@ import { PiMusicNotesSimple } from 'react-icons/pi';
 import { supabase } from '@/lib/supabase';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
+import { movimentacaoService } from '@/services/movimentacaoService';
 import { useItemForm } from '@/hooks/useItemForm';
 import { useDiscogsSearch } from '@/hooks/useDiscogsSearch';
 import { useUndo } from '@/contexts/UndoContext';
@@ -524,12 +525,24 @@ function EditarExcluirContent() {
 
       setConfirmarExclusao(null);
       setResultados((prev) => prev.filter((d) => d.id !== id));
+      const undoMovements = isAtivo
+        ? [{
+            itemId: id,
+            payload: movimentacaoService.createMovementPayload(
+              tipo,
+              id,
+              'entrada',
+              itemParaExcluir.quantidade || 1,
+              'Estorno de saída (desfazer exclusão)',
+            ),
+          }]
+        : [];
       registerUndo(tipo, [snapshotAntes], () => {
         if (itemEditando && itemEditando.id === id) {
           carregarItemPorId(id);
         }
         buscar();
-      });
+      }, undoMovements);
     } catch (err) {
       setMensagem({ tipo: 'error', texto: err.message });
     }
@@ -571,24 +584,22 @@ function EditarExcluirContent() {
   const adicionarObservacao = async () => {
     if (!novaObservacao.trim()) return;
     try {
-      const { data, error } = await supabase
-        .from('observacoes_disco')
-        .insert({ [getCampoIdObservacao()]: itemEditando.id, observacao: novaObservacao.trim() })
-        .select()
-        .single();
-
-      if (error) throw error;
-      setObservacoes((prev) => [data, ...prev.filter((o) => !o.isLegacy)]);
+      const observationText = novaObservacao.trim();
+      const data = await movimentacaoService.addObservation(tipo, itemEditando.id, observationText);
+      const observationRecord = {
+        id: data.id,
+        observacao: observationText,
+        criado_em: new Date().toISOString(),
+      };
+      setObservacoes((prev) => [observationRecord, ...prev.filter((o) => !o.isLegacy)]);
       setNovaObservacao('');
-      try {
-        await itemService.updateItem(tipo, itemEditando.id, { observacao: novaObservacao.trim() });
-      } catch (_) {}
+      setItemEditando((prev) => ({ ...prev, observacao: observationText }));
     } catch (err) {
       if (err.message && err.message.includes('disco_id') && err.message.includes('not-null')) {
         setMensagem({
           tipo: 'error',
           texto:
-            'A coluna "disco_id" no Supabase ainda possui restrição NOT NULL. Execute o script fix_observacoes_disco.sql.',
+            'O banco ainda não está preparado para observações de todas as categorias. Aplique a migration 20261022_atomic_stock_operations.sql antes de publicar esta versão.',
         });
       } else {
         setMensagem({ tipo: 'error', texto: `Erro ao adicionar observação: ${err.message}` });
@@ -604,8 +615,10 @@ function EditarExcluirContent() {
         await itemService.updateItem(tipo, itemEditando.id, { observacao: null });
         setObservacoes((prev) => prev.filter((o) => o.id !== id));
       } else {
-        await supabase.from('observacoes_disco').delete().eq('id', id);
+        await movimentacaoService.deleteObservation(tipo, itemEditando.id, id);
         setObservacoes((prev) => prev.filter((o) => o.id !== id));
+        const remaining = observacoes.filter((observation) => observation.id !== id && !observation.isLegacy);
+        setItemEditando((prev) => ({ ...prev, observacao: remaining[0]?.observacao || null }));
       }
     } catch (err) {
       setMensagem({ tipo: 'error', texto: `Erro ao excluir observação: ${err.message}` });

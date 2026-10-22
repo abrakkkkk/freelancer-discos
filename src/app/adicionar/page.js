@@ -282,41 +282,31 @@ export default function AdicionarItem() {
         itemPayload.artista = form.artista.trim();
       }
 
-      const itemCriado = await itemService.addItem(activeTab, itemPayload);
-
-      // Tarefas paralelas de auditoria e movimentação
-      const tarefasParalelas = [];
-
       const payloadMovimentacao = movimentacaoService.createMovementPayload(
         activeTab,
-        itemCriado.id,
+        null,
         'entrada',
         1,
         'Cadastro inicial'
       );
-      tarefasParalelas.push(movimentacaoService.registerMovement(payloadMovimentacao));
+      const campoIdObservacao =
+        activeTab === 'discos'
+          ? 'disco_id'
+          : activeTab === 'dvds'
+          ? 'dvd_id'
+          : activeTab === 'cds'
+          ? 'cd_id'
+          : 'vhs_id';
+      const observacaoInicial = form.observacao?.trim()
+        ? { [campoIdObservacao]: null, observacao: form.observacao.trim() }
+        : null;
 
-      if (form.observacao?.trim()) {
-        const campoIdObservacao =
-          activeTab === 'discos'
-            ? 'disco_id'
-            : activeTab === 'dvds'
-            ? 'dvd_id'
-            : activeTab === 'cds'
-            ? 'cd_id'
-            : 'vhs_id';
-
-        tarefasParalelas.push(
-          movimentacaoService.registerInitialObservation({
-            [campoIdObservacao]: itemCriado.id,
-            observacao: form.observacao.trim(),
-          }).catch((erroObs) => {
-            console.warn('Aviso: observação inicial não registrada:', erroObs);
-          })
-        );
-      }
-
-      await Promise.allSettled(tarefasParalelas);
+      const itemCriado = await itemService.addItem(
+        activeTab,
+        itemPayload,
+        payloadMovimentacao,
+        observacaoInicial,
+      );
 
       // Sincronização assíncrona de capa sem bloquear interface
       if (suportaDiscogs) {

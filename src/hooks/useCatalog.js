@@ -28,6 +28,7 @@ export function useCatalog(initialCategory = 'discos') {
   const [ordenarColuna, setOrdenarColuna] = useState(() => getStorageItem('ordenarColuna', null));
   const [ordenarDirecao, setOrdenarDirecao] = useState(() => getStorageItem('ordenarDirecao', null));
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -45,6 +46,7 @@ export function useCatalog(initialCategory = 'discos') {
 
   const fetchCatalogItems = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const { data, count } = await itemService.fetchItems(activeTab, {
         pagina,
@@ -59,10 +61,12 @@ export function useCatalog(initialCategory = 'discos') {
       });
       setItens(data || []);
       setTotal(count || 0);
+      setError(null);
     } catch (error) {
       console.error("Erro ao buscar itens:", error);
       setItens([]);
       setTotal(0);
+      setError('Não foi possível carregar o estoque. Verifique a conexão e tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -151,6 +155,7 @@ export function useCatalog(initialCategory = 'discos') {
     ordenarDirecao,
     toggleOrdenacao,
     loading,
+    error,
     refresh: fetchCatalogItems,
     setItens,
     setTotal

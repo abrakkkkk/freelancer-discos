@@ -96,15 +96,7 @@ export function ReposicaoProvider({ children }) {
 
     const { categoria, reserva, itemSaida } = tarefa;
 
-    // 1. Promover item reserva no banco
-    await itemService.promoteReplacement(
-      categoria,
-      reserva.id,
-      itemSaida.caixa,
-      itemSaida.loja
-    );
-
-    // 2. Registrar movimentação de entrada
+    // A promoção e o histórico são gravados juntos no banco.
     const destinoLocal = itemSaida.caixa ? formatCaixa(itemSaida.caixa, itemSaida.loja) : 'estoque ativo';
     const movData = movimentacaoService.createMovementPayload(
       categoria,
@@ -113,7 +105,13 @@ export function ReposicaoProvider({ children }) {
       1,
       `Ativação de cópia reserva para ${destinoLocal}`
     );
-    await movimentacaoService.registerMovement(movData);
+    await itemService.promoteReplacement(
+      categoria,
+      reserva.id,
+      itemSaida.caixa,
+      itemSaida.loja,
+      movData,
+    );
 
     // 3. Remover tarefa cumprida
     setTarefas(prev => prev.filter(t => t.id !== id));

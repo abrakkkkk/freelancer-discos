@@ -1,4 +1,5 @@
 // Rota API Next.js para leitura assistida de codigos de catalogo fonograficos dificeis via Gemini Vision
+import { readAiImage } from '@/lib/ai-image';
 
 const GEMINI_MODELS = [
   'gemini-3.8-flash',
@@ -26,30 +27,14 @@ export async function POST(request) {
       );
     }
 
-    const body = await request.json();
-    const { image } = body;
-
-    if (!image || typeof image !== 'string') {
+    const parsedImage = await readAiImage(request);
+    if (!parsedImage.ok) {
       return Response.json(
-        { success: false, error: 'Nenhuma imagem foi fornecida para análise.' },
-        { status: 400 }
+        { success: false, error: parsedImage.error },
+        { status: parsedImage.status }
       );
     }
-
-    let mimeType = 'image/jpeg';
-    let base64Data = image;
-
-    if (image.startsWith('data:')) {
-      const commaIdx = image.indexOf(',');
-      if (commaIdx !== -1) {
-        const header = image.substring(5, commaIdx);
-        const semiIdx = header.indexOf(';');
-        if (semiIdx !== -1) {
-          mimeType = header.substring(0, semiIdx) || 'image/jpeg';
-        }
-        base64Data = image.substring(commaIdx + 1);
-      }
-    }
+    const { mimeType, base64Data } = parsedImage;
 
     const systemPrompt = `Você é um perito fonográfico e catalogador de discos de vinil e CDs brasileiros e internacionais.
 Analise a imagem deste recorte (lombada, contracapa ou selo do vinil).
