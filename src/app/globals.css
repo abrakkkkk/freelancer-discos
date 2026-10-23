@@ -869,6 +869,36 @@ tr.lote-card.lote-card-selected {
   background-color: #251416 !important;
 }
 
+@media (min-width: 769px) {
+  .lote-card-select-col {
+    width: 40px !important;
+    text-align: center !important;
+  }
+  .lote-checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: transparent;
+    border: none;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lote-checkbox-input {
+    opacity: 1;
+    position: static;
+    width: 18px !important;
+    height: 18px !important;
+    accent-color: var(--accent) !important;
+    cursor: pointer;
+    margin: 0;
+  }
+  .lote-checkbox-custom svg {
+    display: none !important;
+  }
+}
+
 .bulk-actions-panel {
   position: fixed;
   bottom: 32px;
@@ -2663,55 +2693,161 @@ tr.lote-card.lote-card-selected {
     font-size: 13px !important;
   }
 
-  /* Card de Lote no Mobile */
+  /* ==========================================================================
+     Card de Lote no Mobile (Novo estilo padronizado com o catálogo)
+     ========================================================================== */
   tr.lote-card {
-    background: #151518 !important;
-    border: 1px solid #232328 !important;
-    border-radius: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
     padding: 12px 14px !important;
-    margin-bottom: 10px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+    gap: 0 !important;
     position: relative !important;
+    border-radius: 10px !important;
+    background: #18181b !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25) !important;
+    margin-bottom: 8px !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease !important;
   }
 
   tr.lote-card.lote-card-selected {
-    background: #251416 !important;
-    border-color: #632228 !important;
+    background: #201113 !important;
+    border-color: #8b1e1e !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
   }
 
-  tr.lote-card td[data-label="Título"] {
-    font-family: var(--font-title), var(--font-outfit), sans-serif !important;
+  /* Ocultar estritamente no mobile as células desktop da tabela */
+  tr.lote-card > td.cell-desktop-col,
+  tr.lote-card > td.desktop-only,
+  tr.lote-card > td:not(.cell-disco-info):not(.lote-card-select-col) {
+    display: none !important;
+  }
+
+  /* Célula de Informações no card mobile */
+  tr.lote-card .cell-disco-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    text-align: left !important;
+    gap: 2px !important;
+  }
+
+  tr.lote-card .cell-disco-info::before {
+    display: none !important;
+  }
+
+  tr.lote-card .lote-header-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    width: 100% !important;
+    padding-right: 32px !important; /* Espaço para o checkbox compacto de 20px */
+    min-height: 20px !important;
+  }
+
+  tr.lote-card .disco-titulo {
     font-size: 15px !important;
     font-weight: 700 !important;
-    color: #ffffff !important;
-    letter-spacing: -0.2px !important;
-    padding-right: 36px !important;
-    margin-bottom: 2px !important;
+    color: #e5e5e5 !important;
+    line-height: 1.25 !important;
+    word-break: break-word !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    text-align: left !important;
+    width: 100% !important;
+    margin: 0 !important;
   }
 
-  tr.lote-card td[data-label="Artista"] {
-    font-size: 13px !important;
+  tr.lote-card .disco-artista {
+    font-size: 12px !important;
     font-weight: 500 !important;
     color: #a1a1aa !important;
-    border-bottom: 1px solid #232328 !important;
-    padding-bottom: 6px !important;
-    margin-bottom: 4px !important;
-    padding-right: 36px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    display: block !important;
+    text-align: left !important;
+    width: 100% !important;
+    max-width: calc(100% - 32px) !important;
+    margin: 0 0 4px 0 !important;
   }
 
-  tr.lote-card td[data-label="Selecionar"] {
+  tr.lote-card .lote-valores-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    gap: 5px 7px !important;
+    margin-top: 2px !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  /* Célula do Botão de Seleção no mobile */
+  tr.lote-card td.lote-card-select-col {
     position: absolute !important;
-    top: 12px !important;
-    right: 12px !important;
-    margin: 0 !important;
+    top: 11px !important;
+    right: 11px !important;
+    width: 28px !important;
+    height: 28px !important;
     padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    z-index: 2 !important;
   }
 
-  tr.lote-card td[data-label="Selecionar"] input[type="checkbox"] {
-    width: 20px !important;
-    height: 20px !important;
-    accent-color: #8b1e1e !important;
+  tr.lote-card td.lote-card-select-col::before {
+    display: none !important;
+  }
+
+  .lote-checkbox-custom {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    position: relative;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+
+  .lote-checkbox-custom.checked {
+    background: #8b1e1e !important;
+    border-color: #a82424 !important;
+    box-shadow: 0 0 6px rgba(139, 30, 30, 0.35) !important;
+  }
+
+  .lote-checkbox-input {
+    position: absolute;
+    inset: -6px;
+    opacity: 0;
+    width: calc(100% + 12px) !important;
+    height: calc(100% + 12px) !important;
+    margin: 0 !important;
     cursor: pointer !important;
+    z-index: 3;
   }
 
   /* Tela de ediÃ§Ã£o no celular */
@@ -4740,9 +4876,9 @@ tr.lote-card.lote-card-selected {
 tr.card-disco.catalog-row-selected,
 tr.card-disco-loja1.catalog-row-selected,
 tr.card-disco-loja2.catalog-row-selected {
-  border-color: var(--accent, #c53030) !important;
-  background: rgba(197, 48, 48, 0.12) !important;
-  box-shadow: 0 0 0 1px var(--accent, #c53030), 0 4px 14px rgba(197, 48, 48, 0.25) !important;
+  border-color: #8b1e1e !important;
+  background: rgba(139, 30, 30, 0.12) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
 }
 
 tr.catalog-row.catalog-row-selected {

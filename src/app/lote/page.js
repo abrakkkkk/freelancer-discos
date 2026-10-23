@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { MdLayers } from "react-icons/md";
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiCheck } from 'react-icons/fi';
 import { IoClose } from 'react-icons/io5';
 import { useCaixas } from '@/hooks/useCaixas';
 import { itemService } from '@/services/itemService';
@@ -16,6 +16,7 @@ import { removeAcentos, formatCaixa, normalizeCaixa } from '@/utils/stringUtils'
 import { useUndo } from '@/contexts/UndoContext';
 import SuccessModal from '@/components/SuccessModal';
 import { useStore } from '@/contexts/StoreContext';
+import { useTouchGuardTap } from '@/hooks/useTouchGuardTap';
 
 /**
  * Utilitários de persistência de sessão para o módulo de Lote
@@ -51,6 +52,114 @@ const loteStorage = {
     this.remove('selecionadosData');
   }
 };
+
+function LoteCardRow({
+  item,
+  isItemSelecionado,
+  toggleSelecionar,
+  isVideo,
+  activeStore,
+}) {
+  const touchProps = useTouchGuardTap(() => {
+    toggleSelecionar(item.id);
+  });
+
+  const edicaoTag = item.observacao?.match(/^\[([^\]]+)\]/)?.[1] || null;
+  const edicaoTemAno = Boolean(
+    edicaoTag && (
+      /\b(19\d{2}|20\d{2})\b/.test(edicaoTag) ||
+      (item.ano && edicaoTag.includes(String(item.ano).trim()))
+    )
+  );
+
+  return (
+    <tr
+      key={item.id}
+      {...touchProps}
+      className={`lote-card ${isItemSelecionado ? 'lote-card-selected' : ''}`}
+      style={{ opacity: item.ativo === false ? 0.6 : 1, cursor: 'pointer' }}
+    >
+      <td data-label="Selecionar" className="lote-card-select-col">
+        <div className={`lote-checkbox-custom ${isItemSelecionado ? 'checked' : ''}`}>
+          <input
+            type="checkbox"
+            checked={isItemSelecionado}
+            onChange={() => {}}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleSelecionar(item.id);
+            }}
+            aria-label={`Selecionar ${item.titulo || 'item'}`}
+            className="lote-checkbox-input"
+          />
+          {isItemSelecionado && <FiCheck size={10} color="#ffffff" strokeWidth={3.5} />}
+        </div>
+      </td>
+
+      {/* Card Info Mobile (estilo novo padronizado com o catálogo) */}
+      <td data-label="Info" className="cell-disco-info lote-cell-info">
+        <div className="disco-header-row lote-header-row">
+          <span className="disco-titulo">{item.titulo || <span className="text-empty">—</span>}</span>
+        </div>
+        {!isVideo && item.artista && (
+          <span className="disco-artista">{item.artista}</span>
+        )}
+        <div className="disco-valores-row lote-valores-row">
+          <span className="disco-valor-preco">
+            {item.preco ? `R$ ${Number(item.preco).toFixed(2).replace('.', ',')}` : <span className="text-empty">—</span>}
+          </span>
+          {item.caixa && (
+            <span className="disco-valor-caixa">{formatCaixa(item.caixa, item.loja)}</span>
+          )}
+          {edicaoTag && (
+            <span className="disco-edicao-tag" title={`Edição: ${edicaoTag}`}>
+              {edicaoTag}
+            </span>
+          )}
+          {item.ano && !edicaoTemAno && (
+            <span className="disco-valor-ano">{item.ano}</span>
+          )}
+          {!activeStore && item.loja && (
+            <span className={`disco-valor-loja ${item.loja === 'Loja 1' ? 'loja-badge-1' : item.loja === 'Loja 2' ? 'loja-badge-2' : 'loja-badge-anexo'}`}>
+              {item.loja}
+            </span>
+          )}
+          <span className={`disco-valor-status ${item.ativo !== false ? 'status-ativo' : 'status-inativo'}`}>
+            {item.ativo !== false ? 'Ativo' : 'Inativo'}
+          </span>
+        </div>
+      </td>
+
+      {/* Células mantidas no DOM para renderização Desktop */}
+      <td data-label="Local" className="desktop-only cell-desktop-col">{formatCaixa(item.caixa, item.loja)}</td>
+      {!isVideo && (
+        <td data-label="Artista" className={`desktop-only cell-desktop-col ${!item.artista ? 'empty-artist' : ''}`}>
+          {item.artista || <span className="text-empty">—</span>}
+        </td>
+      )}
+      <td data-label="Título" className="desktop-only cell-desktop-col">{item.titulo || <span className="text-empty">—</span>}</td>
+      {!activeStore && (
+        <td data-label="Loja" className="desktop-only cell-desktop-col">
+          {item.loja ? (
+            <span className={`cell-desktop-loja ${item.loja === 'Loja 1' ? 'loja-badge-1' : item.loja === 'Loja 2' ? 'loja-badge-2' : 'loja-badge-anexo'}`} style={{ whiteSpace: 'nowrap' }}>
+              {item.loja}
+            </span>
+          ) : (
+            <span className="text-empty">—</span>
+          )}
+        </td>
+      )}
+      <td data-label="Preço" className="desktop-only cell-desktop-col cell-desktop-preco" style={{ whiteSpace: 'nowrap' }}>
+        {item.preco ? `R$ ${Number(item.preco).toFixed(2).replace('.', ',')}` : <span className="text-empty">—</span>}
+      </td>
+      <td data-label="Status" className="desktop-only cell-desktop-col">
+        <span className={`badge ${item.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
+          {item.ativo !== false ? 'Ativo' : 'Inativo'}
+        </span>
+      </td>
+    </tr>
+  );
+}
 
 export default function AcoesEmLote() {
   const { activeStore } = useStore();
@@ -537,53 +646,16 @@ export default function AcoesEmLote() {
                   </tr>
                 </thead>
                 <tbody>
-                  {itens.map((item) => {
-                    const isItemSelecionado = selecionados.includes(item.id);
-
-                    return (
-                      <tr
-                        key={item.id}
-                        onClick={() => toggleSelecionar(item.id)}
-                        className={`lote-card ${isItemSelecionado ? 'lote-card-selected' : ''}`}
-                        style={{ opacity: item.ativo === false ? 0.6 : 1, cursor: 'pointer' }}
-                      >
-                        <td data-label="Selecionar" style={{ textAlign: 'center' }}>
-                          <input
-                            type="checkbox"
-                            checked={isItemSelecionado}
-                            onChange={() => {}}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleSelecionar(item.id);
-                            }}
-                            style={{ cursor: 'pointer', width: '20px', height: '20px', margin: 0, accentColor: 'var(--accent)' }}
-                          />
-                        </td>
-                        <td data-label="Local">{formatCaixa(item.caixa, item.loja)}</td>
-                        {!isVideo && <td data-label="Artista" className={!item.artista ? "empty-artist" : ""}>{item.artista}</td>}
-                        <td data-label="Título">{item.titulo}</td>
-                        {!activeStore && (
-                          <td data-label="Loja" className="cell-desktop-col">
-                            {item.loja ? (
-                              <span className={`cell-desktop-loja ${item.loja === 'Loja 1' ? 'loja-badge-1' : item.loja === 'Loja 2' ? 'loja-badge-2' : 'loja-badge-anexo'}`} style={{ whiteSpace: 'nowrap' }}>
-                                {item.loja}
-                              </span>
-                            ) : (
-                              <span className="text-empty">—</span>
-                            )}
-                          </td>
-                        )}
-                        <td data-label="Preço" className="cell-desktop-preco" style={{ whiteSpace: 'nowrap' }}>
-                          {item.preco ? `R$ ${Number(item.preco).toFixed(2).replace('.', ',')}` : <span className="text-empty">—</span>}
-                        </td>
-                        <td data-label="Status">
-                          <span className={`badge ${item.ativo !== false ? 'badge-entrada' : 'badge-saida'}`}>
-                            {item.ativo !== false ? 'Ativo' : 'Inativo'}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {itens.map((item) => (
+                    <LoteCardRow
+                      key={item.id}
+                      item={item}
+                      isItemSelecionado={selecionados.includes(item.id)}
+                      toggleSelecionar={toggleSelecionar}
+                      isVideo={isVideo}
+                      activeStore={activeStore}
+                    />
+                  ))}
                 </tbody>
               </table>
             </div>
