@@ -6,7 +6,8 @@
     "dev": "node --max-old-space-size=4096 ./node_modules/next/dist/bin/next dev",
     "build": "node --max-old-space-size=4096 ./node_modules/next/dist/bin/next build",
     "start": "node --max-old-space-size=4096 ./node_modules/next/dist/bin/next start",
-    "lint": "node --max-old-space-size=4096 ./node_modules/eslint/bin/eslint.js ."
+    "lint": "node --max-old-space-size=4096 ./node_modules/eslint/bin/eslint.js .",
+    "test": "node --test \"src/**/*.test.mjs\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",
@@ -19,6 +20,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.11",
     "babel-plugin-react-compiler": "1.0.0",
     "dotenv": "^17.4.2",
     "eslint": "^9",

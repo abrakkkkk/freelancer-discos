@@ -3,6 +3,7 @@
 
 import { createHash } from 'crypto';
 import { readAiImage } from '@/lib/ai-image';
+import { parseRecognizedPrice } from '@/utils/priceRecognition.mjs';
 
 // Ordem por velocidade medida e confiabilidade de cota:
 const GEMINI_MODELS = [
@@ -52,28 +53,6 @@ function setCachedResult(hash, result) {
     recognitionCache.delete(oldestKey);
   }
   recognitionCache.set(hash, { result, timestamp: Date.now() });
-}
-
-function extrairPrecoValido(valor) {
-  if (valor === undefined || valor === null) return '';
-  let str = String(valor).trim();
-  if (!str) return '';
-
-  // Remove moeda, espaços e sufixos manuscritos como ",-" e ",=".
-  str = str.replace(/r?\$|\s/gi, '').replace(/[,.](?:-|=)$/, '');
-
-  // Decimais zerados representam valor inteiro; centavos diferentes de zero são ambíguos.
-  const zeroDecimals = str.match(/^((?:\d{1,3}(?:[.,]\d{3})+|\d+))[,.]0{1,2}$/);
-  if (zeroDecimals) str = zeroDecimals[1];
-
-  // Aceita inteiros ou agrupamento de milhares consistente (ex: "1.200").
-  const isInteger = /^\d+$/.test(str);
-  const isGroupedThousands = /^\d{1,3}(?:[.,]\d{3})+$/.test(str);
-  if (!isInteger && !isGroupedThousands) return '';
-
-  const num = Number(str.replace(/[.,]/g, ''));
-  if (!Number.isSafeInteger(num) || num <= 0 || num >= 100000 || num % 5 !== 0) return '';
-  return String(num);
 }
 
 function normalizarConfianca(valor) {
@@ -255,7 +234,7 @@ JSON: {"artista":"","titulo":"","ano":"","preco":"","confianca":"alta|media|baix
     let artista = (parsed?.artista || '').trim();
     let titulo = (parsed?.titulo || '').trim();
     const ano = (parsed?.ano || '').trim();
-    const preco = extrairPrecoValido(parsed?.preco);
+    const preco = parseRecognizedPrice(parsed?.preco);
     const confianca = normalizarConfianca(parsed?.confianca);
 
     // Normalização estrita para Various

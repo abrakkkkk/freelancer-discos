@@ -18,7 +18,7 @@ npm run build
 npm run start
 ```
 
-`npm run lint` executa o ESLint.
+`npm run lint` executa o ESLint e `npm test` roda os testes unitários e SQL. Os testes SQL usam PostgreSQL descartável em memória via PGlite e não acessam o projeto de produção.
 
 ## Configuração
 
@@ -26,7 +26,7 @@ Para autenticação, configure `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE
 
 As migrações do banco ficam em `supabase/migrations/` e devem ser aplicadas ao projeto Supabase correspondente.
 
-Antes de publicar esta versão em outro projeto Supabase, aplique `20261022_atomic_stock_operations.sql`. Cadastro, baixa, reposição, alterações em lote, observações e desfazer dependem das funções transacionais criadas por essa migration. No projeto de produção atual, ela foi aplicada pelo SQL Editor em 22/10/2026; a execução manual não aparece no histórico de migrations do painel.
+Antes de publicar esta versão em outro projeto Supabase, aplique, em ordem, `20261022_atomic_stock_operations.sql`, `20261022_fix_dynamic_exec_row_checks.sql` e `20261022_fix_stock_write_counts.sql`. As funções transacionais cobrem cadastro, baixa, reposição, alterações em lote, observações e desfazer; as duas últimas migrations corrigem a validação de linhas afetadas e preservam a contagem de operações. No projeto de produção atual, as duas primeiras correções já estavam aplicadas. `20261022_fix_stock_write_counts.sql` foi aplicada pelo SQL Editor em 22/10/2026; execuções manuais não aparecem no histórico de migrations do painel.
 
 ## Estrutura
 

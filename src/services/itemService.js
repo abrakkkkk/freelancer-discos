@@ -1,6 +1,12 @@
 import { supabase } from '@/lib/supabase';
 import { removeAcentos, extractSearchTokens, calculateItemRelevance } from '@/utils/stringUtils';
 import { caixaService } from '@/services/caixaService';
+import { createStockWriteService } from '@/services/stockWriteService.mjs';
+
+const stockWriteService = createStockWriteService({
+  rpc: (...args) => supabase.rpc(...args),
+  invalidateCache: () => caixaService.invalidateCache(),
+});
 
 /**
  * Aplica filtros de caixa na query Supabase suportando variações de Loja 1 e Loja 2
@@ -215,18 +221,7 @@ export const itemService = {
    * Adiciona um novo item e invalida cache de caixas se aplicável
    */
   async addItem(category, insertData, movementPayload, observationPayload = null) {
-    const { data, error } = await supabase.rpc('stock_write_transaction', {
-      p_action: 'create',
-      p_category: category,
-      p_payload: insertData,
-      p_movement: movementPayload,
-      p_observation: observationPayload,
-    });
-    if (error) throw error;
-    if (insertData.caixa) {
-      caixaService.invalidateCache();
-    }
-    return data;
+    return stockWriteService.addItem(category, insertData, movementPayload, observationPayload);
   },
 
   /**
@@ -250,18 +245,7 @@ export const itemService = {
    * Atualização em lote com particionamento em blocos para evitar URL overflow
    */
   async bulkUpdate(category, ids, updateData) {
-    if (!ids || ids.length === 0) return;
-    const { error } = await supabase.rpc('stock_write_transaction', {
-      p_action: 'bulk_update',
-      p_category: category,
-      p_ids: [...new Set(ids)],
-      p_payload: updateData,
-    });
-    if (error) throw error;
-
-    if (updateData.caixa !== undefined || updateData.loja !== undefined) {
-      caixaService.invalidateCache();
-    }
+    return stockWriteService.bulkUpdate(category, ids, updateData);
   },
 
   /**
@@ -276,28 +260,14 @@ export const itemService = {
    * Exclusão com registro automático de saída conforme Regra 1.2 (ativo gera saída, inativo não)
    */
   async deleteItemWithMovement(category, item, motivo = 'Saída (Excluído)') {
-    const { error } = await supabase.rpc('stock_write_transaction', {
-      p_action: 'soft_delete',
-      p_category: category,
-      p_ids: [item.id],
-      p_reason: motivo,
-    });
-    if (error) throw error;
+    return stockWriteService.deleteItemWithMovement(category, item, motivo);
   },
 
   /**
    * Exclusão em lote com registro de saída para os itens que eram ativos
    */
   async bulkDeleteWithMovement(category, itens, motivo = 'Saída em Lote') {
-    if (!itens || itens.length === 0) return;
-
-    const { error } = await supabase.rpc('stock_write_transaction', {
-      p_action: 'soft_delete',
-      p_category: category,
-      p_ids: [...new Set(itens.map((item) => item.id))],
-      p_reason: motivo,
-    });
-    if (error) throw error;
+    return stockWriteService.bulkDeleteWithMovement(category, itens, motivo);
   },
 
   /**
@@ -380,18 +350,12 @@ export const itemService = {
    * Promove disco reserva do Estoque Superior (Inativo) para o chão de loja (Ativo)
    */
   async promoteReplacement(category, replacementId, targetCaixa, targetLoja, movementPayload) {
-    const payload = {};
-    if (targetCaixa) payload.caixa = targetCaixa;
-    if (targetLoja) payload.loja = targetLoja;
-
-    const { error } = await supabase.rpc('stock_write_transaction', {
-      p_action: 'promote',
-      p_category: category,
-      p_item_id: replacementId,
-      p_payload: payload,
-      p_movement: movementPayload,
-    });
-    if (error) throw error;
-    if (targetCaixa || targetLoja) caixaService.invalidateCache();
+    return stockWriteService.promoteReplacement(
+      category,
+      replacementId,
+      targetCaixa,
+      targetLoja,
+      movementPayload
+    );
   },
 };

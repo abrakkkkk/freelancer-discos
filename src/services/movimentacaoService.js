@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase';
+import { createMovementPayload as buildMovementPayload } from '@/utils/movementPayload.mjs';
 
 /**
  * Retorna a data de corte em formato ISO para o período especificado
@@ -150,29 +151,6 @@ export const movimentacaoService = {
    * Constrói o payload padronizado da movimentação associando à chave estrangeira correta
    */
   createMovementPayload(category, itemId, tipo, quantidade, observacao) {
-    const payload = {
-      tipo,
-      quantidade: quantidade || 1,
-      observacao: observacao || null,
-    };
-
-    switch (category) {
-      case 'discos':
-        payload.disco_id = itemId;
-        break;
-      case 'dvds':
-        payload.dvd_id = itemId;
-        break;
-      case 'cds':
-        payload.cd_id = itemId;
-        break;
-      case 'vhs':
-        payload.vhs_id = itemId;
-        break;
-      default:
-        break;
-    }
-
-    return payload;
+    return buildMovementPayload(category, itemId, tipo, quantidade, observacao);
   },
 };
